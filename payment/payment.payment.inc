@@ -65,7 +65,7 @@ function payment_payment_status_info() {
  * Implements hook_payment_method_controller_info().
  */
 function payment_payment_method_controller_info() {
-  return array('PaymentMethodControllerUnavailable');
+  return array('Drupal\payment\PaymentMethodControllerUnavailable');
 }
 
 /**

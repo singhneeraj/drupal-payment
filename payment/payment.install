@@ -223,7 +223,7 @@ function payment_schema() {
       'status' => array(
         'type' => 'int',
         'size' => 'tiny',
-        'default' => ENTITY_CUSTOM,
+        // 'default' => ENTITY_CUSTOM,
         'not null' => TRUE,
       ),
       'title_generic' => array(
