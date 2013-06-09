@@ -305,7 +305,7 @@ function payment_menu_alter(&$items) {
 /**
  * Implements hook_permission().
  *
- * @see payment_method_access()
+ * @see \Drupal\payment\PaymentMethodAccessController
  */
 function payment_permission() {
   $permissions = array(
@@ -839,7 +839,10 @@ function payment_method_controller_load_multiple(array $controller_class_names =
   if (is_null($controllers)) {
     foreach (payment_method_controllers_info() as $controller_class_name_alias => $controller_class_name) {
       $controller = new $controller_class_name();
-      $controller->name = $controller_class_name;
+      // @todo The namespace removal is a temporary fix until controllers are
+      // plugins and have machine names.
+      $controller->name = substr($controller_class_name, strrpos($controller_class_name, '\\') + 1);
+      $controller_class_name_alias = substr($controller_class_name_alias, strrpos($controller_class_name_alias, '\\') + 1);
       $controllers[$controller_class_name_alias] = $controller;
     }
   }
@@ -951,56 +954,6 @@ function payment_line_item_get_prefixed($name, Payment $payment) {
  */
 function payment_rules_access($type, $name) {
   return user_access('payment.rules.administer');
-}
-
-/**
- * Check if a user has access to perform a certain payment method operation.
- *
- * @see payment_permission()
- *
- * @param string $operation
- *   One of the following operations:
- *   - "create" (requires $payment_method)
- *   - "update" (does not require $payment_method, but only grants access if
- *     the user has permission to update any payment method)
- *   - "delete" (does not require $payment_method, but only grants access if
- *     the user has permission to delete any payment method)
- *   - "view" (does not require $payment_method, but only grants access if the
- *     user has permission to view any payment method)
- *   - "enable" (requires $payment_method)
- *   - "disable" (requires $payment_method)
- *   - "clone" (requires $payment_method)
- * @param PaymentMethod $payment_method
- *   The payment method the user wants to perform the operation on.
- * @param object $account
- *   The user account for which to check access. If NULL, the current user is
- *   used.
- *
- * @return boolean
- */
-function payment_method_access($operation, PaymentMethod $payment_method = NULL, $account = NULL) {
-  global $user;
-
-  // Default to the currently logged-in user.
-  if (!$account) {
-    $account = $user;
-  }
-
-  switch ($operation) {
-    case 'create':
-      return $payment_method && user_access('payment.payment_method.create.' . $payment_method->controller->name, $account);
-    case 'enable':
-      return $payment_method && $payment_method->enabled == FALSE && payment_method_access('update', $payment_method, $account);
-    case 'disable':
-      return $payment_method && $payment_method->enabled == TRUE && payment_method_access('update', $payment_method, $account);
-    case 'clone':
-      return payment_method_access('create', $payment_method, $account) && payment_method_access('view', $payment_method, $account);
-    case 'view':
-    case 'update':
-    case 'delete':
-      return user_access('payment.payment_method.' . $operation . '.any', $account) || $payment_method && user_access('payment.payment_method.' . $operation . '.own', $account) && $payment_method->uid == $account->uid;
-  }
-  return FALSE;
 }
 
 /**

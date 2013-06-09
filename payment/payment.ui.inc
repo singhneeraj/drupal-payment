@@ -240,7 +240,7 @@ function payment_page_payment_method_add_select_controller() {
       $payment_method = new PaymentMethod(array(
         'controller' => $controller,
       ));
-      if (payment_method_access('create', $payment_method)) {
+      if ($payment_method->access('create')) {
         $items[] = array(
           'title' => $controller->title,
           'href' => 'admin/config/services/payment/method/add/' . $controller->name,
@@ -273,7 +273,7 @@ function payment_page_payment_method_add_select_controller_access() {
     $payment_method = new PaymentMethod(array(
       'controller' => $controller,
     ));
-    if (payment_method_access('create', $payment_method)) {
+    if ($payment_method->access('create')) {
       return TRUE;
     }
   }
@@ -294,7 +294,7 @@ function payment_method_form_add_access(PaymentMethodController $controller) {
     'controller' => $controller,
   ));
 
-  return payment_method_access('create', $payment_method);
+  return $payment_method->access('create');
 }
 
 /**
@@ -396,7 +396,7 @@ function payment_form_payment_method(array $form, array &$form_state, PaymentMet
       '#type' => 'link',
       '#title' => t('Delete'),
       '#href' => 'admin/config/services/payment/method/' . $payment_method->pmid . '/delete',
-      '#access' => payment_method_access('delete', $payment_method),
+      '#access' => $payment_method->access('delete'),
     );
   }
 

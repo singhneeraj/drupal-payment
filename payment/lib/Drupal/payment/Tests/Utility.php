@@ -1,24 +1,23 @@
 <?php
 
 /**
- * Contains class PaymentWebTestCase.
+ * @file
+ * Contains class \Drupal\payment\Tests\Utility.
  */
+
+namespace Drupal\payment\Tests;
+
+use Drupal\Tests\UnitTestCase;
 
 /**
- * Provides reusable code for testing payments and payment methods.
+ * Provides utility tools to support tests.
  */
-class PaymentWebTestCase extends XtoolsWebTestCase {
+class Utility {
 
   /**
-   * Overrides parent::setUp().
-   */
-  function setUp(array $modules = array()) {
-    $this->profile = 'testing';
-    parent::setUp($modules);
-  }
-
-  /**
-   * Create, save, and return a Payment.
+   * Creates a payment.
+   *
+   * @todo port to D8.
    *
    * @param integer $uid
    *   The user ID of the payment's owner.
@@ -27,7 +26,7 @@ class PaymentWebTestCase extends XtoolsWebTestCase {
    *
    * @return Payment
    */
-  static function paymentCreate($uid, PaymentMethod $payment_method = NULL) {
+  static function createPayment($uid, PaymentMethod $payment_method = NULL) {
     $payment_method = $payment_method ? $payment_method : new PaymentMethodUnavailable;
     $payment = new Payment(array(
       'currency_code' => 'XXX',
@@ -46,7 +45,7 @@ class PaymentWebTestCase extends XtoolsWebTestCase {
   }
 
   /**
-   * Create, save, and return a PaymentMethod.
+   * Creates a payment method.
    *
    * @param integer $uid
    *   The user ID of the payment method's owner.
@@ -56,14 +55,14 @@ class PaymentWebTestCase extends XtoolsWebTestCase {
    *
    * @return PaymentMethod
    */
-  static function paymentMethodCreate($uid, PaymentMethodController $controller = NULL) {
-    $name = self::randomName();
+  static function createPaymentMethod($uid, PaymentMethodController $controller = NULL) {
+    $name = UnitTestCase::randomName();
     $controller = $controller ? $controller : payment_method_controller_load('PaymentMethodControllerUnavailable');
-    $payment_method = new PaymentMethod(array(
+    $payment_method = entity_create('payment_method', array(
       'controller' => $controller,
       'controller_data' => $controller->controller_data_defaults,
       'name' => $name,
-      'title' => $name,
+      'label' => $name,
       'uid' => $uid,
     ));
 
