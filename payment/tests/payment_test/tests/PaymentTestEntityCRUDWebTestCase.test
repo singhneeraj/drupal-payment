@@ -18,7 +18,7 @@ class PaymentTestEntityCrudWebTestCase extends PaymentWebTestCase {
   }
 
   function setUp(array $modules = array()) {
-    parent::setUp($modules = array('payment_test', 'xtools'));
+    parent::setUp($modules = array('payment_test'));
   }
 
   /**
@@ -53,12 +53,7 @@ class PaymentTestEntityCrudWebTestCase extends PaymentWebTestCase {
 
     // Test loading a payment.
     $payment_loaded = entity_load_single('payment', $payment->pid);
-    $blueprint = xtools_blueprint_info('Payment');
-    $asserts = array();
-    $blueprint->validate($payment_loaded, $asserts, '$payment');
-    foreach ($asserts as $assert) {
-      $this->assert($assert->valid, $assert->message, 'Other', $assert->caller);
-    }
+    // @todo
 
     // Test updating a payment.
     $payment->currency_code = 'bar';

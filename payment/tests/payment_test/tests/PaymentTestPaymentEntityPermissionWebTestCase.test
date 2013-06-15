@@ -14,7 +14,7 @@ class PaymentTestPaymentEntityPermissionWebTestCase extends PaymentWebTestCase {
     return array(
       'name' => 'Payment permissions',
       'group' => 'Payment',
-      'dependencies' => array('payment', 'xtools'),
+      'dependencies' => array('payment'),
     );
   }
 
@@ -22,7 +22,7 @@ class PaymentTestPaymentEntityPermissionWebTestCase extends PaymentWebTestCase {
    * Overrides parent::setUp().
    */
   function setUp(array $modules = array()) {
-    parent::setUp($modules + array('payment', 'xtools'));
+    parent::setUp($modules + array('payment'));
   }
 
   function testPaymentEntityPermissions() {
