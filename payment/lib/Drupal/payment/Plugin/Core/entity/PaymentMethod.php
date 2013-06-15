@@ -20,8 +20,8 @@ use Drupal\payment\Plugin\Core\entity\PaymentMethodInterface;
  * @EntityType(
  *   config_prefix = "payment.payment_method",
  *   controllers = {
- *     "access" = "Drupal\payment\PaymentMethodAccessController",
- *     "storage" = "Drupal\payment\PaymentMethodStorageController",
+ *     "access" = "Drupal\payment\Plugin\Core\entity\PaymentMethodAccessController",
+ *     "storage" = "Drupal\payment\Plugin\Core\entity\PaymentMethodStorageController",
  *   },
  *   entity_keys = {
  *     "id" = "name",

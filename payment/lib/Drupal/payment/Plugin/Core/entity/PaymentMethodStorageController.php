@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains Drupal\payment\PaymentMethodStorageController.
+ * Contains Drupal\payment\Plugin\Core\entity\PaymentMethodStorageController.
  */
 
-namespace Drupal\payment;
+namespace Drupal\payment\Plugin\Core\entity;
 
 use Drupal\Core\Config\Entity\ConfigStorageController;
 
