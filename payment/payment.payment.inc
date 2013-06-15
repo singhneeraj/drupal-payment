@@ -62,13 +62,6 @@ function payment_payment_status_info() {
 }
 
 /**
- * Implements hook_payment_method_controller_info().
- */
-function payment_payment_method_controller_info() {
-  return array('Drupal\payment\PaymentMethodControllerUnavailable');
-}
-
-/**
  * Implements hook_payment_line_item_info().
  */
 function payment_payment_line_item_info() {

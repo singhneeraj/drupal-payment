@@ -54,7 +54,7 @@ function payment_test_payment_line_item_info() {
 /**
  * Implements hook_payment_validate().
  */
-function payment_test_payment_validate(Payment $payment, PaymentMethod $payment_method, $strict) {
+function payment_test_payment_validate(Payment $payment, PaymentMethod $payment_method) {
   if (isset($payment->payment_test_payment_validate)) {
     throw new PaymentValidationException('payment_test');
   }

@@ -613,7 +613,7 @@ class PaymentMethodUnavailable extends PaymentMethod {
 
   function __construct() {
     $this->title_specific = $this->title_generic = t('Unavailable');
-    $this->controller = payment_method_controller_load('PaymentMethodControllerUnavailable');
+    $this->controller = \Drupal::service('plugin.manager.payment.payment_method')->createInstance('payment_unavailable');
   }
 }
 

@@ -35,36 +35,17 @@ function hook_payment_status_info_alter(array &$statuses_info) {
 }
 
 /**
- * Defines payment method controllers.
+ * Alters payment method plugins.
  *
- * @return array
- *   An array with the names of payment method controller classes. Keys may
- *   either specific aliases for their values (the classes), or be numeric
- *   (left empty) to make them default to the controller class names they
- *   belong to. This allows hook_payment_method_controller_info_alter() to
- *   override payment method controller class by setting a different class name
- *   for an alias.
+ * @param array $definitions
+ *   Keys are plugin IDs. Values are plugin definitions.
  */
-function hook_payment_method_controller_info() {
-  return array(
-    'DummyPaymentMethodController',
-    'CashOnDeliveryPaymentMethodController',
-  );
-}
+function hook_payment_method_controller_alter(array &$definitions) {
+  // Remvove a payment method plugin.
+  unset($definitions['foo_plugin_id']);
 
-/**
- * Alters payment method controllers.
- *
- * @param array $controllers_info
- *   Keys are payment controller aliases, values are actual payment method
- *   controller class names.
- */
-function hook_payment_method_controller_info_alter(array &$controllers_info) {
-  // Remvove a payment method controller.
-  unset($controllers_info['FooPaymentMethodController']);
-
-  // Replace PaymentMethodControllerUnavailable with another controller.
-  $controllers_info['PaymentMethodControllerUnavailable'] = 'FooPaymentMethodControllerUnavailableAdvanced';
+  // Replace a payment method plugin with another.
+  $definitions['foo_plugin_id']['class'] = 'Drupal\foo\FooPaymentMethod';
 }
 
 /**
@@ -170,16 +151,11 @@ function hook_payment_pre_finish(Payment $payment) {
  *   $payment->method contains the method currently configured, but NOT the
  *   method that $payment should be tested against, which is $payment_method.
  * @param PaymentMethod $payment_method
- * @param boolean $strict
- *   Whether to validate everything a payment method needs or to validate the
- *   most important things only. Useful when finding available payment methods,
- *   for instance, which does not require unimportant things to be a 100%
- *   valid.
  *
  * @return boolean
  *   Whether the payment and/or the payment method are valid.
  */
-function hook_payment_validate(Payment $payment, PaymentMethod $payment_method, $strict) {}
+function hook_payment_validate(Payment $payment, PaymentMethod $payment_method) {}
 
 /**
  * Alter the payment form.

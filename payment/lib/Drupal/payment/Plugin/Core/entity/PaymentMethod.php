@@ -10,7 +10,9 @@ namespace Drupal\payment\Plugin\Core\Entity;
 use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\Annotation\EntityType;
-use Drupal\payment\PaymentMethodInterface;
+use Drupal\payment\Plugin\payment\PaymentMethod\PaymentMethodInterface as PluginPaymentMethodInterface;
+use Drupal\payment\Plugin\Core\entity\Payment;
+use Drupal\payment\Plugin\Core\entity\PaymentMethodInterface;
 
 /**
  * Defines a payment method entity.
@@ -19,7 +21,7 @@ use Drupal\payment\PaymentMethodInterface;
  *   config_prefix = "payment.payment_method",
  *   controllers = {
  *     "access" = "Drupal\payment\PaymentMethodAccessController",
- *     "storage" = "Drupal\Core\Config\Entity\ConfigStorageController",
+ *     "storage" = "Drupal\payment\PaymentMethodStorageController",
  *   },
  *   entity_keys = {
  *     "id" = "name",
@@ -36,18 +38,29 @@ use Drupal\payment\PaymentMethodInterface;
 class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
 
   /**
-   * The payment method controller this merchant uses.
+   * The payment method plugin this entity uses.
    *
-   * @var PaymentMethodController
+   * @var \Drupal\payment\Plugin\payment\PaymentMethod\PaymentMethodInterface
    */
-  public $controller = NULL;
+  public $plugin;
 
   /**
-   * Information about this payment method that is specific to its controller.
+   * The configuration of the payment method plugin in self::plugin.
+   *
+   * This property exists for storage purposes only.
    *
    * @var array
    */
-  public $controller_data = array();
+  protected $pluginConfiguration;
+
+  /**
+   * The plugin ID of the payment method plugin in self::plugin.
+   *
+   * This property exists for storage purposes only.
+   *
+   * @var string
+   */
+  protected $pluginID;
 
   /**
    * The entity's unique machine name.
@@ -84,12 +97,56 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @see \Drupal\payment\PaymentMethodStorageController
    */
-  public function validatePayment(\Payment $payment, $strict = TRUE) {
-    $this->controller->validate($payment, $this, $strict);
-    module_invoke_all('payment_validate', $payment, $this, $strict);
-    if (module_exists('rules')) {
-      rules_invoke_event('payment_validate', $payment, $this, $strict);
-    }
+  public function getExportProperties() {
+    $properties = parent::getExportProperties();
+    $properties['pluginConfiguration'] = $this->getPlugin()->getConfiguration();
+    $properties['pluginID'] = $this->getPlugin()->getPluginId();
+
+    return $properties;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setPlugin(PluginPaymentMethodInterface $plugin) {
+    $this->plugin = $plugin;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPlugin() {
+    return $this->plugin;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function currencies() {
+    return $this->getPlugin()->currencies();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function paymentFormElements(array $form, array &$form_state) {
+    return $this->getPlugin()->paymentFormElements($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validatePayment(Payment $payment) {
+    return $this->getPlugin()->validatePayment($payment);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function executePayment(Payment $payment) {
+    return $this->getPlugin()->executePayment($payment);
   }
 }

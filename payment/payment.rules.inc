@@ -60,11 +60,6 @@ function payment_rules_event_info() {
         'label' => t('Payment method'),
         'description' => t('The payment method the variable is validated against.'),
       ),
-      'strict' => array(
-        'type' => 'boolean',
-        'label' => t('Strict validation'),
-        'description' => t('Whether to validate everything a payment method needs or to validate the most important things only. Useful when finding available payment methods, for instance, which does not require unimportant things to be a 100% valid.'),
-      ),
     ),
   );
 

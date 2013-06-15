@@ -21,7 +21,7 @@ class PaymentGenerate {
   static function paymentMethod($controller_class_name = 'PaymentMethodControllerUnavailable', $uid = 1) {
     require_once './modules/simpletest/drupal_web_test_case.php';
     $name = DrupalTestCase::randomName();
-    $controller = payment_method_controller_load($controller_class_name);
+    $controller = \Drupal::service('plugin.manager.payment.payment_method')->createInstance($controller_class_name);
     $payment_method = new PaymentMethod(array(
       'controller' => $controller,
       'controller_data' => $controller->controller_data_defaults,

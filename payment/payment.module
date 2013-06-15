@@ -361,12 +361,12 @@ function payment_permission() {
       'title' => t('View payment status overview'),
     ),
   );
-  $controllers = payment_method_controller_load_multiple();
-  unset($controllers['PaymentMethodControllerUnavailable']);
-  foreach ($controllers as $controller) {
-    $permissions['payment.payment_method.create.' . $controller->name] = array(
-      'title' => t('Create %controller_title payment methods', array(
-        '%controller_title' => $controller->title,
+  $definitions = \Drupal::service('plugin.manager.payment.payment_method')->getDefinitions();
+  unset($definitions['payment_unavailable']);
+  foreach ($definitions as $plugin_id => $definition) {
+    $permissions['payment.payment_method.create.' . $plugin_id] = array(
+      'title' => t('Create %plugin_label payment methods', array(
+        '%plugin_label' => $definition['label'],
       )),
     );
   }
@@ -381,7 +381,7 @@ function payment_hook_info() {
   $hooks['payment_status_info'] = array(
     'group' => 'payment',
   );
-  $hooks['payment_method_controller_info'] = array(
+  $hooks['payment_method_controller_alter'] = array(
     'group' => 'payment',
   );
   $hooks['payment_line_item_info'] = array(
@@ -777,80 +777,6 @@ function payment_status_has_ancestor($status, $ancestor_status) {
  */
 function payment_status_is_or_has_ancestor($status, $ancestor_status) {
   return $status == $ancestor_status || in_array($ancestor_status, payment_status_info($status, TRUE)->ancestors());
-}
-
-/**
- * Returns information about payment method controllers.
- *
- * @return array
- *   Keys are payment method controller class aliases, values are the real
- *   payment method controller class names. This allows
- *   hook_payment_method_controller_info_alter() to override payment method
- *   controllers.
- */
-function payment_method_controllers_info() {
-  $controllers_info = &drupal_static(__FUNCTION__);
-
-  if (!$controllers_info) {
-    $controllers_info = module_invoke_all('payment_method_controller_info');
-    foreach ($controllers_info as $controller_class_name_alias => $controller_class_name) {
-      if (is_numeric($controller_class_name_alias)) {
-        unset($controllers_info[$controller_class_name_alias]);
-        $controllers_info[$controller_class_name] = $controller_class_name;
-      }
-    }
-    drupal_alter('payment_method_controller_info', $controllers_info);
-  }
-
-  return $controllers_info;
-}
-
-/**
- * Load a payment method controller().
- *
- * @param string $controller_class_name
- *   The name of the controller class to load.
- *
- * @return mixed
- *   Either a PaymentMethodController object or FALSE in case of errors.
- */
-function payment_method_controller_load($controller_class_name) {
-  $controllers = payment_method_controller_load_multiple(array($controller_class_name));
-
-  return reset($controllers);
-}
-
-/**
- * Load multiple payment method controllers.
- *
- * @param array $controller_class_names
- *   An array with names of controller classes. Leave empty to load all
- *   controllers.
- *
- * @return array
- *   Keys are the values of $controller_class_names passed on to this function.
- *   Every value is either a PaymentMethodController object or FALSE if the
- *   controller could not be loaded.
- */
-function payment_method_controller_load_multiple(array $controller_class_names = array()) {
-  $controllers = NULL;
-
-  // Load all existing controllers.
-  if (is_null($controllers)) {
-    foreach (payment_method_controllers_info() as $controller_class_name_alias => $controller_class_name) {
-      $controller = new $controller_class_name();
-      // @todo The namespace removal is a temporary fix until controllers are
-      // plugins and have machine names.
-      $controller->name = substr($controller_class_name, strrpos($controller_class_name, '\\') + 1);
-      $controller_class_name_alias = substr($controller_class_name_alias, strrpos($controller_class_name_alias, '\\') + 1);
-      $controllers[$controller_class_name_alias] = $controller;
-    }
-  }
-
-  // Set FALSE for requested controllers that do not exist.
-  $controllers += array_fill_keys(array_diff($controller_class_names, array_keys($controllers)), FALSE);
-
-  return $controller_class_names ? array_intersect_key($controllers, array_flip($controller_class_names)) : array_filter($controllers);
 }
 
 /**

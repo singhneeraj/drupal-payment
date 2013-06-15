@@ -14,6 +14,8 @@ class PaymentViewsHandlerFieldPaymentMethodControllerDescription extends views_h
    * Implements views_handler_field::render().
    */
   function render($values) {
-    return payment_method_controller_load($this->get_value($values))->description;
+    $definition = \Drupal::service('plugin.manager.payment.payment_method')->getDefinition($this->getValue($values));
+
+    return $definition['description'];
   }
 }

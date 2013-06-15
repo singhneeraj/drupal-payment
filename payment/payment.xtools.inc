@@ -14,11 +14,6 @@ function payment_xtools_blueprint_info() {
     new XtoolsBlueprintPlaceholder('PaymentLineItemInfo'),
   ), 'integer');
 
-  // hook_payment_method_controller_info() implementation return value.
-  $blueprints['hook_payment_method_controller_info'] = new XtoolsBlueprintArray(array(), array(
-    new XtoolsBlueprintString,
-  ));
-
   // hook_payment_status_info() implementation return value.
   $blueprints['hook_payment_status_info'] = new XtoolsBlueprintArray(array(), array(
     new XtoolsBlueprintPlaceholder('PaymentStatusInfo'),
@@ -104,12 +99,6 @@ function payment_xtools_callable_type_info() {
     new XtoolsCallableTypeHook('payment_line_item_info_alter', array(
       'signature' => new XtoolsSignaturePlaceholder('hook_payment_line_item_info_alter'),
     )),
-    new XtoolsCallableTypeHook('payment_method_controller_info', array(
-      'blueprint' => new XtoolsBlueprintPlaceholder('hook_payment_method_controller_info'),
-    )),
-    new XtoolsCallableTypeHook('payment_method_controller_info_alter', array(
-      'signature' => new XtoolsSignaturePlaceholder('hook_payment_method_controller_info_alter'),
-    )),
     new XtoolsCallableTypeHook('payment_pre_execute', array(
       'signature' => new XtoolsSignaturePlaceholder('hook_payment_pre_execute'),
     )),
@@ -156,13 +145,6 @@ function payment_xtools_signature_info() {
       'type' => 'array',
     )),
   ));
-  $signatures['hook_payment_method_controller_info_alter'] = new XtoolsSignature(array(
-    new XtoolsSignatureParameter(array(
-      'name' => 'controllers_info',
-      'reference' => TRUE,
-      'type' => 'array',
-    )),
-  ));
   $signatures['hook_payment_pre_execute'] = new XtoolsSignature(array(
     new XtoolsSignatureParameter(array(
       'name' => 'payment',
@@ -194,9 +176,6 @@ function payment_xtools_signature_info() {
     new XtoolsSignatureParameter(array(
       'name' => 'payment_method',
       'type' => 'PaymentMethod',
-    )),
-    new XtoolsSignatureParameter(array(
-      'name' => 'strict',
     )),
   ));
 

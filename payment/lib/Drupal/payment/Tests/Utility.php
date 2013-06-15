@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Tests;
 
+use Drupal\payment\Plugin\payment\PaymentMethod\PaymentMethodInterface as PluginPaymentMethodInterface;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -49,18 +50,16 @@ class Utility {
    *
    * @param integer $uid
    *   The user ID of the payment method's owner.
-   * @param PaymentMethodController $controller
-   *   An optional controller to set. Defaults to
-   *   PaymentMethodControllerUnavailable.
+   * @param \Drupal\payment\Plugin\payment\PaymentMethod\PaymentMethodInterface $plugin
+   *   An optional plugin to set. Defaults to payment_unavailable.
    *
    * @return PaymentMethod
    */
-  static function createPaymentMethod($uid, PaymentMethodController $controller = NULL) {
+  static function createPaymentMethod($uid, PaymentMethodInterface $plugin = NULL) {
     $name = UnitTestCase::randomName();
-    $controller = $controller ? $controller : payment_method_controller_load('PaymentMethodControllerUnavailable');
+    $plugin = $plugin ? $plugin : \Drupal::service('plugin.manager.payment.payment_method')->createInstance('payment_unavailable');
     $payment_method = entity_create('payment_method', array(
-      'controller' => $controller,
-      'controller_data' => $controller->controller_data_defaults,
+      'plugin' => $plugin,
       'name' => $name,
       'label' => $name,
       'uid' => $uid,

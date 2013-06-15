@@ -232,19 +232,19 @@ function payment_form_payment_delete_submit(array $form, array &$form_state) {
  * @return string
  */
 function payment_page_payment_method_add_select_controller() {
-  $controllers = payment_method_controller_load_multiple();
-  unset($controllers['PaymentMethodControllerUnavailable']);
-  if ($controllers) {
+  $definitions = \Drupal::service('plugin.manager.payment.payment_method')->getDefinitions();
+  unset($definitions['payment_unavailable']);
+  if ($definitions) {
     $items = array();
-    foreach ($controllers as $controller) {
-      $payment_method = new PaymentMethod(array(
-        'controller' => $controller,
+    foreach ($definitions as $plugin_id => $definition) {
+      $payment_method = entity_create('payment_method', array(
+        'controller' => $manager->createInstance($plugin_id),
       ));
       if ($payment_method->access('create')) {
         $items[] = array(
-          'title' => $controller->title,
-          'href' => 'admin/config/services/payment/method/add/' . $controller->name,
-          'description' => $controller->description,
+          'title' => $definition['title'],
+          'href' => 'admin/config/services/payment/method/add/' . $plugin_id,
+          'description' => $definition['description'],
           'localized_options' => array(),
         );
       }
@@ -267,11 +267,12 @@ function payment_page_payment_method_add_select_controller() {
  *   has permission to create payment methods with.
  */
 function payment_page_payment_method_add_select_controller_access() {
-  $controllers = payment_method_controller_load_multiple();
-  unset($controllers['PaymentMethodControllerUnavailable']);
-  foreach ($controllers as $controller) {
-    $payment_method = new PaymentMethod(array(
-      'controller' => $controller,
+  $manager = \Drupal::service('plugin.manager.payment.payment_method');
+  $definitions = $manager->getDefinitions();
+  unset($definitions['payment_unavailable']);
+  foreach (array_keys($definitions) as $plugin_id) {
+    $payment_method = entity_create('payment_method', array(
+      'controller' => $manager->createInstance($plugin_id),
     ));
     if ($payment_method->access('create')) {
       return TRUE;
@@ -645,12 +646,8 @@ function payment_page_method_clone(PaymentMethod $payment_method) {
  * Implements form process callback for a payment_form_context element.
  */
 function payment_form_process_context(array $element, array &$form_state, array $form) {
-  if ($build_callback = payment_method_controller_form_callback(payment_method_controller_load($element['#payment_method_controller_name']), $element['#callback_type'], 'build')) {
-    $element = array_merge($element, $build_callback($element, $form_state));
-  }
-  if ($validate_callback = payment_method_controller_form_callback(payment_method_controller_load($element['#payment_method_controller_name']), $element['#callback_type'], 'validate')) {
-    $element['#element_validate'] = array($validate_callback);
-  }
+  $elements = \Drupal::service('plugin.manager.payment.payment_method')->createInstance($element['#payment_method_controller_name'])->paymentFormElements($element, $form_state);
+  $element = array_merge($element, $elements);
 
   return $element;
 }
@@ -1037,32 +1034,6 @@ function payment_form_process_method_submit_ajax_callback(array $form, array &$f
 }
 
 /**
- * Call one of a payment method controller's form callbacks.
- *
- * @param PaymentMethodController $controller
- * @param string $callback
- *   Either "payment" or "payment_method".
- * @param string $operation
- *   Either "build" or "validate".
- *
- * @return string
- *   The callback function's name.
- */
-function payment_method_controller_form_callback(PaymentMethodController $controller, $callback, $operation) {
-  $property = $callback . '_configuration_form_elements_callback';
-  switch ($operation) {
-    case 'build':
-      $function = $controller->$property;
-      break;
-    case 'validate':
-      $function = $controller->$property . '_validate';
-      break;
-  }
-
-  return isset($function) && function_exists($function) ? $function : FALSE;
-}
-
-/**
  * Returns a hierarchical representation of payment statuses.
  *
  * @return array
@@ -1168,8 +1139,10 @@ function payment_method_options() {
  */
 function payment_method_controller_options() {
   $options = array();
-  foreach (payment_method_controller_load_multiple() as $payment_method_controller) {
-    $options[$payment_method_controller->name] = $payment_method_controller->title;
+  $definitions = \Drupal::service('plugin.manager.payment.payment_method')->getDefinitions();
+  unset($definitions['payment_unavailable']);
+  foreach ($definitions as $plugin_id => $definition) {
+    $options[$plugin_id] = $definition['title'];
   }
   natcasesort($options);
 
