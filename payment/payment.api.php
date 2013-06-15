@@ -40,7 +40,7 @@ function hook_payment_status_info_alter(array &$statuses_info) {
  * @param array $definitions
  *   Keys are plugin IDs. Values are plugin definitions.
  */
-function hook_payment_method_controller_alter(array &$definitions) {
+function hook_payment_method_alter(array &$definitions) {
   // Remvove a payment method plugin.
   unset($definitions['foo_plugin_id']);
 

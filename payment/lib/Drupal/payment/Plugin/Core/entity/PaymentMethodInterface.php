@@ -21,7 +21,7 @@ interface PaymentMethodInterface extends EntityInterface, PaymentProcessingInter
    *
    * @param \Drupal\payment\Plugin\payment\PaymentMethod\PaymentMethodInterface
    */
-  public function setPlugin(PluginPaymentMethodInterface $payment_method_controller);
+  public function setPlugin(PluginPaymentMethodInterface $plugin);
 
   /**
    * Gets the payment method controller plugin.
