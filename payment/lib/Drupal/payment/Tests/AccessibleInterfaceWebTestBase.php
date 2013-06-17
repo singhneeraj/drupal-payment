@@ -9,7 +9,7 @@ namespace Drupal\payment\Tests;
 
 use Drupal\Core\TypedData\AccessibleInterface;
 use Drupal\simpletest\WebTestBase;
-use Drupal\user\Plugin\Core\Entity\User;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Provides tools to test \Drupal\Core\TypedData\AccessibleInterface objects.
@@ -47,7 +47,7 @@ class AccessibleInterfaceWebTestBase extends WebTestBase {
    *   The entity's human-readable type.
    * @param string $operation
    *   The operation to perform on the entity.
-   * @param \Drupal\user\Plugin\Core\Entity\User $authenticated
+   * @param \Drupal\Core\Session\AccountInterface $authenticated
    *   The account of the authenticated user to test with.
    * @param array $permissions
    *   Permissions to grant authenticated users before testing their access.
@@ -66,7 +66,7 @@ class AccessibleInterfaceWebTestBase extends WebTestBase {
    *
    * @return NULL
    */
-  function assertDataAccess(AccessibleInterface $data, $data_label, $operation, User $authenticated, array $permissions = array(), array $access = array()) {
+  function assertDataAccess(AccessibleInterface $data, $data_label, $operation, AccountInterface $authenticated, array $permissions = array(), array $access = array()) {
     $user_access_permissions = &drupal_static('user_access');
 
     // Create the user accounts.
@@ -93,8 +93,11 @@ class AccessibleInterfaceWebTestBase extends WebTestBase {
 
     // Test authenticated users with all permissions.
     if ($permissions) {
+      foreach ($authenticated->getRoles() as $rid) {
+        $authenticated->removeRole($rid);
+      }
       $rid = $this->drupalCreateRole($permissions);
-      $authenticated->roles = array($rid => $rid);
+      $authenticated->addRole($rid);
       $authenticated->save();
       $with = $permissions ? 'with' : 'without';
       $can = $access['authenticated_with_permissions'] ? 'can' : 'cannot';
@@ -105,8 +108,11 @@ class AccessibleInterfaceWebTestBase extends WebTestBase {
     foreach ($permissions as $i => $permission) {
       $assert_permissions = $permissions;
       unset($assert_permissions[$i]);
+      foreach ($authenticated->getRoles() as $rid) {
+        $authenticated->removeRole($rid);
+      }
       $rid = $this->drupalCreateRole($assert_permissions);
-      $authenticated->roles = array($rid => $rid);
+      $authenticated->addRole($rid);
       $authenticated->save();
       drupal_static_reset();
       drupal_flush_all_caches();

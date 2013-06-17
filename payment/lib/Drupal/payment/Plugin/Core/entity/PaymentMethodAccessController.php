@@ -9,7 +9,7 @@ namespace Drupal\payment\Plugin\Core\entity;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityAccessController;
-use Drupal\user\Plugin\Core\Entity\User;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Defines the default list controller for ConfigEntity objects.
@@ -19,7 +19,7 @@ class PaymentMethodAccessController extends EntityAccessController {
   /**
    * {@inheritdoc}
    */
-  protected function checkAccess(EntityInterface $entity, $operation, $langcode, User $account) {
+  protected function checkAccess(EntityInterface $entity, $operation, $langcode, AccountInterface $account) {
     if ($operation == 'create' && $entity->controller) {
       return user_access('payment.payment_method.create.' . $entity->controller->name, $account);
     }
