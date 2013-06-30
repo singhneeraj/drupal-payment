@@ -36,7 +36,7 @@ class Unavailable extends Base {
    * {@inheritdoc}.
    */
   public function executePayment(Payment $payment) {
-    $payment->setStatus(new PaymentStatusItem(PAYMENT_STATUS_UNKNOWN));
+    $payment->setStatus(\Drupal::service('plugin.manager.payment.status')->createInstance('payment_unknown'));
   }
 
   /**

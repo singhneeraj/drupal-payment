@@ -4,3 +4,5 @@ core: 8.x
 configure: admin/config/services/payment
 type: module
 package: Payment
+dependencies:
+  - entity_reference

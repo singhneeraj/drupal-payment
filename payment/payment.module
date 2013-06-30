@@ -9,56 +9,6 @@
 module_load_include('inc', 'payment', 'payment.ui');
 
 /**
- * An absolute parent status: a payment for which all money has been transferred.
- */
-define('PAYMENT_STATUS_MONEY_TRANSFERRED', 'payment_status_money_transferred');
-
-/**
- * An absolute parent status: a payment for which no money has been transferred.
- */
-define('PAYMENT_STATUS_MONEY_NOT_TRANSFERRED', 'payment_status_money_not_transferred');
-
-/**
- * An absolute parent status: a payment whose status is unknown to us.
- */
-define('PAYMENT_STATUS_UNKNOWN', 'payment_status_unknown');
-
-/**
- * A new payment for which processing has not yet started.
- */
-define('PAYMENT_STATUS_NEW', 'payment_status_new');
-
-/**
- * An open (pending) payment.
- */
-define('PAYMENT_STATUS_PENDING', 'payment_status_pending');
-
-/**
- * A payment for which funds have been successfully transferred.
- */
-define('PAYMENT_STATUS_SUCCESS', 'payment_status_success');
-
-/**
- * A failed payment, e.g. for which no funds have been transferred.
- */
-define('PAYMENT_STATUS_FAILED', 'payment_status_failed');
-
-/**
- * A payment that was cancelled by the payer.
- */
-define('PAYMENT_STATUS_CANCELLED', 'payment_status_cancelled');
-
-/**
- * A payment that expired due to inactivity.
- */
-define('PAYMENT_STATUS_EXPIRED', 'payment_status_expired');
-
-/**
- * A payment for which payer authorization failed.
- */
-define('PAYMENT_STATUS_AUTHORIZATION_FAILED', 'payment_status_authorization_failed');
-
-/**
  * The prefix for payment line item tokens.
  */
 define('PAYMENT_LINE_ITEM_TOKEN_PREFIX', 'line_item-');
@@ -378,13 +328,13 @@ function payment_permission() {
  * Implements hook_hook_info().
  */
 function payment_hook_info() {
-  $hooks['payment_status_info'] = array(
+  $hooks['payment_status_alter'] = array(
     'group' => 'payment',
   );
   $hooks['payment_method_alter'] = array(
     'group' => 'payment',
   );
-  $hooks['payment_line_item_info'] = array(
+  $hooks['payment_line_item_alter'] = array(
     'group' => 'payment',
   );
   $hooks['payment_status_change'] = array(
@@ -445,30 +395,6 @@ function payment_field_extra_fields() {
  * Implements hook_entity_info().
  */
 function payment_entity_info() {
-  $entity_info['payment'] = array(
-    'label' => t('Payment'),
-    'controller class' => 'PaymentEntityController',
-    'entity class' => 'Payment',
-    'module' => 'payment',
-    'base table' => 'payment',
-    'entity keys' => array(
-      'id' => 'pid',
-    ),
-    'label callback' => 'payment_label',
-    // @todo Enable static cache once http://drupal.org/node/1273756 is fixed.
-    'static cache' => FALSE,
-    'fieldable' => TRUE,
-    'bundles' => array(
-      'payment' => array(
-        'label' => t('Payment'),
-        'admin' => array(
-          'path' => 'admin/config/services/payment/payment',
-          'access arguments' => array('payment.payment.administer'),
-        ),
-      ),
-    ),
-    'access callback' => 'payment_access',
-  );
   $entity_info['payment_method'] = array(
     'label' => t('Payment method'),
     'controller class' => 'PaymentMethodEntityController',
@@ -491,70 +417,9 @@ function payment_entity_info() {
 }
 
 /**
- * Returns the label of a given Payment entity.
- *
- * @param Payment $entity
- *   A Payment entity.
- *
- * @return string
- *   The label of the Payment entity.
- */
-function payment_label(Payment $entity) {
-  return t($entity->description, $entity->description_arguments);
-}
-
-/**
  * Implements hook_entity_property_info().
  */
 function payment_entity_property_info() {
-  // Payment.
-  $properties['payment']['properties']['context'] = array(
-    'description' => t("The machine-readable name of the context that created the payment."),
-    'label' => t('Context'),
-    'required' => TRUE,
-    'schema field' => 'context',
-  );
-  $properties['payment']['properties']['currency_code'] = array(
-    'description' => t('A three-letter ISO 4217 currency code.'),
-    'label' => t('Currency code'),
-    'required' => TRUE,
-    'schema field' => 'currency_code',
-  );
-  $properties['payment']['properties']['description'] = array(
-    'label' => t('Description'),
-    'schema field' => 'description',
-    'getter callback' => 'payment_entity_property_get',
-  );
-  $properties['payment']['properties']['finish_callback'] = array(
-    'description' => t('The name of the function to call once payment processing is completed.'),
-    'label' => t('Finish callback'),
-    'required' => TRUE,
-    'schema field' => 'finish_callback',
-  );
-  $properties['payment']['properties']['method'] = array(
-    'label' => t('Payment method'),
-    'required' => TRUE,
-    'type' => 'payment_method',
-  );
-  $properties['payment']['properties']['pid'] = array(
-    'label' => t('Payment ID'),
-    'schema field' => 'pid',
-    'type' => 'integer',
-  );
-  $properties['payment']['properties']['pmid'] = array(
-    'label' => t('Payment method ID'),
-    'schema field' => 'pmid',
-    'type' => 'integer',
-  );
-  $properties['payment']['properties']['uid'] = array(
-    'label' => t('User ID'),
-    'description' => t('The ID of the user this payment belongs to.'),
-    'required' => TRUE,
-    'schema field' => 'uid',
-    'type' => 'integer',
-  );
-
-  // Payment method.
   $properties['payment_method']['properties']['controller_class_name'] = array(
     'label' => t('Payment method type'),
     'schema field' => 'controller_class_name',
@@ -588,21 +453,6 @@ function payment_entity_property_info() {
   );
 
   return $properties;
-}
-
-/**
- * Gets the property of a Payment entity.
- *
- * @see payment_entity_property_info()
- */
-function payment_entity_property_get(Payment $payment, array $options, $name, $type, $info) {
-  switch ($name) {
-    case 'description':
-      return payment_label($payment);
-
-    default:
-      return entity_property_verbatim_get($payment, $options, $name, $type, $info);
-  }
 }
 
 /**
@@ -673,113 +523,6 @@ function payment_views_api() {
 }
 
 /**
- * Gets payment statuses.
- *
- * @see hook_payment_status_info()
- *
- * @return array
- *   An array with PaymentStatusInfo objects for all available statuses.
- */
-function payment_statuses_info() {
-  $statuses_info = &drupal_static(__FUNCTION__);
-
-  if (!$statuses_info) {
-    $statuses_info = array();
-    foreach (module_invoke_all('payment_status_info') as $status_info) {
-      $statuses_info[$status_info->status] = $status_info;
-    }
-    drupal_alter('payment_status_info', $statuses_info);
-  }
-
-  return $statuses_info;
-}
-
-/**
- * Gets a specific payment status.
- *
- * @param string $status
- *   A status' system name.
- * @param boolean $unknown
- *   Whether to return info for PAYMENT_STATUS_UNKNOWN if the requested status
- *   does not exist.
- *
- * @return mixed
- *   A PaymentStatusInfo object or FALSE if the status does not exist.
- */
-function payment_status_info($status, $unknown = FALSE) {
-  $statuses_info = payment_statuses_info();
-
-  return isset($statuses_info[$status]) ? $statuses_info[$status] : ($unknown ? $statuses_info[PAYMENT_STATUS_UNKNOWN] : FALSE);
-}
-
-/**
- * Returns information about all line item types.
- *
- * @see hook_payment_line_item_type_info()
- *
- * @return array
- *   An array with PaymentLineItemInfo objects, keyed by PaymentLineItemInfo::name.
- */
-function payment_line_items_info() {
-  $line_items_info = &drupal_static(__FUNCTION__);
-
-  if (is_null($line_items_info)) {
-    $line_items_info = array();
-    foreach (module_invoke_all('payment_line_item_info') as $line_item_info) {
-      $line_items_info[$line_item_info->name] = $line_item_info;
-    }
-    drupal_alter('payment_line_item_info', $line_items_info);
-  }
-
-  return $line_items_info;
-}
-
-/**
- * Returns information about a specific line item type.
- *
- * @param string $name
- *   The line item type's machine name.
- *
- * @return mixed
- *   A PaymentLineItemInfo object or FALSE if the requested info could not be
- *   found.
- */
-function payment_line_item_info($name) {
-  $line_items_info = payment_line_items_info();
-
-  return isset($line_items_info[$name]) ? $line_items_info[$name] : FALSE;
-}
-
-/**
- * Check if a payment status has a given other status as one of its ancestors.
- *
- * @param string $status
- *   The payment status.
- * @param string $ancestor_status
- *   The ancestor status to check for.
- *
- * @return boolean
- */
-function payment_status_has_ancestor($status, $ancestor_status) {
-  return in_array($ancestor_status, payment_status_info($status, TRUE)->ancestors());
-}
-
-/**
- * Check if a payment status is equal to a given other status or has it one of
- * its ancestors.
- *
- * @param string $status
- *   The payment status.
- * @param string $ancestor_status
- *   The ancestor status to check for.
- *
- * @return boolean
- */
-function payment_status_is_or_has_ancestor($status, $ancestor_status) {
-  return $status == $ancestor_status || in_array($ancestor_status, payment_status_info($status, TRUE)->ancestors());
-}
-
-/**
  * Convert an amount as a float to a human-readable format.
  *
  * @param float $amount
@@ -802,77 +545,6 @@ function payment_amount_human_readable($amount, $currency_code = NULL) {
     '!cents' => substr($amount_string, $decimal_separator_position + 1),
   );
   return $currency_code ? t('!currency_code !units.!cents', $arguments) : t('!units.!cents', $arguments);
-}
-
-/**
- * Check if a user has access to perform a certain payment operation.
- *
- * @see payment_permission()
- *
- * @param string $operation
- *   One of the following operations:
- *   - "create"
- *   - "update" (does not require $payment, but only grants access if the user
- *     has permission to update any payment)
- *   - "delete" (does not require $payment_method, but only grants access if
- *     the user has permission to delete any payment)
- *   - "view" (does not require $payment_method, but only grants access if the
- *     user has permission to view any payment)
- * @param Payment $payment
- *   The payment the user wants to perform the operation on.
- * @param object $account
- *   The user account for which to check access. If NULL, the current user is
- *   used.
- *
- * @return boolean
- */
-function payment_access($operation, Payment $payment = NULL, $account = NULL) {
-  global $user;
-
-  if (!$account) {
-    $account = $user;
-  }
-
-  switch ($operation) {
-    case 'create':
-      // We let other modules decide whether users have access to create
-      // new payments. There is no corresponding permission for this operation.
-      return TRUE;
-    case 'view':
-    case 'update';
-    case 'delete':
-      return user_access('payment.payment.' . $operation . '.any', $account) || $payment && user_access('payment.payment.' . $operation . '.own', $account) && $account->uid == $payment->uid;
-  }
-  return FALSE;
-}
-
-/**
- * Implements PaymentLineItemInfo::callback.
- */
-function payment_line_item_get_specific($name, Payment $payment) {
-  return isset($payment->line_items[$name]) ? array($payment->line_items[$name]) : array();
-}
-
-/**
- * Implements PaymentLineItemInfo::callback.
- */
-function payment_line_item_get_all($name, Payment $payment) {
-  return $payment->line_items;
-}
-
-/**
- * Implements PaymentLineItemInfo::callback.
- */
-function payment_line_item_get_prefixed($name, Payment $payment) {
-  $selection = array();
-
-  foreach ($payment->line_items as $line_item) {
-    if (strpos($line_item->name, $name) === 0) {
-      $selection[] = $line_item;
-    }
-  }
-
-  return $selection;
 }
 
 /**

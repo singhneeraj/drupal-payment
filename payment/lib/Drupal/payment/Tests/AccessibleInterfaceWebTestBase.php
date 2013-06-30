@@ -101,7 +101,8 @@ class AccessibleInterfaceWebTestBase extends WebTestBase {
       $authenticated->save();
       $with = $permissions ? 'with' : 'without';
       $can = $access['authenticated_with_permissions'] ? 'can' : 'cannot';
-      $this->assertEqual($data->access($operation, $authenticated), $access['authenticated_with_permissions'], "An authenticated user (UID $authenticated->uid) $can perform operation <strong>$operation</strong> on <strong>$data_label</strong>$comment with permission(s) " . $this->permissionLabel($permissions));
+      $uid = $authenticated->id();
+      $this->assertEqual($data->access($operation, $authenticated), $access['authenticated_with_permissions'], "An authenticated user (UID $uid) $can perform operation <strong>$operation</strong> on <strong>$data_label</strong>$comment with permission(s) " . $this->permissionLabel($permissions));
     }
 
     // Test authenticated users without all permissions.
@@ -117,7 +118,7 @@ class AccessibleInterfaceWebTestBase extends WebTestBase {
       drupal_static_reset();
       drupal_flush_all_caches();
       $can = $access['authenticated_without_permissions'] ? 'can' : 'cannot';
-      $this->assertFalse($data->access($operation, $authenticated), "An authenticated user (UID $authenticated->uid) $can perform operation <strong>$operation</strong> on <strong>$data_label</strong>$comment without permission " . $this->permissionLabel(array($permissions[$i])));
+      $this->assertFalse($data->access($operation, $authenticated), "An authenticated user (UID $uid) $can perform operation <strong>$operation</strong> on <strong>$data_label</strong>$comment without permission " . $this->permissionLabel(array($permissions[$i])));
     }
   }
 }

@@ -90,3 +90,14 @@ function paymentreference_update_7100(&$sandbox) {
       ->execute();
   }
 }
+
+/**
+ * Implements hook_update_dependencies()
+ */
+function paymentreference_update_dependencies() {
+  $dependencies['payment'][8200] = array(
+    'paymentreference' => 7100,
+  );
+
+  return $dependencies;
+}

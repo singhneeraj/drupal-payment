@@ -85,7 +85,7 @@ function paymentmethodbasic_payment_method_delete($entity) {
  * payment-specific information and does not transfer any money. It can be
  * useful to create a "collect on delivery" payment method, for instance.
  */
-class PaymentMethodBasicController extends PaymentMethodController {
+class PaymentMethodBasicController {
 
   public $controller_data_defaults = array(
     'message' => '',

@@ -5,33 +5,18 @@
  * Hook documentation.
  */
 
-/**
- * Defines payment statuses.
- *
- * @return array
- *   An array with PaymentStatusInfo objects.
- */
-function hook_payment_status_info() {
-  return array(
-    new PaymentStatusInfo(array(
-      'description' => t('Foo payments are still being processed by Bar to guarantee their authenticity.'),
-      'status' => PAYMENT_STATUS_FOO,
-      'parent' => PAYMENT_STATUS_PENDING,
-      'title' => t('Pending (waiting for Bar authentication)'),
-    )),
-  );
-}
+use Drupal\payment\Plugin\Core\Entity\PaymentInterface;
+use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
 
 /**
- * Alters payment statuses.
+ * Alters payment status plugins.
  *
- * @param array $statuses_info
- *   An array with PaymentStatusInfo objects.
- *
- * @return NULL
+ * @param array $definitions
+ *   Keys are plugin IDs. Values are plugin definitions.
  */
-function hook_payment_status_info_alter(array &$statuses_info) {
-  $statuses_info[PAYMENT_STATUS_FAILED]->title = 'Something went wrong!';
+function hook_payment_status_alter(array &$definitions) {
+  // Rename a plugin.
+  $definitions['payment_failed']['label'] = 'Something went wrong!';
 }
 
 /**
@@ -49,42 +34,12 @@ function hook_payment_method_alter(array &$definitions) {
 }
 
 /**
- * Defines line item types.
+ * Alters line item plugins.
  *
- * @see Payment::getLineItems()
- *
- * @return array
- *   An array with PaymentLineItemInfo objects.
+ * @param array $definitions
+ *   Keys are plugin IDs. Values are plugin definitions.
  */
-function hook_payment_line_item_info() {
-  return array(
-    new PaymentLineItemInfo(array(
-      'name' => 'foo_fee_credit_card',
-      'title' => t('Credit card fee'),
-    )),
-    new PaymentLineItemInfo(array(
-      'name' => 'foo_fee_wire_transfer',
-      'title' => t('Wire transfer fee'),
-    )),
-    new PaymentLineItemInfo(array(
-      // Use a custom callback, so we can get any/all line items we need
-      // simultaneously.
-      'callback' => 'foo_payment_line_item_get_fee',
-      'name' => 'foo_fee',
-      'title' => t('Any payment method fee'),
-    )),
-  );
-}
-
-/**
- * Alters line item types.
- *
- * @param array $line_items_info
- *   An array with PaymentLineItemInfo objects, keyed by PaymentLineItemInfo::name.
- */
-function hook_payment_line_item_info_alter(array &$line_items_info) {
-  // Set a callback for a line item.
-  $line_items_info['foo_fee_credit_card']['callback'] = 'foo_payment_line_item_get';
+function hook_payment_line_item_alter(array &$definitions) {
 }
 
 /**
@@ -92,13 +47,13 @@ function hook_payment_line_item_info_alter(array &$line_items_info) {
  *
  * @see Payment::setStatus()
  *
- * @param Payment $payment
- * @param PaymentStatusItem $previous_status_item
+ * @param \Drupal\payment\Plugin\Core\Entity\PaymentInterface $payment
+ * @param \Drupal\payment\Plugin\payment\status\PaymentStatusInterface $previous_status_item
  *   The status the payment had before it was set.
  *
  * @return NULL
  */
-function hook_payment_status_change(Payment $payment, PaymentStatusItem $previous_status_item) {
+function hook_payment_status_change(PaymentInterface $payment, PaymentStatusInterface $previous_status_item) {
   // Notify the site administrator, for instance.
 }
 
@@ -108,17 +63,15 @@ function hook_payment_status_change(Payment $payment, PaymentStatusItem $previou
  *
  * @see Payment::execute()
  *
- * @param Payment $payment
+ * @param \Drupal\payment\Plugin\Core\Entity\PaymentInterface $payment
  *
  * @return NULL
  */
-function hook_payment_pre_execute(Payment $payment) {
+function hook_payment_pre_execute(PaymentInterface $payment) {
   // Add a payment method processing fee.
-  $payment->setLineItem(new PaymentLineItem(array(
+  $payment->setLineItem(\Drupal::service('plugin.manager.payment.line_item')->createInstance('payment_basic', array(
     'name' => 'foo_fee',
     'amount' => 5.50,
-    'description' => 'Credit card fee',
-    'tax_rate' => 0.19,
   )));
 }
 
@@ -127,12 +80,12 @@ function hook_payment_pre_execute(Payment $payment) {
  *
  * @see Payment::finish()
  *
- * @param Payment $payment
+ * @param \Drupal\payment\Plugin\Core\Entity\PaymentInterface $payment
  *
  * @return NULL
  */
-function hook_payment_pre_finish(Payment $payment) {
-  if (payment_status_is_or_has_ancestor($payment->getStatus()->status, PAYMENT_STATUS_SUCCESS)) {
+function hook_payment_pre_finish(PaymentInterface $payment) {
+  if ($payment->getStatus()->isOrHasAncestor('payment_success')) {
     drupal_set_message(t('Your payment was successfully completed.'));
   }
   else {
@@ -147,15 +100,15 @@ function hook_payment_pre_finish(Payment $payment) {
  * different payment methods, for example when looking for payment methods that
  * are capable of processing a payment.
  *
- * @param Payment $payment
- *   $payment->method contains the method currently configured, but NOT the
+ * @param \Drupal\payment\Plugin\Core\Entity\PaymentInterface $payment
+ *   $payment->getMethod() contains the method currently configured, but NOT the
  *   method that $payment should be tested against, which is $payment_method.
  * @param PaymentMethod $payment_method
  *
  * @return boolean
  *   Whether the payment and/or the payment method are valid.
  */
-function hook_payment_validate(Payment $payment, PaymentMethod $payment_method) {}
+function hook_payment_validate(PaymentInterface $payment, PaymentMethod $payment_method) {}
 
 /**
  * Alter the payment form.

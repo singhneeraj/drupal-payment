@@ -8,7 +8,8 @@
 namespace Drupal\payment\Tests;
 
 use Drupal\payment\Plugin\payment\PaymentMethod\PaymentMethodInterface as PluginPaymentMethodInterface;
-use Drupal\Tests\UnitTestCase;
+use Drupal\payment\Plugin\payment\PaymentMethod\Unavailable;
+use Drupal\Component\Utility\Random;
 
 /**
  * Provides utility tools to support tests.
@@ -18,28 +19,22 @@ class Utility {
   /**
    * Creates a payment.
    *
-   * @todo port to D8.
-   *
    * @param integer $uid
    *   The user ID of the payment's owner.
    * @param PaymentMethod $payment_method
-   *   An optional payment method to set. Defaults to PaymentMethodUnavailable.
+   *   An optional payment method to set. Defaults to Unavailable.
    *
-   * @return Payment
+   * @return \Drupal\payment\Plugin\Core\entity\Payment
    */
   static function createPayment($uid, PaymentMethod $payment_method = NULL) {
-    $payment_method = $payment_method ? $payment_method : new PaymentMethodUnavailable;
-    $payment = new Payment(array(
-      'currency_code' => 'XXX',
-      'description' => 'This is the payment description',
-      'finish_callback' => 'payment_test_finish_callback',
-      'method' => $payment_method,
-      'uid' => $uid,
-    ));
-    $payment->setLineItem(new PaymentLineItem(array(
+    $lineItemManager = \Drupal::service('plugin.manager.payment.line_item');
+    $payment = entity_create('payment', array());
+    $payment->setFinishCallback('payment_test_finish_callback');
+    $payment->setPaymentMethodId('payment_unavailable');
+    $payment->setOwnerId($uid);
+    $payment->setLineItem($lineItemManager->createInstance('payment_basic', array(
       'name' => 'foo',
       'amount' => 1.0,
-      'tax_rate' => 0.1,
     )));
 
     return $payment;
@@ -56,7 +51,7 @@ class Utility {
    * @return PaymentMethod
    */
   static function createPaymentMethod($uid, PaymentMethodInterface $plugin = NULL) {
-    $name = UnitTestCase::randomName();
+    $name = Random::name();
     $plugin = $plugin ? $plugin : \Drupal::service('plugin.manager.payment.payment_method')->createInstance('payment_unavailable');
     $payment_method = entity_create('payment_method', array(
       'plugin' => $plugin,

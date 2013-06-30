@@ -6,6 +6,14 @@
  */
 
 /**
+ * A bit flag used to let us know if an entity has been customly defined.
+ *
+ * This constant comes from Entity 7.x-1.x and is required for
+ * payment_update_7103() to work under Drupal 8.x.
+ */
+define('ENTITY_CUSTOM', 0x01);
+
+/**
  * Implements hook_schema().
  */
 function payment_schema() {
@@ -21,49 +29,37 @@ function payment_schema() {
         'size' => 'big',
         'not null' => TRUE,
       ),
-      'description' => array(
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-      ),
-      'description_arguments' => array(
-        'type' => 'blob',
-        'size' => 'big',
-        'serialize' => TRUE,
-      ),
       'name' => array(
         'type' => 'varchar',
         'length' => 255,
       ),
-      'pid' => array(
-        'description' => 'The {payment}.pid this line item belongs to.',
+      'payment_id' => array(
+        'description' => 'The {payment}.id this line item belongs to.',
         'type' => 'int',
         'not null' => TRUE,
         'default' => 0,
+      ),
+      'plugin_id' => array(
+        'type' => 'varchar',
+        'length' => 255,
       ),
       'quantity' => array(
         'type' => 'int',
         'default' => 1,
         'not null' => TRUE,
       ),
-      'tax_rate' => array(
-        'type' => 'float',
-        'size' => 'big',
-        'default' => 0.0,
-        'not null' => TRUE,
-      ),
     ),
-    'primary key' => array('name', 'pid'),
+    'primary key' => array('name', 'payment_id'),
     'foreign keys' => array(
-      'pid' => array(
+      'payment_id' => array(
         'table' => 'payment',
         'columns' => array(
-          'pid' => 'pid',
+          'payment_id' => 'id',
         ),
       ),
     ),
     'indexes' => array(
-      'pid' => array('pid'),
+      'payment_id' => array('payment_id'),
     ),
   );
   $schema['payment'] = array(
@@ -72,26 +68,10 @@ function payment_schema() {
         'type' => 'varchar',
         'length' => 255,
       ),
-      'context_data' => array(
-        'type' => 'blob',
-        'size' => 'big',
-        'serialize' => TRUE,
-      ),
       'currency_code' => array(
         'type' => 'varchar',
         'length' => 3,
         'default' => 'XXX',
-        'not null' => TRUE,
-      ),
-      'description' => array(
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-      ),
-      'description_arguments' => array(
-        'type' => 'blob',
-        'size' => 'big',
-        'serialize' => TRUE,
         'not null' => TRUE,
       ),
       'finish_callback' => array(
@@ -99,30 +79,28 @@ function payment_schema() {
         'length' => 255,
         'not null' => TRUE,
       ),
-      'pid' => array(
+      'id' => array(
         'type' => 'serial',
       ),
-      'pmid' => array(
+      'payment_method_id' => array(
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'fist_payment_status_id' => array(
+        'description' => "The {payment_status_item}.id of this payment's first status item.",
         'type' => 'int',
         'unsigned' => TRUE,
         'default' => 0,
         'not null' => TRUE,
       ),
-      'psiid_first' => array(
-        'description' => "The {payment_status_item}.psiid of this payment's first status item.",
+      'last_payment_status_id' => array(
+        'description' => "The {payment_status_item}.id of this payment's most recent status item.",
         'type' => 'int',
         'unsigned' => TRUE,
         'default' => 0,
         'not null' => TRUE,
       ),
-      'psiid_last' => array(
-        'description' => "The {payment_status_item}.psiid of this payment's most recent status item.",
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'default' => 0,
-        'not null' => TRUE,
-      ),
-      'uid' => array(
+      'owner_id' => array(
         'description' => 'The {users}.uid this payment belongs to.',
         'type' => 'int',
         'not null' => TRUE,
@@ -130,69 +108,63 @@ function payment_schema() {
       ),
     ),
     'foreign keys' => array(
-      'pmid' => array(
-        'table' => 'payment_method',
-        'columns' => array(
-          'pmid' => 'pmid',
-        ),
-      ),
-      'psiid_last' => array(
+      'fist_payment_status_id' => array(
         'table' => 'payment_status_item',
         'columns' => array(
-          'psiid_last' => 'psiid',
+          'fist_payment_status_id' => 'id',
         ),
       ),
-      'psiid_first' => array(
+      'last_payment_status_id' => array(
         'table' => 'payment_status_item',
         'columns' => array(
-          'psiid_first' => 'psiid',
+          'last_payment_status_id' => 'id',
         ),
       ),
-      'uid' => array(
+      'owner_id' => array(
         'table' => 'user',
         'columns' => array(
-          'uid' => 'uid',
+          'owner_id' => 'uid',
         ),
       ),
     ),
     'indexes' => array(
-      'pid' => array('pid'),
+      'id' => array('id'),
     ),
-    'primary key' => array('pid'),
+    'primary key' => array('id'),
   );
-  $schema['payment_status_item'] = array(
+  $schema['payment_status'] = array(
     'fields' => array(
-      'status' => array(
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-      ),
       'created' => array(
         'type' => 'int',
         'not null' => TRUE,
       ),
-      'pid' => array(
+      'payment_id' => array(
         'description' => 'The payment ID.',
         'type' => 'int',
         'not null' => TRUE,
         'default' => 0,
       ),
-      'psiid' => array(
+      'plugin_id' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'id' => array(
         'type' => 'serial',
       ),
     ),
     'foreign keys' => array(
-      'pid' => array(
+      'payment_id' => array(
         'table' => 'payment',
         'columns' => array(
-          'pid' => 'pid',
+          'payment_id' => 'id',
         ),
       ),
     ),
     'indexes' => array(
-      'pid' => array('pid'),
+      'payment_id' => array('payment_id'),
     ),
-    'primary key' => array('psiid'),
+    'primary key' => array('id'),
   );
   $schema['payment_method'] = array(
     'fields' => array(
@@ -433,4 +405,182 @@ function payment_update_7105(array &$sandbox) {
         ->execute();
     }
   }
+}
+
+/**
+ * Upgrades payments to 8.x-2.x.
+ */
+function payment_update_8200(array &$sandbox) {
+  // Rename pid to id.
+  db_drop_primary_key('payment');
+  db_change_field('payment', 'pid', 'id', array(
+    'type' => 'serial',
+  ), array(
+    'primary key' => array('id'),
+  ));
+  db_drop_index('payment', 'pid');
+  db_add_index('payment', 'id', array('id'));
+
+  // Rename context_data to context_configuration.
+  db_change_field('payment', 'context_data', 'context_configuration', array(
+    'type' => 'blob',
+    'size' => 'big',
+    'serialize' => TRUE,
+  ));
+
+  // Rename pmid to payment_method_id and convert numeric IDs to entity names.
+  db_change_field('payment', 'pmid', 'payment_method_id', array(
+    'type' => 'varchar',
+    'length' => 255,
+  ));
+  $names = db_select('payment_method', 'pm')
+    ->fields('pm', array('pmid', 'name'))
+    ->execute()
+    ->fetchAllKeyed();
+  foreach ($names as $pmid => $name) {
+    db_update('payment')
+      ->fields(array(
+        'payment_method_id' => $name,
+      ))
+      ->condition('payment_method_id', $pmid)
+      ->execute();
+  }
+
+  // Rename psiid_first to first_payment_status_id.
+  db_change_field('payment', 'psiid_first', 'first_payment_status_id', array(
+    'description' => "The {payment_status_item}.id of this payment's first status item.",
+    'type' => 'int',
+    'unsigned' => TRUE,
+    'default' => 0,
+    'not null' => TRUE,
+  ));
+
+  // Rename psiid_lastto last_payment_status_id.
+  db_change_field('payment', 'psiid_last', 'last_payment_status_id', array(
+    'description' => "The {payment_status_item}.id of this payment's most recent status item.",
+    'type' => 'int',
+    'unsigned' => TRUE,
+    'default' => 0,
+    'not null' => TRUE,
+  ));
+
+  // Rename uid to owner_id.
+  db_change_field('payment', 'uid', 'owner_id', array(
+    'description' => 'The {users}.uid this payment belongs to.',
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 0,
+  ));
+
+  // Drop unnecessary fields.
+  db_drop_field('payment_line_item', 'context_configuration');
+  db_drop_field('payment_line_item', 'description');
+  db_drop_field('payment_line_item', 'description_arguments');
+}
+
+/**
+ * Upgrades payment line items to 8.x-2.x.
+ */
+function payment_update_8201(array &$sandbox) {
+  // Rename pid to payment_id.
+  db_drop_primary_key('payment_line_item');
+  db_drop_index('payment_line_item', 'pid');
+  db_change_field('payment_line_item', 'pid', 'payment_id', array(
+    'description' => 'The {payment}.id this line item belongs to.',
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 0,
+  ));
+  db_add_index('payment_line_item', 'payment_id', array('payment_id'));
+  db_add_primary_key('payment_line_item', array('name', 'payment_id'));
+
+  // Add plugin_id to store the line item plugin type.
+  db_add_field('payment_line_item', 'plugin_id', array(
+    'type' => 'varchar',
+    'length' => 255,
+  ));
+
+  // Drop unnecessary fields.
+  db_drop_field('payment_line_item', 'description');
+  db_drop_field('payment_line_item', 'description_arguments');
+  db_drop_field('payment_line_item', 'tax_rate');
+}
+
+/**
+ * Upgrades payment statuses to 8.x-2.x.
+ */
+function payment_update_8202(array &$sandbox) {
+  db_rename_table('payment_status_item', 'payment_status');
+
+  // Rename psiid to id. Add a temporary index in order to be able to drop and
+  //re-add the primary key.
+  db_add_index('payment_status', 'psiid', array('psiid'));
+  db_drop_primary_key('payment_status');
+  db_change_field('payment_status', 'psiid', 'id', array(
+    'type' => 'serial',
+  ), array(
+    'primary key' => array('id'),
+  ));
+  db_drop_index('payment_status', 'psiid');
+
+  // Rename pid to payment_id.
+  db_change_field('payment_status', 'pid', 'payment_id', array(
+    'description' => 'The payment ID.',
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 0,
+  ));
+  db_drop_index('payment_status', 'pid');
+  db_add_index('payment_status', 'payment_id', array('payment_id'));
+
+  // Rename status to plugin_id and update the column's values.
+  db_change_field('payment_status', 'status', 'plugin_id', array(
+    'type' => 'varchar',
+    'length' => 255,
+    'not null' => TRUE,
+  ));
+  foreach (payment_upgrade_map_status() as $old_status => $plugin_id) {
+    db_update('payment_status')
+      ->fields(array(
+        'plugin_id' => $plugin_id,
+      ))
+      ->condition('plugin_id', $old_status)
+      ->execute();
+  }
+}
+
+/**
+ * Maps payment statuses from 7.x-1.x to 8.x-2.x.
+ *
+ * @return array
+ *   Keys are 7.x-1.x statuses. Values are 8.x-2.x status plugin IDs.
+ */
+function payment_upgrade_map_status() {
+  return array(
+    'payment_status_money_transferred' => 'payment_money_transferred',
+    'payment_status_money_not_transferred' => 'payment_no_money_transferred',
+    'payment_status_unknown' => 'payment_unknown',
+    'payment_status_new' => 'payment_created',
+    'payment_status_pending' => 'payment_pending',
+    'payment_status_success' => 'payment_success',
+    'payment_status_failed' => 'payment_failed',
+    'payment_status_cancelled' => 'payment_cancelled',
+    'payment_status_expired' => 'payment_expired',
+    'payment_status_authorization_failed' => 'payment_authorization_failed',
+  );
+}
+
+/**
+ * Maps payment method plugins from 7.x-1.x to 8.x-2.x.
+ *
+ * @return array
+ *   Keys are 7.x-1.x payment method controller names. Values are 8.x-2.x
+ *   plugin IDs.
+ */
+function payment_upgrade_map_payment_method() {
+  return array(
+    'PaymentMethodControllerUnavailable' => 'payment_unavailable',
+    // @todo
+    // 'PaymentMethodBasicController' => '',
+  );
 }

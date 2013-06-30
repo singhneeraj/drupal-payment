@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * @file
+ * Contains class \Drupal\payment\Tests\Plugin\Core\entity\PaymentStorageControllerTest.
+ */
+
+namespace Drupal\payment\Tests\Plugin\Core\entity;
+
+use Drupal\payment\Plugin\Core\entity\PaymentInterface;
+use Drupal\payment\Tests\Utility;
+use Drupal\simpletest\WebTestBase;
+
+/**
+ * Tests \Drupal\payment\Plugin\Core\entity\PaymentStorageController.
+ */
+class PaymentStorageControllerTest extends WebTestBase {
+
+  public static $modules = array('payment');
+
+  /**
+   * {@inheritdoc}
+   */
+  static function getInfo() {
+    return array(
+      'name' => '\Drupal\payment\Plugin\Core\entity\PaymentStorageController',
+      'group' => 'Payment',
+    );
+  }
+
+  /**
+   * Tests create();
+   */
+  function testCreate() {
+    $payment = entity_create('payment', array());
+    $this->assertTrue($payment instanceof PaymentInterface);
+    $this->assertEqual(count($payment->validate()), 0);
+  }
+
+  /**
+   * Tests save();
+   */
+  function testSave() {
+    $payment = Utility::createPayment(1);
+    $this->assertFalse($payment->id());
+    $payment->save();
+    $this->assertTrue($payment->id());
+    $payment_loaded = entity_load_unchanged('payment', $payment->id());
+    $this->assertEqual(count($payment_loaded->getLineItems()), count($payment->getLineItems()));
+    $this->assertEqual(count($payment_loaded->getStatuses()), count($payment->getStatuses()));
+  }
+
+  /**
+   * Tests delete();
+   */
+  function testDelete() {
+    $payment = Utility::createPayment(1);
+    $payment->save();
+    $this->assertTrue($payment->id());
+    $payment->delete();
+    $this->assertFalse(entity_load('payment', $payment->id()));
+    $line_items_exists = db_select('payment_line_item')
+      ->condition('payment_id', $payment->id())
+      ->countQuery()
+      ->execute()
+      ->fetchField();
+    $this->assertFalse($line_items_exists);
+    $statuses_exist = db_select('payment_status')
+      ->condition('payment_id', $payment->id())
+      ->countQuery()
+      ->execute()
+      ->fetchField();
+    $this->assertFalse($statuses_exist);
+  }
+}
