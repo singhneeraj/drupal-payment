@@ -164,7 +164,7 @@ class Payment extends EntityNG implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public function getLineItemsByType($pluginId) {
+  public function getLineItemsByType($plugin_id) {
     $line_items = array();
     foreach ($this->getLineItems() as $line_item) {
       if ($line_item->getPluginId() == $plugin_id) {
@@ -280,8 +280,8 @@ class Payment extends EntityNG implements PaymentInterface {
    */
   public function getAmount() {
     $total = 0;
-    foreach ($this->getLineItems() as $lineItem) {
-      $total += $lineItem->totalAmount();
+    foreach ($this->getLineItems() as $line_item) {
+      $total += $line_item->getTotalAmount();
     }
 
     return $total;
