@@ -58,18 +58,6 @@ class Payment extends EntityNG implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $values, $entity_type) {
-    global $user;
-
-    parent::__construct($values, $entity_type);
-    if (is_null($this->getOwnerId())) {
-      $this->setOwnerId($user->id());
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function label($langcode = NULL) {
     // @todo Delegate this to the context plugin, once contexts have been
     // converted to plugins.

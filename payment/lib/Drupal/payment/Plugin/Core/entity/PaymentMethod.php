@@ -67,18 +67,6 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
 
   /**
    * {@inheritdoc}
-   */
-  public function __construct(array $values, $entity_type) {
-    global $user;
-
-    parent::__construct($values, $entity_type);
-    if (is_null($this->getOwnerId())) {
-      $this->setOwnerId($user->uid);
-    }
-  }
-
-  /**
-   * {@inheritdoc}
    *
    * @see \Drupal\payment\PaymentMethodStorageController
    */

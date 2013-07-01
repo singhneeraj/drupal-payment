@@ -16,6 +16,20 @@ class PaymentMethodStorageController extends ConfigStorageController {
 
   /**
    * {@inheritdoc}
+   */
+  function create(array $values) {
+    // @todo Remove access to global $user once https://drupal.org/node/2032553
+    //has been fixed.
+    global $user;
+
+    $payment = parent::create($values);
+    $payment->setOwnerId($user->id());
+
+    return $payment;
+  }
+
+  /**
+   * {@inheritdoc}
    *
    * @see \Drupal\payment\Plugin\Core\Entity\PaymentMethod::getExportProperties
    */

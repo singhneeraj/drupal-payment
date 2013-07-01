@@ -19,7 +19,12 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
    * {@inheritdoc}
    */
   function create(array $values) {
+    // @todo Remove access to global $user once https://drupal.org/node/2032553
+    //has been fixed.
+    global $user;
+
     $payment = parent::create($values);
+    $payment->setOwnerId($user->id());
     $payment->setStatus(\Drupal::service('plugin.manager.payment.status')->createInstance('payment_created'));
 
     return $payment;
