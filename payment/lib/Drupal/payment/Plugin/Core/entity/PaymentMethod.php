@@ -10,7 +10,7 @@ namespace Drupal\payment\Plugin\Core\Entity;
 use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\Annotation\EntityType;
-use Drupal\payment\Plugin\payment\PaymentMethod\PaymentMethodInterface as PluginPaymentMethodInterface;
+use Drupal\payment\Plugin\payment\method\PaymentMethodInterface as PluginPaymentMethodInterface;
 use Drupal\payment\Plugin\Core\entity\Payment;
 use Drupal\payment\Plugin\Core\entity\PaymentMethodInterface;
 
@@ -40,7 +40,7 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
   /**
    * The payment method plugin this entity uses.
    *
-   * @var \Drupal\payment\Plugin\payment\PaymentMethod\PaymentMethodInterface
+   * @var \Drupal\payment\Plugin\payment\method\PaymentMethodInterface
    */
   public $plugin;
 

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Contains \Drupal\payment\Plugin\payment\PaymentMethod\Unavailable.
+ * Contains \Drupal\payment\Plugin\payment\method\Unavailable.
  */
 
-namespace Drupal\payment\Plugin\payment\PaymentMethod;
+namespace Drupal\payment\Plugin\payment\method;
 
 use Drupal\Core\Annotation\Translation;
 use Drupal\payment\Annotations\PaymentMethod;

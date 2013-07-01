@@ -7,8 +7,8 @@
 
 namespace Drupal\payment\Tests;
 
-use Drupal\payment\Plugin\payment\PaymentMethod\PaymentMethodInterface as PluginPaymentMethodInterface;
-use Drupal\payment\Plugin\payment\PaymentMethod\Unavailable;
+use Drupal\payment\Plugin\payment\method\PaymentMethodInterface as PluginPaymentMethodInterface;
+use Drupal\payment\Plugin\payment\method\Unavailable;
 use Drupal\Component\Utility\Random;
 
 /**
@@ -45,7 +45,7 @@ class Utility {
    *
    * @param integer $uid
    *   The user ID of the payment method's owner.
-   * @param \Drupal\payment\Plugin\payment\PaymentMethod\PaymentMethodInterface $plugin
+   * @param \Drupal\payment\Plugin\payment\method\PaymentMethodInterface $plugin
    *   An optional plugin to set. Defaults to payment_unavailable.
    *
    * @return PaymentMethod

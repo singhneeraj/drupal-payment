@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Contains \Drupal\payment\Plugin\payment\PaymentMethod\Manager.
+ * Contains \Drupal\payment\Plugin\payment\method\Manager.
  */
 
-namespace Drupal\payment\Plugin\payment\PaymentMethod;
+namespace Drupal\payment\Plugin\payment\method;
 
 use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Component\Plugin\Factory\DefaultFactory;
@@ -16,7 +16,7 @@ use Drupal\Core\Plugin\Discovery\CacheDecorator;
 /**
  * Manages discovery and instantiation of payment method controller plugins.
  *
- * @see \Drupal\payment\Plugin\payment\PaymentMethod\PaymentMethodInterface
+ * @see \Drupal\payment\Plugin\payment\method\PaymentMethodInterface
  */
 class Manager extends PluginManagerBase {
 
@@ -30,7 +30,7 @@ class Manager extends PluginManagerBase {
     $annotation_namespaces = array(
       'Drupal\payment\Annotations' => drupal_get_path('module', 'payment') . '/lib',
     );
-    $this->discovery = new AnnotatedClassDiscovery('payment/PaymentMethod', $namespaces, $annotation_namespaces, 'Drupal\payment\Annotations\PaymentMethod');
+    $this->discovery = new AnnotatedClassDiscovery('payment/method', $namespaces, $annotation_namespaces, 'Drupal\payment\Annotations\PaymentMethod');
     $this->discovery = new AlterDecorator($this->discovery, 'payment_method');
     $this->discovery = new CacheDecorator($this->discovery, 'payment_method');
     $this->factory = new DefaultFactory($this->discovery);

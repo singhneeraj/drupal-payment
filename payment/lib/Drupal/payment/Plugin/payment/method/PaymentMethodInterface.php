@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Contains \Drupal\payment\plugin\payment\PaymentMethod\PaymentMethodInterface.
+ * Contains \Drupal\payment\Plugin\payment\method\PaymentMethodInterface.
  */
 
-namespace Drupal\payment\plugin\payment\PaymentMethod;
+namespace Drupal\payment\Plugin\payment\method;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\payment\PaymentProcessingInterface;

@@ -4,11 +4,11 @@
  * Contains \Drupal\payment\PaymentMethod.
  */
 
-namespace Drupal\payment\Plugin\payment\PaymentMethod;
+namespace Drupal\payment\Plugin\payment\method;
 
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Component\Plugin\PluginInspectionInterface;
-use Drupal\payment\Plugin\payment\PaymentMethod\PaymentMethodInterface;
+use Drupal\payment\Plugin\payment\method\PaymentMethodInterface;
 use Drupal\payment\Plugin\Core\entity\Payment;
 use Drupal\payment\Plugin\Core\entity\PaymentMethod;
 
