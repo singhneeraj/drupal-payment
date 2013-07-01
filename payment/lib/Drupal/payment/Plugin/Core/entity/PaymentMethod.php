@@ -24,7 +24,7 @@ use Drupal\payment\Plugin\Core\entity\PaymentMethodInterface;
  *     "storage" = "Drupal\payment\Plugin\Core\entity\PaymentMethodStorageController",
  *   },
  *   entity_keys = {
- *     "id" = "name",
+ *     "id" = "id",
  *     "label" = "label",
  *     "uuid" = "uuid",
  *     "status" = "status"
@@ -38,50 +38,32 @@ use Drupal\payment\Plugin\Core\entity\PaymentMethodInterface;
 class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
 
   /**
-   * The payment method plugin this entity uses.
-   *
-   * @var \Drupal\payment\Plugin\payment\method\PaymentMethodInterface
-   */
-  public $plugin;
-
-  /**
-   * The configuration of the payment method plugin in self::plugin.
-   *
-   * This property exists for storage purposes only.
-   *
-   * @var array
-   */
-  protected $pluginConfiguration;
-
-  /**
-   * The plugin ID of the payment method plugin in self::plugin.
-   *
-   * This property exists for storage purposes only.
-   *
-   * @var string
-   */
-  protected $pluginID;
-
-  /**
    * The entity's unique machine name.
    *
    * @var string
    */
-  public $name = NULL;
+  protected $id;
 
   /**
    * The human-readable label.
    *
    * @var string
    */
-  public $label = NULL;
+  protected $label;
 
   /**
    * The UID of the user this payment method belongs to.
    *
    * @var integer
    */
-  public $uid = NULL;
+  protected $ownerId;
+
+  /**
+   * The payment method plugin this entity uses.
+   *
+   * @var \Drupal\payment\Plugin\payment\method\PaymentMethodInterface
+   */
+  protected $plugin;
 
   /**
    * {@inheritdoc}
@@ -90,8 +72,8 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
     global $user;
 
     parent::__construct($values, $entity_type);
-    if (is_null($this->uid)) {
-      $this->uid = $user->uid;
+    if (is_null($this->getOwnerId())) {
+      $this->setOwnerId($user->uid);
     }
   }
 
@@ -102,6 +84,9 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
    */
   public function getExportProperties() {
     $properties = parent::getExportProperties();
+    $properties['id'] = $this->id();
+    $properties['label'] = $this->label();
+    $properties['ownerId'] = $this->getOwnerId();
     $properties['pluginConfiguration'] = $this->getPlugin()->getConfiguration();
     $properties['pluginID'] = $this->getPlugin()->getPluginId();
 
@@ -113,6 +98,8 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
    */
   public function setPlugin(PluginPaymentMethodInterface $plugin) {
     $this->plugin = $plugin;
+
+    return $this;
   }
 
   /**
@@ -120,6 +107,40 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
    */
   public function getPlugin() {
     return $this->plugin;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOwnerId($id) {
+    $this->ownerId = $id;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOwnerId() {
+    return $this->ownerId;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setId($id) {
+    $this->id = $id;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setLabel($label) {
+    $this->label = $label;
+
+    return $this;
   }
 
   /**
