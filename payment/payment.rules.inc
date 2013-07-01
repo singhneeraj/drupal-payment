@@ -482,19 +482,6 @@ function payment_rules_condition_payment_method_comparison(PaymentMethod $paymen
 }
 
 /**
- * Implements Rules options list callback for
- * payment_rules_condition_payment_uses_payment_method_type.
- *
- * This function is deprecated. Use payment_method_controller_options()
- * instead.
- *
- * @todo Remove this function in Payment 2.
- */
-function payment_rules_options_list_payment_uses_payment_method_type() {
-  return payment_method_controller_options();
-}
-
-/**
  * Implements Rules condition callback: check whether a payment uses one of the
  * selected payment methods types.
  *
