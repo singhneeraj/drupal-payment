@@ -166,68 +166,6 @@ function payment_schema() {
     ),
     'primary key' => array('id'),
   );
-  $schema['payment_method'] = array(
-    'fields' => array(
-      'controller_class_name' => array(
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-      ),
-      'enabled' => array(
-        'type' => 'int',
-        'size' => 'tiny',
-        'default' => 0,
-        'not null' => TRUE,
-      ),
-      'module' => array(
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-      ),
-      'name' => array(
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-      ),
-      'pmid' => array(
-        'type' => 'serial',
-      ),
-      'status' => array(
-        'type' => 'int',
-        'size' => 'tiny',
-        // 'default' => ENTITY_CUSTOM,
-        'not null' => TRUE,
-      ),
-      'title_generic' => array(
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-      ),
-      'title_specific' => array(
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-      ),
-      'uid' => array(
-        'description' => 'The {users}.uid this {payment_method} belongs to.',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 0,
-      ),
-    ),
-    'foreign keys' => array(
-      'uid' => array(
-        'table' => 'user',
-        'columns' => array(
-          'uid' => 'uid',
-        ),
-      ),
-    ),
-    'primary key' => array('pmid'),
-    'unique keys' => array(
-      'pmid' => array('pmid'),
-    ),
-  );
 
   return $schema;
 }
@@ -547,6 +485,15 @@ function payment_update_8202(array &$sandbox) {
       ->condition('plugin_id', $old_status)
       ->execute();
   }
+}
+
+/**
+ * Upgrades payment methods to 8.x-2.x.
+ */
+function payment_update_8203(array &$sandbox) {
+  // @todo Convert existing payment methods to config entities. See
+  //https://drupal.org/node/2032059.
+  db_drop_table('payment_method');
 }
 
 /**

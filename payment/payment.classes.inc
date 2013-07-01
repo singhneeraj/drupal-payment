@@ -6,17 +6,6 @@
  */
 
 /**
- * Base class with common functionality.
- */
-class PaymentCommon {
-  function __construct(array $properties = array()) {
-    foreach ($properties as $property => $value) {
-      $this->$property = $value;
-    }
-  }
-}
-
-/**
  * A payment method that essentially disables payments.
  *
  * This is a 'placeholder' method that returns defaults and doesn't really do
