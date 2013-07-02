@@ -28,16 +28,23 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
   /**
    * {@inheritdoc}
    */
-  function attachLoad(&$payments, $load_revision = FALSE) {
-    $line_items = $this->loadLineItems(array_keys($payments));
-    foreach ($line_items as $payment_id => $entity_line_items) {
-      $payments[$payment_id]->lineItems = $entity_line_items;
+  function attachLoad(&$queried_entities, $load_revision = FALSE) {
+    $line_items = $this->loadLineItems(array_keys($queried_entities));
+    $statuses = $this->loadPaymentStatuses(array_keys($queried_entities));
+    foreach ($queried_entities as $id => $queried_entity) {
+      $queried_entities[$id] = (object) array(
+        'context' => $queried_entity->context,
+        'currencyCode' => $queried_entity->currency_code,
+        'finishCallback' => $queried_entity->finish_callback,
+        'id' => (int) $queried_entity->id,
+        'lineItems' => $line_items[$id],
+        'ownerId' => (int) $queried_entity->context,
+        'paymentMethodId' => $queried_entity->payment_method_id,
+        'statuses' => $statuses[$id],
+        'uuid' => $queried_entity->uuid,
+      );
     }
-    $statuses = $this->loadPaymentStatuses(array_keys($payments));
-    foreach ($statuses as $payment_id => $entity_statuses) {
-      $payments[$payment_id]->statuses = $entity_statuses;
-    }
-    parent::attachLoad($payments, $load_revision);
+    parent::attachLoad($queried_entities, $load_revision);
   }
 
   /**
@@ -67,7 +74,7 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
     );
     $fields['paymentMethodId'] = array(
       'label' => t('Payment method ID'),
-      'type' => 'integer_field',
+      'type' => 'string_field',
     );
     $fields['ownerId'] = array(
       'label' => t('Owner'),
@@ -99,6 +106,7 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
     $record->first_payment_status_id = current($entity->getStatuses())->getId();
     $record->last_payment_status_id = $entity->getStatus()->getId();
     $record->owner_id = $entity->getOwnerId();
+    $record->uuid= $entity->uuid();
 
     return $record;
   }
@@ -112,7 +120,7 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
       ->fields('pli')
       ->condition('payment_id', $ids)
       ->execute();
-    $line_items = array();
+    $line_items = array_fill_keys($ids, array());
     while ($line_item_data = $result->fetchAssoc()) {
       $plugin_id = $line_item_data['plugin_id'];
       $line_item = $manager->createInstance($plugin_id, array(
@@ -169,7 +177,7 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
       ->condition('payment_id', $ids)
       ->orderBy('id', 'ASC')
       ->execute();
-    $statuses = array();
+    $statuses= array_fill_keys($ids, array());
     while ($status_data = $result->fetchAssoc()) {
       $plugin_id = $status_data['plugin_id'];
       $status = $manager->createInstance($plugin_id, array(

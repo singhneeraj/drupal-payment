@@ -37,5 +37,15 @@ class UpgradePathWithContent extends UpgradePathTestBase {
    */
   function testPaymentUpgrade() {
     $this->assertTrue($this->performUpgrade(), 'The upgrade was completed successfully.');
+
+    // Test payment integrity.
+    foreach (array(1, 2) as $id) {
+      $payment = entity_load('payment', $id);
+      $this->assertTrue((bool) $payment);
+      $this->assertEqual(count($payment->getLineItems()), 2);
+      $this->assertEqual(count($payment->getStatuses()), 1);
+      $this->assertTrue(is_string($payment->getPaymentMethodId()));
+      $this->assertTrue(is_numeric($payment->getOwnerId()));
+    }
   }
 }

@@ -45,7 +45,11 @@ class PaymentStorageControllerTest extends WebTestBase {
     $payment = Utility::createPayment(1);
     $this->assertFalse($payment->id());
     $payment->save();
-    $this->assertTrue($payment->id());
+    // @todo The ID should be an integer, but for some reason the entity field
+    // API returns a string.
+    $this->assertTrue(is_numeric($payment->id()));
+    $this->assertTrue(strlen($payment->uuid()));
+    $this->assertTrue(is_int($payment->getOwnerId()));
     $payment_loaded = entity_load_unchanged('payment', $payment->id());
     $this->assertEqual(count($payment_loaded->getLineItems()), count($payment->getLineItems()));
     $this->assertEqual(count($payment_loaded->getStatuses()), count($payment->getStatuses()));

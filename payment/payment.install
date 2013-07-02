@@ -86,7 +86,7 @@ function payment_schema() {
         'type' => 'varchar',
         'length' => 255,
       ),
-      'fist_payment_status_id' => array(
+      'first_payment_status_id' => array(
         'description' => "The {payment_status_item}.id of this payment's first status item.",
         'type' => 'int',
         'unsigned' => TRUE,
@@ -106,12 +106,18 @@ function payment_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
+      'uuid' => array(
+        'description' => 'Unique Key: Universally unique identifier for this entity.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => FALSE,
+      ),
     ),
     'foreign keys' => array(
-      'fist_payment_status_id' => array(
+      'first_payment_status_id' => array(
         'table' => 'payment_status_item',
         'columns' => array(
-          'fist_payment_status_id' => 'id',
+          'first_payment_status_id' => 'id',
         ),
       ),
       'last_payment_status_id' => array(
@@ -129,6 +135,7 @@ function payment_schema() {
     ),
     'indexes' => array(
       'id' => array('id'),
+      'uuid' => array('uuid'),
     ),
     'primary key' => array('id'),
   );
@@ -409,6 +416,15 @@ function payment_update_8200(array &$sandbox) {
     'not null' => TRUE,
     'default' => 0,
   ));
+
+  // Add uuid.
+  db_add_field('payment', 'uuid', array(
+    'description' => 'Unique Key: Universally unique identifier for this entity.',
+    'length' => 128,
+    'not null' => FALSE,
+    'type' => 'varchar',
+  ));
+  db_add_index('payment', 'uuid', array('uuid'));
 
   // Drop unnecessary fields.
   db_drop_field('payment_line_item', 'context_configuration');
