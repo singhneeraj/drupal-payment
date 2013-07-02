@@ -1,0 +1,14 @@
+payment.payment_method.*:
+  type: mapping
+  label: 'Payment method'
+  mapping:
+    id:
+      type: string
+    label:
+      type: label
+    ownerId:
+      type: integer
+    pluginConfiguration:
+      type: mapping
+    pluginId:
+      type: string

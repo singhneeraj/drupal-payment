@@ -42,7 +42,7 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
    *
    * @var string
    */
-  protected $id;
+  public $id;
 
   /**
    * The human-readable label.
@@ -76,7 +76,7 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
     $properties['label'] = $this->label();
     $properties['ownerId'] = $this->getOwnerId();
     $properties['pluginConfiguration'] = $this->getPlugin()->getConfiguration();
-    $properties['pluginID'] = $this->getPlugin()->getPluginId();
+    $properties['pluginId'] = $this->getPlugin()->getPluginId();
 
     return $properties;
   }

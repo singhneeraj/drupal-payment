@@ -34,7 +34,7 @@ class PaymentMethodAccessController extends EntityAccessController {
     }
     else {
       $permission = 'payment.payment_method.' . $operation;
-      return user_access($permission . '.any', $account) || user_access($permission . '.own', $account) && $entity->uid == $account->uid;
+      return user_access($permission . '.any', $account) || user_access($permission . '.own', $account) && $entity->getOwnerId() == $account->id();
     }
   }
 }

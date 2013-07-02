@@ -53,12 +53,11 @@ class Utility {
   static function createPaymentMethod($uid, PaymentMethodInterface $plugin = NULL) {
     $name = Random::name();
     $plugin = $plugin ? $plugin : \Drupal::service('plugin.manager.payment.payment_method')->createInstance('payment_unavailable');
-    $payment_method = entity_create('payment_method', array(
-      'plugin' => $plugin,
-      'name' => $name,
-      'label' => $name,
-      'uid' => $uid,
-    ));
+    $payment_method = entity_create('payment_method', array())
+      ->setId($name)
+      ->setLabel($name)
+      ->setOwnerId($uid)
+      ->setPlugin($plugin);
 
     return $payment_method;
   }

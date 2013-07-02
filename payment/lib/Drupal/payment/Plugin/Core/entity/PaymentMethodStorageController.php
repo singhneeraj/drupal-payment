@@ -22,10 +22,10 @@ class PaymentMethodStorageController extends ConfigStorageController {
     //has been fixed.
     global $user;
 
-    $payment = parent::create($values);
-    $payment->setOwnerId($user->id());
+    $payment_method = parent::create($values);
+    $payment_method->setOwnerId($user->id());
 
-    return $payment;
+    return $payment_method;
   }
 
   /**
@@ -35,10 +35,11 @@ class PaymentMethodStorageController extends ConfigStorageController {
    */
   protected function buildQuery($ids, $revision_id = FALSE) {
     $payment_methods = parent::buildQuery($ids, $revision_id);
-    $manager = $this->container->get('plugin.manager.payment.payment_method');
+    $manager = \Drupal::service('plugin.manager.payment.payment_method');
     foreach ($payment_methods as $payment_method) {
-      $payment_method->controller = $manager->createInstance($payment_method->controllerID, $payment_method->controllerConfiguration);
-      $payment_method->controllerID == $payment_method->controllerConfiguration = NULL;
+      $payment_method->setPlugin($manager->createInstance($payment_method->pluginId), $payment_method->pluginConfiguration);
+      unset($payment_method->pluginId);
+      unset($payment_method->pluginConfiguration);
     }
 
     return $payment_methods;
