@@ -27,16 +27,32 @@ class ManagerTest extends DrupalUnitTestBase {
   }
 
   /**
+   * {@inheritdoc
+   */
+  function setUp() {
+    parent::setUp();
+    $this->manager = \Drupal::service('plugin.manager.payment.status');
+  }
+
+  /**
    * Tests getDefinitions().
    */
   function testGetDefinitions() {
-    $manager = \Drupal::service('plugin.manager.payment.status');
     // Test the default status plugins.
-    $definitions = $manager->getDefinitions();
+    $definitions = $this->manager->getDefinitions();
     $this->assertEqual(count($definitions), 10);
     foreach ($definitions as $definition) {
       $this->assertIdentical(strpos($definition['id'], 'payment_'), 0);
       $this->assertTrue(is_subclass_of($definition['class'], '\Drupal\payment\Plugin\payment\status\PaymentStatusInterface'));
     }
+  }
+
+  /**
+   * Tests createInstance().
+   */
+  function testCreateInstance() {
+    $id = 'payment_unknown';
+    $this->assertEqual($this->manager->createInstance($id)->getPluginId(), $id);
+    $this->assertEqual($this->manager->createInstance('ThisIdDoesNotExist')->getPluginId(), $id);
   }
 }
