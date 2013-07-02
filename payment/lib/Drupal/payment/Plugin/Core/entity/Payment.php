@@ -351,6 +351,19 @@ class Payment extends EntityNG implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
+  public static function preCreate(EntityStorageControllerInterface $storage_controller, array &$values) {
+    // @todo Remove access to global $user once https://drupal.org/node/2032553
+    //has been fixed.
+    global $user;
+
+    $values += array(
+      'ownerId' => (int) $user->id(),
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function postSave(EntityStorageControllerInterface $controller, $update = TRUE) {
     $controller->saveLineItems(array(
       $this->id() => $this->getLineItems(),

@@ -10,6 +10,7 @@ namespace Drupal\payment\Plugin\Core\Entity;
 use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\Annotation\EntityType;
+use Drupal\Core\Entity\EntityStorageControllerInterface;
 use Drupal\payment\Plugin\payment\method\PaymentMethodInterface as PluginPaymentMethodInterface;
 use Drupal\payment\Plugin\Core\entity\Payment;
 use Drupal\payment\Plugin\Core\entity\PaymentMethodInterface;
@@ -157,5 +158,18 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
    */
   public function executePayment(Payment $payment) {
     return $this->getPlugin()->executePayment($payment);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function preCreate(EntityStorageControllerInterface $storage_controller, array &$values) {
+    // @todo Remove access to global $user once https://drupal.org/node/2032553
+    //has been fixed.
+    global $user;
+
+    $values += array(
+      'ownerId' => (int) $user->id(),
+    );
   }
 }

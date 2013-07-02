@@ -34,6 +34,7 @@ class PaymentStorageControllerTest extends WebTestBase {
   function testCreate() {
     $payment = entity_create('payment', array());
     $this->assertTrue($payment instanceof PaymentInterface);
+    $this->assertTrue(is_int($payment->getOwnerId()));
     $this->assertEqual(count($payment->validate()), 0);
   }
 
