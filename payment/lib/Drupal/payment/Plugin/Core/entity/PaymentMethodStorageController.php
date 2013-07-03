@@ -23,7 +23,9 @@ class PaymentMethodStorageController extends ConfigStorageController {
     $payment_methods = parent::buildQuery($ids, $revision_id);
     $manager = \Drupal::service('plugin.manager.payment.payment_method');
     foreach ($payment_methods as $payment_method) {
-      $payment_method->setPlugin($manager->createInstance($payment_method->pluginId), $payment_method->pluginConfiguration);
+      $configuration = $payment_method->pluginConfiguration;
+      $configuration['paymentMethod'] = $payment_method;
+      $payment_method->setPlugin($manager->createInstance($payment_method->pluginId), $configuration);
       unset($payment_method->pluginId);
       unset($payment_method->pluginConfiguration);
       $payment_method->setOwnerId((int) $payment_method->getOwnerId());

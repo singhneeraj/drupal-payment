@@ -40,22 +40,28 @@ interface PaymentProcessingInterface {
   public function paymentFormElements(array $form, array &$form_state);
 
   /**
-   * Executes a payment.
+   * Checks access to execute a payment operation.
    *
-   * @param Payment $payment
+   * @see \Drupal\payment\Annotations\PaymentMethod
+   *
+   * @param \Drupal\payment\Plugin\Core\entity\PaymentInterface $payment
+   * @param string $operation
+   *   See \Drupal\payment\Annotations\PaymentMethod::operations for the
+   *   definition of available operations.
+   *
+   * @return bool
    */
-  public function executePayment(PaymentInterface $payment);
+  function paymentOperationAccess(PaymentInterface $payment, $operation);
 
   /**
-   * Validates a payment against a payment method and this controller. Don't
-   * call directly. Use PaymentMethod::validate() instead.
+   * Executes a payment operation.
    *
-   * @see PaymentMethod::validate()
+   * @see \Drupal\payment\Annotations\PaymentMethod
    *
-   * @param Payment $payment
-   * @param PaymentMethod $payment_method
-   *
-   * @throws PaymentValidationException
+   * @param \Drupal\payment\Plugin\Core\entity\PaymentInterface $payment
+   * @param string $operation
+   *   See \Drupal\payment\Annotations\PaymentMethod::operations for the
+   *   definition of available operations.
    */
-  public function validatePayment(PaymentInterface $payment);
+  function executePaymentOperation(PaymentInterface $payment, $operation);
 }

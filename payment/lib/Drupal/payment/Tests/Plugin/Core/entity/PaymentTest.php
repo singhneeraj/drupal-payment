@@ -186,14 +186,6 @@ class PaymentTest extends DrupalUnitTestBase {
   }
 
   /**
-   * Tests validate().
-   */
-  function testValidate() {
-    // @todo Finish this test.
-    $this->assertTrue(FALSE);
-  }
-
-  /**
    * Tests execute().
    */
   function testExecute() {

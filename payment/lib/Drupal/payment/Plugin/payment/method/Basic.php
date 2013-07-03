@@ -17,7 +17,13 @@ use Drupal\payment\Plugin\Core\entity\PaymentInterface;
  *   description = "A 'dumb' payment method type that always successfully executes payments, but never actually transfers money. It can be useful for <em>collect on delivery</em>, for instance.",
  *   id = "payment_basic",
  *   label = @Translation("Basic"),
- *   module = "payment"
+ *   module = "payment",
+ *   operations = {
+ *     "execute" = {
+ *       "interrupts_execution" = "false",
+ *       "label" = @Translation("Execute")
+ *     }
+ *   }
  * )
  */
 class Basic extends Base {
@@ -64,13 +70,6 @@ class Basic extends Base {
   }
 
   /**
-   * {@inheritdoc}.
-   */
-  public function executePayment(PaymentInterface $payment) {
-    $payment->setStatus(\Drupal::service('plugin.manager.payment.status')->createInstance($this->getStatus()));
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function paymentMethodFormElements(array $form, array &$form_state) {
@@ -87,11 +86,38 @@ class Basic extends Base {
     return $elements;
   }
 
-    /**
-     * Implements form validate callback for self::paymentMethodFormElements().
-     */
-    public function paymentMethodFormElementsValidateStatus(array $element, array &$form_state, array $form) {
-      $values = drupal_array_get_nested_value($form_state['values'], $element['#parents']);
-      $this->setStatus($values['status']);
+  /**
+   * Implements form validate callback for self::paymentMethodFormElements().
+   */
+  public function paymentMethodFormElementsValidateStatus(array $element, array &$form_state, array $form) {
+    $values = drupal_array_get_nested_value($form_state['values'], $element['#parents']);
+    $this->setStatus($values['status']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  function paymentOperationAccess(PaymentInterface $payment, $operation) {
+    // This plugin only supports the execute operation.
+    return $operation == 'execute' && parent::paymentOperationAccess($payment, $operation);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function paymentOperationAccessCurrency(PaymentInterface $payment, $operation) {
+    // This plugin supports any currency.
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  function executePaymentOperation(PaymentInterface $payment, $operation) {
+    if ($this->paymentOperationAccess($payment, $operation)) {
+      if ($operation == 'execute') {
+        $payment->setStatus(\Drupal::service('plugin.manager.payment.status')->createInstance($this->getStatus()));
+      }
     }
+  }
 }

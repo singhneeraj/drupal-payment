@@ -26,6 +26,13 @@ interface PaymentMethodInterface extends PaymentProcessingInterface, PluginInspe
   public function getConfiguration();
 
   /**
+   * Gets the payment method the plugin instance is for.
+   *
+   * @return \Drupal\payment\Plugin\Core\entity\PaymentMethodInterface
+   */
+  public function getPaymentMethod();
+
+  /**
    * Returns the form elements to configure payment methods.
    *
    * $form_state['payment_method'] contains the payment method that is added or

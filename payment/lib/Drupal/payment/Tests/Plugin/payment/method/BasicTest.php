@@ -32,7 +32,10 @@ class BasicTest extends DrupalUnitTestBase {
    */
   function setUp() {
     parent::setUp();
-    $this->method = \Drupal::service('plugin.manager.payment.payment_method')->createInstance('payment_basic');
+    $this->methodEntity= entity_create('payment_method', array());
+    $this->method = \Drupal::service('plugin.manager.payment.payment_method')->createInstance('payment_basic', array(
+      'paymentMethod' => $this->methodEntity,
+    ));
   }
 
   /**
@@ -45,6 +48,7 @@ class BasicTest extends DrupalUnitTestBase {
     $this->assertEqual($this->method->getConfiguration(), array(
       'messageText' => 'foo',
       'messageTextFormat' => 'bar',
+      'paymentMethod' => $this->methodEntity,
       'status' => 'baz',
     ));
   }
@@ -83,5 +87,25 @@ class BasicTest extends DrupalUnitTestBase {
     $form = array();
     $form_state = array();
     $this->assertTrue(is_array($this->method->paymentMethodFormElements($form, $form_state)));
+  }
+
+  /**
+   * Tests paymentOperationAccess().
+   */
+  function testPaymentOperationAccess() {
+    $payment = entity_create('payment', array());
+    $this->assertTrue($this->method->paymentOperationAccess($payment, 'execute'));
+    $this->assertFalse($this->method->paymentOperationAccess($payment, $this->randomName()));
+  }
+
+  /**
+   * Tests executePaymentOperation().
+   */
+  function testExecutePaymentOperation() {
+    $plugin_id = 'payment_unknown';
+    $payment = entity_create('payment', array());
+    $this->method->setStatus($plugin_id);
+    $this->method->executePaymentOperation($payment, 'execute');
+    $this->assertTrue($payment->getStatus()->getPluginId() == $plugin_id);
   }
 }

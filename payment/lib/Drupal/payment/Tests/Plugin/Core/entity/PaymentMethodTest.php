@@ -87,20 +87,4 @@ class PaymentMethodTest extends DrupalUnitTestBase {
     $this->paymentMethod->setPlugin($this->manager->createInstance('payment_unavailable'));
     $this->assertTrue(is_array($this->paymentMethod->currencies()));
   }
-
-  /**
-   * Tests currencies().
-   */
-  function testValidatePayment() {
-    // @todo Finish this test.
-    $this->assertTrue(FALSE);
-  }
-
-  /**
-   * Tests currencies().
-   */
-  function testExecutePayment() {
-    // @todo Finish this test.
-    $this->assertTrue(FALSE);
-  }
 }

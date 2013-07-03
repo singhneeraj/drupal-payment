@@ -28,6 +28,23 @@ use Drupal\payment\Plugin\payment\method\PaymentMethodInterface;
 class Unavailable extends PluginBase implements PaymentMethodInterface {
 
   /**
+   * {@inheritdoc}
+   */
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
+    $configuration += array(
+      'paymentMethod' => NULL,
+    );
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPaymentMethod() {
+    return $this->configuration['paymentMethod'];
+  }
+
+  /**
    * {@inheritdoc}.
    */
   public function currencies() {
@@ -35,17 +52,16 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
   }
 
   /**
-   * {@inheritdoc}.
+   * {@inheritdoc}
    */
-  public function executePayment(PaymentInterface $payment) {
-    $payment->setStatus(\Drupal::service('plugin.manager.payment.status')->createInstance('payment_unknown'));
+  function paymentOperationAccess(PaymentInterface $payment, $operation) {
+    return FALSE;
   }
 
   /**
-   * {@inheritdoc}.
+   * {@inheritdoc}
    */
-  public function validatePayment(PaymentInterface $payment) {
-    throw new PaymentValidationException(t('This payment method plugin is unavailable.'));
+  function executePaymentOperation(PaymentInterface $payment, $operation) {
   }
 
   /**

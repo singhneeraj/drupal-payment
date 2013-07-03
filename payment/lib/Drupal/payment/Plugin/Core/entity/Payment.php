@@ -278,17 +278,14 @@ class Payment extends EntityNG implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public function getAvailablePaymentMethods(array $paymentMethods = array()) {
-    if (!$paymentMethods) {
-      $paymentMethods = entity_load_multiple('payment_method');
+  public function getAvailablePaymentMethods(array $payment_methods = array()) {
+    if (!$payment_methods) {
+      $payment_methods = entity_load_multiple('payment_method');
     }
     $available = array();
-    foreach ($paymentMethods as $paymentMethod) {
-      try {
-        $paymentMethod->validatePayment($this);
-        $available[$paymentMethod->id()] = $paymentMethod;
-      }
-      catch (PaymentValidationException $e) {
+    foreach ($payment_methods as $payment_method) {
+      if ($payment_method->paymentOperationAccess($this, 'execute')) {
+        $available[$payment_method->id()] = $payment_method;
       }
     }
 
@@ -325,27 +322,8 @@ class Payment extends EntityNG implements PaymentInterface {
     }
     else {
       $this->setStatus($manager->createInstance('payment_pending'));
-      $this->getPaymentMethod()->executePayment($this);
+      $this->getPaymentMethod()->executePaymentOperation('execute', $this);
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validate() {
-    $violations = parent::validate();
-    // Do not call the payment method if it does not exist, in which case a
-    // violation will already have been added.
-    if ($this->getPaymentMethodId()) {
-      try {
-        $this->getPaymentMethod()->validatePayment($this);
-      }
-      catch (PaymentValidationException $exception) {
-        $violations->add(new ConstraintViolation($exception->getMessage(), $exception->getMessage(), array(), $this, 'paymentMethodId', $this->getPaymentMethodId()));
-      }
-    }
-
-    return $violations;
   }
 
   /**

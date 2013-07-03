@@ -6,6 +6,7 @@
  */
 
 use Drupal\payment\Plugin\Core\Entity\PaymentInterface;
+use Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface;
 use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
 
 /**
@@ -94,21 +95,18 @@ function hook_payment_pre_finish(PaymentInterface $payment) {
 }
 
 /**
- * Validate a payment against a payment method.
- *
- * This hook may be called multiple times for the exact same payment, but for
- * different payment methods, for example when looking for payment methods that
- * are capable of processing a payment.
+ * Checks access for performing a payment method operation on a payment.
  *
  * @param \Drupal\payment\Plugin\Core\Entity\PaymentInterface $payment
- *   $payment->getMethod() contains the method currently configured, but NOT the
+ *   $payment->getPaymentMethod() contains the method currently configured, but NOT the
  *   method that $payment should be tested against, which is $payment_method.
- * @param PaymentMethod $payment_method
+ * @param \Drupal\payment\Plugin\Core\entity\PaymentMethodInterface $payment_method
+ * @param string $operation
  *
  * @return boolean
- *   Whether the payment and/or the payment method are valid.
+ *   Whether the operation can be performed on the payment.
  */
-function hook_payment_validate(PaymentInterface $payment, PaymentMethod $payment_method) {}
+function hook_payment_operation_access(PaymentInterface $payment, PaymentMethodInterface $payment_method, $operation) {}
 
 /**
  * Alter the payment form.
