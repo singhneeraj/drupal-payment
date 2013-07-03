@@ -50,4 +50,19 @@ class Manager extends PluginManagerBase {
       return parent::createInstance('payment_unknown', $configuration);
     }
   }
+
+  /**
+   * Returns payment method options.
+   *
+   * @return array
+   *   Keys are plugin IDs. Values are plugin labels.
+   */
+  function options() {
+    $options = array();
+    foreach ($this->getDefinitions() as $entity_type => $definition) {
+      $options[$entity_type] = $definition['label'];
+    }
+
+    return $options;
+  }
 }

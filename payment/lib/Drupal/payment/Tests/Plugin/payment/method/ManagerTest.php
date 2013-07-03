@@ -40,7 +40,7 @@ class ManagerTest extends DrupalUnitTestBase {
   function testGetDefinitions() {
     // Test the default payment method plugins.
     $definitions = $this->manager->getDefinitions();
-    $this->assertEqual(count($definitions), 1);
+    $this->assertEqual(count($definitions), 2);
     foreach ($definitions as $definition) {
       $this->assertIdentical(strpos($definition['id'], 'payment_'), 0);
       $this->assertTrue(is_subclass_of($definition['class'], '\Drupal\payment\Plugin\payment\method\PaymentMethodInterface'));

@@ -6,9 +6,11 @@
 
 namespace Drupal\payment\Plugin\payment\method;
 
+use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Annotation\Translation;
 use Drupal\payment\Annotations\PaymentMethod;
-use Drupal\payment\Plugin\Core\entity\Payment;
+use Drupal\payment\Plugin\Core\entity\PaymentInterface;
+use Drupal\payment\Plugin\payment\method\PaymentMethodInterface;
 
 /**
  * A payment method controller that essentially disables payment methods.
@@ -23,7 +25,7 @@ use Drupal\payment\Plugin\Core\entity\Payment;
  *   module = "payment"
  * )
  */
-class Unavailable extends Base {
+class Unavailable extends PluginBase implements PaymentMethodInterface {
 
   /**
    * {@inheritdoc}.
@@ -35,14 +37,35 @@ class Unavailable extends Base {
   /**
    * {@inheritdoc}.
    */
-  public function executePayment(Payment $payment) {
+  public function executePayment(PaymentInterface $payment) {
     $payment->setStatus(\Drupal::service('plugin.manager.payment.status')->createInstance('payment_unknown'));
   }
 
   /**
    * {@inheritdoc}.
    */
-  public function validatePayment(Payment $payment) {
+  public function validatePayment(PaymentInterface $payment) {
     throw new PaymentValidationException(t('This payment method plugin is unavailable.'));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getConfiguration() {
+    return array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function paymentFormElements(array $form, array &$form_state) {
+    return array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function paymentMethodFormElements(array $form, array &$form_state) {
+    return array();
   }
 }

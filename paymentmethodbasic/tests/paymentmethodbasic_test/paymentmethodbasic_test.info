@@ -1,8 +1,0 @@
-name = Basic Payment Method tests
-description = "Supports Basic Payment Method's automated tests."
-core = 7.x
-dependencies[] = paymentmethodbasic
-package = Payment
-hidden = TRUE
-files[] = tests/PaymentmethodbasicTestCallablesWebTestCase.test
-files[] = tests/PaymentmethodbasicTestPaymentMethodBasicControllerWebTestCase.test

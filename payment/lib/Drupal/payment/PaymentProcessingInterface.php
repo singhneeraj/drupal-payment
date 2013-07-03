@@ -6,7 +6,7 @@
 
 namespace Drupal\payment;
 
-use Drupal\payment\Plugin\Core\entity\Payment;
+use Drupal\payment\Plugin\Core\entity\PaymentInterface;
 
 /**
  * Defines anything that can process payments.
@@ -44,7 +44,7 @@ interface PaymentProcessingInterface {
    *
    * @param Payment $payment
    */
-  public function executePayment(Payment $payment);
+  public function executePayment(PaymentInterface $payment);
 
   /**
    * Validates a payment against a payment method and this controller. Don't
@@ -57,5 +57,5 @@ interface PaymentProcessingInterface {
    *
    * @throws PaymentValidationException
    */
-  public function validatePayment(Payment $payment);
+  public function validatePayment(PaymentInterface $payment);
 }

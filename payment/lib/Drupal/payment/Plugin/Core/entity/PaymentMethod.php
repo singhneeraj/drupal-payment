@@ -12,7 +12,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\Annotation\EntityType;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
 use Drupal\payment\Plugin\payment\method\PaymentMethodInterface as PluginPaymentMethodInterface;
-use Drupal\payment\Plugin\Core\entity\Payment;
+use Drupal\payment\Plugin\Core\entity\PaymentInterface;
 use Drupal\payment\Plugin\Core\entity\PaymentMethodInterface;
 
 /**
@@ -149,14 +149,14 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
-  public function validatePayment(Payment $payment) {
+  public function validatePayment(PaymentInterface $payment) {
     return $this->getPlugin()->validatePayment($payment);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function executePayment(Payment $payment) {
+  public function executePayment(PaymentInterface $payment) {
     return $this->getPlugin()->executePayment($payment);
   }
 

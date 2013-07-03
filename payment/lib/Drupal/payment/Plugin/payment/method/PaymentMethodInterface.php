@@ -18,13 +18,6 @@ use Drupal\payment\Plugin\Core\entity\Payment;
 interface PaymentMethodInterface extends PaymentProcessingInterface, PluginInspectionInterface {
 
   /**
-   * Sets the plugin configuration.
-   *
-   * @param array $configuration
-   */
-  public function setConfiguration(array $configuration);
-
-  /**
    * Gets the plugin configuration.
    *
    * @return array
