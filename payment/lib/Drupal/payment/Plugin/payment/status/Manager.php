@@ -6,36 +6,39 @@
 
 namespace Drupal\payment\Plugin\payment\status;
 
-use Drupal\Component\Plugin\Discovery\DerivativeDiscoveryDecorator;
 use Drupal\Component\Plugin\Exception\PluginException;
-use Drupal\Component\Plugin\Factory\DefaultFactory;
-use Drupal\Component\Plugin\PluginManagerBase;
-use Drupal\Core\Plugin\Discovery\AnnotatedClassDiscovery;
-use Drupal\Core\Plugin\Discovery\AlterDecorator;
-use Drupal\Core\Plugin\Discovery\CacheDecorator;
+use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Language\LanguageManager;
+use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**
  * Manages discovery and instantiation of payment status plugins.
  *
  * @see \Drupal\payment\Plugin\payment\status\PaymentStatusInterface
  */
-class Manager extends PluginManagerBase {
+class Manager extends DefaultPluginManager {
 
   /**
    * Constructor.
    *
-   * @param array $namespaces
-   *   An array of paths keyed by their corresponding namespaces.
+   * @param \Traversable $namespaces
+   *   An object that implements \Traversable which contains the root paths
+   *   keyed by the corresponding namespace to look for plugin implementations.
+   * @param \Drupal\Core\Cache\CacheBackendInterface $cache_backend
+   *   Cache backend instance to use.
+   * @param \Drupal\Core\Language\LanguageManager $language_manager
+   *   The language manager.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler to invoke the alter hook with.
    */
-  public function __construct(\Traversable $namespaces) {
+  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, LanguageManager $language_manager, ModuleHandlerInterface $module_handler) {
     $annotation_namespaces = array(
       'Drupal\payment\Annotations' => drupal_get_path('module', 'payment') . '/lib',
     );
-    $this->discovery = new AnnotatedClassDiscovery('payment/status', $namespaces, $annotation_namespaces, 'Drupal\payment\Annotations\PaymentStatus');
-    $this->discovery = new DerivativeDiscoveryDecorator($this->discovery);
-    $this->discovery = new AlterDecorator($this->discovery, 'payment_status');
-    $this->discovery = new CacheDecorator($this->discovery, 'payment_status');
-    $this->factory = new DefaultFactory($this->discovery);
+    parent::__construct('payment/status', $namespaces, $annotation_namespaces, 'Drupal\payment\Annotations\PaymentStatus');
+    $this->alterInfo($module_handler, 'payment_status');
+    $this->setCacheBackend($cache_backend, $language_manager, 'payment_status');
   }
 
   /**

@@ -37,7 +37,7 @@ class Manager extends DefaultPluginManager {
     $annotation_namespaces = array(
       'Drupal\payment\Annotations' => drupal_get_path('module', 'payment') . '/lib',
     );
-    parent::__construct('payment\method', $namespaces, $annotation_namespaces, 'Drupal\payment\Annotations\PaymentMethod');
+    parent::__construct('payment/method', $namespaces, $annotation_namespaces, 'Drupal\payment\Annotations\PaymentMethod');
     $this->alterInfo($module_handler, 'payment_method');
     $this->setCacheBackend($cache_backend, $language_manager, 'payment_method');
   }
