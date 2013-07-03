@@ -16,6 +16,10 @@ function paymentmethodbasic_payment_method_controller_info() {
  * Implements hook_entity_load().
  */
 function paymentmethodbasic_entity_load(array $entities, $entity_type) {
+  // @todo Temporarily disable this function until it has been ported to Payment
+  // 8.x-2.x.
+  // @debug
+  return;
 if ($entity_type == 'payment_method') {
     $pmids = array();
     foreach ($entities as $payment_method) {

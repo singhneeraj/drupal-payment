@@ -26,6 +26,7 @@ class PaymentMethodStorageController extends ConfigStorageController {
       $payment_method->setPlugin($manager->createInstance($payment_method->pluginId), $payment_method->pluginConfiguration);
       unset($payment_method->pluginId);
       unset($payment_method->pluginConfiguration);
+      $payment_method->setOwnerId((int) $payment_method->getOwnerId());
     }
 
     return $payment_methods;

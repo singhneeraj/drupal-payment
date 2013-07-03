@@ -12,3 +12,7 @@ payment.payment_method.*:
       type: mapping
     pluginId:
       type: string
+    status:
+      type: boolean
+    uuid:
+      type: string

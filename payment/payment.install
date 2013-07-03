@@ -5,6 +5,8 @@
  * Installation and uninstallation functions.
  */
 
+use Drupal\Component\Uuid\Uuid;
+
 /**
  * A bit flag used to let us know if an entity has been customly defined.
  *
@@ -507,8 +509,24 @@ function payment_update_8202(array &$sandbox) {
  * Upgrades payment methods to 8.x-2.x.
  */
 function payment_update_8203(array &$sandbox) {
-  // @todo Convert existing payment methods to config entities. See
-  //https://drupal.org/node/2032059.
+  $map = payment_upgrade_map_payment_method();
+  $payment_methods_data = db_select('payment_method', 'pm')
+    ->fields('pm')
+    ->execute()
+    ->fetchAllAssoc('name');
+  $uuid = new Uuid();
+  foreach ($payment_methods_data as $payment_method_data) {
+    $plugin_id = isset($map[$payment_method_data->controller_class_name]) ? $map[$payment_method_data->controller_class_name] : '';
+    \Drupal::config('payment.payment_method.' . $payment_method_data->name)
+      ->set('id', $payment_method_data->name)
+      ->set('label', $payment_method_data->title_specific)
+      ->set('ownerId', $payment_method_data->uid)
+      ->set('pluginConfiguration', array())
+      ->set('pluginId', $plugin_id)
+      ->set('status', $payment_method_data->enabled)
+      ->set('uuid', $uuid->generate())
+      ->save();
+  }
   db_drop_table('payment_method');
 }
 

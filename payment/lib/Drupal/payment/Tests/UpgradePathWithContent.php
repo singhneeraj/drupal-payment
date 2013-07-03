@@ -8,6 +8,7 @@
 namespace Drupal\payment\Tests;
 
 use Drupal\system\Tests\Upgrade\UpgradePathTestBase;
+use Drupal\payment\Plugin\payment\method\PaymentMethodInterface as PluginPaymentMethodInterface;
 
 /**
  * Tests Payment's upgrade path.
@@ -39,13 +40,25 @@ class UpgradePathWithContent extends UpgradePathTestBase {
     $this->assertTrue($this->performUpgrade(), 'The upgrade was completed successfully.');
 
     // Test payment integrity.
-    foreach (array(1, 2) as $id) {
+    $ids = array(1, 2);
+    foreach ($ids as $id) {
       $payment = entity_load('payment', $id);
       $this->assertTrue((bool) $payment);
       $this->assertEqual(count($payment->getLineItems()), 2);
       $this->assertEqual(count($payment->getStatuses()), 1);
       $this->assertTrue(is_string($payment->getPaymentMethodId()));
       $this->assertTrue(is_numeric($payment->getOwnerId()));
+    }
+
+    // Test payment method integrity.
+    $names = array('gakdcnxd', 'eh9wkb2p');
+    foreach ($names as $name) {
+      $payment_method = entity_load('payment_method', $name);
+      $this->assertTrue((bool) $payment_method);
+      $this->assertTrue(is_string($payment_method->id()));
+      $this->assertTrue(is_string($payment_method->label()));
+      $this->assertTrue(is_int($payment_method->getOwnerId()));
+      $this->assertTrue($payment_method->getPlugin() instanceof PluginPaymentMethodInterface);
     }
   }
 }
