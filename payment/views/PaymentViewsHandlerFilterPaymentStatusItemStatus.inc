@@ -10,7 +10,7 @@ class PaymentViewsHandlerFilterPaymentStatusItemStatus extends views_handler_fil
    */
   function get_value_options() {
     if (!isset($this->value_options)) {
-      $this->value_options = payment_status_options();
+      $this->value_options = \Drupal::service('plugin.manager.payment.status')->options();
     }
   }
 }

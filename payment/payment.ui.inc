@@ -84,7 +84,7 @@ function payment_form_embedded(array &$form_state, Payment $payment, array $pmid
     '#access' => !payment_status_is_or_has_ancestor($payment->getStatus()->status, PAYMENT_STATUS_NEW),
     '#type' => 'select',
     '#title' => t('Status'),
-    '#options' => payment_status_options(),
+    '#options' => \Drupal::service('plugin.manager.payment.status')->options(),
     '#default_value' => $payment->getStatus()->status,
     '#required' => TRUE,
     '#description' => t('Updating a payment status manually can disrupt automatic payment processing.') . (user_access('payment.payment_status.view') ? ' ' . l(t('Payment status overview.'), 'admin/config/services/payment/status') : ''),
@@ -518,13 +518,6 @@ function _payment_page_status_rows(array $statuses, array $children, array &$row
       _payment_page_status_rows($children[$status], $children, $rows, $depth + 1);
     }
   }
-}
-
-/**
- * Implements uasort() callback to sort PaymentStatusInfo objects by title.
- */
-function payment_payment_status_sort_title(PaymentStatusInfo $status_a, PaymentStatusInfo $status_b) {
-  return strcmp($status_a->title, $status_b->title);
 }
 
 function payment_method_name_exists($name) {
@@ -1031,87 +1024,6 @@ function payment_form_process_method_submit(array $form, array &$form_state) {
  */
 function payment_form_process_method_submit_ajax_callback(array $form, array &$form_state) {
   return $form;
-}
-
-/**
- * Returns a hierarchical representation of payment statuses.
- *
- * @return array
- *   A possibly infinitely nested associative array. Keys are statuses and
- *   values are arrays of similar structure as this function's return value.
- */
-function payment_status_hierarchy() {
-  static $hierarchy = NULL;
-
-  if (is_null($hierarchy)) {
-    $parents = $children = array();
-    $statuses_info = payment_statuses_info();
-    uasort($statuses_info, 'payment_payment_status_sort_title');
-    foreach ($statuses_info as $status_info) {
-      $children[$status_info->parent][] = $status_info->status;
-      if (!$status_info->parent) {
-        $parents[] = $status_info->status;
-      }
-    }
-    $hierarchy = _payment_status_hierarchy_level($parents, $children);
-  }
-
-  return $hierarchy;
-}
-
-/**
- * Helper function for payment_status_hierarchy().
- *
- * @param array $parents
- *   An array with payment statuses that are part of the same hierarchy level.
- * @param array $children
- *   Keys are payment statuses. Values are arrays with those statuses' child
- *   statuses.
- *
- * @return array
- *   The return value is identical to that of payment_status_hierarchy().
- */
-function _payment_status_hierarchy_level(array $statuses, array $children) {
-  $hierarchy = array();
-  foreach ($statuses as $status) {
-    $hierarchy[$status] = isset($children[$status]) ? _payment_status_hierarchy_level($children[$status], $children) : array();
-  }
-
-  return $hierarchy;
-}
-
-/**
- * Return payment statuses for use in form elements.
- *
- * @return array
- *   Keys are payment statuses. Values are status titles, prefixed with dashes
- *   to show hierarchy.
- */
-function payment_status_options() {
-  return _payment_status_options_level(payment_status_hierarchy(), 0);
-}
-
-/**
- * Helper function for payment_status_options().
- *
- * @param array $hierarchy
- *   A payment status hierarchy as returned by payment_status_hierarchy().
- * @param integer $depth
- *   The depth of $hierarchy's top-level items as seen from the original
- *   hierarchy's root (this function is recursive), starting with 0.
- *
- * @return array
- *   The return value is identical to that of payment_status_options().
- */
-function _payment_status_options_level(array $hierarchy, $depth) {
-  $options = array();
-  $prefix = $depth ? str_repeat('-', $depth) . ' ' : '';
-  foreach ($hierarchy as $status => $children) {
-    $options[$status] = $prefix . payment_status_info($status)->title;
-    $options += _payment_status_options_level($children, $depth + 1);
-  }
-
-  return $options;
 }
 
 /**
