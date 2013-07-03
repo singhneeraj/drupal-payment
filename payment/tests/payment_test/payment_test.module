@@ -16,15 +16,6 @@ function payment_test_menu() {
     'page arguments' => array('payment_test_form_payment_line_item'),
     'access callback' => TRUE,
   );
-  // @see PaymentAmountFormElementWebTestCase
-  // The second URL path argument is an optional float value specifying a
-  // minimum amount.
-  $items['payment_test-form-element-payment-amount'] = array(
-    'title' => 'Test the payment_amount form element',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('payment_test_form_payment_amount'),
-    'access callback' => TRUE,
-  );
 
   return $items;
 }
@@ -89,13 +80,6 @@ function payment_test_finish_callback(Payment $payment) {
 }
 
 /**
- * Implements PaymentLineItemInfo::callback.
- */
-function payment_test_line_item_get($name, Payment $payment) {
-  return(array($payment->line_items['foo'], $payment->line_items['bar']));
-}
-
-/**
  * Implements form build callback: show a payment_line_item element.
  */
 function payment_test_form_payment_line_item(array $form, array &$form_state) {
@@ -137,26 +121,6 @@ function payment_test_default_line_items() {
       'description' => 'description_2',
       'name' => 'name_2',)),
   );
-}
-
-/**
- * Implements form build callback: show a payment_amount element.
- */
-function payment_test_form_payment_amount(array $form, array &$form_state) {
-  $form['#submit'] = array('payment_test_form_payment_element');
-  $form['amount'] = array(
-    '#type' => 'payment_amount',
-    '#currency_code' => 'XXX',
-  );
-  if (arg(1)) {
-    $form['amount']['#minimum_amount'] = (float) arg(1);
-  }
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Submit'),
-  );
-
-  return $form;
 }
 
 /**
