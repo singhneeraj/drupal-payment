@@ -19,4 +19,10 @@ use Drupal\payment\Plugin\payment\line_item\Base;
  * )
  */
 class Basic extends Base {
+
+  /**
+   * {@inheritdoc}
+   */
+  function getDescription() {
+  }
 }

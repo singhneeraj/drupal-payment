@@ -54,6 +54,13 @@ interface LineItemInterface extends PluginInspectionInterface {
   public function getName();
 
   /**
+   * Gets the line item description.
+   *
+   * @return string
+   */
+  public function getDescription();
+
+  /**
    * Sets the payment ID.
    *
    * @param integer $id
