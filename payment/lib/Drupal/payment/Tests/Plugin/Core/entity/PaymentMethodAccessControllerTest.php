@@ -34,8 +34,9 @@ class PaymentMethodAccessControllerTest extends AccessibleInterfaceWebTestBase {
     $authenticated = $this->drupalCreateUser();
 
     // Create a new payment method.
-    // @todo Test this with a controller that actually has create permissions.
-    // $this->assertDataAccess(Utility::createPaymentMethod(0), 'a payment method', 'create', $authenticated, array('payment.payment_method.create.PaymentMethodControllerUnavailable'));
+    $manager = \Drupal::service('plugin.manager.payment.payment_method');
+    $plugin = $manager->createInstance('payment_basic');
+    $this->assertDataAccess(Utility::createPaymentMethod(0, $plugin), 'a payment method', 'create', $authenticated, array('payment.payment_method.create.payment_basic'));
 
     // Update a payment method that belongs to user 1.
     $this->assertDataAccess(Utility::createPaymentMethod(1), 'a payment method', 'update', $authenticated, array('payment.payment_method.update.any'));

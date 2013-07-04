@@ -20,8 +20,8 @@ class PaymentMethodAccessController extends EntityAccessController {
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, $langcode, AccountInterface $account) {
-    if ($operation == 'create' && $entity->controller) {
-      return user_access('payment.payment_method.create.' . $entity->controller->name, $account);
+    if ($operation == 'create') {
+      return $entity->getPlugin() && user_access('payment.payment_method.create.' . $entity->getPlugin()->getPluginId(), $account);
     }
     elseif ($operation == 'enable') {
       return !$entity->status() && $entity->access('update', $account);

@@ -7,7 +7,7 @@
 
 namespace Drupal\payment\Tests;
 
-use Drupal\payment\Plugin\payment\method\PaymentMethodInterface as PluginPaymentMethodInterface;
+use Drupal\payment\Plugin\payment\method\PaymentMethodInterface;
 use Drupal\payment\Plugin\payment\method\Unavailable;
 use Drupal\Component\Utility\Random;
 
@@ -21,7 +21,7 @@ class Utility {
    *
    * @param integer $uid
    *   The user ID of the payment's owner.
-   * @param PaymentMethod $payment_method
+   * @param \Drupal\payment\Plugin\Core\entity\PaymentMethod $payment_method
    *   An optional payment method to set. Defaults to Unavailable.
    *
    * @return \Drupal\payment\Plugin\Core\entity\Payment
@@ -49,7 +49,7 @@ class Utility {
    * @param \Drupal\payment\Plugin\payment\method\PaymentMethodInterface $plugin
    *   An optional plugin to set. Defaults to payment_unavailable.
    *
-   * @return PaymentMethod
+   * @return \Drupal\payment\Plugin\Core\entity\PaymentMethod
    */
   static function createPaymentMethod($uid, PaymentMethodInterface $plugin = NULL) {
     $name = Random::name();
