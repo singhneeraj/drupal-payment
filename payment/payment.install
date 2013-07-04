@@ -497,7 +497,7 @@ function payment_update_8202(array &$sandbox) {
     'length' => 255,
     'not null' => TRUE,
   ));
-  foreach (payment_upgrade_map_status() as $old_status => $plugin_id) {
+  foreach (payment_upgrade_8x2x_map_status() as $old_status => $plugin_id) {
     db_update('payment_status')
       ->fields(array(
         'plugin_id' => $plugin_id,
@@ -511,7 +511,7 @@ function payment_update_8202(array &$sandbox) {
  * Upgrades payment methods to 8.x-2.x.
  */
 function payment_update_8203(array &$sandbox) {
-  $map = payment_upgrade_map_payment_method();
+  $map = payment_upgrade_8x2x_map_payment_method();
   $payment_methods_data = db_select('payment_method', 'pm')
     ->fields('pm')
     ->execute()
@@ -538,7 +538,7 @@ function payment_update_8203(array &$sandbox) {
  * @return array
  *   Keys are 7.x-1.x statuses. Values are 8.x-2.x status plugin IDs.
  */
-function payment_upgrade_map_status() {
+function payment_upgrade_8x2x_map_status() {
   return array(
     'payment_status_money_transferred' => 'payment_money_transferred',
     'payment_status_money_not_transferred' => 'payment_no_money_transferred',
@@ -560,7 +560,7 @@ function payment_upgrade_map_status() {
  *   Keys are 7.x-1.x payment method controller names. Values are 8.x-2.x
  *   plugin IDs.
  */
-function payment_upgrade_map_payment_method() {
+function payment_upgrade_8x2x_map_payment_method() {
   return array(
     'PaymentMethodControllerUnavailable' => 'payment_unavailable',
     'PaymentMethodBasicController' => 'payment_basic',

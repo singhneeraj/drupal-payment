@@ -27,22 +27,22 @@ class UpgradeMap extends DrupalUnitTestBase {
   }
 
   /**
-   * Tests payment_upgrade_map_status().
+   * Tests payment_upgrade_8x2x_map_status().
    */
   function testStatus() {
     module_load_install('payment');
     $manager = \Drupal::service('plugin.manager.payment.status');
     $pluginIds = array_keys($manager->getDefinitions());
-    $this->assertFalse(array_diff(payment_upgrade_map_status(), $pluginIds));
+    $this->assertFalse(array_diff(payment_upgrade_8x2x_map_status(), $pluginIds));
   }
 
   /**
-   * Tests payment_upgrade_map_payment_method().
+   * Tests payment_upgrade_8x2x_map_payment_method().
    */
   function testPaymentMethod() {
     module_load_install('payment');
     $manager = \Drupal::service('plugin.manager.payment.payment_method');
     $pluginIds = array_keys($manager->getDefinitions());
-    $this->assertFalse(array_diff(payment_upgrade_map_payment_method(), $pluginIds));
+    $this->assertFalse(array_diff(payment_upgrade_8x2x_map_payment_method(), $pluginIds));
   }
 }
