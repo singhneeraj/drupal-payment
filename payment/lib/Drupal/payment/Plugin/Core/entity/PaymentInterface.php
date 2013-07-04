@@ -11,7 +11,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Executable\ExecutableInterface;
 use Drupal\payment\Plugin\Core\entity\PaymentMethodInterface;
 use Drupal\payment\Plugin\payment\context\PaymentContextInterface;
-use Drupal\payment\Plugin\payment\line_item\LineItemInterface;
+use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
 
 /**
@@ -57,7 +57,7 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
    * Sets line items.
    *
    * @param array $line_items
-   *   Values are \Drupal\payment\Plugin\payment\line_item\LineItemInterface
+   *   Values are \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
    *   objects.
    *
    * @return \Drupal\payment\Plugin\Core\entity\PaymentInterface
@@ -67,11 +67,11 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
   /**
    * Sets a line item.
    *
-   * @param \Drupal\payment\Plugin\payment\line_item\LineItemInterface $line_item
+   * @param \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface $line_item
    *
    * @return \Drupal\payment\Plugin\Core\entity\PaymentInterface
    */
-  public function setLineItem(LineItemInterface $line_item);
+  public function setLineItem(PaymentLineItemInterface $line_item);
 
   /**
    * Gets all line items.
@@ -97,7 +97,7 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
    *   The line item plugin's ID.
    *
    * @return array
-   *   Values are \Drupal\payment\Plugin\payment\line_item\LineItemInterface
+   *   Values are \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
    *   objects.
    */
   public function getLineItemsByType($type);

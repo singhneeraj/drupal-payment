@@ -15,7 +15,7 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 /**
  * Manages discovery and instantiation of payment line item plugins.
  *
- * @see \Drupal\payment\Plugin\payment\line_item\LineItemInterface
+ * @see \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
  */
 class Manager extends DefaultPluginManager {
 
@@ -36,7 +36,7 @@ class Manager extends DefaultPluginManager {
     $annotation_namespaces = array(
       'Drupal\payment\Annotations' => drupal_get_path('module', 'payment') . '/lib',
     );
-    parent::__construct('payment/line_item', $namespaces, $annotation_namespaces, 'Drupal\payment\Annotations\LineItem');
+    parent::__construct('payment/line_item', $namespaces, $annotation_namespaces, 'Drupal\payment\Annotations\PaymentLineItem');
     $this->alterInfo($module_handler, 'payment_line_item');
     $this->setCacheBackend($cache_backend, $language_manager, 'payment_line_item');
   }

@@ -7,12 +7,12 @@
 namespace Drupal\payment\Plugin\payment\line_item;
 
 use Drupal\Component\Plugin\PluginBase;
-use Drupal\payment\Plugin\payment\line_item\LineItemInterface;
+use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 
 /**
  * A base line item.
  */
-abstract class Base extends PluginBase implements LineItemInterface {
+abstract class Base extends PluginBase implements PaymentLineItemInterface {
 
   /**
    * {@inheritdoc}

@@ -7,7 +7,7 @@
 
 namespace Drupal\payment\Tests\Plugin\payment\line_item;
 
-use Drupal\payment\Plugin\payment\line_item\LineItemInterface;
+use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 use Drupal\simpletest\DrupalUnitTestBase;
 
 /**
@@ -40,7 +40,7 @@ class BaseTest extends DrupalUnitTestBase {
    */
   function testGetAmount() {
     $amount = 5.3;
-    $this->assertTrue($this->lineItem->setAmount($amount) instanceof LineItemInterface);
+    $this->assertTrue($this->lineItem->setAmount($amount) instanceof PaymentLineItemInterface);
     $this->assertIdentical($this->lineItem->getAmount(), $amount);
   }
 
@@ -49,7 +49,7 @@ class BaseTest extends DrupalUnitTestBase {
    */
   function testGetQuantity() {
     $quantity = 7;
-    $this->assertTrue($this->lineItem->setQuantity($quantity) instanceof LineItemInterface);
+    $this->assertTrue($this->lineItem->setQuantity($quantity) instanceof PaymentLineItemInterface);
     $this->assertIdentical($this->lineItem->getQuantity(), $quantity);
   }
 
@@ -69,7 +69,7 @@ class BaseTest extends DrupalUnitTestBase {
    */
   function testGetName() {
     $name = $this->randomName();
-    $this->assertTrue($this->lineItem->setName($name) instanceof LineItemInterface);
+    $this->assertTrue($this->lineItem->setName($name) instanceof PaymentLineItemInterface);
     $this->assertIdentical($this->lineItem->getName(), $name);
   }
 
@@ -78,7 +78,7 @@ class BaseTest extends DrupalUnitTestBase {
    */
   function testGetPaymentId() {
     $id = 7;
-    $this->assertTrue($this->lineItem->setPaymentId($id) instanceof LineItemInterface);
+    $this->assertTrue($this->lineItem->setPaymentId($id) instanceof PaymentLineItemInterface);
     $this->assertIdentical($this->lineItem->getPaymentId(), $id);
   }
 }

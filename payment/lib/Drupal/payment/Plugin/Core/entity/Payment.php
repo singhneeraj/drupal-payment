@@ -13,7 +13,7 @@ use Drupal\Core\Entity\EntityNG;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
 use Drupal\payment\Plugin\Core\entity\PaymentInterface;
 use Drupal\payment\Plugin\payment\context\PaymentContextInterface;
-use Drupal\payment\Plugin\payment\line_item\LineItemInterface;
+use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
 
 /**
@@ -49,7 +49,7 @@ class Payment extends EntityNG implements PaymentInterface {
    *
    * @var array
    *   Keys are line item machine names. Values are
-   *   Drupal\payment\Plugin\payment\line_item\LineItemInterface instances.
+   *   Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface instances.
    */
   protected $lineItems = array();
 
@@ -119,7 +119,7 @@ class Payment extends EntityNG implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public function setLineItem(LineItemInterface $line_item) {
+  public function setLineItem(PaymentLineItemInterface $line_item) {
     $line_item->setPaymentId($this->id());
     $this->lineItems[$line_item->getName()] = $line_item;
 

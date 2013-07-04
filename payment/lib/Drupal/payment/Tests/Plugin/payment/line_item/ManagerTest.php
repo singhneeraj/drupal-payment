@@ -43,7 +43,7 @@ class ManagerTest extends DrupalUnitTestBase {
     $this->assertEqual(count($definitions), 1);
     foreach ($definitions as $definition) {
       $this->assertIdentical(strpos($definition['id'], 'payment_'), 0);
-      $this->assertTrue(is_subclass_of($definition['class'], '\Drupal\payment\Plugin\payment\line_item\LineItemInterface'));
+      $this->assertTrue(is_subclass_of($definition['class'], '\Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface'));
     }
   }
 

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Annotations\LineItem.
+ * Contains \Drupal\payment\Annotations\PaymentLineItem.
  */
 
 namespace Drupal\payment\Annotations;
@@ -14,7 +14,7 @@ use Drupal\Component\Annotation\Plugin;
  *
  * @Annotation
  */
-class LineItem extends Plugin {
+class PaymentLineItem extends Plugin {
 
   /**
    * The plugin ID.

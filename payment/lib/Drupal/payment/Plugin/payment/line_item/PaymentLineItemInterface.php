@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Contains \Drupal\payment\plugin\payment\line_item\LineItemInterface.
+ * Contains \Drupal\payment\plugin\payment\line_item\PaymentLineItemInterface.
  */
 
 namespace Drupal\payment\plugin\payment\line_item;
@@ -12,14 +12,14 @@ use Drupal\Core\TypedData\ComplexDataInterface;
 /**
  * A payment line item.
  */
-interface LineItemInterface extends PluginInspectionInterface {
+interface PaymentLineItemInterface extends PluginInspectionInterface {
 
   /**
    * Sets the amount.
    *
    * @param float $amount
    *
-   * @return \Drupal\payment\Plugin\payment\line_item\LineItemInterface
+   * @return \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
    */
   public function setAmount($amount);
 
@@ -42,7 +42,7 @@ interface LineItemInterface extends PluginInspectionInterface {
    *
    * @param string $name
    *
-   * @return \Drupal\payment\Plugin\payment\line_item\LineItemInterface
+   * @return \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
    */
   public function setName($name);
 
@@ -65,7 +65,7 @@ interface LineItemInterface extends PluginInspectionInterface {
    *
    * @param integer $id
    *
-   * @return \Drupal\payment\Plugin\payment\line_item\LineItemInterface
+   * @return \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
    */
   public function setPaymentId($id);
 
@@ -81,7 +81,7 @@ interface LineItemInterface extends PluginInspectionInterface {
    *
    * @param int $quantity
    *
-   * @return \Drupal\payment\Plugin\payment\line_item\LineItemInterface
+   * @return \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
    */
   public function setQuantity($quantity);
 
