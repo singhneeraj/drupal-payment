@@ -323,25 +323,28 @@ function payment_permission() {
  * Implements hook_hook_info().
  */
 function payment_hook_info() {
-  $hooks['payment_status_alter'] = array(
-    'group' => 'payment',
-  );
-  $hooks['payment_method_alter'] = array(
+  $hooks['payment_context_alter'] = array(
     'group' => 'payment',
   );
   $hooks['payment_line_item_alter'] = array(
     'group' => 'payment',
   );
-  $hooks['payment_status_change'] = array(
+  $hooks['payment_method_alter'] = array(
     'group' => 'payment',
   );
-  $hooks['payment_pre_execute'] = array(
+  $hooks['payment_operation_access'] = array(
+    'group' => 'payment',
+  );
+  $hooks['payment_pre_operation'] = array(
     'group' => 'payment',
   );
   $hooks['payment_pre_resume'] = array(
     'group' => 'payment',
   );
-  $hooks['payment_validate'] = array(
+  $hooks['payment_status_alter'] = array(
+    'group' => 'payment',
+  );
+  $hooks['payment_status_set'] = array(
     'group' => 'payment',
   );
 

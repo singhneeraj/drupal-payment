@@ -177,8 +177,8 @@ class Payment extends EntityNG implements PaymentInterface {
     }
     if ($notify) {
       $handler = \Drupal::moduleHandler();
-      foreach ($handler->getImplementations('payment_status_change') as $moduleName) {
-        $handler->invoke($moduleName, 'payment_status_change', $this, $previousStatus);
+      foreach ($handler->getImplementations('payment_status_set') as $moduleName) {
+        $handler->invoke($moduleName, 'payment_status_set', $this, $previousStatus);
         // If a hook invocation has added another log item, a new loop with
         // invocations has already been executed and we don't need to continue
         // with this one.
@@ -186,9 +186,7 @@ class Payment extends EntityNG implements PaymentInterface {
           return;
         }
       }
-      if ($handler->moduleExists('rules')) {
-        rules_invoke_event('payment_status_change', $this, $previousStatus);
-      }
+      // @todo Invoke Rules event.
     }
 
     return $this;

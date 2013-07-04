@@ -9,8 +9,8 @@
  * Implements hook_rules_event_info().
  */
 function payment_rules_event_info() {
-  $event['payment_status_change'] = array(
-    'label' => t("After changing a payment's status"),
+  $event['payment_status_set'] = array(
+    'label' => t("After setting a payment's status"),
     'group' => t('Payment'),
     'access callback' => 'payment_rules_access',
     'variables' => array(

@@ -43,12 +43,12 @@ abstract class Base extends PluginBase implements PaymentContextInterface {
   /**
    * {@inheritdoc}
    *
-   * Child classes are required to overrided this method and explicitly resume
+   * Child classes are required to override this method and explicitly resume
    * the context workflow.
    */
   function resume() {
     $handler = \Drupal::moduleHandler();
-    $handler->invokeAll('payment_pre_resume', entity_load('payment', $this->getPaymentId()));
+    $handler->invokeAll('payment_pre_resume_context', entity_load('payment', $this->getPaymentId()));
     // @todo Invoke Rules event.
   }
 }
