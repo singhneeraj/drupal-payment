@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Tests;
 
+use Drupal\payment\Plugin\Core\entity\PaymentMethodInterface;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -27,10 +28,18 @@ class ModuleInstallUninstall extends WebTestBase {
   }
 
   /**
-   * Test uninstall.
+   * Test installation and uninstallation.
    */
-  function testUninstallation() {
+  function testInstallationAndUninstallation() {
     $this->assertTrue(module_exists('payment'));
+
+    // Test default configuration.
+    $names = array('collect_on_delivery', 'no_payment_required');
+    foreach ($names as $name) {
+      $payment_method = entity_load('payment_method', $name);
+      $this->assertTrue($payment_method instanceof PaymentMethodInterface);
+    }
+
     module_disable(array('payment'));
     module_uninstall(array('payment'));
     $this->assertFalse(module_exists('payment'));

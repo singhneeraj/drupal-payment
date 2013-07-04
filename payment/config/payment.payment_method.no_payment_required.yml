@@ -1,0 +1,5 @@
+id: no_payment_required
+label: 'No payment required'
+ownerId: 1
+pluginId: payment_basic
+status: 0

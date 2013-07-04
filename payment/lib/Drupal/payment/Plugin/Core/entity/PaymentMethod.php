@@ -76,9 +76,9 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
     $properties['id'] = $this->id();
     $properties['label'] = $this->label();
     $properties['ownerId'] = $this->getOwnerId();
-    $properties['pluginConfiguration'] = $this->getPlugin()->getConfiguration();
+    $properties['pluginConfiguration'] = $this->getPlugin() ? $this->getPlugin()->getConfiguration() : array();
     unset($properties['pluginConfiguration']['paymentMethod']);
-    $properties['pluginId'] = $this->getPlugin()->getPluginId();
+    $properties['pluginId'] = $this->getPlugin() ? $this->getPlugin()->getPluginId() : NULL;
 
     return $properties;
   }
