@@ -12,9 +12,9 @@ use Drupal\Core\Entity\Annotation\EntityType;
 use Drupal\Core\Entity\EntityNG;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
 use Drupal\payment\Plugin\Core\entity\PaymentInterface;
+use Drupal\payment\Plugin\payment\context\PaymentContextInterface;
 use Drupal\payment\Plugin\payment\line_item\LineItemInterface;
 use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
-use Symfony\Component\Validator\ConstraintViolation;
 
 /**
  * Defines a payment entity.
@@ -36,6 +36,13 @@ use Symfony\Component\Validator\ConstraintViolation;
  * )
  */
 class Payment extends EntityNG implements PaymentInterface {
+
+  /**
+   * The payment context.
+   *
+   * @var \Drupal\payment\Plugin\payment\context\PaymentContextInterface
+   */
+  protected $context;
 
   /**
    * Line items.
@@ -69,8 +76,8 @@ class Payment extends EntityNG implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public function setPaymentContext($context) {
-    $this->set('paymentContext', $context);
+  public function setPaymentContext(PaymentContextInterface $context) {
+    $this->context = $context;
 
     return $this;
   }
@@ -79,7 +86,7 @@ class Payment extends EntityNG implements PaymentInterface {
    * {@inheritdoc}
    */
   public function getPaymentContext() {
-    return $this->get('paymentContext')->value;
+    return $this->context;
   }
 
   /**
@@ -96,22 +103,6 @@ class Payment extends EntityNG implements PaymentInterface {
    */
   public function getCurrencyCode() {
     return $this->get('currencyCode')->value;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setFinishCallback($callback) {
-    $this->finishCallback[0]->setValue($callback);
-
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getFinishCallback() {
-    return $this->finishCallback[0]->value;
   }
 
   /**
@@ -290,19 +281,6 @@ class Payment extends EntityNG implements PaymentInterface {
     }
 
     return $available;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function finish() {
-    $this->save();
-    $handler = \Drupal::moduleHandler();
-    $handler->invokeAll('payment_pre_finish', $this);
-    if ($handler->moduleExists('rules')) {
-      rules_invoke_event('payment_pre_finish', $this);
-    }
-    call_user_func($this->finish_callback, $this);
   }
 
   /**

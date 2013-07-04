@@ -8,6 +8,7 @@
 namespace Drupal\payment\Tests\Plugin\Core\entity;
 
 use Drupal\payment\Plugin\Core\entity\PaymentInterface;
+use Drupal\payment\Plugin\payment\context\PaymentContextInterface;
 use Drupal\payment\Tests\Utility;
 use Drupal\simpletest\WebTestBase;
 
@@ -53,6 +54,7 @@ class PaymentStorageControllerTest extends WebTestBase {
     $payment_loaded = entity_load_unchanged('payment', $payment->id());
     $this->assertEqual(count($payment_loaded->getLineItems()), count($payment->getLineItems()));
     $this->assertEqual(count($payment_loaded->getStatuses()), count($payment->getStatuses()));
+    $this->assertTrue($payment_loaded->getPaymentContext() instanceof PaymentContextInterface);
   }
 
   /**

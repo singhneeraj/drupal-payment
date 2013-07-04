@@ -48,7 +48,7 @@ class PaymentTest extends DrupalUnitTestBase {
    * Tests setPaymentContext() and getPaymentContext().
    */
   function testGetPaymentContext() {
-    $context = $this->randomName();
+    $context = \Drupal::service('plugin.manager.payment.context')->createInstance('payment_unavailable');
     $this->assertTrue($this->payment->setPaymentContext($context) instanceof PaymentInterface);
     $this->assertIdentical($this->payment->getPaymentContext(), $context);
   }
@@ -60,15 +60,6 @@ class PaymentTest extends DrupalUnitTestBase {
     $currency_code = 'ABC';
     $this->assertTrue($this->payment->setCurrencyCode($currency_code) instanceof PaymentInterface);
     $this->assertIdentical($this->payment->getCurrencyCode(), $currency_code);
-  }
-
-  /**
-   * Tests setFinishCallback() and getFinishCallback().
-   */
-  function testGetFinishCallback() {
-    $callback = $this->randomName();
-    $this->assertTrue($this->payment->setFinishCallback($callback) instanceof PaymentInterface);
-    $this->assertIdentical($this->payment->getFinishCallback(), $callback);
   }
 
   /**

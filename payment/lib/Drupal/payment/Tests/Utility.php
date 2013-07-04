@@ -27,15 +27,16 @@ class Utility {
    * @return \Drupal\payment\Plugin\Core\entity\Payment
    */
   static function createPayment($uid, PaymentMethod $payment_method = NULL) {
-    $lineItemManager = \Drupal::service('plugin.manager.payment.line_item');
-    $payment = entity_create('payment', array());
-    $payment->setFinishCallback('payment_test_finish_callback');
-    $payment->setPaymentMethodId('payment_unavailable');
-    $payment->setOwnerId($uid);
-    $payment->setLineItem($lineItemManager->createInstance('payment_basic', array(
-      'name' => 'foo',
-      'amount' => 1.0,
-    )));
+    $line_item_manager = \Drupal::service('plugin.manager.payment.line_item');
+    $context_manager = \Drupal::service('plugin.manager.payment.context');
+    $payment = entity_create('payment', array())
+      ->setPaymentMethodId('payment_unavailable')
+      ->setOwnerId($uid)
+      ->setPaymentContext($context_manager->createInstance('payment_unavailable'))
+      ->setLineItem($line_item_manager->createInstance('payment_basic', array(
+        'name' => 'foo',
+        'amount' => 1.0,
+      )));
 
     return $payment;
   }

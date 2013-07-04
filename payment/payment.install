@@ -66,7 +66,7 @@ function payment_schema() {
   );
   $schema['payment'] = array(
     'fields' => array(
-      'context' => array(
+      'context_plugin_id' => array(
         'type' => 'varchar',
         'length' => 255,
       ),
@@ -74,11 +74,6 @@ function payment_schema() {
         'type' => 'varchar',
         'length' => 3,
         'default' => 'XXX',
-        'not null' => TRUE,
-      ),
-      'finish_callback' => array(
-        'type' => 'varchar',
-        'length' => 255,
         'not null' => TRUE,
       ),
       'id' => array(
@@ -393,6 +388,12 @@ function payment_update_8200(array &$sandbox) {
       ->execute();
   }
 
+  // Rename context to context_plugin_id.
+  db_change_field('payment', 'context', 'context_plugin_id', array(
+    'type' => 'varchar',
+    'length' => 255,
+  ));
+
   // Rename psiid_first to first_payment_status_id.
   db_change_field('payment', 'psiid_first', 'first_payment_status_id', array(
     'description' => "The {payment_status_item}.id of this payment's first status item.",
@@ -429,9 +430,10 @@ function payment_update_8200(array &$sandbox) {
   db_add_index('payment', 'uuid', array('uuid'));
 
   // Drop unnecessary fields.
-  db_drop_field('payment_line_item', 'context_configuration');
-  db_drop_field('payment_line_item', 'description');
-  db_drop_field('payment_line_item', 'description_arguments');
+  db_drop_field('payment', 'context_configuration');
+  db_drop_field('payment', 'description');
+  db_drop_field('payment', 'description_arguments');
+  db_drop_field('payment', 'finish_callback');
 }
 
 /**

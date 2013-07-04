@@ -29,16 +29,16 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
    * {@inheritdoc}
    */
   function attachLoad(&$queried_entities, $load_revision = FALSE) {
+    $manager = \Drupal::service('plugin.manager.payment.context');
     $line_items = $this->loadLineItems(array_keys($queried_entities));
     $statuses = $this->loadPaymentStatuses(array_keys($queried_entities));
     foreach ($queried_entities as $id => $queried_entity) {
       $queried_entities[$id] = (object) array(
-        'context' => $queried_entity->context,
+        'context' => $queried_entity->context_plugin_id ? $manager->createInstance($queried_entity->context_plugin_id) : NULL,
         'currencyCode' => $queried_entity->currency_code,
-        'finishCallback' => $queried_entity->finish_callback,
         'id' => (int) $queried_entity->id,
         'lineItems' => $line_items[$id],
-        'ownerId' => (int) $queried_entity->context,
+        'ownerId' => (int) $queried_entity->owner_id,
         'paymentMethodId' => $queried_entity->payment_method_id,
         'statuses' => $statuses[$id],
         'uuid' => $queried_entity->uuid,
@@ -52,19 +52,11 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
    */
   public function baseFieldDefinitions() {
     $fields = parent::baseFieldDefinitions();
-    $fields['paymentContext'] = array(
-      'label' => t('Context'),
-      'type' => 'string_field',
-    );
     $fields['currencyCode'] = array(
       'label' => t('Currency code'),
       'settings' => array(
         'default_value' => 'XXX',
       ),
-      'type' => 'string_field',
-    );
-    $fields['finishCallback'] = array(
-      'label' => t('Finish callback'),
       'type' => 'string_field',
     );
     $fields['id'] = array(
@@ -98,9 +90,8 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
    */
   protected function mapToStorageRecord(EntityInterface $entity) {
     $record = new \stdClass();
-    $record->context = $entity->getPaymentContext();
+    $record->context_plugin_id = $entity->getPaymentContext() ? $entity->getPaymentContext()->getPluginId() : NULL;
     $record->currency_code = $entity->getCurrencyCode();
-    $record->finish_callback = $entity->getFinishCallback();
     $record->id = $entity->id();
     $record->payment_method_id = $entity->getPaymentMethodId();
     $record->first_payment_status_id = current($entity->getStatuses())->getId();

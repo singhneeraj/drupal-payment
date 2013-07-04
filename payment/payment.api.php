@@ -77,15 +77,13 @@ function hook_payment_pre_execute(PaymentInterface $payment) {
 }
 
 /**
- * Executes right before payment execution is finished.
+ * Executes right before the payment context is resumed.
  *
- * @see Payment::finish()
+ * @see \Drupal\payment\Plugin\payment\method\Base::resume()
  *
  * @param \Drupal\payment\Plugin\Core\Entity\PaymentInterface $payment
- *
- * @return NULL
  */
-function hook_payment_pre_finish(PaymentInterface $payment) {
+function hook_payment_pre_resume(PaymentInterface $payment) {
   if ($payment->getStatus()->isOrHasAncestor('payment_success')) {
     drupal_set_message(t('Your payment was successfully completed.'));
   }

@@ -35,7 +35,7 @@ function payment_rules_event_info() {
       ),
     ),
   );
-  $event['payment_pre_finish'] = array(
+  $event['payment_pre_resume'] = array(
     'label' => t("When resuming the user's work after finishing payment execution"),
     'group' => t('Payment'),
     'access callback' => 'payment_rules_access',

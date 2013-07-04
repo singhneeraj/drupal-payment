@@ -10,6 +10,7 @@ namespace Drupal\payment\Plugin\Core\entity;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Executable\ExecutableInterface;
 use Drupal\payment\Plugin\Core\entity\PaymentMethodInterface;
+use Drupal\payment\Plugin\payment\context\PaymentContextInterface;
 use Drupal\payment\Plugin\payment\line_item\LineItemInterface;
 use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
 
@@ -22,11 +23,11 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
    * Sets the machine name of the context that created this Payment, such as a
    * payment form, or a module.
    *
-   * @param string $context
+   * @param \Drupal\payment\Plugin\payment\context\PaymentContextInterface $context
    *
    * @return \Drupal\payment\Plugin\Core\entity\PaymentInterface
    */
-  public function setPaymentContext($context);
+  public function setPaymentContext(PaymentContextInterface $context);
 
   /**
    * Gets the machine name of the context that created this Payment, such as a
@@ -51,34 +52,6 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
    * @return string
    */
   public function getCurrencyCode();
-
-  /**
-   * Sets the name of the function to call when payment execution is completed,
-   * regardless of the payment status. It receives one argument:
-   * - $payment Payment
-   *   The Payment object.
-   * The callback does not need to return anything and is free to redirect the
-   * user or display something.
-   * Use Payment::context_data to pass on arbitrary data to the finish callback.
-   *
-   * @param string $callback
-   *
-   * @return \Drupal\payment\Plugin\Core\entity\PaymentInterface
-   */
-  public function setFinishCallback($callback);
-
-  /**
-   * Gets the name of the function to call when payment execution is completed,
-   * regardless of the payment status. It receives one argument:
-   * - $payment Payment
-   *   The Payment object.
-   * The callback does not need to return anything and is free to redirect the
-   * user or display something.
-   * Use Payment::context_data to pass on arbitrary data to the finish callback.
-   *
-   * @return string|null
-   */
-  public function getFinishCallback();
 
   /**
    * Sets line items.
@@ -229,9 +202,4 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
    *   objects.
    */
   public function getAvailablePaymentMethods(array $paymentMethods = array());
-
-  /**
-   * Finishes the payment and resumes context workflow.
-   */
-  public function finish();
 }

@@ -68,12 +68,6 @@ class PaymentValidationMissingCurrencyException extends PaymentValidationExcepti
 class PaymentValidationUnsupportedCurrencyException extends PaymentValidationException {}
 
 /**
- * Exception thrown if a payment's finish callback is not set or the function
- * does not exist.
- */
-class PaymentValidationMissingFinishCallback extends PaymentValidationException {}
-
-/**
  * Exception thrown if a payment's description is missing.
  */
 class PaymentValidationDescriptionMissing extends PaymentValidationException {}

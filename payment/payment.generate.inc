@@ -46,7 +46,6 @@ class PaymentGenerate {
     $payment = new Payment(array(
       'currency_code' => 'XXX',
       'description' => 'This is the payment description',
-      'finish_callback' => 'payment_generate_finish_callback',
       'method' => $payment_method,
       'uid' => $uid,
     ));
@@ -66,10 +65,3 @@ class PaymentGenerate {
     return $payment;
   }
 }
-
-/**
- * Implements Payment::finish_callback for generated payments.
- *
- * @see payment_generate_payment()
- */
-function payment_generate_finish_callback() {}
