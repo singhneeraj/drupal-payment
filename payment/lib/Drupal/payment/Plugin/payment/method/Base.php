@@ -9,6 +9,7 @@ namespace Drupal\payment\Plugin\payment\method;
 use Doctrine\Tests\Common\Annotations\False;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Extension\ModuleHandler;
+use Drupal\Core\Utility\Token;
 use Drupal\payment\Plugin\payment\method\PaymentMethodInterface;
 use Drupal\payment\Plugin\Core\entity\PaymentInterface;
 
@@ -23,7 +24,7 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
   public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
     $configuration += array(
       'messageText' => '',
-      'messageTextFormat' => '',
+      'messageTextFormat' => 'plain_text',
       'paymentMethod' => NULL,
     );
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -92,10 +93,16 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
    * {@inheritdoc}
    */
   public function paymentFormElements(array $form, array &$form_state) {
+    $message = check_markup($this->getMessageText(), $this->getMessageTextFormat());
+    $message = \Drupal::service('token')->replace($message, array(
+      'payment' => $form_state['payment'],
+    ), array(
+      'clear' => TRUE,
+    ));
     $elements = array();
     $elements['message'] = array(
       '#type' => 'markup',
-      '#markup' => check_markup($this->getMessageText(), $this->getMessageTextFormat()),
+      '#markup' => $message,
     );
 
     return $elements;
@@ -105,6 +112,7 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
    * {@inheritdoc}
    */
   public function paymentMethodFormElements(array $form, array &$form_state) {
+    // @todo Add a token overview, possibly when Token.module has been ported.
     $elements['message'] = array(
       '#element_validate' => array($this, 'PaymentMethodFormElementsValidateMessage'),
       '#type' => 'text_format',

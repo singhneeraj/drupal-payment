@@ -8,12 +8,12 @@
 namespace Drupal\payment\Tests\Plugin\payment\method;
 
 use Drupal\payment\Plugin\payment\method\PaymentMethodInterface;
-use Drupal\simpletest\DrupalUnitTestBase;
+use Drupal\simpletest\WebtestBase;
 
 /**
  * Tests \Drupal\payment\Plugin\payment\status\Base.
  */
-class BasicTest extends DrupalUnitTestBase {
+class BasicTest extends WebtestBase {
 
   public static $modules = array('payment');
 
@@ -78,6 +78,20 @@ class BasicTest extends DrupalUnitTestBase {
     $status = $this->randomName();
     $this->assertTrue($this->method->setStatus($status) instanceof PaymentMethodInterface);
     $this->assertIdentical($this->method->getStatus(), $status);
+  }
+
+  /**
+   * Tests paymentFormElements().
+   */
+  function testPaymentFormElements() {
+    $this->method->setMessageText('Hello [site:name]!');
+    $form = array();
+    $form_state = array(
+      'payment' => entity_create('payment', array()),
+    );
+    $elements = $this->method->paymentFormElements($form, $form_state);
+    $this->assertIdentical($elements['message']['#markup'], "<p>Hello Drupal!</p>\n");
+    $this->assertTrue(is_array($this->method->paymentFormElements($form, $form_state)));
   }
 
   /**
