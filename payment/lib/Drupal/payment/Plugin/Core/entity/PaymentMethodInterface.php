@@ -21,7 +21,7 @@ interface PaymentMethodInterface extends ConfigEntityInterface, PaymentProcessin
    *
    * @param \Drupal\payment\Plugin\payment\method\PaymentMethodInterface
    *
-   * @return \Drupal\payment\Plugin\Core\entity\PaymentInterface
+   * @return \Drupal\payment\Plugin\Core\entity\PaymentMethodInterface
    */
   public function setPlugin(PluginPaymentMethodInterface $plugin);
 
@@ -39,9 +39,20 @@ interface PaymentMethodInterface extends ConfigEntityInterface, PaymentProcessin
    *
    * @param string $id
    *
-   * @return \Drupal\payment\Plugin\Core\entity\PaymentInterface
+   * @return \Drupal\payment\Plugin\Core\entity\PaymentMethodInterface
    */
   public function setId($id);
+
+  /**
+   * Sets the payment method UUID.
+   *
+   * @see \Drupal\Core\Entity\EntityInterface::uuid()
+   *
+   * @param string $uuid
+   *
+   * @return \Drupal\payment\Plugin\Core\entity\PaymentMethodInterface
+   */
+  public function setUuid($uuid);
 
   /**
    * Sets the human-readable label.
@@ -50,7 +61,7 @@ interface PaymentMethodInterface extends ConfigEntityInterface, PaymentProcessin
    *
    * @param string $label
    *
-   * @return \Drupal\payment\Plugin\Core\entity\PaymentInterface
+   * @return \Drupal\payment\Plugin\Core\entity\PaymentMethodInterface
    */
   public function setLabel($label);
 
@@ -59,7 +70,7 @@ interface PaymentMethodInterface extends ConfigEntityInterface, PaymentProcessin
    *
    * @param int $id
    *
-   * @return \Drupal\payment\Plugin\Core\entity\PaymentInterface
+   * @return \Drupal\payment\Plugin\Core\entity\PaymentMethodInterface
    */
   public function setOwnerId($id);
 

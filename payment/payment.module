@@ -18,8 +18,7 @@ define('PAYMENT_LINE_ITEM_TOKEN_PREFIX', 'line_item-');
  */
 function payment_init() {
   // Add administration CSS.
-  if (preg_match('#^admin/config/services/payment/method#', $_GET['q'])
-    || preg_match('#^admin/content/payment#', $_GET['q'])
+  if (preg_match('#^admin/content/payment#', $_GET['q'])
     || preg_match('#^user/\d+?/payment#', $_GET['q'])) {
     drupal_add_css(drupal_get_path('module', 'payment') . '/css/payment.css');
   }
@@ -106,90 +105,13 @@ function payment_menu() {
     'file' => 'payment.ui.inc',
   );
 
-  // Payment method administration.
-  $items['admin/config/services/payment/method/add'] = array(
-    'title' => 'Add payment method',
-    'page callback' => 'payment_page_payment_method_add_select_controller',
-    'access callback' => 'payment_page_payment_method_add_select_controller_access',
-    'file' => 'payment.ui.inc',
-    'type' => MENU_NORMAL_ITEM | MENU_LOCAL_ACTION,
-    'weight' => 1,
+  // Payment methods.
+  $items['admin/config/services/payment/method'] = array(
+    'route_name' => 'payment.payment_method.list',
+    'title' => 'Payment methods',
   );
-  $items['admin/config/services/payment/method/add/%payment_method_controller'] = array(
-    'title' => 'Add payment method',
-    'title callback' => 'payment_method_form_add_title',
-    'title arguments' => array(6),
-    'page callback' => 'payment_method_form_add',
-    'page arguments' => array(6),
-    'access callback' => 'payment_method_form_add_access',
-    'access arguments' => array(6),
-    'file' => 'payment.ui.inc',
-    'type' => MENU_CALLBACK,
-  );
-  $items['admin/config/services/payment/method/%entity_object'] = array(
-    'load arguments' => array('payment_method'),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('payment_form_payment_method', 5),
-    'access callback' => 'payment_method_access',
-    'access arguments' => array('update', 5),
-    'title' => 'Payment method',
-    'title callback' => 'payment_method_title',
-    'title arguments' => array(5),
-    'file' => 'payment.ui.inc',
-  );
-  $items['admin/config/services/payment/method/%entity_object/edit'] = array(
-    'load arguments' => array('payment_method'),
-    'title' => 'Edit',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-    'context' => MENU_CONTEXT_INLINE,
-  );
-  $items['admin/config/services/payment/method/%entity_object/enable'] = array(
-    'load arguments' => array('payment_method'),
-    'page callback' => 'payment_page_method_enable_disable',
-    'page arguments' => array('enable', 5),
-    'access callback' => 'payment_method_access_token',
-    'access arguments' => array(7, 'enable', 5),
-    'title' => 'Enable',
-    'file' => 'payment.ui.inc',
-    'type' => MENU_LOCAL_TASK,
-    'context' => MENU_CONTEXT_INLINE,
-    'weight' => 1,
-  );
-  $items['admin/config/services/payment/method/%entity_object/disable'] = array(
-    'load arguments' => array('payment_method'),
-    'page callback' => 'payment_page_method_enable_disable',
-    'page arguments' => array('disable', 5),
-    'access callback' => 'payment_method_access_token',
-    'access arguments' => array(7, 'disable', 5),
-    'title' => 'Disable',
-    'file' => 'payment.ui.inc',
-    'type' => MENU_LOCAL_TASK,
-    'context' => MENU_CONTEXT_INLINE,
-    'weight' => 1,
-  );
-  $items['admin/config/services/payment/method/%entity_object/clone'] = array(
-    'load arguments' => array('payment_method'),
-    'page callback' => 'payment_page_method_clone',
-    'page arguments' => array(5),
-    'access callback' => 'payment_method_access',
-    'access arguments' => array('clone', 5),
-    'title' => 'Clone',
-    'file' => 'payment.ui.inc',
-    'type' => MENU_LOCAL_TASK,
-    'context' => MENU_CONTEXT_INLINE,
-    'weight' => 2,
-  );
-  $items['admin/config/services/payment/method/%entity_object/delete'] = array(
-    'load arguments' => array('payment_method'),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('payment_form_payment_method_delete', 5),
-    'access callback' => 'payment_method_access',
-    'access arguments' => array('delete', 5),
-    'title' => 'Delete',
-    'file' => 'payment.ui.inc',
-    'type' => MENU_LOCAL_TASK,
-    'context' => MENU_CONTEXT_INLINE,
-    'weight' => 3,
+  $items['admin/config/services/payment/method/%'] = array(
+    'route_name' => 'payment.payment_method.edit',
   );
 
   // Payment status overview.
@@ -201,31 +123,20 @@ function payment_menu() {
     'weight' => 1,
   );
 
-  // Placeholder pages in case certain dependencies have not been met.
-  $base = array(
-    'page callback' => 'payment_page_required_modules',
-    'page arguments' => array(array(
-      'views' => 'Views',
-    )),
-    'file' => 'payment.ui.inc',
-    'menu_name' => 'management',
+  return $items;
+}
+
+/**
+ * Implements hook_local_actions().
+ */
+function payment_local_actions() {
+  $items = array();
+  $items[] = array(
+    'appears_on' => array('payment.payment_method.list'),
+    'route_name' => 'payment.payment_method.select',
+    'title' => t('Add payment method'),
+
   );
-  if (!module_exists('views')) {
-    $items['admin/content/payment'] = array(
-      'title' => 'Payments',
-      'access callback' => 'payment_access',
-      'access arguments' => array('view'),
-    ) + $base;
-    $items['admin/config/services/payment/method'] = array(
-      'title' => 'Payment methods',
-      'access callback' => 'payment_method_access',
-      'access arguments' => array('view'),
-    ) + $base;
-    $items['user/%user/payment'] = array(
-      'title' => 'Payments',
-      'access arguments' => array('payment.payment.view.own'),
-    ) + $base;
-  }
 
   return $items;
 }

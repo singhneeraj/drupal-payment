@@ -43,7 +43,8 @@ class PaymentMethodStorageControllerTest extends WebTestBase {
    * Tests save();
    */
   function testSave() {
-    $payment_method = Utility::createPaymentmethod(1);
+    $manager = \Drupal::service('plugin.manager.payment.payment_method');
+    $payment_method = Utility::createPaymentmethod(1, $manager->createInstance('payment_basic'));
     $payment_method->save();
     $payment_method_loaded = entity_load_unchanged('payment_method', $payment_method->id());
     $this->assertTrue($payment_method_loaded instanceof PaymentMethodInterface);

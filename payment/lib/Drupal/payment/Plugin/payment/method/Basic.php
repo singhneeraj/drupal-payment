@@ -6,6 +6,7 @@
 
 namespace Drupal\payment\Plugin\payment\method;
 
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Annotation\Translation;
 use Drupal\payment\Annotations\PaymentMethod;
 use Drupal\payment\Plugin\Core\entity\PaymentInterface;
@@ -75,7 +76,7 @@ class Basic extends Base {
   public function paymentMethodFormElements(array $form, array &$form_state) {
     $elements = parent::paymentMethodFormElements($form, $form_state);
     $elements['status'] = array(
-      '#element_validate' => array($this, 'paymentMethodFormElementsValidateStatus'),
+      '#element_validate' => array(array($this, 'paymentMethodFormElementsValidateStatus')),
       '#type' => 'select',
       '#title' => t('Final payment status'),
       '#description' => t('The status to give a payment after being processed by this payment method.'),
@@ -90,8 +91,8 @@ class Basic extends Base {
    * Implements form validate callback for self::paymentMethodFormElements().
    */
   public function paymentMethodFormElementsValidateStatus(array $element, array &$form_state, array $form) {
-    $values = drupal_array_get_nested_value($form_state['values'], $element['#parents']);
-    $this->setStatus($values['status']);
+    $status = NestedArray::getValue($form_state['values'], $element['#parents']);
+    $this->setStatus($status);
   }
 
   /**

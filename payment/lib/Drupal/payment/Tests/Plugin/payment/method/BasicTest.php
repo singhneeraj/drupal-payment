@@ -33,9 +33,8 @@ class BasicTest extends WebtestBase {
   function setUp() {
     parent::setUp();
     $this->methodEntity= entity_create('payment_method', array());
-    $this->method = \Drupal::service('plugin.manager.payment.payment_method')->createInstance('payment_basic', array(
-      'paymentMethod' => $this->methodEntity,
-    ));
+    $this->method = \Drupal::service('plugin.manager.payment.payment_method')->createInstance('payment_basic');
+    $this->method->setPaymentMethod($this->methodEntity);
   }
 
   /**
@@ -48,9 +47,17 @@ class BasicTest extends WebtestBase {
     $this->assertEqual($this->method->getConfiguration(), array(
       'messageText' => 'foo',
       'messageTextFormat' => 'bar',
-      'paymentMethod' => $this->methodEntity,
       'status' => 'baz',
     ));
+  }
+
+  /**
+   * Tests setPaymentMethod() and getPaymentMethod().
+   */
+  function testGetPaymentMethod() {
+    $payment_method = entity_create('payment_method', array());
+    $this->assertTrue($this->method->setPaymentMethod($payment_method) instanceof PaymentMethodInterface);
+    $this->assertIdentical($this->method->getPaymentMethod(), $payment_method);
   }
 
   /**

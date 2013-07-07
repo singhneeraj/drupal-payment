@@ -10,6 +10,7 @@ use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Annotation\Translation;
 use Drupal\payment\Annotations\PaymentMethod;
 use Drupal\payment\Plugin\Core\entity\PaymentInterface;
+use Drupal\payment\Plugin\Core\entity\PaymentMethodInterface as EntityPaymentMethodInterface;
 use Drupal\payment\Plugin\payment\method\PaymentMethodInterface;
 
 /**
@@ -28,20 +29,26 @@ use Drupal\payment\Plugin\payment\method\PaymentMethodInterface;
 class Unavailable extends PluginBase implements PaymentMethodInterface {
 
   /**
+   * The payment method entity this plugin belongs to.
+   *
+   * @var \Drupal\payment\Plugin\Core\entity\PaymentMethodInterface
+   */
+  protected $paymentMethod;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
-    $configuration += array(
-      'paymentMethod' => NULL,
-    );
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  public function setPaymentMethod(EntityPaymentMethodInterface $payment_method) {
+    $this->paymentMethod = $payment_method;
+
+    return $this;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getPaymentMethod() {
-    return $this->configuration['paymentMethod'];
+    return $this->paymentMethod;
   }
 
   /**

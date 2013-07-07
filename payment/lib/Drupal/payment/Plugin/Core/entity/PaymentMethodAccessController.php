@@ -29,7 +29,7 @@ class PaymentMethodAccessController extends EntityAccessController {
     elseif ($operation == 'disable') {
       return $entity->status() && $entity->access('update', $account);
     }
-    elseif ($operation == 'clone') {
+    elseif ($operation == 'duplicate') {
       return $entity->access('create', $account) && $entity->access('view', $account);
     }
     else {

@@ -73,6 +73,15 @@ class PaymentMethodTest extends DrupalUnitTestBase {
   }
 
   /**
+   * Tests setUuid() and uuid().
+   */
+  function testUuid() {
+    $uuid = 'foo';
+    $this->assertTrue($this->paymentMethod->setUuid($uuid) instanceof PaymentMethodInterface);
+    $this->assertIdentical($this->paymentMethod->uuid(), $uuid);
+  }
+
+  /**
    * Tests currencies().
    */
   function testCurrencies() {

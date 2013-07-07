@@ -6,17 +6,23 @@
 
 namespace Drupal\payment\Plugin\payment\method;
 
-use Doctrine\Tests\Common\Annotations\False;
 use Drupal\Component\Plugin\PluginBase;
-use Drupal\Core\Extension\ModuleHandler;
-use Drupal\Core\Utility\Token;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\payment\Plugin\payment\method\PaymentMethodInterface;
 use Drupal\payment\Plugin\Core\entity\PaymentInterface;
+use Drupal\payment\Plugin\Core\entity\PaymentMethodInterface as EntityPaymentMethodInterface;
 
 /**
- * A base payment method controller.
+ * A base payment method plugin.
  */
 abstract class Base extends PluginBase implements PaymentMethodInterface {
+
+  /**
+   * The payment method entity this plugin belongs to.
+   *
+   * @var \Drupal\payment\Plugin\Core\entity\PaymentMethodInterface
+   */
+  protected $paymentMethod;
 
   /**
    * {@inheritdoc}
@@ -25,7 +31,6 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
     $configuration += array(
       'messageText' => '',
       'messageTextFormat' => 'plain_text',
-      'paymentMethod' => NULL,
     );
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -40,8 +45,17 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
+  public function setPaymentMethod(EntityPaymentMethodInterface $payment_method) {
+    $this->paymentMethod = $payment_method;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getPaymentMethod() {
-    return $this->configuration['paymentMethod'];
+    return $this->paymentMethod;
   }
 
   /**
@@ -49,7 +63,7 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
    *
    * @param string $text
    *
-   * @return \Drupal\payment\Plugin\payment\method\PaymentInterface
+   * @return \Drupal\payment\Plugin\payment\method\PaymentMethodInterface
    */
   public function setMessageText($text) {
     $this->configuration['messageText'] = $text;
@@ -72,7 +86,7 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
    * @param string $format
    *   The machine name of the text format the payer message is in.
    *
-   * @return \Drupal\payment\Plugin\payment\method\PaymentInterface
+   * @return \Drupal\payment\Plugin\payment\method\PaymentMethodInterface
    */
   public function setMessageTextFormat($format) {
     $this->configuration['messageTextFormat'] = $format;
@@ -113,8 +127,9 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
    */
   public function paymentMethodFormElements(array $form, array &$form_state) {
     // @todo Add a token overview, possibly when Token.module has been ported.
+    $elements['#element_validate'] = array(array($this, 'paymentMethodFormElementsValidate'));
+    $elements['#tree'] = TRUE;
     $elements['message'] = array(
-      '#element_validate' => array($this, 'PaymentMethodFormElementsValidateMessage'),
       '#type' => 'text_format',
       '#title' => t('Payment form message'),
       '#default_value' => $this->getMessageText(),
@@ -127,8 +142,8 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
   /**
    * Implements form validate callback for self::paymentMethodFormElements().
    */
-  public function PaymentMethodFormElementsValidateMessage(array $element, array &$form_state, array $form) {
-    $values = drupal_array_get_nested_value($form_state['values'], $element['#parents']);
+  public function paymentMethodFormElementsValidate(array $element, array &$form_state, array $form) {
+    $values = NestedArray::getValue($form_state['values'], $element['#parents']);
     $this->setMessageText($values['message']['value']);
     $this->setMessageTextFormat($values['message']['format']);
   }

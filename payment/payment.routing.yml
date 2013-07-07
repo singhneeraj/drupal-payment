@@ -1,0 +1,56 @@
+payment.payment_method.list:
+  pattern: '/admin/config/services/payment/method'
+  defaults:
+    _content: '\Drupal\Core\Entity\Controller\EntityListController::listing'
+    entity_type: 'payment_method'
+  requirements:
+    _permission: 'payment.payment_method.view.any'
+
+payment.payment_method.select:
+  pattern: '/admin/config/services/payment/method-add'
+  defaults:
+    _controller: '\Drupal\payment\PaymentMethodUI::select'
+  requirements:
+    _payment_method_access: 'create'
+
+payment.payment_method.add:
+  pattern: '/admin/config/services/payment/method-add/{payment_method_plugin_id}'
+  defaults:
+    _controller: '\Drupal\payment\PaymentMethodUI::add'
+  requirements:
+    _payment_method_access: 'create'
+
+payment.payment_method.edit:
+  pattern: '/admin/config/services/payment/method/{payment_method}'
+  defaults:
+    _entity_form: 'payment_method.default'
+  requirements:
+    _entity_access: 'payment_method.update'
+
+payment.payment_method.enable:
+  pattern: '/admin/config/services/payment/method/{payment_method}/enable'
+  defaults:
+    _controller: '\Drupal\payment\PaymentMethodUI::enable'
+  requirements:
+    _entity_access: 'payment_method.enable'
+
+payment.payment_method.disable:
+  pattern: '/admin/config/services/payment/method/{payment_method}/disable'
+  defaults:
+    _controller: '\Drupal\payment\PaymentMethodUI::disable'
+  requirements:
+    _entity_access: 'payment_method.disable'
+
+payment.payment_method.delete:
+  pattern: '/admin/config/services/payment/method/{payment_method}/delete'
+  defaults:
+    _entity_form: 'payment_method.delete'
+  requirements:
+    _entity_access: 'payment_method.delete'
+
+payment.payment_method.duplicate:
+  pattern: '/admin/config/services/payment/method/{payment_method}/duplicate'
+  defaults:
+    _controller: '\Drupal\payment\PaymentMethodUI::duplicate'
+  requirements:
+    _entity_access: 'payment_method.duplicate'
