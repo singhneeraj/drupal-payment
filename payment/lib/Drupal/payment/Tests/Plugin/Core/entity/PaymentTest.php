@@ -9,7 +9,7 @@ namespace Drupal\payment\Tests\Plugin\Core\entity;
 
 use Drupal\payment\Plugin\Core\entity\PaymentInterface;
 use Drupal\payment\Plugin\Core\entity\PaymentMethodInterface;
-use Drupal\payment\Tests\Utility;
+use Drupal\payment\Generate;
 use Drupal\simpletest\DrupalUnitTestBase;
 
 /**
@@ -136,7 +136,7 @@ class PaymentTest extends DrupalUnitTestBase {
    * Tests getPaymentMethod().
    */
   function testGetPaymentMethod() {
-    $payment_method = Utility::createPaymentMethod(1);
+    $payment_method = Generate::createPaymentMethod(1);
     $payment_method->save();
     $this->payment->setPaymentMethodId($payment_method->id());
     $this->assertTrue($this->payment->getPaymentMethod() instanceof PaymentMethodInterface);

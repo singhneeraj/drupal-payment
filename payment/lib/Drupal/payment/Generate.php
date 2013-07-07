@@ -2,19 +2,18 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Utility.
+ * Contains class \Drupal\payment\Generate.
  */
 
-namespace Drupal\payment\Tests;
+namespace Drupal\payment;
 
 use Drupal\payment\Plugin\payment\method\PaymentMethodInterface;
-use Drupal\payment\Plugin\payment\method\Unavailable;
 use Drupal\Component\Utility\Random;
 
 /**
  * Provides utility tools to support tests.
  */
-class Utility {
+class Generate {
 
   /**
    * Creates a payment.
@@ -36,6 +35,11 @@ class Utility {
       ->setLineItem($line_item_manager->createInstance('payment_basic', array(
         'name' => 'foo',
         'amount' => 1.0,
+      )))
+      ->setLineItem($line_item_manager->createInstance('payment_basic', array(
+        'name' => 'bar',
+        'amount' => 2.0,
+        'quantity' => 3,
       )));
 
     return $payment;

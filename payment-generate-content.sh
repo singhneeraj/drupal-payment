@@ -44,14 +44,14 @@ unset($form_state);
 drupal_cron_run();
 
 // Create two payment methods.
-$payment_method_unavailable = PaymentGenerate::paymentMethod();
+$payment_method_unavailable = Generate::paymentMethod();
 $payment_method_unavailable->enabled = FALSE;
 entity_save('payment_method', $payment_method_unavailable);
-$payment_method_basic = PaymentGenerate::paymentMethod('PaymentMethodBasicController');
+$payment_method_basic = Generate::paymentMethod('PaymentMethodBasicController');
 entity_save('payment_method', $payment_method_basic);
 
 // Create two payments
-$payment_unavailable = PaymentGenerate::payment($payment_method_unavailable);
+$payment_unavailable = Generate::payment($payment_method_unavailable);
 entity_save('payment', $payment_unavailable);
-$payment_basic = PaymentGenerate::payment($payment_method_basic);
+$payment_basic = Generate::payment($payment_method_basic);
 entity_save('payment', $payment_basic);

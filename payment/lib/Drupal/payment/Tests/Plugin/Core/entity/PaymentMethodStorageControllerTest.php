@@ -9,7 +9,7 @@ namespace Drupal\payment\Tests\Plugin\Core\entity;
 
 use Drupal\payment\Plugin\payment\method\PaymentMethodInterface as PluginPaymentMethodInterface;
 use Drupal\payment\Plugin\Core\entity\PaymentMethodInterface;
-use Drupal\payment\Tests\Utility;
+use Drupal\payment\Generate;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -44,7 +44,7 @@ class PaymentMethodStorageControllerTest extends WebTestBase {
    */
   function testSave() {
     $manager = \Drupal::service('plugin.manager.payment.payment_method');
-    $payment_method = Utility::createPaymentmethod(1, $manager->createInstance('payment_basic'));
+    $payment_method = Generate::createPaymentmethod(1, $manager->createInstance('payment_basic'));
     $payment_method->save();
     $payment_method_loaded = entity_load_unchanged('payment_method', $payment_method->id());
     $this->assertTrue($payment_method_loaded instanceof PaymentMethodInterface);
@@ -55,7 +55,7 @@ class PaymentMethodStorageControllerTest extends WebTestBase {
    * Tests delete();
    */
   function testDelete() {
-    $payment_method = Utility::createPaymentMethod(1);
+    $payment_method = Generate::createPaymentMethod(1);
     $payment_method->save();
     $this->assertTrue($payment_method->id());
     $payment_method->delete();

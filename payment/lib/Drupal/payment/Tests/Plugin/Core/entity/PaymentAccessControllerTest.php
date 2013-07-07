@@ -8,7 +8,7 @@
 namespace Drupal\payment\Tests\Plugin\Core\entity;
 
 use Drupal\payment\Tests\AccessibleInterfaceWebTestBase;
-use Drupal\payment\Tests\Utility;
+use Drupal\payment\Generate;
 
 /**
  * Tests \Drupal\payment\Plugin\Core\entity\PaymentAccessController.
@@ -31,8 +31,8 @@ class PaymentAccessControllerTest extends AccessibleInterfaceWebTestBase {
    * Tests access control.
    */
   function testAccessControl() {
-    $payment_1 = Utility::createPayment(1);
-    $payment_2 = Utility::createPayment(2);
+    $payment_1 = Generate::createPayment(1);
+    $payment_2 = Generate::createPayment(2);
     $authenticated = $this->drupalCreateUser();
 
     // Create a new payment.

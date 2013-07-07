@@ -9,7 +9,7 @@ namespace Drupal\payment\Tests\Plugin\Core\entity;
 
 use Drupal\payment\Plugin\Core\entity\PaymentInterface;
 use Drupal\payment\Plugin\payment\context\PaymentContextInterface;
-use Drupal\payment\Tests\Utility;
+use Drupal\payment\Generate;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -43,7 +43,7 @@ class PaymentStorageControllerTest extends WebTestBase {
    * Tests save();
    */
   function testSave() {
-    $payment = Utility::createPayment(1);
+    $payment = Generate::createPayment(1);
     $this->assertFalse($payment->id());
     $payment->save();
     // @todo The ID should be an integer, but for some reason the entity field
@@ -61,7 +61,7 @@ class PaymentStorageControllerTest extends WebTestBase {
    * Tests delete();
    */
   function testDelete() {
-    $payment = Utility::createPayment(1);
+    $payment = Generate::createPayment(1);
     $payment->save();
     $this->assertTrue($payment->id());
     $payment->delete();

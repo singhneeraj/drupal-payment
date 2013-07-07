@@ -11283,7 +11283,7 @@ db_insert('registry')->fields(array(
   'weight' => '0',
 ))
 ->values(array(
-  'name' => 'PaymentGenerate',
+  'name' => 'Generate',
   'type' => 'class',
   'filename' => 'sites/all/modules/payment/payment/payment.generate.inc',
   'module' => 'payment',
