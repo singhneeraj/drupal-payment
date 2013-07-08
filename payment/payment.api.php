@@ -94,11 +94,13 @@ function hook_payment_pre_resume_context(PaymentInterface $payment) {
  *   method that $payment should be tested against, which is $payment_method.
  * @param \Drupal\payment\Plugin\Core\entity\PaymentMethodInterface $payment_method
  * @param string $operation
+ * @param string $payment_method_brand
+ *   See \Drupal\payment\PaymentProcessingInterface for the available brands.
  *
  * @return boolean
  *   Whether the operation can be performed on the payment.
  */
-function hook_payment_operation_access(PaymentInterface $payment, PaymentMethodInterface $payment_method, $operation) {}
+function hook_payment_operation_access(PaymentInterface $payment, PaymentMethodInterface $payment_method, $operation, $payment_method_brand) {}
 
 /**
  * Executes before a payment method operation is performed on a payment.
@@ -107,5 +109,7 @@ function hook_payment_operation_access(PaymentInterface $payment, PaymentMethodI
  *
  * @param \Drupal\payment\Plugin\Core\Entity\PaymentInterface $payment
  * @param string $operation
+ * @param string $payment_method_brand
+ *   See \Drupal\payment\PaymentProcessingInterface for the available brands.
  */
-function hook_payment_pre_operation(PaymentInterface $payment, $operation) {}
+function hook_payment_pre_operation(PaymentInterface $payment, $operation, $payment_method_brand) {}

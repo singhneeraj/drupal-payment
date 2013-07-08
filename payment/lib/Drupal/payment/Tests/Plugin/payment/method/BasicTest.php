@@ -32,7 +32,7 @@ class BasicTest extends WebtestBase {
    */
   function setUp() {
     parent::setUp();
-    $this->methodEntity= entity_create('payment_method', array());
+    $this->methodEntity = entity_create('payment_method', array());
     $this->method = \Drupal::service('plugin.manager.payment.payment_method')->createInstance('payment_basic');
     $this->method->setPaymentMethod($this->methodEntity);
   }
@@ -41,10 +41,12 @@ class BasicTest extends WebtestBase {
    * Tests setAmount() and getAmount().
    */
   function testGetConfiguration() {
-    $this->method->setMessageText('foo');
-    $this->method->setMessageTextFormat('bar');
-    $this->method->setStatus('baz');
+    $this->method->setMessageText('foo')
+      ->setMessageTextFormat('bar')
+      ->setStatus('baz')
+      ->setBrandOption('Foo');
     $this->assertEqual($this->method->getConfiguration(), array(
+      'brandOption' => 'Foo',
       'messageText' => 'foo',
       'messageTextFormat' => 'bar',
       'status' => 'baz',
@@ -88,6 +90,20 @@ class BasicTest extends WebtestBase {
   }
 
   /**
+   * Tests setBrandOption() and brandOptions().
+   */
+  function testBrandOptions() {
+    $this->assertIdentical($this->method->brandOptions(), array(
+      'default' => $this->methodEntity->label(),
+    ));
+    $label = $this->randomName();
+    $this->assertTrue($this->method->setbrandOption($label) instanceof PaymentMethodInterface);
+    $this->assertIdentical($this->method->brandOptions(), array(
+      'default' => $label,
+    ));
+  }
+
+  /**
    * Tests paymentFormElements().
    */
   function testPaymentFormElements() {
@@ -115,8 +131,8 @@ class BasicTest extends WebtestBase {
    */
   function testPaymentOperationAccess() {
     $payment = entity_create('payment', array());
-    $this->assertTrue($this->method->paymentOperationAccess($payment, 'execute'));
-    $this->assertFalse($this->method->paymentOperationAccess($payment, $this->randomName()));
+    $this->assertTrue($this->method->paymentOperationAccess($payment, 'execute', 'default'));
+    $this->assertFalse($this->method->paymentOperationAccess($payment, $this->randomName(), 'default'));
   }
 
   /**
@@ -126,7 +142,7 @@ class BasicTest extends WebtestBase {
     $plugin_id = 'payment_unknown';
     $payment = entity_create('payment', array());
     $this->method->setStatus($plugin_id);
-    $this->method->executePaymentOperation($payment, 'execute');
+    $this->method->executePaymentOperation($payment, 'execute', 'default');
     $this->assertTrue($payment->getStatus()->getPluginId() == $plugin_id);
   }
 }

@@ -34,6 +34,7 @@ class Basic extends Base {
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
     $configuration += array(
+      'brandOption' => '',
       'status' => '',
     );
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -75,8 +76,15 @@ class Basic extends Base {
    */
   public function paymentMethodFormElements(array $form, array &$form_state) {
     $elements = parent::paymentMethodFormElements($form, $form_state);
+    $elements['#element_validate'][] = array($this, 'paymentMethodFormElementsValidateBasic');
+
+    $elements['brand'] = array(
+      '#default_value' => $this->configuration['brandOption'],
+      '#description' => t('The label that payers will see when choosing a payment method. Defaults to the payment method label.'),
+      '#title' => t('Brand label'),
+      '#type' => 'textfield',
+    );
     $elements['status'] = array(
-      '#element_validate' => array(array($this, 'paymentMethodFormElementsValidateStatus')),
       '#type' => 'select',
       '#title' => t('Final payment status'),
       '#description' => t('The status to give a payment after being processed by this payment method.'),
@@ -90,23 +98,24 @@ class Basic extends Base {
   /**
    * Implements form validate callback for self::paymentMethodFormElements().
    */
-  public function paymentMethodFormElementsValidateStatus(array $element, array &$form_state, array $form) {
-    $status = NestedArray::getValue($form_state['values'], $element['#parents']);
-    $this->setStatus($status);
+  public function paymentMethodFormElementsValidateBasic(array $element, array &$form_state, array $form) {
+    $values = NestedArray::getValue($form_state['values'], $element['#parents']);
+    $this->setStatus($values['status'])
+      ->setBrandOption($values['brand']);
   }
 
   /**
    * {@inheritdoc}
    */
-  function paymentOperationAccess(PaymentInterface $payment, $operation) {
+  function paymentOperationAccess(PaymentInterface $payment, $operation, $payment_method_brand) {
     // This plugin only supports the execute operation.
-    return $operation == 'execute' && parent::paymentOperationAccess($payment, $operation);
+    return $operation == 'execute' && parent::paymentOperationAccess($payment, $operation, $payment_method_brand);
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function paymentOperationAccessCurrency(PaymentInterface $payment, $operation) {
+  protected function paymentOperationAccessCurrency(PaymentInterface $payment, $operation, $payment_method_brand) {
     // This plugin supports any currency.
     return TRUE;
   }
@@ -114,11 +123,33 @@ class Basic extends Base {
   /**
    * {@inheritdoc}
    */
-  function executePaymentOperation(PaymentInterface $payment, $operation) {
-    if ($this->paymentOperationAccess($payment, $operation)) {
+  function executePaymentOperation(PaymentInterface $payment, $operation, $payment_method_brand) {
+    if ($this->paymentOperationAccess($payment, $operation, $payment_method_brand)) {
       if ($operation == 'execute') {
         $payment->setStatus(\Drupal::service('plugin.manager.payment.status')->createInstance($this->getStatus()));
       }
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function brandOptions() {
+    return array(
+      'default' => $this->configuration['brandOption'] ? $this->configuration['brandOption'] : $this->getPaymentMethod()->label(),
+    );
+  }
+
+  /**
+   * Sets the brand option label.
+   *
+   * @param string $label
+   *
+   * @return \Drupal\payment\Plugin\payment\method\PaymentMethodInterface
+   */
+  public function setBrandOption($label) {
+    $this->configuration['brandOption'] = $label;
+
+    return $this;
   }
 }

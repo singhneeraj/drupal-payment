@@ -151,14 +151,14 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
-  function paymentOperationAccess(PaymentInterface $payment, $operation) {
+  function paymentOperationAccess(PaymentInterface $payment, $operation, $payment_method_brand) {
     if (!$this->getPaymentMethod()->status()) {
       return FALSE;
     }
-    if (!$this->paymentOperationAccessCurrency($payment, $operation)) {
+    if (!$this->paymentOperationAccessCurrency($payment, $operation, $payment_method_brand)) {
       return FALSE;
     }
-    if (!$this->paymentOperationAccessEvent($payment, $operation)) {
+    if (!$this->paymentOperationAccessEvent($payment, $operation, $payment_method_brand)) {
       return FALSE;
     }
     return TRUE;
@@ -167,7 +167,7 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
   /**
    * Checks a payment's currency against this plugin.
    */
-  protected function paymentOperationAccessCurrency(PaymentInterface $payment, $operation) {
+  protected function paymentOperationAccessCurrency(PaymentInterface $payment, $operation, $payment_method_brand) {
     if (!$payment->getCurrencyCode()) {
       return FALSE;
     }
@@ -195,10 +195,10 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
    *
    * @return bool
    */
-  protected function paymentOperationAccessEvent(PaymentInterface $payment, $operation) {
+  protected function paymentOperationAccessEvent(PaymentInterface $payment, $operation, $payment_method_brand) {
     $handler = \Drupal::moduleHandler();
     foreach ($handler->getImplementations('payment_operation_access') as $module) {
-      $module_access = $handler->invoke($module, 'payment_operation_access', $payment, $this->getPaymentMethod(), $operation);
+      $module_access = $handler->invoke($module, 'payment_operation_access', $payment, $this->getPaymentMethod(), $operation, $payment_method_brand);
       if ($module_access === FALSE) {
         return FALSE;
       }

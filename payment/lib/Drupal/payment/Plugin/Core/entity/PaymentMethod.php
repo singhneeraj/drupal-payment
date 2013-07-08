@@ -175,15 +175,22 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
-  function paymentOperationAccess(PaymentInterface $payment, $operation) {
-    return $this->getPlugin()->paymentOperationAccess($payment, $operation);
+  function paymentOperationAccess(PaymentInterface $payment, $operation, $payment_method_brand) {
+    return $this->getPlugin()->paymentOperationAccess($payment, $operation, $payment_method_brand);
   }
 
   /**
    * {@inheritdoc}
    */
-  function executePaymentOperation(PaymentInterface $payment, $operation) {
-    return $this->getPlugin()->executePaymentOperation($payment, $operation);
+  function executePaymentOperation(PaymentInterface $payment, $operation, $payment_method_brand) {
+    return $this->getPlugin()->executePaymentOperation($payment, $operation, $payment_method_brand);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  function brandOptions() {
+    return $this->getPlugin()->brandOptions();
   }
 
   /**

@@ -25,6 +25,19 @@ interface PaymentProcessingInterface {
   public function currencies();
 
   /**
+   * Returns the available brand names.
+   *
+   * Payment method plugins may represent payment processing services that
+   * provide more than one 'brand' of payment method through which a payment can
+   * be processed, such as a combination of different credit or debit card
+   * brands and direct debit.
+   *
+   * @return array
+   *  Keys are machine names. Values are human-readable brand names.
+   */
+  public function brandOptions();
+
+  /**
    * Returns the form elements to configure payments.
    *
    * $form_state['payment'] contains the payment that is added or edited. All
@@ -48,10 +61,12 @@ interface PaymentProcessingInterface {
    * @param string $operation
    *   See \Drupal\payment\Annotations\PaymentMethod::operations for the
    *   definition of available operations.
+   * @param string $payment_method_brand
+   *   See self::brandOptions for the available brands.
    *
    * @return bool
    */
-  function paymentOperationAccess(PaymentInterface $payment, $operation);
+  function paymentOperationAccess(PaymentInterface $payment, $operation, $payment_method_brand);
 
   /**
    * Executes a payment operation.
@@ -63,5 +78,5 @@ interface PaymentProcessingInterface {
    *   See \Drupal\payment\Annotations\PaymentMethod::operations for the
    *   definition of available operations.
    */
-  function executePaymentOperation(PaymentInterface $payment, $operation);
+  function executePaymentOperation(PaymentInterface $payment, $operation, $payment_method_brand);
 }

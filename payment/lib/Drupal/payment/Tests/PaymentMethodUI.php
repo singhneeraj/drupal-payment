@@ -137,17 +137,22 @@ class PaymentMethodUI extends WebTestBase {
     $this->assertFieldByXPath('//input[@id="edit-owner" and contains(@class, "error")]');
 
     // Test form submission and payment method creation.
-    $label = 'foo';
-    $id = 'bar';
+    $label = $this->randomString();;
+    $brand_option = $this->randomString();
+    $id = strtolower($this->randomName());
     $this->drupalPost(NULL, array(
       'label' => $label,
       'id' => $id,
       'owner' => $user->label(),
+      'plugin_form[brand]' => $brand_option,
     ), t('Save'));
     $payment_method = entity_load('payment_method', $id);
     $this->assertTrue((bool) $payment_method);
     $this->assertEqual($payment_method->label(), $label);
     $this->assertEqual($payment_method->id(), $id);
     $this->assertEqual($payment_method->getOwnerId(), $user->id());
+    $this->assertEqual($payment_method->brandOptions(), array(
+      'default' => $brand_option,
+    ));
   }
 }

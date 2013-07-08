@@ -61,14 +61,14 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
-  function paymentOperationAccess(PaymentInterface $payment, $operation) {
+  function paymentOperationAccess(PaymentInterface $payment, $operation, $payment_method_brand) {
     return FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
-  function executePaymentOperation(PaymentInterface $payment, $operation) {
+  function executePaymentOperation(PaymentInterface $payment, $operation, $payment_method_brand) {
   }
 
   /**
@@ -89,6 +89,13 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
    * {@inheritdoc}
    */
   public function paymentMethodFormElements(array $form, array &$form_state) {
+    return array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function brandOptions() {
     return array();
   }
 }
