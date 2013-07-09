@@ -167,28 +167,4 @@ class PaymentTest extends DrupalUnitTestBase {
     }
     $this->assertIdentical($this->payment->getAmount(), 12);
   }
-
-  /**
-   * Tests getAvailablePaymentMethods().
-   */
-  function testGetAvailablePaymentMethods() {
-    // @todo Finish this test.
-    $this->assertTrue(FALSE);
-  }
-
-  /**
-   * Tests execute().
-   */
-  function testExecute() {
-    // @todo Finish this test.
-    $this->assertTrue(FALSE);
-  }
-
-  /**
-   * Tests finish().
-   */
-  function testFinish() {
-    // @todo Finish this test.
-    $this->assertTrue(FALSE);
-  }
 }
