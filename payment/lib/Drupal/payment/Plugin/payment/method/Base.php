@@ -9,8 +9,8 @@ namespace Drupal\payment\Plugin\payment\method;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\payment\Plugin\payment\method\PaymentMethodInterface;
-use Drupal\payment\Plugin\Core\entity\PaymentInterface;
-use Drupal\payment\Plugin\Core\entity\PaymentMethodInterface as EntityPaymentMethodInterface;
+use Drupal\payment\Plugin\Core\Entity\PaymentInterface;
+use Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface as EntityPaymentMethodInterface;
 
 /**
  * A base payment method plugin.
@@ -20,7 +20,7 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
   /**
    * The payment method entity this plugin belongs to.
    *
-   * @var \Drupal\payment\Plugin\Core\entity\PaymentMethodInterface
+   * @var \Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface
    */
   protected $paymentMethod;
 
@@ -190,7 +190,7 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
   /**
    * Invokes events for self::paymentOperationAccess().
    *
-   * @param \Drupal\payment\Plugin\Core\entity\PaymentInterface $payment
+   * @param \Drupal\payment\Plugin\Core\Entity\PaymentInterface $payment
    * @param string $operation
    *
    * @return bool

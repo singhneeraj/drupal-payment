@@ -11,7 +11,7 @@ use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Entity\Annotation\EntityType;
 use Drupal\Core\Entity\EntityNG;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
-use Drupal\payment\Plugin\Core\entity\PaymentInterface;
+use Drupal\payment\Plugin\Core\Entity\PaymentInterface;
 use Drupal\payment\Plugin\payment\context\PaymentContextInterface;
 use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
@@ -22,8 +22,8 @@ use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
  * @EntityType(
  *   base_table = "payment",
  *   controllers = {
- *     "access" = "Drupal\payment\Plugin\Core\entity\PaymentAccessController",
- *     "storage" = "Drupal\payment\Plugin\Core\entity\PaymentStorageController",
+ *     "access" = "Drupal\payment\Plugin\Core\Entity\PaymentAccessController",
+ *     "storage" = "Drupal\payment\Plugin\Core\Entity\PaymentStorageController",
  *   },
  *   entity_keys = {
  *     "id" = "id",

@@ -7,13 +7,13 @@
 
 namespace Drupal\payment\Tests\Plugin\Core\entity;
 
-use Drupal\payment\Plugin\Core\entity\PaymentInterface;
+use Drupal\payment\Plugin\Core\Entity\PaymentInterface;
 use Drupal\payment\Plugin\payment\context\PaymentContextInterface;
 use Drupal\payment\Generate;
 use Drupal\simpletest\WebTestBase;
 
 /**
- * Tests \Drupal\payment\Plugin\Core\entity\PaymentStorageController.
+ * Tests \Drupal\payment\Plugin\Core\Entity\PaymentStorageController.
  */
 class PaymentStorageControllerTest extends WebTestBase {
 
@@ -24,7 +24,7 @@ class PaymentStorageControllerTest extends WebTestBase {
    */
   static function getInfo() {
     return array(
-      'name' => '\Drupal\payment\Plugin\Core\entity\PaymentStorageController',
+      'name' => '\Drupal\payment\Plugin\Core\Entity\PaymentStorageController',
       'group' => 'Payment',
     );
   }

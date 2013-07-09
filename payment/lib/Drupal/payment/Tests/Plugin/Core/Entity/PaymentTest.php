@@ -7,13 +7,13 @@
 
 namespace Drupal\payment\Tests\Plugin\Core\entity;
 
-use Drupal\payment\Plugin\Core\entity\PaymentInterface;
-use Drupal\payment\Plugin\Core\entity\PaymentMethodInterface;
+use Drupal\payment\Plugin\Core\Entity\PaymentInterface;
+use Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface;
 use Drupal\payment\Generate;
 use Drupal\simpletest\DrupalUnitTestBase;
 
 /**
- * Tests \Drupal\payment\Plugin\Core\entity\Payment.
+ * Tests \Drupal\payment\Plugin\Core\Entity\Payment.
  */
 class PaymentTest extends DrupalUnitTestBase {
 
@@ -24,7 +24,7 @@ class PaymentTest extends DrupalUnitTestBase {
    */
   static function getInfo() {
     return array(
-      'name' => '\Drupal\payment\Plugin\Core\entity\Payment',
+      'name' => '\Drupal\payment\Plugin\Core\Entity\Payment',
       'group' => 'Payment',
     );
   }

@@ -8,12 +8,12 @@
 namespace Drupal\payment\Tests\Plugin\Core\entity;
 
 use Drupal\payment\Plugin\payment\method\PaymentMethodInterface as PluginPaymentMethodInterface;
-use Drupal\payment\Plugin\Core\entity\PaymentMethodInterface;
+use Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface;
 use Drupal\payment\Generate;
 use Drupal\simpletest\WebTestBase;
 
 /**
- * Tests \Drupal\payment\Plugin\Core\entity\PaymentMethodStorageController.
+ * Tests \Drupal\payment\Plugin\Core\Entity\PaymentMethodStorageController.
  */
 class PaymentMethodStorageControllerTest extends WebTestBase {
 
@@ -24,7 +24,7 @@ class PaymentMethodStorageControllerTest extends WebTestBase {
    */
   static function getInfo() {
     return array(
-      'name' => '\Drupal\payment\Plugin\Core\entity\PaymentMethodStorageController',
+      'name' => '\Drupal\payment\Plugin\Core\Entity\PaymentMethodStorageController',
       'group' => 'Payment',
     );
   }

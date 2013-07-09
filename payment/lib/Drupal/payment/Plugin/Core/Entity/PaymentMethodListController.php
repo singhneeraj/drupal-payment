@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Definition of Drupal\payment\Plugin\Core\entity\PaymentMethodListController.
+ * Definition of Drupal\payment\Plugin\Core\Entity\PaymentMethodListController.
  */
 
-namespace Drupal\payment\Plugin\Core\entity;
+namespace Drupal\payment\Plugin\Core\Entity;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Config\Entity\ConfigEntityListController;

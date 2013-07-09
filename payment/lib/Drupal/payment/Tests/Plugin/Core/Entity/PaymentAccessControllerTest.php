@@ -11,7 +11,7 @@ use Drupal\payment\Tests\AccessibleInterfaceWebTestBase;
 use Drupal\payment\Generate;
 
 /**
- * Tests \Drupal\payment\Plugin\Core\entity\PaymentAccessController.
+ * Tests \Drupal\payment\Plugin\Core\Entity\PaymentAccessController.
  */
 class PaymentAccessControllerTest extends AccessibleInterfaceWebTestBase {
 
@@ -22,7 +22,7 @@ class PaymentAccessControllerTest extends AccessibleInterfaceWebTestBase {
    */
   static function getInfo() {
     return array(
-      'name' => '\Drupal\payment\Plugin\Core\entity\PaymentAccessController',
+      'name' => '\Drupal\payment\Plugin\Core\Entity\PaymentAccessController',
       'group' => 'Payment',
     );
   }

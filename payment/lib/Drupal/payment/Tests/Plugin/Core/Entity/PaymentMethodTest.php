@@ -7,11 +7,11 @@
 
 namespace Drupal\payment\Tests\Plugin\Core\entity;
 
-use Drupal\payment\Plugin\Core\entity\PaymentMethodInterface;
+use Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface;
 use Drupal\simpletest\DrupalUnitTestBase;
 
 /**
- * Tests \Drupal\payment\Plugin\Core\entity\PaymentMethod.
+ * Tests \Drupal\payment\Plugin\Core\Entity\PaymentMethod.
  */
 class PaymentMethodTest extends DrupalUnitTestBase {
 
@@ -22,7 +22,7 @@ class PaymentMethodTest extends DrupalUnitTestBase {
    */
   static function getInfo() {
     return array(
-      'name' => '\Drupal\payment\Plugin\Core\entity\PaymentMethod',
+      'name' => '\Drupal\payment\Plugin\Core\Entity\PaymentMethod',
       'group' => 'Payment',
     );
   }

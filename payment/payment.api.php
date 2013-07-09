@@ -92,7 +92,7 @@ function hook_payment_pre_resume_context(PaymentInterface $payment) {
  * @param \Drupal\payment\Plugin\Core\Entity\PaymentInterface $payment
  *   $payment->getPaymentMethod() contains the method currently configured, but NOT the
  *   method that $payment should be tested against, which is $payment_method.
- * @param \Drupal\payment\Plugin\Core\entity\PaymentMethodInterface $payment_method
+ * @param \Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface $payment_method
  * @param string $operation
  * @param string $payment_method_brand
  *   See \Drupal\payment\PaymentProcessingInterface for the available brands.

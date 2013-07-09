@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains Drupal\payment\Plugin\Core\entity\PaymentMethodFormController.
+ * Contains Drupal\payment\Plugin\Core\Entity\PaymentMethodFormController.
  */
 
-namespace Drupal\payment\Plugin\Core\entity;
+namespace Drupal\payment\Plugin\Core\Entity;
 
 use Drupal\Core\Entity\EntityFormController;
 

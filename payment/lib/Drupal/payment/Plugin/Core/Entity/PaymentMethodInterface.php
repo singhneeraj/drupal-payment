@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Definition of Drupal\payment\Plugin\Core\entity\PaymentMethodInterface.
+ * Definition of Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface.
  */
 
-namespace Drupal\payment\Plugin\Core\entity;
+namespace Drupal\payment\Plugin\Core\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\payment\PaymentProcessingInterface;
@@ -21,7 +21,7 @@ interface PaymentMethodInterface extends ConfigEntityInterface, PaymentProcessin
    *
    * @param \Drupal\payment\Plugin\payment\method\PaymentMethodInterface
    *
-   * @return \Drupal\payment\Plugin\Core\entity\PaymentMethodInterface
+   * @return \Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface
    */
   public function setPlugin(PluginPaymentMethodInterface $plugin);
 
@@ -39,7 +39,7 @@ interface PaymentMethodInterface extends ConfigEntityInterface, PaymentProcessin
    *
    * @param string $id
    *
-   * @return \Drupal\payment\Plugin\Core\entity\PaymentMethodInterface
+   * @return \Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface
    */
   public function setId($id);
 
@@ -50,7 +50,7 @@ interface PaymentMethodInterface extends ConfigEntityInterface, PaymentProcessin
    *
    * @param string $uuid
    *
-   * @return \Drupal\payment\Plugin\Core\entity\PaymentMethodInterface
+   * @return \Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface
    */
   public function setUuid($uuid);
 
@@ -61,7 +61,7 @@ interface PaymentMethodInterface extends ConfigEntityInterface, PaymentProcessin
    *
    * @param string $label
    *
-   * @return \Drupal\payment\Plugin\Core\entity\PaymentMethodInterface
+   * @return \Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface
    */
   public function setLabel($label);
 
@@ -70,7 +70,7 @@ interface PaymentMethodInterface extends ConfigEntityInterface, PaymentProcessin
    *
    * @param int $id
    *
-   * @return \Drupal\payment\Plugin\Core\entity\PaymentMethodInterface
+   * @return \Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface
    */
   public function setOwnerId($id);
 
