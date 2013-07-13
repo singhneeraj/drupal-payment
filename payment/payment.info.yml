@@ -6,4 +6,3 @@ type: module
 package: Payment
 dependencies:
   - currency
-  - entity_reference
