@@ -2,18 +2,18 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\payment\method\BaseTest.
+ * Contains class \Drupal\payment\Tests\Plugin\payment\method\BasicTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\payment\method;
 
 use Drupal\payment\Plugin\payment\method\PaymentMethodInterface;
-use Drupal\simpletest\WebtestBase;
+use Drupal\simpletest\WebTestBase;
 
 /**
- * Tests \Drupal\payment\Plugin\payment\status\Base.
+ * Tests \Drupal\payment\Plugin\payment\method\Basic.
  */
-class BasicTest extends WebtestBase {
+class BasicTest extends WebTestBase {
 
   public static $modules = array('payment');
 
