@@ -20,10 +20,7 @@ class PaymentMethodAccessController extends EntityAccessController {
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, $langcode, AccountInterface $account) {
-    if ($operation == 'create') {
-      return $entity->getPlugin() && user_access('payment.payment_method.create.' . $entity->getPlugin()->getPluginId(), $account);
-    }
-    elseif ($operation == 'enable') {
+    if ($operation == 'enable') {
       return !$entity->status() && $entity->access('update', $account);
     }
     elseif ($operation == 'disable') {
@@ -36,5 +33,12 @@ class PaymentMethodAccessController extends EntityAccessController {
       $permission = 'payment.payment_method.' . $operation;
       return user_access($permission . '.any', $account) || user_access($permission . '.own', $account) && $entity->getOwnerId() == $account->id();
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
+    return user_access('payment.payment_method.create.' . $entity_bundle, $account);
   }
 }

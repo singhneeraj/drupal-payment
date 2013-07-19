@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Tests;
 
+use Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface;
 use Drupal\simpletest\WebTestBase ;
 
 /**
@@ -79,7 +80,7 @@ class PaymentMethodUI extends WebTestBase {
     $this->drupalGet('admin/config/services/payment/method');
     $this->clickLink(t('Duplicate'));
     $this->assertResponse(200);
-    $this->assertFieldByXPath('//form[@id="payment-method-form"]');
+    $this->assertFieldByXPath('//form[@id="payment-basic-payment-method-form"]');
   }
 
   /**
@@ -126,7 +127,7 @@ class PaymentMethodUI extends WebTestBase {
     $this->drupalLogin($user);
     $this->drupalGet('admin/config/services/payment/method-add/' . $plugin_id);
     $this->assertResponse(200);
-    $this->assertFieldByXPath('//form[@id="payment-method-form"]');
+    $this->assertFieldByXPath('//form[@id="payment-basic-payment-method-form"]');
 
     // Test form validation.
     $this->drupalPost(NULL, array(
@@ -147,12 +148,13 @@ class PaymentMethodUI extends WebTestBase {
       'plugin_form[brand]' => $brand_option,
     ), t('Save'));
     $payment_method = entity_load('payment_method', $id);
-    $this->assertTrue((bool) $payment_method);
-    $this->assertEqual($payment_method->label(), $label);
-    $this->assertEqual($payment_method->id(), $id);
-    $this->assertEqual($payment_method->getOwnerId(), $user->id());
-    $this->assertEqual($payment_method->brandOptions(), array(
-      'default' => $brand_option,
-    ));
+    if ($this->assertTrue($payment_method instanceof PaymentMethodInterface)) {
+      $this->assertEqual($payment_method->label(), $label);
+      $this->assertEqual($payment_method->id(), $id);
+      $this->assertEqual($payment_method->getOwnerId(), $user->id());
+      $this->assertEqual($payment_method->brandOptions(), array(
+        'default' => $brand_option,
+      ));
+    }
   }
 }

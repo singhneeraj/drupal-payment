@@ -31,6 +31,7 @@ use Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface;
  *   },
  *   entity_keys = {
  *     "id" = "id",
+ *     "bundle" = "pluginId",
  *     "label" = "label",
  *     "uuid" = "uuid",
  *     "status" = "status"
@@ -84,6 +85,24 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
   public $uuid;
 
   /**
+   * Implements __get().
+   */
+  public function __get($name) {
+    if ($name == 'pluginId' && $this->getPlugin()) {
+      return $this->getPlugin()->getPluginId();
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function bundle() {
+    if ($this->getPlugin()) {
+      return $this->getPlugin()->getPluginId();
+    }
+  }
+
+  /**
    * {@inheritdoc}
    *
    * @see \Drupal\payment\PaymentMethodStorageController
@@ -104,6 +123,7 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
    */
   public function setPlugin(PluginPaymentMethodInterface $plugin) {
     $this->plugin = $plugin;
+    $this->pluginId = $plugin->getPluginId();
 
     return $this;
   }
