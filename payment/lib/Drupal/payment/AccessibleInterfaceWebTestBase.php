@@ -5,7 +5,7 @@
  * Contains class \Drupal\payment\Tests\AccessibleInterfaceWebTestBase.
  */
 
-namespace Drupal\payment\Tests;
+namespace Drupal\payment;
 
 use Drupal\Core\TypedData\AccessibleInterface;
 use Drupal\simpletest\WebTestBase;
