@@ -53,4 +53,20 @@ class Manager extends DefaultPluginManager {
       return parent::createInstance('payment_basic', $configuration);
     }
   }
+
+  /**
+   * Returns payment line item options.
+   *
+   * @return array
+   *   Keys are plugin IDs. Values are plugin labels.
+   */
+  public function options() {
+    $options = array();
+    foreach ($this->getDefinitions() as $plugin_id => $definition) {
+      $options[$plugin_id] = $definition['label'];
+    }
+    natcasesort($options);
+
+    return $options;
+  }
 }

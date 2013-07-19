@@ -92,8 +92,8 @@ class Payment extends EntityNG implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public function setCurrencyCode($currencyCode) {
-    $this->set('currencyCode', $currencyCode);
+  public function setCurrencyCode($currency_code) {
+    $this->currencyCode[0]->setValue($currency_code);
 
     return $this;
   }
@@ -102,7 +102,7 @@ class Payment extends EntityNG implements PaymentInterface {
    * {@inheritdoc}
    */
   public function getCurrencyCode() {
-    return $this->get('currencyCode')->value;
+    return $this->currencyCode[0]->value;
   }
 
   /**

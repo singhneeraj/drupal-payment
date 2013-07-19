@@ -7,12 +7,27 @@
 namespace Drupal\payment\plugin\payment\line_item;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
-use Drupal\Core\TypedData\ComplexDataInterface;
 
 /**
  * A payment line item.
  */
 interface PaymentLineItemInterface extends PluginInspectionInterface {
+
+  /**
+   * Sets the ID of the payment the line item belongs to.
+   *
+   * @param $int $payment_id
+   *
+   * @return \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
+   */
+  public function setPaymentId($payment_id);
+
+  /**
+   * Gets the ID of the payment this line item belongs to.
+   *
+   * @return int
+   */
+  public function getPaymentId();
 
   /**
    * Sets the amount.
@@ -61,20 +76,20 @@ interface PaymentLineItemInterface extends PluginInspectionInterface {
   public function getDescription();
 
   /**
-   * Sets the payment ID.
+   * Sets the currency code.
    *
-   * @param integer $id
+   * @param string $currency_code
    *
    * @return \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
    */
-  public function setPaymentId($id);
+  public function setCurrencyCode($currency_code);
 
   /**
-   * Gets the payment ID.
+   * Gets the currency_code.
    *
-   * @return integer
+   * @return string
    */
-  public function getPaymentId();
+  public function getCurrencyCode();
 
   /**
    * Sets the quantity.
@@ -91,4 +106,12 @@ interface PaymentLineItemInterface extends PluginInspectionInterface {
    * @return int
    */
   public function getQuantity();
+
+  /**
+   * Builds the form elements for this line item.
+   *
+   * @return array
+   *   A render array.
+   */
+  public function formElements(array $form, array &$form_state);
 }

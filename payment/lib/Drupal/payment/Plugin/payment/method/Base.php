@@ -168,21 +168,21 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
    * Checks a payment's currency against this plugin.
    */
   protected function paymentOperationAccessCurrency(PaymentInterface $payment, $operation, $payment_method_brand) {
-    if (!$payment->getCurrencyCode()) {
+    if (!$payment->id()) {
       return FALSE;
     }
     $currencies = $this->currencies();
     // Confirm the payment's currency is supported.
     $currencies = $this->currencies();
-    if (!empty($currencies) && !isset($currencies[$payment->getCurrencyCode()])) {
+    if (!empty($currencies) && !isset($currencies[$payment->id()])) {
       return FALSE;
     }
     // Confirm the payment amount is higher than the supported minimum.
-    if (isset($currencies[$payment->getCurrencyCode()]['minimum']) && $payment->getAmount() < $currencies[$payment->getCurrencyCode()]['minimum']) {
+    if (isset($currencies[$payment->id()]['minimum']) && $payment->getAmount() < $currencies[$payment->id()]['minimum']) {
       return FALSE;
     }
     // Confirm the payment amount does not exceed the maximum.
-    if (isset($currencies[$payment->getCurrencyCode()]['maximum']) && $payment->getAmount() > $currencies[$payment->getCurrencyCode()]['maximum']) {
+    if (isset($currencies[$payment->id()]['maximum']) && $payment->getAmount() > $currencies[$payment->id()]['maximum']) {
       return FALSE;
     }
   }

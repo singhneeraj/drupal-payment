@@ -26,23 +26,51 @@ class Generate {
    * @return \Drupal\payment\Plugin\Core\Entity\Payment
    */
   static function createPayment($uid, PaymentMethod $payment_method = NULL) {
-    $line_item_manager = \Drupal::service('plugin.manager.payment.line_item');
     $context_manager = \Drupal::service('plugin.manager.payment.context');
     $payment = entity_create('payment', array())
       ->setPaymentMethodId('payment_unavailable')
       ->setOwnerId($uid)
       ->setPaymentContext($context_manager->createInstance('payment_unavailable'))
-      ->setLineItem($line_item_manager->createInstance('payment_basic', array(
-        'name' => 'foo',
-        'amount' => 1.0,
-      )))
-      ->setLineItem($line_item_manager->createInstance('payment_basic', array(
-        'name' => 'bar',
-        'amount' => 2.0,
-        'quantity' => 3,
-      )));
+      ->setLineItems(static::createPaymentLineItems());
 
     return $payment;
+  }
+
+  /**
+   * Creates payment line items.
+   *
+   * @return array
+   *   Values are
+   *   \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
+   *   objects.
+   */
+  static function createPaymentLineItems() {
+    $line_item_manager = \Drupal::service('plugin.manager.payment.line_item');
+    $line_items = array(
+      $line_item_manager->createInstance('payment_basic', array())
+        ->setName('foo')
+        ->setAmount(9.9)
+      // The Dutch guilder has 100 subunits, which is most common, but is no
+      // longer in circulation.
+        ->setCurrencyCode('NLG')
+        ->setDescription(Random::string()),
+      $line_item_manager->createInstance('payment_basic', array())
+        ->setName('bar')
+        ->setAmount(5.5)
+      // The Japanese yen has 1000 subunits.
+        ->setCurrencyCode('JPY')
+        ->setQuantity(2)
+        ->setDescription(Random::string()),
+      $line_item_manager->createInstance('payment_basic', array())
+        ->setName('baz')
+        ->setAmount(1.1)
+      // The Malagasy ariary has 5 subunits, which is non-decimal.
+        ->setCurrencyCode('MGA')
+        ->setQuantity(3)
+        ->setDescription(Random::string()),
+    );
+
+    return $line_items;
   }
 
   /**

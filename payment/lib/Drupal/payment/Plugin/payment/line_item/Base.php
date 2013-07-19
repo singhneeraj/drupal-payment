@@ -7,6 +7,7 @@
 namespace Drupal\payment\Plugin\payment\line_item;
 
 use Drupal\Component\Plugin\PluginBase;
+use Drupal\payment\Plugin\Core\Entity\PaymentInterface;
 use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 
 /**
@@ -20,11 +21,28 @@ abstract class Base extends PluginBase implements PaymentLineItemInterface {
   public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
     $configuration += array(
       'amount' => 0,
+      'currencyCode' => '',
       'name' => NULL,
-      'paymentId' => 0,
+      'paymentId' => NULL,
       'quantity' => 1,
     );
     parent::__construct($configuration, $plugin_id, $plugin_definition);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setPaymentId($payment_id) {
+    $this->configuration['paymentId'] = $payment_id;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPaymentId() {
+    return $this->configuration['paymentId'];
   }
 
   /**
@@ -62,15 +80,15 @@ abstract class Base extends PluginBase implements PaymentLineItemInterface {
   /**
    * {@inheritdoc}
    */
-  public function getPaymentId() {
-    return $this->configuration['paymentId'];
+  public function getCurrencyCode() {
+    return $this->configuration['currencyCode'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setPaymentId($id) {
-    $this->configuration['paymentId'] = $id;
+  public function setCurrencyCode($currency_code) {
+    $this->configuration['currencyCode'] = $currency_code;
 
     return $this;
   }

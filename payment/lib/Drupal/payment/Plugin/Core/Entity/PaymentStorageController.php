@@ -54,9 +54,6 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
     $fields = parent::baseFieldDefinitions();
     $fields['currencyCode'] = array(
       'label' => t('Currency code'),
-      'settings' => array(
-        'default_value' => 'XXX',
-      ),
       'type' => 'string_field',
     );
     $fields['id'] = array(
@@ -91,7 +88,7 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
   protected function mapToStorageRecord(EntityInterface $entity) {
     $record = new \stdClass();
     $record->context_plugin_id = $entity->getPaymentContext() ? $entity->getPaymentContext()->getPluginId() : NULL;
-    $record->currency_code = $entity->getCurrencyCode();
+    $record->currency_code = $entity->id();
     $record->id = $entity->id();
     $record->payment_method_id = $entity->getPaymentMethodId();
     $record->first_payment_status_id = current($entity->getStatuses())->getId();
@@ -114,13 +111,13 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
     $line_items = array_fill_keys($ids, array());
     while ($line_item_data = $result->fetchAssoc()) {
       $plugin_id = $line_item_data['plugin_id'];
-      $line_item = $manager->createInstance($plugin_id, array(
-        'amount' => (float) $line_item_data['amount'],
-        'name' => $line_item_data['name'],
-        'paymentId' => (int) $line_item_data['payment_id'],
-        'quantity' => (int) $line_item_data['quantity'],
-      ));
-      $line_items[$line_item->getPaymentId()][$line_item->getName()] = $line_item;
+      $line_item = $manager->createInstance($plugin_id)
+        ->setAmount((float) $line_item_data['amount'])
+        ->setCurrencyCode($line_item_data['currency_code'])
+        ->setName($line_item_data['name'])
+        ->setPaymentId($line_item_data['payment_id'])
+        ->setQuantity((int) $line_item_data['quantity']);
+      $line_items[$line_item_data['payment_id']][$line_item->getName()] = $line_item;
     }
 
     return $line_items;
@@ -132,13 +129,14 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
   public function saveLineItems(array $line_items) {
     $this->deleteLineItems(array_keys($line_items));
     $query = db_insert('payment_line_item')
-      ->fields(array('amount', 'amount_total', 'name', 'payment_id', 'plugin_id', 'quantity'));
+      ->fields(array('amount', 'amount_total', 'currency_code', 'name', 'payment_id', 'plugin_id', 'quantity'));
     foreach ($line_items as $payment_id => $entity_line_items) {
       foreach ($entity_line_items as $line_item) {
         $line_item->setPaymentId($payment_id);
         $query->values(array(
           'amount' => $line_item->getAmount(),
           'amount_total' => $line_item->getTotalAmount(),
+          'currency_code' => $line_item->getCurrencyCode(),
           'name' => $line_item->getName(),
           'payment_id' => $line_item->getPaymentId(),
           'plugin_id' => $line_item->getPluginId(),

@@ -1,0 +1,157 @@
+<?php
+
+/**
+ * @file
+ * Contains class \Drupal\payment\Tests\PaymentLineItemFormElement.
+ */
+
+namespace Drupal\payment\Tests\FormElement;
+
+use Drupal\payment\Generate;
+use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
+use Drupal\simpletest\WebTestBase ;
+
+/**
+ * Tests the payment_line_item form element.
+ */
+class PaymentLineItem extends WebTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static $modules = array('payment_test');
+
+  /**
+   * {@inheritdoc}
+   */
+  static function getInfo() {
+    return array(
+      'name' => 'payment_line_item form element',
+      'group' => 'Payment',
+    );
+  }
+
+  /**
+   * Creates line item form data.
+   *
+   * @param array $names
+   *   Line item machine names.
+   *
+   * @return array
+   */
+  public function lineItemData(array $names) {
+    $data = array();
+    foreach ($names as $name) {
+      $data += array(
+        'line_item[line_items][' . $name . '][plugin_form][amount][amount]' => '10.0',
+        'line_item[line_items][' . $name . '][plugin_form][description]' => 'foo',
+        'line_item[line_items][' . $name . '][plugin_form][quantity]' => '1',
+      );
+    }
+
+    return $data;
+  }
+
+  /**
+   * Asserts the presence of the element's line item elements.
+   */
+  function assertLineItemElements(array $names) {
+    foreach (array_keys($this->lineItemData($names)) as $input_name) {
+      $this->assertFieldByName($input_name);
+    }
+  }
+
+  /**
+   * Asserts the presence of the element's add more elements..
+   */
+  function assertAddMore($present) {
+    $elements = $this->xpath('//select[@name="line_item[add_more][type]"]');
+    $this->assertEqual($present, isset($elements[0]));
+    $elements = $this->xpath('//input[@id="edit-line-item-add-more-add"]');
+    $this->assertEqual($present, isset($elements[0]));
+  }
+
+  /**
+   * Tests a regular submission.
+   */
+  function testSubmission() {
+    $names = array();
+    foreach (Generate::createPaymentLineItems() as $line_item) {
+      $names[] = $line_item->getName();
+    }
+    $type = 'payment_basic';
+
+    // Test the presence of default elements.
+    $this->drupalGet('payment_test-form-element-payment-line-item');
+    $this->assertLineItemElements($names);
+    $this->assertAddMore(TRUE);
+
+    // Add a line item.
+    $this->drupalPost(NULL, array(
+      'line_item[add_more][type]' => $type,
+    ), t('Add a line item'));
+    $this->assertLineItemElements(array_merge($names, array($type)));
+    $this->assertAddMore(FALSE);
+
+    // Delete a line item.
+    $this->drupalPost(NULL, array(), t('Delete'));
+    $this->assertLineItemElements($names);
+    $elements = $this->xpath('//input[@name="line_item[line_items][' . $type . '][weight]"]');
+    $this->assertFalse(isset($elements[0]));
+    $this->assertAddMore(TRUE);
+
+    // Change a line item's weight and test the element's value.
+    $name = 'line_item[line_items][' . reset($names) . '][weight]';
+    $this->assertFieldByXPath('//select[@name="' . $name . '"]/option[@value="0" and @selected="selected"]');
+    $this->drupalPost(NULL, array(
+      // Change the first line item's weight to be the highest.
+      $name => count($names),
+    ), t('Submit'));
+    $value = \Drupal::state()->get('payment_test_line_item_form_element');
+    if ($this->assertTrue(is_array($value))) {
+      /// We end up with one more line item than we originally had.
+      $this->assertEqual(count($value), count($names));
+      foreach ($value as $line_item) {
+        $this->assertTrue($line_item instanceof PaymentLineItemInterface);
+      }
+      // Check that the first line item is now the last.
+      $this->assertEqual(end($value)->getName(), reset($names));
+    }
+  }
+
+  /**
+   * Tests an AJAX submission.
+   *
+   * @todo Test deleting a line item once WebTestBase::drupalPostAjax() supports
+   *   testing RemoveCommand.
+   */
+  function testAjaxSubmission() {
+    $names = array();
+    foreach (Generate::createPaymentLineItems() as $line_item) {
+      $names[] = $line_item->getName();
+    }
+    $type = 'payment_basic';
+
+    // Add a line item.
+    $this->drupalPostAJAX('payment_test-form-element-payment-line-item', array(
+      'line_item[add_more][type]' => $type,
+    ), array(
+      'op' => t('Add a line item'),
+    ));
+    $this->verbose($this->drupalGetContent());
+    $this->assertLineItemElements(array_merge($names, array($type)));
+    $this->assertAddMore(FALSE);
+
+    // Test the element's value.
+    $this->drupalPost(NULL, array(
+      'line_item[line_items][payment_basic][plugin_form][description]' => $this->randomString(),
+    ), t('Submit'));
+    $value = \Drupal::state()->get('payment_test_line_item_form_element');
+    if ($this->assertTrue(is_array($value))) {
+      $this->assertEqual(count($value), count($names) + 1);
+      foreach ($value as $line_item) {
+        $this->assertTrue($line_item instanceof PaymentLineItemInterface);
+      }
+    }
+  }
+}

@@ -6,23 +6,25 @@
 
 /* @end */
 
-/* @group Payment line item form element */
+/* @group payment_line_items form element */
 
-.payment-line-item-container .form-item {
-  float: left;
-  margin-right: 1em;
-}
-.payment-line-item-container {
-  padding: 0 1em;
-}
-.payment-line-item-container.odd {
-  background-color: #f8f8f8;
-}
-.payment-line-item-container .clear {
-  clear: both;
+.payment-line-item-plugin-form {
+    padding: 0 1em;
 }
 .payment-add-more {
-  margin-top: 1em;
+    margin-top: 1em;
+}
+
+/* @end */
+
+/* @group payment_basic line item plugin */
+
+.payment-line-item-payment-basic .form-item {
+    float: left;
+    margin-right: 1em;
+}
+.payment-line-item-payment-basic .clear {
+    clear: both;
 }
 
 /* @end */

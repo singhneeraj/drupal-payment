@@ -5,6 +5,9 @@
  * Hook implementations and shared functions.
  */
 
+use Drupal\payment\Plugin\Core\Entity\PaymentInterface;
+use Drupal\payment\Plugin\payment\line_item\Basic;
+
 // Load include files that contain hooks or callback code.
 module_load_include('inc', 'payment', 'payment.ui');
 
@@ -316,31 +319,26 @@ function payment_element_info() {
     // the user as if there only is one payment method available at all.
     '#pmids' => array(),
   );
-  // An element to collect a payment amount and convert it to a float.
-  $elements['payment_amount'] = array(
-    '#input' => TRUE,
-    '#process' => array('payment_form_process_amount'),
-    '#element_validate' => array('payment_form_process_amount_validate'),
-    // The minimum payment amount as a float that needs to be entered. Use
-    // FALSE to omit.
-    '#minimum_amount' => FALSE,
-    // The ISO 4217 currency code.
-    '#currency_code' => 'XXX',
-  );
-  // Line item configuration. The element's #default_value is an array with
-  // PaymentLineItem objects.
-  $elements['payment_line_item'] = array(
-    '#input' => TRUE,
-    '#tree' => TRUE,
-    '#process' => array('payment_form_process_line_item'),
+  // Line item configuration. Use
+  // \Drupal\payment\FormElement\PaymentLineItem::getLineItems() to get the
+  // 'return' value.
+  $elements['payment_line_items'] = array(
     '#attached' => array(
       'css' => array(drupal_get_path('module', 'payment') . '/css/payment.css'),
-      ),
-    '#element_validate' => array('payment_form_process_line_item_validate'),
-    // The ISO 4217 currency code.
-    '#currency_code' => 'XXX',
-    // The number of values this element allows. Enter 0 for unlimited.
+    ),
+    // The number of values this element allows, which must be at least as much
+    // as the number of line items in the default value. Enter 0 for unlimited.
     '#cardinality' => 0,
+    // An array of
+    // \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
+    // objects.
+    '#default_value' => array(),
+    '#element_validate' => array(array('\Drupal\payment\FormElement\PaymentLineItem', 'validate')),
+    '#input' => TRUE,
+    '#process' => array('form_process_container', array('\Drupal\payment\FormElement\PaymentLineItem', 'process')),
+    '#tree' => TRUE,
+    '#theme_wrappers' => array('container'),
+    '#value' => array(),
   );
   // Placeholder element for a payment method controller's payment or payment
   // method form elements callback. Using this element ensures the callbacks
@@ -355,6 +353,56 @@ function payment_element_info() {
   );
 
   return $elements;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_load().
+ */
+function payment_payment_load(array $payments) {
+  foreach ($payments as $payment) {
+    // Load payment_basic-specific line item data.
+    foreach ($payment->getLineItems() as $line_item) {
+      if ($line_item instanceof Basic) {
+        $line_item->loadData();
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function payment_payment_insert(PaymentInterface $payment) {
+  // Save payment_basic-specific line item data.
+  foreach ($payment->getLineItems() as $line_item) {
+    if ($line_item instanceof Basic) {
+      $line_item->saveData();
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function payment_payment_update(PaymentInterface $payment) {
+  // Save payment_basic-specific line item data.
+  foreach ($payment->getLineItems() as $line_item) {
+    if ($line_item instanceof Basic) {
+      $line_item->saveData();
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function payment_payment_delete(PaymentInterface $payment) {
+  // Delete payment_basic-specific line item data.
+  foreach ($payment->getLineItems() as $line_item) {
+    if ($line_item instanceof Basic) {
+      $line_item->deleteData();
+    }
+  }
 }
 
 /**

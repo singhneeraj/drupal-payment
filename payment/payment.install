@@ -5,6 +5,7 @@
  * Installation and uninstallation functions.
  */
 
+use Drupal\Component\Utility\String;
 use Drupal\Component\Uuid\Uuid;
 
 /**
@@ -31,6 +32,11 @@ function payment_schema() {
         'size' => 'big',
         'not null' => TRUE,
       ),
+      'currency_code' => array(
+        'type' => 'varchar',
+        'length' => 3,
+        'not null' => TRUE,
+      ),
       'name' => array(
         'type' => 'varchar',
         'length' => 255,
@@ -49,6 +55,36 @@ function payment_schema() {
         'type' => 'int',
         'default' => 1,
         'not null' => TRUE,
+      ),
+    ),
+    'primary key' => array('name', 'payment_id'),
+    'foreign keys' => array(
+      'payment_id' => array(
+        'table' => 'payment',
+        'columns' => array(
+          'payment_id' => 'id',
+        ),
+      ),
+    ),
+    'indexes' => array(
+      'payment_id' => array('payment_id'),
+    ),
+  );
+  $schema['payment_line_item_payment_basic'] = array(
+    'fields' => array(
+      'description' => array(
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'name' => array(
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'payment_id' => array(
+        'description' => 'The {payment}.id this line item belongs to.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
       ),
     ),
     'primary key' => array('name', 'payment_id'),
@@ -437,9 +473,82 @@ function payment_update_8200(array &$sandbox) {
 }
 
 /**
- * Upgrades payment line items to 8.x-2.x.
+ * Creates and populates Basic line item storage.
  */
 function payment_update_8201(array &$sandbox) {
+  if (!isset($sandbox['table_created'])) {
+    db_create_table('payment_line_item_payment_basic', array(
+      'fields' => array(
+        'description' => array(
+          'type' => 'varchar',
+          'length' => 255,
+        ),
+        'name' => array(
+          'type' => 'varchar',
+          'length' => 255,
+        ),
+        'payment_id' => array(
+          'description' => 'The {payment}.id this line item belongs to.',
+          'type' => 'int',
+          'not null' => TRUE,
+          'default' => 0,
+        ),
+      ),
+      'primary key' => array('name', 'payment_id'),
+      'foreign keys' => array(
+        'payment_id' => array(
+          'table' => 'payment',
+          'columns' => array(
+            'payment_id' => 'id',
+          ),
+        ),
+      ),
+      'indexes' => array(
+        'payment_id' => array('payment_id'),
+      ),
+    ));
+    $sandbox['table_created'] = TRUE;
+  }
+
+
+  // Convert all existing line items to Basic line items.
+  $per_run = 100;
+  if (!isset($sandbox['count'])) {
+    $sandbox['count'] = db_select('payment_line_item')
+      ->countQuery()
+      ->execute()
+      ->fetchField();
+  }
+  if (!isset($sandbox['run'])) {
+    $sandbox['run'] = 0;
+  }
+  else {
+    $sandbox['run']++;
+  }
+  if ($sandbox['count']) {
+    $sandbox['#finished'] = 1 / ceil($sandbox['count'] / (($sandbox['run'] + 1) * $per_run));
+
+    $result= db_select('payment_line_item')
+      ->fields('payment_line_item', array('description', 'description_arguments', 'name', 'pid'))
+      ->range($sandbox['run'] * $per_run, $per_run)
+      ->execute();
+    $insert = db_insert('payment_line_item_payment_basic')
+      ->fields(array('description', 'name', 'payment_id'));
+    while ($description_data = $result->fetchAssoc()) {
+      $insert->values(array(
+        'description' => String::format($description_data['description'], unserialize($description_data['description_arguments'])),
+        'name' => $description_data['name'],
+        'payment_id' => $description_data['pid'],
+      ));
+    }
+    $insert->execute();
+  }
+}
+
+/**
+ * Upgrades payment line items to 8.x-2.x.
+ */
+function payment_update_8202(array &$sandbox) {
   // Rename pid to payment_id.
   db_drop_primary_key('payment_line_item');
   db_drop_index('payment_line_item', 'pid');
@@ -448,6 +557,33 @@ function payment_update_8201(array &$sandbox) {
     'type' => 'int',
     'not null' => TRUE,
     'default' => 0,
+  ));
+
+  // Add a currency code to line items.
+  db_add_field('payment_line_item', 'currency_code', array(
+    'length' => 3,
+    'type' => 'varchar',
+  ));
+  $currency_codes = array();
+  $payments = db_select('payment', 'p')
+    ->fields('p', array('id', 'currency_code'))
+    ->execute()
+    ->fetchAllKeyed();
+  foreach ($payments as $payment_id => $currency_code) {
+    $currency_codes[$currency_code][] = $payment_id;
+  }
+  foreach ($currency_codes as $currency_code => $payment_ids) {
+    db_update('payment_line_item')
+      ->fields(array(
+        'currency_code' => $currency_code,
+      ))
+      ->condition('payment_id', $payment_ids)
+      ->execute();
+  }
+  db_change_field('payment_line_item', 'currency_code', 'currency_code', array(
+    'length' => 3,
+    'not null' => TRUE,
+    'type' => 'varchar',
   ));
   db_add_index('payment_line_item', 'payment_id', array('payment_id'));
   db_add_primary_key('payment_line_item', array('name', 'payment_id'));
@@ -467,7 +603,7 @@ function payment_update_8201(array &$sandbox) {
 /**
  * Upgrades payment statuses to 8.x-2.x.
  */
-function payment_update_8202(array &$sandbox) {
+function payment_update_8203(array &$sandbox) {
   db_rename_table('payment_status_item', 'payment_status');
 
   // Rename psiid to id. Add a temporary index in order to be able to drop and
@@ -510,7 +646,7 @@ function payment_update_8202(array &$sandbox) {
 /**
  * Upgrades payment methods to 8.x-2.x.
  */
-function payment_update_8203(array &$sandbox) {
+function payment_update_8204(array &$sandbox) {
   $map = payment_upgrade_8x2x_map_payment_method();
   $payment_methods_data = db_select('payment_method', 'pm')
     ->fields('pm')

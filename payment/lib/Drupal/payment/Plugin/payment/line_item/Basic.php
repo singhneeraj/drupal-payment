@@ -6,6 +6,7 @@
 
 namespace Drupal\payment\Plugin\payment\line_item;
 
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Annotation\Translation;
 use Drupal\payment\Annotations\PaymentLineItem;
 use Drupal\payment\Plugin\payment\line_item\Base;
@@ -23,6 +24,147 @@ class Basic extends Base {
   /**
    * {@inheritdoc}
    */
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
+    $configuration += array(
+      'description' => NULL,
+    );
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   function getDescription() {
+    return $this->configuration['description'];
+  }
+
+  /**
+   * Sets the line item description.
+   *
+   * @param string $description
+   *
+   * @return \Drupal\payment\Plugin\payment\line_item\Basic
+   */
+  function setDescription($description) {
+    $this->configuration['description'] = $description;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function formElements(array $form, array &$form_state) {
+    $elements = array(
+      '#attributes' => array(
+        'class' => array('payment-line-item-payment-basic'),
+      ),
+      '#attached' => array(
+        'css' => array(drupal_get_path('module', 'payment') . '/css/payment.css'),
+      ),
+      '#element_validate' => array(array($this, 'validate')),
+      '#input' => TRUE,
+      '#process' => array(array($this, 'process')),
+      '#tree' => TRUE,
+      '#type' => 'container',
+    );
+
+    return $elements;
+  }
+
+  /**
+   * Implements form #process callback.
+   */
+  public function process(array $element, array &$form_state, array $form) {
+    $element['amount'] = array(
+      '#type' => 'currency_amount',
+      '#title' => t('Amount'),
+      '#default_value' => array(
+        'amount' => $this->getAmount(),
+        'currency_code' => $this->getCurrencyCode(),
+      ),
+      '#required' => TRUE,
+    );
+    $element['quantity'] = array(
+      '#type' => 'number',
+      '#title' => t('Quantity'),
+      '#default_value' => $this->getQuantity(),
+      '#min' => 1,
+      '#size' => 3,
+      '#required' => TRUE,
+    );
+    $element['description'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Description'),
+      '#default_value' => $this->getDescription(),
+      '#required' => TRUE,
+      '#maxlength' => 255,
+    );
+    $element['clear'] = array(
+      '#type' => 'markup',
+      '#markup' => '<div class="clear"></div>',
+    );
+
+    return $element;
+  }
+
+  /**
+   * Implements form #element_validate callback.
+   */
+  public function validate(array $element, array &$form_state, array $form) {
+    $values = NestedArray::getValue($form_state['values'], $element['#parents']);
+    $this->setAmount($values['amount']['amount'])
+      ->setCurrencyCode($values['amount']['currency_code'])
+      ->setQuantity($values['quantity'])
+      ->setDescription($values['description']);
+    form_set_value($element, $this, $form_state);
+  }
+
+  /**
+   * Loads additional data for this line item.
+   */
+  public function loadData() {
+    if ($this->getPaymentId() && $this->getName()) {
+      $query = db_select('payment_line_item_payment_basic', 'plipb')
+        ->condition('name', $this->getName())
+        ->condition('payment_id', $this->getPaymentId());
+      $query->addField('plipb', 'description');
+      $this->setDescription($query->execute()->fetchField());
+    }
+
+    return $this;
+  }
+
+  /**
+   * Saves additional data for this line item.
+   */
+  public function saveData() {
+    if ($this->getPaymentId() && $this->getName()) {
+      db_merge('payment_line_item_payment_basic')
+        ->key(array(
+          'name' => $this->getName(),
+          'payment_id' => $this->getPaymentId(),
+        ))
+        ->fields(array(
+          'description' => $this->getDescription(),
+        ))
+        ->execute();
+    }
+
+    return $this;
+  }
+
+  /**
+   * Deletes additional data for this line item.
+   */
+  public function deleteData() {
+    if ($this->getPaymentId() && $this->getName()) {
+      db_delete('payment_line_item_payment_basic')
+        ->condition('name', $this->getName())
+        ->condition('payment_id', $this->getPaymentId())
+        ->execute();
+    }
+
+    return $this;
   }
 }
