@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\Core\entity\PaymentMethodStorageControllerTest.
+ * Contains class \Drupal\payment\Tests\Plugin\Core\Entity\PaymentMethodStorageControllerTest.
  */
 
-namespace Drupal\payment\Tests\Plugin\Core\entity;
+namespace Drupal\payment\Tests\Plugin\Core\Entity;
 
 use Drupal\payment\Plugin\payment\method\PaymentMethodInterface as PluginPaymentMethodInterface;
 use Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface;

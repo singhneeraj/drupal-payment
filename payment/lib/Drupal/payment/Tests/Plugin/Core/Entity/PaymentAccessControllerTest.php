@@ -5,9 +5,9 @@
  * Contains class \Drupal\payment\Tests\PaymentAccessControllerTest.
  */
 
-namespace Drupal\payment\Tests\Plugin\Core\entity;
+namespace Drupal\payment\Tests\Plugin\Core\Entity;
 
-use Drupal\payment\Tests\AccessibleInterfaceWebTestBase;
+use Drupal\payment\AccessibleInterfaceWebTestBase;
 use Drupal\payment\Generate;
 
 /**
