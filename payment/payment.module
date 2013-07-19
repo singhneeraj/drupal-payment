@@ -406,48 +406,6 @@ function payment_payment_delete(PaymentInterface $payment) {
 }
 
 /**
- * Implements hook_views_api().
- */
-function payment_views_api() {
-  return array(
-    'api' => '2',
-    'path' => drupal_get_path('module', 'payment') . '/views',
-  );
-}
-
-/**
- * Convert an amount as a float to a human-readable format.
- *
- * @param float $amount
- * @param string $currency_code
- *
- * @return string
- */
-function payment_amount_human_readable($amount, $currency_code = NULL) {
-  if (payment_currency_version() === 2) {
-    $currency = currency_load($currency_code);
-    if ($currency) {
-      return $currency->format($amount);
-    }
-  }
-  $amount_string = number_format($amount, 2, '.', '');
-  $decimal_separator_position = strpos($amount_string, '.');
-  $arguments = array(
-    '!currency_code' => $currency_code,
-    '!units' => substr($amount_string, 0, $decimal_separator_position),
-    '!cents' => substr($amount_string, $decimal_separator_position + 1),
-  );
-  return $currency_code ? t('!currency_code !units.!cents', $arguments) : t('!units.!cents', $arguments);
-}
-
-/**
- * Implements Rules access callback.
- */
-function payment_rules_access($type, $name) {
-  return user_access('payment.rules.administer');
-}
-
-/**
  * Check if a user has access to perform a certain payment method operation and
  * do additional token validation.
  *
@@ -512,39 +470,4 @@ function payment_debug($message, $file = '', $line = 0) {
     drupal_set_message(t($string, $string_arguments));
     watchdog('Payment', $string, $string_arguments);
   }
-}
-
-/**
- * Checks what version of Currency is installed, if any.
- *
- * @return integer|false
- *   An integer major version, or FALSE if the module is not available.
- */
-function payment_currency_version() {
-  // Currency.module 7.x-1.x and 7.x-2.x both exist, but currency_load() only
-  // exists in 7.x-2.x.
-  if (module_exists('currency') && function_exists('currency_load')) {
-    return 2;
-  }
-  elseif (module_exists('currency_api')) {
-    return 1;
-  }
-  return FALSE;
-}
-
-/**
- * Returns an options list of currencies.
- *
- * @return array
- *  Keys are ISO 4217 codes and values are currency titles.
- */
-function payment_currency_options() {
-  $version = payment_currency_version();
-  if ($version == 2) {
-    return currency_options();
-  }
-  if ($version == 1) {
-    return currency_api_get_list();
-  }
-  return array();
 }

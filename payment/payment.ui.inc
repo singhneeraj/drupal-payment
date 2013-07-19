@@ -6,41 +6,6 @@
  */
 
 /**
- * Menu title callback: return a payment's title.
- *
- * @param Payment $payment
- *
- * @return string
- */
-function payment_title(Payment $payment) {
-  return t('Payment !pid', array(
-    '!pid' => $payment->pid,
-  ));
-}
-
-/**
- * Menu page callback: show a message that describes the dependencies for
- * viewing this page have not been met.
- *
- * @param array $modules
- *   Keys are modules' machine names or numeric, values are modules'
- *   human-readable titles.
- *
- * @return string
- */
-function payment_page_required_modules(array $modules) {
-  foreach ($modules as $name => &$title) {
-    if (is_string($name)) {
-      $title = l($title, 'http://drupal.org/project/' . $name);
-    }
-  }
-
-  return t('This page requires !modules.', array(
-    '!modules' => implode(', ', $modules),
-  ));
-}
-
-/**
  * Menu page callback: show a payment.
  *
  * @param Payment $payment
@@ -593,17 +558,4 @@ function payment_form_global_configuration(array $form, array &$form_state) {
   );
 
   return system_settings_form($form);
-}
-
-/**
- * Returns an array of numerical comparison operators for use in Rules.
- */
-function payment_numeric_comparison_operator_options() {
-  return array(
-    '<' => t('lesser than'),
-    '<=' => t('lesser than or equal to'),
-    '=' => t('equal to'),
-    '>=' => t('greater than or equal to'),
-    '>' => t('greater than'),
-  );
 }
