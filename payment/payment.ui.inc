@@ -192,68 +192,6 @@ function payment_form_payment_delete_submit(array $form, array &$form_state) {
 }
 
 /**
- * Display a payment status overview.
- *
- * @return string
- */
-function payment_page_status() {
-  return theme('table', array(
-    'header' => array(t('Title'), t('Description')),
-    'rows' => _payment_page_status_level(payment_status_hierarchy(), 0),
-  ));
-}
-
-/**
- * Helper function for payment_page_status() to build table rows.
- *
- * @param array $hierarchy
- *   A payment status hierarchy as returned by payment_status_hierarchy().
- * @param integer $depth
- *   The depth of $hierarchy's top-level items as seen from the original
- *   hierarchy's root (this function is recursive), starting with 0.
- *
- * @return array
- */
-function _payment_page_status_level(array $hierarchy, $depth) {
-  $rows = array();
-  foreach ($hierarchy as $status => $children) {
-    $status_info = payment_status_info($status);
-    $rows[] = array(theme('indentation', array(
-    'size' => $depth,
-  )) . $status_info->title, $status_info->description);
-    $rows = array_merge($rows, _payment_page_status_level($children, $depth + 1));
-  }
-
-  return $rows;
-}
-
-/**
- * Helper function to build the rows for the table in payment_page_status().
- *
- * @see payment_page_status()
- *
- * @param array $statuses
- *   The statuses for which to build table rows.
- * @param array $children
- *   Keys are payment statuses, values are the statuses that are the keys's
- *   children.
- * @param array $rows
- *   The table rows to which to add new ones.
- * @param integer $depth
- */
-function _payment_page_status_rows(array $statuses, array $children, array &$rows, $depth = 0) {
-  foreach ($statuses as $status) {
-    $rows[] = array(theme('payment_page_status_row', array(
-      'status' => $status,
-      'depth' => $depth,
-    )));
-    if (isset($children[$status])) {
-      _payment_page_status_rows($children[$status], $children, $rows, $depth + 1);
-    }
-  }
-}
-
-/**
  * Return a render array containing a Payment's line items.
  *
  * @param Payment $payment

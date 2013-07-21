@@ -99,11 +99,8 @@ function payment_menu() {
 
   // Payment status overview.
   $items['admin/config/services/payment/status'] = array(
+    'route_name' => 'payment.payment_status.view',
     'title' => 'Payment statuses',
-    'page callback' => 'payment_page_status',
-    'access arguments' => array('payment.payment_status.view'),
-    'file' => 'payment.ui.inc',
-    'weight' => 1,
   );
 
   return $items;

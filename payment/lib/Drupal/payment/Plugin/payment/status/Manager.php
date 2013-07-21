@@ -71,7 +71,7 @@ class Manager extends DefaultPluginManager {
    *   A possibly infinitely nested associative array. Keys are plugin IDs and
    *   values are arrays of similar structure as this method's return value.
    */
-  protected function hierarchy() {
+  public function hierarchy() {
     static $hierarchy = NULL;
 
     if (is_null($hierarchy)) {

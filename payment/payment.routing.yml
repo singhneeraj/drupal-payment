@@ -54,3 +54,10 @@ payment.payment_method.duplicate:
     _controller: '\Drupal\payment\PaymentMethodUI::duplicate'
   requirements:
     _entity_access: 'payment_method.duplicate'
+
+payment.payment_status.view:
+  pattern: '/admin/config/services/payment/status'
+  defaults:
+    _controller: '\Drupal\payment\PaymentStatusUI::listing'
+  requirements:
+    _permission: 'payment.payment_status.view'
