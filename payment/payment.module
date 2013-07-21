@@ -17,17 +17,6 @@ module_load_include('inc', 'payment', 'payment.ui');
 define('PAYMENT_LINE_ITEM_TOKEN_PREFIX', 'line_item-');
 
 /**
- * Implements hook_init().
- */
-function payment_init() {
-  // Add administration CSS.
-  if (preg_match('#^admin/content/payment#', $_GET['q'])
-    || preg_match('#^user/\d+?/payment#', $_GET['q'])) {
-    drupal_add_css(drupal_get_path('module', 'payment') . '/css/payment.css');
-  }
-}
-
-/**
  * Implements hook_module_implements_alter().
  */
 function payment_module_implements_alter(array &$implementations, $hook) {
@@ -161,10 +150,6 @@ function payment_permission() {
   $permissions = array(
     'payment.global.administer' => array(
       'title' => t('Administer global Payment configuration'),
-    ),
-    'payment.rules.administer' => array(
-      'title' => t('Administer rule configurations'),
-      'restrict access' => TRUE,
     ),
     'payment.payment.administer' => array(
       'title' => t('Administer payment configuration'),

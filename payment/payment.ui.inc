@@ -192,48 +192,6 @@ function payment_form_payment_delete_submit(array $form, array &$form_state) {
 }
 
 /**
- * Implements form submit callback for payment_form_payment_method().
- */
-function payment_form_payment_method_submit(array $form, array &$form_state) {
-  $values = $form_state['values'];
-  $payment_method = $form_state['payment_method'];
-  $payment_method->enabled = $values['enabled'];
-  $payment_method->name = $values['name'];
-  $payment_method->title_specific = $values['title_specific'];
-  // The generic title defaults to the specific one.
-  $payment_method->title_generic = $values['title_generic'] ? $values['title_generic'] : $values['title_specific'];
-  $payment_method->uid = user_load_by_name($values['owner'])->uid;
-  entity_save('payment_method', $payment_method);
-  $form_state['redirect'] = 'admin/config/services/payment/method';
-  drupal_set_message(t('Payment method %title has been saved.', array(
-    '%title' => $payment_method->title_specific,
-  )));
-}
-
-/**
- * Implements form build callback: payment method deletion form.
- */
-function payment_form_payment_method_delete(array $form, array &$form_state, PaymentMethod $payment_method) {
-  $form_state['payment_method'] = $payment_method;
-
-  return confirm_form($form, t('Do you really want to delete payment method %title?', array(
-    '%title' => $form_state['payment_method']->title_specific,
-  )), 'admin/config/services/payment/method', t('Existing payments that use this payment method will become unusable. This action cannot be undone.'), t('Delete payment method'));
-}
-
-/**
- * Implements form submit callback for payment_form_payment_method_delete().
- */
-function payment_form_payment_method_delete_submit(array $form, array &$form_state) {
-  $payment_method = $form_state['payment_method'];
-  entity_delete('payment_method', $payment_method->pmid);
-  $form_state['redirect'] = 'admin/config/services/payment/method';
-  drupal_set_message(t('Payment method %title has been deleted.', array(
-    '%title' => $payment_method->title_specific,
-  )));
-}
-
-/**
  * Display a payment status overview.
  *
  * @return string
