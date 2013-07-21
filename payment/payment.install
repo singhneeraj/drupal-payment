@@ -674,6 +674,13 @@ function payment_update_8204(array &$sandbox) {
 }
 
 /**
+ * Removes unneeded 7.x-1.x content and configuration.
+ */
+function payment_update_8205(array &$sandbox) {
+  update_variable_del('payment_debug');
+}
+
+/**
  * Maps payment statuses from 7.x-1.x to 8.x-2.x.
  *
  * @return array
