@@ -2,18 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\payment_test\LineItemFormElement.
+ * Contains \Drupal\payment_test\PaymentLineItemElement.
  */
 
 namespace Drupal\payment_test;
 
 use Drupal\Core\Controller\ControllerInterface;
 use Drupal\Core\Form\FormInterface;
-use Drupal\payment\FormElement\PaymentLineItem;
+use Drupal\payment\Element\PaymentLineItem;
 use Drupal\payment\Generate;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class PaymentLineItemFormElement implements ControllerInterface, FormInterface {
+class PaymentLineItemElement implements ControllerInterface, FormInterface {
 
   /**
    * {@inheritdoc}
@@ -26,7 +26,7 @@ class PaymentLineItemFormElement implements ControllerInterface, FormInterface {
    * {@inheritdoc}
    */
   public function getFormID() {
-    return 'payment_test_line_item_form_element';
+    return 'payment_test_payment_line_item_element';
   }
 
   /**

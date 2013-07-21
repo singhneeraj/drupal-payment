@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\payment\FormElement\PaymentLineItem.
+ * Contains \Drupal\payment\Element\PaymentLineItem.
  */
 
-namespace Drupal\payment\FormElement;
+namespace Drupal\payment\Element;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Ajax\AjaxResponse;

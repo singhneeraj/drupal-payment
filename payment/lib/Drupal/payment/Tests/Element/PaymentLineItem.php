@@ -5,14 +5,14 @@
  * Contains class \Drupal\payment\Tests\PaymentLineItemFormElement.
  */
 
-namespace Drupal\payment\Tests\FormElement;
+namespace Drupal\payment\Tests\Element;
 
 use Drupal\payment\Generate;
 use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 use Drupal\simpletest\WebTestBase ;
 
 /**
- * Tests the payment_line_item form element.
+ * Tests the payment_line_item element.
  */
 class PaymentLineItem extends WebTestBase {
 
@@ -26,7 +26,7 @@ class PaymentLineItem extends WebTestBase {
    */
   static function getInfo() {
     return array(
-      'name' => 'payment_line_item form element',
+      'name' => 'payment_line_item element',
       'group' => 'Payment',
     );
   }
@@ -82,7 +82,7 @@ class PaymentLineItem extends WebTestBase {
     $type = 'payment_basic';
 
     // Test the presence of default elements.
-    $this->drupalGet('payment_test-form-element-payment-line-item');
+    $this->drupalGet('payment_test-element-payment-line-item');
     $this->assertLineItemElements($names);
     $this->assertAddMore(TRUE);
 
@@ -133,7 +133,7 @@ class PaymentLineItem extends WebTestBase {
     $type = 'payment_basic';
 
     // Add a line item.
-    $this->drupalPostAJAX('payment_test-form-element-payment-line-item', array(
+    $this->drupalPostAJAX('payment_test-element-payment-line-item', array(
       'line_item[add_more][type]' => $type,
     ), array(
       'op' => t('Add a line item'),

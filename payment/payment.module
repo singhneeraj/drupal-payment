@@ -293,7 +293,7 @@ function payment_element_info() {
     '#pmids' => array(),
   );
   // Line item configuration. Use
-  // \Drupal\payment\FormElement\PaymentLineItem::getLineItems() to get the
+  // \Drupal\payment\Element\PaymentLineItem::getLineItems() to get the
   // 'return' value.
   $elements['payment_line_items'] = array(
     '#attached' => array(
@@ -306,9 +306,9 @@ function payment_element_info() {
     // \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
     // objects.
     '#default_value' => array(),
-    '#element_validate' => array(array('\Drupal\payment\FormElement\PaymentLineItem', 'validate')),
+    '#element_validate' => array(array('\Drupal\payment\Element\PaymentLineItem', 'validate')),
     '#input' => TRUE,
-    '#process' => array('form_process_container', array('\Drupal\payment\FormElement\PaymentLineItem', 'process')),
+    '#process' => array('form_process_container', array('\Drupal\payment\Element\PaymentLineItem', 'process')),
     '#tree' => TRUE,
     '#theme_wrappers' => array('container'),
     '#value' => array(),
