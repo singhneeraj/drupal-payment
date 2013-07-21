@@ -464,12 +464,6 @@ function payment_update_8200(array &$sandbox) {
     'type' => 'varchar',
   ));
   db_add_index('payment', 'uuid', array('uuid'));
-
-  // Drop unnecessary fields.
-  db_drop_field('payment', 'context_configuration');
-  db_drop_field('payment', 'description');
-  db_drop_field('payment', 'description_arguments');
-  db_drop_field('payment', 'finish_callback');
 }
 
 /**
@@ -593,11 +587,6 @@ function payment_update_8202(array &$sandbox) {
     'type' => 'varchar',
     'length' => 255,
   ));
-
-  // Drop unnecessary fields.
-  db_drop_field('payment_line_item', 'description');
-  db_drop_field('payment_line_item', 'description_arguments');
-  db_drop_field('payment_line_item', 'tax_rate');
 }
 
 /**
@@ -670,7 +659,6 @@ function payment_update_8204(array &$sandbox) {
     }
     $config->save();
   }
-  db_drop_table('payment_method');
 }
 
 /**
@@ -678,6 +666,20 @@ function payment_update_8204(array &$sandbox) {
  */
 function payment_update_8205(array &$sandbox) {
   update_variable_del('payment_debug');
+
+  // For payment_update_8200().
+  db_drop_field('payment', 'context_configuration');
+  db_drop_field('payment', 'description');
+  db_drop_field('payment', 'description_arguments');
+  db_drop_field('payment', 'finish_callback');
+
+  // For payment_update_8202().
+  db_drop_field('payment_line_item', 'description');
+  db_drop_field('payment_line_item', 'description_arguments');
+  db_drop_field('payment_line_item', 'tax_rate');
+
+  // For payment_update_8204().
+  db_drop_table('payment_method');
 }
 
 /**
