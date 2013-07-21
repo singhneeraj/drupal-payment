@@ -56,27 +56,15 @@ class Basic extends Base {
    */
   public function formElements(array $form, array &$form_state) {
     $elements = array(
-      '#attributes' => array(
-        'class' => array('payment-line-item-payment-basic'),
-      ),
       '#attached' => array(
         'css' => array(drupal_get_path('module', 'payment') . '/css/payment.css'),
       ),
       '#element_validate' => array(array($this, 'validate')),
       '#input' => TRUE,
-      '#process' => array(array($this, 'process')),
       '#tree' => TRUE,
       '#type' => 'container',
     );
-
-    return $elements;
-  }
-
-  /**
-   * Implements form #process callback.
-   */
-  public function process(array $element, array &$form_state, array $form) {
-    $element['amount'] = array(
+    $elements['amount'] = array(
       '#type' => 'currency_amount',
       '#title' => t('Amount'),
       '#default_value' => array(
@@ -85,7 +73,7 @@ class Basic extends Base {
       ),
       '#required' => TRUE,
     );
-    $element['quantity'] = array(
+    $elements['quantity'] = array(
       '#type' => 'number',
       '#title' => t('Quantity'),
       '#default_value' => $this->getQuantity(),
@@ -93,19 +81,19 @@ class Basic extends Base {
       '#size' => 3,
       '#required' => TRUE,
     );
-    $element['description'] = array(
+    $elements['description'] = array(
       '#type' => 'textfield',
       '#title' => t('Description'),
       '#default_value' => $this->getDescription(),
       '#required' => TRUE,
       '#maxlength' => 255,
     );
-    $element['clear'] = array(
+    $elements['clear'] = array(
       '#type' => 'markup',
       '#markup' => '<div class="clear"></div>',
     );
 
-    return $element;
+    return $elements;
   }
 
   /**
