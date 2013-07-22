@@ -143,6 +143,15 @@ class PaymentTest extends DrupalUnitTestBase {
   }
 
   /**
+   * Tests setPaymentMethodBrand() and getPaymentMethodBrand().
+   */
+  function testGetPaymentMethodBrand() {
+    $brand_name = $this->randomName();
+    $this->assertTrue($this->payment->setPaymentMethodBrand($brand_name) instanceof PaymentInterface);
+    $this->assertIdentical($this->payment->getPaymentMethodBrand(), $brand_name);
+  }
+
+  /**
    * Tests setOwnerId() and getOwnerId().
    */
   function testGetOwnerId() {

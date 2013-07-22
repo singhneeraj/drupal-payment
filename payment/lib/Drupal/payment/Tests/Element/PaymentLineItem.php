@@ -138,7 +138,6 @@ class PaymentLineItem extends WebTestBase {
     ), array(
       'op' => t('Add a line item'),
     ));
-    $this->verbose($this->drupalGetContent());
     $this->assertLineItemElements(array_merge($names, array($type)));
     $this->assertAddMore(FALSE);
 

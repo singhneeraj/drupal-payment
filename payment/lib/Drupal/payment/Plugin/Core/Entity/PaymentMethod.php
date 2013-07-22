@@ -188,8 +188,8 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
-  public function paymentFormElements(array $form, array &$form_state) {
-    return $this->getPlugin()->paymentFormElements($form, $form_state);
+  public function paymentFormElements(array $form, array &$form_state, PaymentInterface $payment) {
+    return $this->getPlugin()->paymentFormElements($form, $form_state, $payment);
   }
 
   /**

@@ -232,6 +232,22 @@ class Payment extends EntityNG implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
+  public function setPaymentMethodBrand($brand_name) {
+    $this->paymentMethodBrand[0]->value = $brand_name;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPaymentMethodBrand() {
+    return $this->paymentMethodBrand[0]->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function setOwnerId($id) {
     $this->ownerId[0]->setValue($id);
 
@@ -262,23 +278,6 @@ class Payment extends EntityNG implements PaymentInterface {
     }
 
     return $total;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getAvailablePaymentMethods(array $payment_methods = array()) {
-    if (!$payment_methods) {
-      $payment_methods = entity_load_multiple('payment_method');
-    }
-    $available = array();
-    foreach ($payment_methods as $payment_method) {
-      if ($payment_method->paymentOperationAccess($this, 'execute')) {
-        $available[$payment_method->id()] = $payment_method;
-      }
-    }
-
-    return $available;
   }
 
   /**

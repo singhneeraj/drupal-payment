@@ -140,7 +140,7 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
   /**
    * Sets the ID of the payment method entity.
    *
-   * @param string $name
+   * @param string $id
    *
    * @return \Drupal\payment\Plugin\Core\Entity\PaymentInterface
    */
@@ -152,6 +152,22 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
    * @return string|null
    */
   public function getPaymentMethodId();
+
+  /**
+   * Sets the brand of the payment method entity.
+   *
+   * @param string $brand_name
+   *
+   * @return \Drupal\payment\Plugin\Core\Entity\PaymentInterface
+   */
+  public function setPaymentMethodBrand($brand_name);
+
+  /**
+   * Gets the brand of the payment method entity.
+   *
+   * @return string|null
+   */
+  public function getPaymentMethodBrand();
 
   /**
    * Gets the payment method entity.
@@ -189,17 +205,4 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
    * @return float
    */
   public function getAmount();
-
-  /**
-   * Gets the available payment methods.
-   *
-   * @param array $paymentMethods
-   *   An array with \Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface
-   *   objects to optionally limit the check to.
-   *
-   * @return array
-   *   An array with \Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface
-   *   objects.
-   */
-  public function getAvailablePaymentMethods(array $paymentMethods = array());
 }

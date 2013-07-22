@@ -81,7 +81,7 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
-  public function paymentFormElements(array $form, array &$form_state) {
+  public function paymentFormElements(array $form, array &$form_state, PaymentInterface $payment) {
     return array();
   }
 

@@ -106,10 +106,10 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
-  public function paymentFormElements(array $form, array &$form_state) {
+  public function paymentFormElements(array $form, array &$form_state, PaymentInterface $payment) {
     $message = check_markup($this->getMessageText(), $this->getMessageTextFormat());
     $message = \Drupal::service('token')->replace($message, array(
-      'payment' => $form_state['payment'],
+      'payment' => $payment,
     ), array(
       'clear' => TRUE,
     ));

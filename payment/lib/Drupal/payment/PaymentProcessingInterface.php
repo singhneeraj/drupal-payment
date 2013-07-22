@@ -46,11 +46,12 @@ interface PaymentProcessingInterface {
    *
    * @param array $form
    * @param array $form_state
+   * @param \Drupal\payment\Plugin\Core\Entity\PaymentInterface $payment
    *
    * @return array
    *   A render array.
    */
-  public function paymentFormElements(array $form, array &$form_state);
+  public function paymentFormElements(array $form, array &$form_state, PaymentInterface $payment);
 
   /**
    * Checks access to execute a payment operation.

@@ -280,18 +280,20 @@ function payment_field_extra_fields() {
  * Implements hook_element_info().
  */
 function payment_element_info() {
-  // A payment method selection and configuration element. Every form this
-  // element is used in should have a Payment object in $form_state['payment'].
+  // A payment method selection and configuration element for a payment.
   $elements['payment_method'] = array(
+    // A \Drupal\payment\Plugin'Core\Entity\PaymentInterface object.
+    '#default_value' => NULL,
     '#input' => TRUE,
-    '#process' => array('payment_form_process_method'),
-    '#element_validate' => array('payment_form_process_method_validate'),
     // An array with IDs of the allowed payment methods. Leave empty to allow
     // all. If just a single value is given, or if only ony payment method is
     // valid, the element will not expand to a select list, but will appear to
     // the user as if there only is one payment method available at all.
-    '#pmids' => array(),
+    '#payment_method_ids' => array(),
+    '#process' => array(array('\Drupal\payment\Element\PaymentMethod', 'process')),
+    '#tree' => TRUE,
   );
+
   // Line item configuration. Use
   // \Drupal\payment\Element\PaymentLineItem::getLineItems() to get the
   // 'return' value.
@@ -312,17 +314,6 @@ function payment_element_info() {
     '#tree' => TRUE,
     '#theme_wrappers' => array('container'),
     '#value' => array(),
-  );
-  // Placeholder element for a payment method controller's payment or payment
-  // method form elements callback. Using this element ensures the callbacks
-  // receive enough contextual information.
-  $elements['payment_form_context'] = array(
-    '#tree' => TRUE,
-    '#process' => array('payment_form_process_context'),
-    // The class name of the payment method controller whose callbacks to call.
-    '#payment_method_controller_name' => '',
-    // Either "payment" or "payment_method".
-    '#callback_type' => '',
   );
 
   return $elements;

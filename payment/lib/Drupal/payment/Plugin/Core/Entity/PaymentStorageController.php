@@ -65,6 +65,10 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
       'label' => t('Payment method ID'),
       'type' => 'string_field',
     );
+    $fields['paymentMethodBrand'] = array(
+      'label' => t('Payment method brand name'),
+      'type' => 'string_field',
+    );
     $fields['ownerId'] = array(
       'label' => t('Owner'),
       'type' => 'entity_reference_field',
