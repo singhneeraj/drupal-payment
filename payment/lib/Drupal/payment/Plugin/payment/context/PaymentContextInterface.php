@@ -7,6 +7,7 @@
 namespace Drupal\payment\Plugin\payment\context;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
+use Drupal\payment\Plugin\Core\Entity\PaymentInterface;
 
 /**
  * A payment context plugin.
@@ -16,18 +17,18 @@ interface PaymentContextInterface extends PluginInspectionInterface {
   /**
    * Sets the ID of the payment this context is of.
    *
-   * @param int $id
-   * *
-   * * @return \Drupal\payment\Plugin\payment\context\ContextInterface
+   * @param \Drupal\payment\Plugin\Core\Entity\PaymentInterface $payment
+   *
+   * @return \Drupal\payment\Plugin\payment\context\PaymentContextInterface
    */
-  public function setPaymentId($id);
+  public function setPayment(PaymentInterface $payment);
 
   /**
    * Gets the ID of the payment this context is of.
    *
-   * @param int
+   * @return \Drupal\payment\Plugin\Core\Entity\PaymentInterface
    */
-  public function getPaymentId();
+  public function getPayment();
 
   /**
    * Returns the description of the payment this context is of.

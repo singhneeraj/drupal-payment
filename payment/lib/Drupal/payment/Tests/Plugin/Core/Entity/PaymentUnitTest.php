@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\Core\Entity\PaymentTest.
+ * Contains class \Drupal\payment\Tests\Plugin\Core\Entity\PaymentUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Core\Entity;
@@ -15,7 +15,7 @@ use Drupal\simpletest\DrupalUnitTestBase;
 /**
  * Tests \Drupal\payment\Plugin\Core\Entity\Payment.
  */
-class PaymentTest extends DrupalUnitTestBase {
+class PaymentUnitTest extends DrupalUnitTestBase {
 
   public static $modules = array('payment', 'system');
 
@@ -24,7 +24,7 @@ class PaymentTest extends DrupalUnitTestBase {
    */
   static function getInfo() {
     return array(
-      'name' => '\Drupal\payment\Plugin\Core\Entity\Payment',
+      'name' => '\Drupal\payment\Plugin\Core\Entity\Payment unit test',
       'group' => 'Payment',
     );
   }

@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\payment\status\ManagerTest.
+ * Contains class \Drupal\payment\Tests\Plugin\payment\context\ManagerUnitTest.
  */
 
-namespace Drupal\payment\Tests\Plugin\payment\status;
+namespace Drupal\payment\Tests\Plugin\payment\context;
 
 use Drupal\simpletest\DrupalUnitTestBase;
 
 /**
- * Tests \Drupal\payment\Plugin\payment\status\Manager.
+ * Tests \Drupal\payment\Plugin\payment\context\Manager.
  */
-class ManagerTest extends DrupalUnitTestBase {
+class ManagerUnitTest extends DrupalUnitTestBase {
 
   public static $modules = array('payment');
 
@@ -21,7 +21,7 @@ class ManagerTest extends DrupalUnitTestBase {
    */
   static function getInfo() {
     return array(
-      'name' => '\Drupal\payment\Plugin\payment\status\Manager',
+      'name' => '\Drupal\payment\Plugin\payment\context\Manager unit test',
       'group' => 'Payment',
     );
   }
@@ -31,19 +31,19 @@ class ManagerTest extends DrupalUnitTestBase {
    */
   function setUp() {
     parent::setUp();
-    $this->manager = \Drupal::service('plugin.manager.payment.status');
+    $this->manager = \Drupal::service('plugin.manager.payment.context');
   }
 
   /**
    * Tests getDefinitions().
    */
   function testGetDefinitions() {
-    // Test the default status plugins.
+    // Test the default line item plugins.
     $definitions = $this->manager->getDefinitions();
-    $this->assertEqual(count($definitions), 10);
+    $this->assertEqual(count($definitions), 1);
     foreach ($definitions as $definition) {
       $this->assertIdentical(strpos($definition['id'], 'payment_'), 0);
-      $this->assertTrue(is_subclass_of($definition['class'], '\Drupal\payment\Plugin\payment\status\PaymentStatusInterface'));
+      $this->assertTrue(is_subclass_of($definition['class'], '\Drupal\payment\Plugin\payment\context\PaymentContextInterface'));
     }
   }
 
@@ -51,15 +51,8 @@ class ManagerTest extends DrupalUnitTestBase {
    * Tests createInstance().
    */
   function testCreateInstance() {
-    $id = 'payment_unknown';
+    $id = 'payment_unavailable';
     $this->assertEqual($this->manager->createInstance($id)->getPluginId(), $id);
     $this->assertEqual($this->manager->createInstance('ThisIdDoesNotExist')->getPluginId(), $id);
-  }
-
-  /**
-   * Tests options().
-   */
-  function testOptions() {
-    $this->assertTrue($this->manager->options());
   }
 }

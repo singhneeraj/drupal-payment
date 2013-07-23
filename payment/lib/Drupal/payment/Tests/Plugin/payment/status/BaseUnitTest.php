@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\payment\status\BaseTest.
+ * Contains class \Drupal\payment\Tests\Plugin\payment\status\BaseUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\payment\status;
@@ -13,7 +13,7 @@ use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
 /**
  * Tests \Drupal\payment\Plugin\payment\status\Base.
  */
-class BaseTest extends DrupalUnitTestBase {
+class BaseUnitTest extends DrupalUnitTestBase {
 
   public static $modules = array('payment');
 
@@ -22,7 +22,7 @@ class BaseTest extends DrupalUnitTestBase {
    */
   static function getInfo() {
     return array(
-      'name' => '\Drupal\payment\Plugin\payment\status\Base',
+      'name' => '\Drupal\payment\Plugin\payment\status\Base unit test',
       'group' => 'Payment',
     );
   }

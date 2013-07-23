@@ -2,18 +2,18 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\payment\method\BasicTest.
+ * Contains class \Drupal\payment\Tests\Plugin\payment\method\BasicUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\payment\method;
 
 use Drupal\payment\Plugin\payment\method\PaymentMethodInterface;
-use Drupal\simpletest\WebTestBase;
+use Drupal\simpletest\DrupalUnitTestBase;
 
 /**
  * Tests \Drupal\payment\Plugin\payment\method\Basic.
  */
-class BasicTest extends WebTestBase {
+class BasicUnitTest extends DrupalUnitTestBase {
 
   public static $modules = array('payment');
 
@@ -22,7 +22,7 @@ class BasicTest extends WebTestBase {
    */
   static function getInfo() {
     return array(
-      'name' => '\Drupal\payment\Plugin\payment\method\Basic',
+      'name' => '\Drupal\payment\Plugin\payment\method\Basic unit test',
       'group' => 'Payment',
     );
   }
@@ -101,22 +101,6 @@ class BasicTest extends WebTestBase {
     $this->assertIdentical($this->method->brandOptions(), array(
       'default' => $label,
     ));
-  }
-
-  /**
-   * Tests paymentFormElements().
-   */
-  function testPaymentFormElements() {
-    $this->method->setMessageText('Hello [site:name]!');
-    $form = array();
-    $form_state = array(
-      'payment' => entity_create('payment', array()),
-    );
-    $payment = entity_create('payment', array());
-    $elements = $this->method->paymentFormElements($form, $form_state, $payment);
-    if ($this->assertTrue(is_array($elements))) {
-      $this->assertIdentical($elements['message']['#markup'], "<p>Hello Drupal!</p>\n");
-    }
   }
 
   /**

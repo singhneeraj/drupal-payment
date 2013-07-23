@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\UpgradeMap.
+ * Contains class \Drupal\payment\Tests\UpgradeMapUnitTest.
  */
 
 namespace Drupal\payment\Tests;
@@ -12,7 +12,7 @@ use Drupal\simpletest\DrupalUnitTestBase;
 /**
  * Tests the payment_upgrade_map_*() functions.
  */
-class UpgradeMap extends DrupalUnitTestBase {
+class UpgradeMapUnitTest extends DrupalUnitTestBase {
 
   public static $modules = array('payment');
 

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\PaymentAccessControllerTest.
+ * Contains class \Drupal\payment\Tests\PaymentAccessControllerWebTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Core\Entity;
@@ -13,7 +13,7 @@ use Drupal\payment\Generate;
 /**
  * Tests \Drupal\payment\Plugin\Core\Entity\PaymentAccessController.
  */
-class PaymentAccessControllerTest extends AccessibleInterfaceWebTestBase {
+class PaymentAccessControllerWebTest extends AccessibleInterfaceWebTestBase {
 
   public static $modules = array('payment');
 
@@ -22,7 +22,7 @@ class PaymentAccessControllerTest extends AccessibleInterfaceWebTestBase {
    */
   static function getInfo() {
     return array(
-      'name' => '\Drupal\payment\Plugin\Core\Entity\PaymentAccessController',
+      'name' => '\Drupal\payment\Plugin\Core\Entity\PaymentAccessController web test',
       'group' => 'Payment',
     );
   }

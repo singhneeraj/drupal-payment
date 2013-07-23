@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\PaymentLineItemFormElement.
+ * Contains class \Drupal\payment\Tests\PaymentLineItemWebTest.
  */
 
 namespace Drupal\payment\Tests\Element;
@@ -14,7 +14,7 @@ use Drupal\simpletest\WebTestBase ;
 /**
  * Tests the payment_line_item element.
  */
-class PaymentLineItem extends WebTestBase {
+class PaymentLineItemWebTest extends WebTestBase {
 
   /**
    * {@inheritdoc}

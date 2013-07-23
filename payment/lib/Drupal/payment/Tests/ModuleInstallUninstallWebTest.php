@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\ModuleInstallUninstall.
+ * Contains class \Drupal\payment\Tests\ModuleInstallUninstallWebTest.
  */
 
 namespace Drupal\payment\Tests;
@@ -13,7 +13,7 @@ use Drupal\simpletest\WebTestBase;
 /**
  * Tests module installation and uninstallation.
  */
-class ModuleInstallUninstall extends WebTestBase {
+class ModuleInstallUninstallWebTest extends WebTestBase {
 
   public static $modules = array('payment');
 

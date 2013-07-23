@@ -7,7 +7,8 @@
 namespace Drupal\payment\Plugin\payment\context;
 
 use Drupal\Component\Plugin\PluginBase;
-use Drupal\payment\Plugin\payment\context\ContextInterface;
+use Drupal\payment\Plugin\payment\context\PaymentContextInterface;
+use Drupal\payment\Plugin\Core\Entity\PaymentInterface;
 
 /**
  * A base context.
@@ -15,27 +16,24 @@ use Drupal\payment\Plugin\payment\context\ContextInterface;
 abstract class Base extends PluginBase implements PaymentContextInterface {
 
   /**
+   * The payment this context is of.
+   *
+   * @var \Drupal\payment\Plugin\Core\Entity\PaymentInterface
+   */
+  protected $payment;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
-    $configuration += array(
-      'paymentId' => 0,
-    );
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  public function getPayment() {
+    return $this->payment;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getPaymentId() {
-    return $this->configuration['paymentId'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setPaymentId($id) {
-    $this->configuration['paymentId'] = $id;
+  public function setPayment(PaymentInterface $payment) {
+    $this->payment = $payment;
 
     return $this;
   }
@@ -48,7 +46,7 @@ abstract class Base extends PluginBase implements PaymentContextInterface {
    */
   function resume() {
     $handler = \Drupal::moduleHandler();
-    $handler->invokeAll('payment_pre_resume_context', entity_load('payment', $this->getPaymentId()));
+    $handler->invokeAll('payment_pre_resume_context', $this->getPayment());
     // @todo Invoke Rules event.
   }
 }

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class Drupal\payment\Tests\UpgradePathWithContent.
+ * Contains class Drupal\payment\Tests\UpgradePathWithContentWebTest.
  */
 
 namespace Drupal\payment\Tests;
@@ -12,7 +12,7 @@ use Drupal\system\Tests\Upgrade\UpgradePathTestBase;
 /**
  * Tests Payment's upgrade path.
  */
-class UpgradePathWithoutContent extends UpgradePathTestBase {
+class UpgradePathWithoutContentWebTest extends UpgradePathTestBase {
 
   static function getInfo() {
     return array(
