@@ -112,9 +112,11 @@ class BasicTest extends WebTestBase {
     $form_state = array(
       'payment' => entity_create('payment', array()),
     );
-    $elements = $this->method->paymentFormElements($form, $form_state);
-    $this->assertIdentical($elements['message']['#markup'], "<p>Hello Drupal!</p>\n");
-    $this->assertTrue(is_array($this->method->paymentFormElements($form, $form_state)));
+    $payment = entity_create('payment', array());
+    $elements = $this->method->paymentFormElements($form, $form_state, $payment);
+    if ($this->assertTrue(is_array($elements))) {
+      $this->assertIdentical($elements['message']['#markup'], "<p>Hello Drupal!</p>\n");
+    }
   }
 
   /**
