@@ -2,27 +2,27 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\Core\Entity\PaymentMethodAccessControllerWebTest.
+ * Contains class \Drupal\payment\Tests\Plugin\Core\Entity\PaymentMethodAccessControllerUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Core\Entity;
 
-use Drupal\payment\AccessibleInterfaceWebTestBase;
+use Drupal\payment\AccessibleInterfaceUnitTestBase;
 use Drupal\payment\Generate;
 
 /**
  * Tests \Drupal\payment\PaymentMethodAccessController.
  */
-class PaymentMethodAccessControllerWebTest extends AccessibleInterfaceWebTestBase {
+class PaymentMethodAccessControllerUnitTest extends AccessibleInterfaceUnitTestBase {
 
-  public static $modules = array('payment');
+  public static $modules = array('payment', 'system', 'user');
 
   /**
    * {@inheritdoc}
    */
   static function getInfo() {
     return array(
-      'name' => '\Drupal\payment\PaymentMethodAccessController web test',
+      'name' => '\Drupal\payment\PaymentMethodAccessController unit test',
       'group' => 'Payment',
     );
   }
@@ -31,7 +31,9 @@ class PaymentMethodAccessControllerWebTest extends AccessibleInterfaceWebTestBas
    * Tests access control.
    */
   function testAccessControl() {
-    $authenticated = $this->drupalCreateUser();
+    $entity_manager = $this->container->get('plugin.manager.entity');
+    $user_storage_controller = $entity_manager->getStorageController('user');
+    $authenticated = $user_storage_controller->create(array());
 
     // Create a new payment method.
     $manager = \Drupal::service('plugin.manager.payment.payment_method');

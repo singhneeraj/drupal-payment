@@ -2,27 +2,27 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\PaymentAccessControllerWebTest.
+ * Contains class \Drupal\payment\Tests\PaymentAccessControllerUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Core\Entity;
 
-use Drupal\payment\AccessibleInterfaceWebTestBase;
+use Drupal\payment\AccessibleInterfaceUnitTestBase;
 use Drupal\payment\Generate;
 
 /**
  * Tests \Drupal\payment\Plugin\Core\Entity\PaymentAccessController.
  */
-class PaymentAccessControllerWebTest extends AccessibleInterfaceWebTestBase {
+class PaymentAccessControllerUnitTest extends AccessibleInterfaceUnitTestBase {
 
-  public static $modules = array('payment');
+  public static $modules = array('payment', 'system', 'user');
 
   /**
    * {@inheritdoc}
    */
   static function getInfo() {
     return array(
-      'name' => '\Drupal\payment\Plugin\Core\Entity\PaymentAccessController web test',
+      'name' => '\Drupal\payment\Plugin\Core\Entity\PaymentAccessController unit test',
       'group' => 'Payment',
     );
   }
@@ -33,7 +33,11 @@ class PaymentAccessControllerWebTest extends AccessibleInterfaceWebTestBase {
   function testAccessControl() {
     $payment_1 = Generate::createPayment(1);
     $payment_2 = Generate::createPayment(2);
-    $authenticated = $this->drupalCreateUser();
+    $entity_manager = $this->container->get('plugin.manager.entity');
+    $user_storage_controller = $entity_manager->getStorageController('user');
+    $authenticated = $user_storage_controller->create(array(
+      'uid' => 2,
+    ));
 
     // Create a new payment.
     $this->assertDataAccess(entity_create('payment', array()), 'a payment', 'create', $authenticated, array(), array(

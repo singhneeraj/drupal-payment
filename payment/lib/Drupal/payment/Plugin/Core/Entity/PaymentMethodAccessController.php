@@ -41,4 +41,13 @@ class PaymentMethodAccessController extends EntityAccessController {
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
     return user_access('payment.payment_method.create.' . $entity_bundle, $account);
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getCache($cid, $operation, $langcode, AccountInterface $account) {
+    // Disable the cache, because the intensive operations are cached in
+    // user_access() already and the results of all other operations are too
+    // volatile to be cached.
+  }
 }

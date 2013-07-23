@@ -2,19 +2,19 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\AccessibleInterfaceWebTestBase.
+ * Contains class \Drupal\payment\Tests\AccessibleInterfaceUnitTestBase.
  */
 
 namespace Drupal\payment;
 
 use Drupal\Core\TypedData\AccessibleInterface;
-use Drupal\simpletest\WebTestBase;
+use Drupal\simpletest\DrupalUnitTestBase;
 use Drupal\Core\Session\AccountInterface;
 
 /**
  * Provides tools to test \Drupal\Core\TypedData\AccessibleInterface objects.
  */
-class AccessibleInterfaceWebTestBase extends WebTestBase {
+class AccessibleInterfaceUnitTestBase extends DrupalUnitTestBase {
 
   /**
    * Returns permissions' human-readable titles and their machine names.
@@ -42,7 +42,7 @@ class AccessibleInterfaceWebTestBase extends WebTestBase {
   /**
    * Tests access to typed data.
    *
-   * @param Drupal\Core\TypedData\AccessibleInterface $data
+   * @param \Drupal\Core\TypedData\AccessibleInterface $data
    * @param string $data_label
    *   The entity's human-readable type.
    * @param string $operation
@@ -67,11 +67,15 @@ class AccessibleInterfaceWebTestBase extends WebTestBase {
    * @return NULL
    */
   function assertDataAccess(AccessibleInterface $data, $data_label, $operation, AccountInterface $authenticated, array $permissions = array(), array $access = array()) {
-    $user_access_permissions = &drupal_static('user_access');
+    $entity_manager = $this->container->get('plugin.manager.entity');
+    $user_storage_controller = $entity_manager->getStorageController('user');
+    $user_role_storage_controller = $entity_manager->getStorageController('user_role');
 
     // Create the user accounts.
     $anonymous = drupal_anonymous_user();
-    $root = entity_load('user', 1);
+    $root = $user_storage_controller->create(array(
+      'uid' => 1,
+    ));
 
     $comment = $data && isset($data->uid) ? ' with UID ' . $data->uid : NULL;
 
@@ -96,9 +100,14 @@ class AccessibleInterfaceWebTestBase extends WebTestBase {
       foreach ($authenticated->getRoles() as $rid) {
         $authenticated->removeRole($rid);
       }
-      $rid = $this->drupalCreateRole($permissions);
-      $authenticated->addRole($rid);
-      $authenticated->save();
+      $role = $user_role_storage_controller->create(array(
+        'id' => $this->randomName(),
+      ));
+      foreach ($permissions as $permission) {
+        $role->grantPermission($permission);
+      }
+      $role->save();
+      $authenticated->addRole($role->id());
       $with = $permissions ? 'with' : 'without';
       $can = $access['authenticated_with_permissions'] ? 'can' : 'cannot';
       $uid = $authenticated->id();
@@ -112,11 +121,14 @@ class AccessibleInterfaceWebTestBase extends WebTestBase {
       foreach ($authenticated->getRoles() as $rid) {
         $authenticated->removeRole($rid);
       }
-      $rid = $this->drupalCreateRole($assert_permissions);
-      $authenticated->addRole($rid);
-      $authenticated->save();
-      drupal_static_reset();
-      drupal_flush_all_caches();
+      $role = $user_role_storage_controller->create(array(
+        'id' => $this->randomName(),
+      ));
+      foreach ($assert_permissions as $permission) {
+        $role->grantPermission($permission);
+      }
+      $role->save();
+      $authenticated->addRole($role->id());
       $can = $access['authenticated_without_permissions'] ? 'can' : 'cannot';
       $this->assertFalse($data->access($operation, $authenticated), "An authenticated user (UID $uid) $can perform operation <strong>$operation</strong> on <strong>$data_label</strong>$comment without permission " . $this->permissionLabel(array($permissions[$i])));
     }
