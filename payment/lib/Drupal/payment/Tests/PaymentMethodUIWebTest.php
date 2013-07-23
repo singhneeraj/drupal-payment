@@ -28,9 +28,21 @@ class PaymentMethodUIWebTest extends WebTestBase {
   }
 
   /**
+   * Tests the different UI components.
+   */
+  public function testUI() {
+    $this->doTestList();
+    $this->doTestEnableDisable();
+    $this->doTestDuplicate();
+    $this->doTestDelete();
+    $this->doTestAddSelect();
+    $this->doTestAdd();
+  }
+
+  /**
    * Tests the list.
    */
-  function testList() {
+  function doTestList() {
     $this->drupalGet('admin/config/services/payment/method');
     $this->assertResponse(403);
     $this->drupalLogin($this->drupalCreateUser(array('payment.payment_method.view.any')));
@@ -41,7 +53,8 @@ class PaymentMethodUIWebTest extends WebTestBase {
   /**
    * Tests enabling/disabling.
    */
-  function testEnableDisable() {
+  function doTestEnableDisable() {
+    $this->drupalLogout();
     // Confirm that there are no enable/disable links without the required
     // permissions.
     $this->drupalLogin($this->drupalCreateUser(array('payment.payment_method.view.any')));
@@ -66,7 +79,8 @@ class PaymentMethodUIWebTest extends WebTestBase {
   /**
    * Tests duplication.
    */
-  function testDuplicate() {
+  function doTestDuplicate() {
+    $this->drupalLogout();
     $id = 'collect_on_delivery';
     $plugin = entity_load('payment_method', $id)->getPlugin();
 
@@ -86,7 +100,8 @@ class PaymentMethodUIWebTest extends WebTestBase {
   /**
    * Tests deletion.
    */
-  function testDelete() {
+  function doTestDelete() {
+    $this->drupalLogout();
     $id = 'collect_on_delivery';
 
     $this->drupalGet('admin/config/services/payment/method/' . $id . '/delete');
@@ -105,7 +120,8 @@ class PaymentMethodUIWebTest extends WebTestBase {
   /**
    * Tests selecting.
    */
-  function testAddSelect() {
+  function doTestAddSelect() {
+    $this->drupalLogout();
     $plugin_id = 'payment_basic';
     $this->drupalGet('admin/config/services/payment/method-add');
     $this->assertResponse(403);
@@ -119,7 +135,8 @@ class PaymentMethodUIWebTest extends WebTestBase {
   /**
    * Tests adding.
    */
-  function testAdd() {
+  function doTestAdd() {
+    $this->drupalLogout();
     $plugin_id = 'payment_basic';
     $this->drupalGet('admin/config/services/payment/method-add/' . $plugin_id);
     $this->assertResponse(403);

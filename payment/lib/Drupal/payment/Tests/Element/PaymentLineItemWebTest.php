@@ -72,9 +72,12 @@ class PaymentLineItemWebTest extends WebTestBase {
   }
 
   /**
-   * Tests a regular submission.
+   * Tests the element.
+   *
+   * @todo Test deleting a line item once WebTestBase::drupalPostAjax() supports
+   *   testing RemoveCommand.
    */
-  function testSubmission() {
+  function testElement() {
     $names = array();
     foreach (Generate::createPaymentLineItems() as $line_item) {
       $names[] = $line_item->getName();
@@ -86,21 +89,22 @@ class PaymentLineItemWebTest extends WebTestBase {
     $this->assertLineItemElements($names);
     $this->assertAddMore(TRUE);
 
-    // Add a line item.
+    // Add a line item through a regular submission.
     $this->drupalPost(NULL, array(
       'line_item[add_more][type]' => $type,
     ), t('Add a line item'));
     $this->assertLineItemElements(array_merge($names, array($type)));
     $this->assertAddMore(FALSE);
 
-    // Delete a line item.
+    // Delete a line item through a regular submission.
     $this->drupalPost(NULL, array(), t('Delete'));
     $this->assertLineItemElements($names);
     $elements = $this->xpath('//input[@name="line_item[line_items][' . $type . '][weight]"]');
     $this->assertFalse(isset($elements[0]));
     $this->assertAddMore(TRUE);
 
-    // Change a line item's weight and test the element's value.
+    // Change a line item's weight and test the element's value through a
+    // regular submission.
     $name = 'line_item[line_items][' . reset($names) . '][weight]';
     $this->assertFieldByXPath('//select[@name="' . $name . '"]/option[@value="0" and @selected="selected"]');
     $this->drupalPost(NULL, array(
@@ -117,22 +121,8 @@ class PaymentLineItemWebTest extends WebTestBase {
       // Check that the first line item is now the last.
       $this->assertEqual(end($value)->getName(), reset($names));
     }
-  }
 
-  /**
-   * Tests an AJAX submission.
-   *
-   * @todo Test deleting a line item once WebTestBase::drupalPostAjax() supports
-   *   testing RemoveCommand.
-   */
-  function testAjaxSubmission() {
-    $names = array();
-    foreach (Generate::createPaymentLineItems() as $line_item) {
-      $names[] = $line_item->getName();
-    }
-    $type = 'payment_basic';
-
-    // Add a line item.
+    // Add a line item through an AJAX submission.
     $this->drupalPostAJAX('payment_test-element-payment-line-item', array(
       'line_item[add_more][type]' => $type,
     ), array(
@@ -141,7 +131,7 @@ class PaymentLineItemWebTest extends WebTestBase {
     $this->assertLineItemElements(array_merge($names, array($type)));
     $this->assertAddMore(FALSE);
 
-    // Test the element's value.
+    // Test the element's value through an AJAX submission.
     $this->drupalPost(NULL, array(
       'line_item[line_items][payment_basic][plugin_form][description]' => $this->randomString(),
     ), t('Submit'));
