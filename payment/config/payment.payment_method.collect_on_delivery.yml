@@ -4,5 +4,6 @@ ownerId: 1
 pluginConfiguration:
   messageText: 'You will be charged upon delivery. Please make sure you have enough cash available.'
   messageTextFormat: plain_text
+  status: payment_pending
 pluginId: payment_basic
 status: '0'
