@@ -21,6 +21,7 @@ class UpgradeMapUnitTest extends DrupalUnitTestBase {
    */
   static function getInfo() {
     return array(
+      'description' => '',
       'name' => 'Upgrade maps',
       'group' => 'Payment',
     );

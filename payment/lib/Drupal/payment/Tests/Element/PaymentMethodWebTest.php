@@ -25,6 +25,7 @@ class PaymentMethodWebTest extends WebTestBase {
    */
   static function getInfo() {
     return array(
+      'description' => '',
       'name' => 'payment_method element',
       'group' => 'Payment',
     );

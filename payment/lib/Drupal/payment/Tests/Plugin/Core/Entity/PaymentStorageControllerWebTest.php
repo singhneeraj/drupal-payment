@@ -24,6 +24,7 @@ class PaymentStorageControllerWebTest extends WebTestBase {
    */
   static function getInfo() {
     return array(
+      'description' => '',
       'name' => '\Drupal\payment\Plugin\Core\Entity\PaymentStorageController web test',
       'group' => 'Payment',
     );

@@ -24,6 +24,7 @@ class PaymentMethodStorageControllerUnitTest extends DrupalUnitTestBase {
    */
   static function getInfo() {
     return array(
+      'description' => '',
       'name' => '\Drupal\payment\Plugin\Core\Entity\PaymentMethodStorageController web test',
       'group' => 'Payment',
     );

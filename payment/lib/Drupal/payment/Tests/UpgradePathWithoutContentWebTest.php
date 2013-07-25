@@ -16,6 +16,7 @@ class UpgradePathWithoutContentWebTest extends UpgradePathTestBase {
 
   static function getInfo() {
     return array(
+      'description' => '',
       'name'  => 'Upgrade path (without existing content and configuration)',
       'group' => 'Payment',
     );

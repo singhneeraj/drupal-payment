@@ -20,6 +20,7 @@ class PaymentStatusUIWebTest extends WebTestBase {
    */
   static function getInfo() {
     return array(
+      'description' => '',
       'name' => 'Payment status UI',
       'group' => 'Payment',
     );

@@ -24,6 +24,7 @@ class PaymentUnitTest extends DrupalUnitTestBase {
    */
   static function getInfo() {
     return array(
+      'description' => '',
       'name' => '\Drupal\payment\Plugin\Core\Entity\Payment unit test',
       'group' => 'Payment',
     );

@@ -22,6 +22,7 @@ class BaseUnitTest extends DrupalUnitTestBase {
    */
   static function getInfo() {
     return array(
+      'description' => '',
       'name' => '\Drupal\payment\Plugin\payment\status\Base unit test',
       'group' => 'Payment',
     );

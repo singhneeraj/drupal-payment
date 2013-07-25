@@ -22,6 +22,7 @@ class BasicWebTest extends WebTestBase {
    */
   static function getInfo() {
     return array(
+      'description' => '',
       'name' => '\Drupal\payment\Plugin\payment\line_item\Basic web test',
       'group' => 'Payment',
     );

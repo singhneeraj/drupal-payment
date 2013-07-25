@@ -26,6 +26,7 @@ class UnavailableUnitTest extends DrupalUnitTestBase {
    */
   static function getInfo() {
     return array(
+      'description' => '',
       'name' => '\Drupal\payment\Plugin\payment\context\Unavailable unit test',
       'group' => 'Payment',
     );

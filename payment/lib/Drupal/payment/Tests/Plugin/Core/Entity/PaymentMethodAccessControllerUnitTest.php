@@ -22,6 +22,7 @@ class PaymentMethodAccessControllerUnitTest extends AccessibleInterfaceUnitTestB
    */
   static function getInfo() {
     return array(
+      'description' => '',
       'name' => '\Drupal\payment\PaymentMethodAccessController unit test',
       'group' => 'Payment',
     );

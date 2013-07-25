@@ -26,6 +26,7 @@ class PaymentLineItemWebTest extends WebTestBase {
    */
   static function getInfo() {
     return array(
+      'description' => '',
       'name' => 'payment_line_item element',
       'group' => 'Payment',
     );

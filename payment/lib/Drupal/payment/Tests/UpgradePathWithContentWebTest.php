@@ -17,6 +17,7 @@ class UpgradePathWithContentWebTest extends UpgradePathTestBase {
 
   static function getInfo() {
     return array(
+      'description' => '',
       'name'  => 'Upgrade path (with existing content and configuration)',
       'group' => 'Payment',
     );

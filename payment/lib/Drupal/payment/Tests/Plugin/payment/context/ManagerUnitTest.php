@@ -21,6 +21,7 @@ class ManagerUnitTest extends DrupalUnitTestBase {
    */
   static function getInfo() {
     return array(
+      'description' => '',
       'name' => '\Drupal\payment\Plugin\payment\context\Manager unit test',
       'group' => 'Payment',
     );
