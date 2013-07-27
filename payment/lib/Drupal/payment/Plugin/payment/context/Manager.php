@@ -36,7 +36,7 @@ class Manager extends DefaultPluginManager {
     $annotation_namespaces = array(
       'Drupal\payment\Annotations' => drupal_get_path('module', 'payment') . '/lib',
     );
-    parent::__construct('payment/context', $namespaces, $annotation_namespaces, 'Drupal\payment\Annotations\PaymentContext');
+    parent::__construct('Plugin/payment/context', $namespaces, $annotation_namespaces, 'Drupal\payment\Annotations\PaymentContext');
     $this->alterInfo($module_handler, 'payment_context');
     $this->setCacheBackend($cache_backend, $language_manager, 'payment_context');
   }
