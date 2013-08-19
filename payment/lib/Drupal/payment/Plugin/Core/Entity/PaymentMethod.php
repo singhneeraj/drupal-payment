@@ -19,6 +19,7 @@ use Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface;
  * Defines a payment method entity.
  *
  * @EntityType(
+ *   bundle_label = @Translation("Payment method type"),
  *   config_prefix = "payment.payment_method",
  *   controllers = {
  *     "access" = "Drupal\payment\Plugin\Core\Entity\PaymentMethodAccessController",

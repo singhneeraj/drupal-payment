@@ -21,6 +21,7 @@ use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
  *
  * @EntityType(
  *   base_table = "payment",
+ *   bundle_label = @Translation("Payment context"),
  *   controllers = {
  *     "access" = "Drupal\payment\Plugin\Core\Entity\PaymentAccessController",
  *     "storage" = "Drupal\payment\Plugin\Core\Entity\PaymentStorageController",
