@@ -27,10 +27,10 @@ class Generate {
    */
   static function createPayment($uid, PaymentMethod $payment_method = NULL) {
     $context_manager = \Drupal::service('plugin.manager.payment.context');
-    $payment = entity_create('payment', array())
-      ->setPaymentMethodId('payment_unavailable')
+    $payment = entity_create('payment', array(
+      'bundle' => 'payment_unavailable',
+    ))->setPaymentMethodId('payment_unavailable')
       ->setOwnerId($uid)
-      ->setPaymentContext($context_manager->createInstance('payment_unavailable'))
       ->setLineItems(static::createPaymentLineItems());
 
     return $payment;

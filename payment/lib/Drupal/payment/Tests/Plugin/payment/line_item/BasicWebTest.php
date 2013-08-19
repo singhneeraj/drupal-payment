@@ -95,7 +95,9 @@ class BasicWebTest extends WebTestBase {
   public function testPaymentEntityIntegration() {
     $description = $this->randomString();
     $name = $this->randomName();
-    $payment = entity_create('payment', array());
+    $payment = entity_create('payment', array(
+      'bundle' => 'payment_unavailable',
+    ));
     $this->lineItem
       ->setName($name)
       ->setDescription($description);

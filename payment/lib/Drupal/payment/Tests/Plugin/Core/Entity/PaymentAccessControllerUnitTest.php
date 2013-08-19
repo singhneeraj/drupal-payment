@@ -41,7 +41,9 @@ class PaymentAccessControllerUnitTest extends AccessibleInterfaceUnitTestBase {
     ));
 
     // Create a new payment.
-    $this->assertDataAccess(entity_create('payment', array()), 'a payment', 'create', $authenticated, array(), array(
+    $this->assertDataAccess(entity_create('payment', array(
+      'bundle' => 'payment_unavailable',
+    )), 'a payment', 'create', $authenticated, array(), array(
       'anonymous' => TRUE,
       'authenticated_without_permissions' => TRUE,
     ));

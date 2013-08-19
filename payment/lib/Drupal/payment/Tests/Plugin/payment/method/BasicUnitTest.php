@@ -117,7 +117,9 @@ class BasicUnitTest extends DrupalUnitTestBase {
    * Tests paymentOperationAccess().
    */
   function testPaymentOperationAccess() {
-    $payment = entity_create('payment', array());
+    $payment = entity_create('payment', array(
+      'bundle' => 'payment_unavailable',
+    ));
     $this->assertTrue($this->method->paymentOperationAccess($payment, 'execute', 'default'));
     $this->assertFalse($this->method->paymentOperationAccess($payment, $this->randomName(), 'default'));
   }
@@ -127,7 +129,9 @@ class BasicUnitTest extends DrupalUnitTestBase {
    */
   function testExecutePaymentOperation() {
     $plugin_id = 'payment_unknown';
-    $payment = entity_create('payment', array());
+    $payment = entity_create('payment', array(
+      'bundle' => 'payment_unavailable',
+    ));
     $this->method->setStatus($plugin_id);
     $this->method->executePaymentOperation($payment, 'execute', 'default');
     $this->assertTrue($payment->getStatus()->getPluginId() == $plugin_id);

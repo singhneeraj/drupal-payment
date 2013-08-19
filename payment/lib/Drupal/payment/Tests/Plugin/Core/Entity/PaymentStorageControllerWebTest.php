@@ -35,15 +35,16 @@ class PaymentStorageControllerWebTest extends WebTestBase {
    */
   function testCRUD() {
     // Test creating a payment.
-    $payment = entity_create('payment', array());
+    $payment = entity_create('payment', array(
+      'bundle' => 'payment_unavailable',
+    ));
     $this->assertTrue($payment instanceof PaymentInterface);
     $this->assertTrue(is_int($payment->getOwnerId()));
     $this->assertEqual(count($payment->validate()), 0);
+    $this->assertTrue($payment->getPaymentContext() instanceof PaymentContextInterface);
 
     // Test saving a payment.
-    $context_manager = $this->container->get('plugin.manager.payment.context');
     $this->assertFalse($payment->id());
-    $payment->setPaymentContext($context_manager->createInstance('payment_unavailable'));
     $payment->save();
     // @todo The ID should be an integer, but for some reason the entity field
     //   API returns a string.
@@ -53,7 +54,6 @@ class PaymentStorageControllerWebTest extends WebTestBase {
     $payment_loaded = entity_load_unchanged('payment', $payment->id());
     $this->assertEqual(count($payment_loaded->getLineItems()), count($payment->getLineItems()));
     $this->assertEqual(count($payment_loaded->getStatuses()), count($payment->getStatuses()));
-    $this->assertTrue($payment_loaded->getPaymentContext() instanceof PaymentContextInterface);
 
     // Test deleting a payment.
     $payment->delete();

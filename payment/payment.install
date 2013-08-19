@@ -102,7 +102,7 @@ function payment_schema() {
   );
   $schema['payment'] = array(
     'fields' => array(
-      'context_plugin_id' => array(
+      'bundle' => array(
         'type' => 'varchar',
         'length' => 255,
       ),
@@ -424,8 +424,8 @@ function payment_update_8200(array &$sandbox) {
       ->execute();
   }
 
-  // Rename context to context_plugin_id.
-  db_change_field('payment', 'context', 'context_plugin_id', array(
+  // Rename context to bundle.
+  db_change_field('payment', 'context', 'bundle', array(
     'type' => 'varchar',
     'length' => 255,
   ));

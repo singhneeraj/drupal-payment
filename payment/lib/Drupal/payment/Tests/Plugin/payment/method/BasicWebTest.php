@@ -43,10 +43,10 @@ class BasicWebTest extends WebTestBase {
   function testPaymentFormElements() {
     $this->method->setMessageText('Hello [site:name]!');
     $form = array();
-    $form_state = array(
-      'payment' => entity_create('payment', array()),
-    );
-    $payment = entity_create('payment', array());
+    $form_state = array();
+    $payment = entity_create('payment', array(
+      'bundle' => 'payment_unavailable',
+    ));
     $elements = $this->method->paymentFormElements($form, $form_state, $payment);
     if ($this->assertTrue(is_array($elements))) {
       $this->assertIdentical($elements['message']['#markup'], "<p>Hello Drupal!</p>\n");

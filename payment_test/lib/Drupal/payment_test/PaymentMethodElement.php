@@ -57,9 +57,9 @@ class PaymentMethodElement implements ControllerInterface, FormInterface {
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
-    $payment = $this->entityManager->getStorageController('payment')->create(array())
-      ->setPaymentContext($this->contextManager->createInstance('payment_unavailable'))
-      ->setLineItems(Generate::createPaymentLineItems());
+    $payment = $this->entityManager->getStorageController('payment')->create(array(
+      'bundle' => 'payment_unavailable',
+    ))->setLineItems(Generate::createPaymentLineItems());
     $form['payment_method'] = array(
       '#default_value' => $payment,
       '#required' => TRUE,

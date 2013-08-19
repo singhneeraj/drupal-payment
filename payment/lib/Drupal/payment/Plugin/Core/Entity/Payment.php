@@ -26,6 +26,7 @@ use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
  *     "storage" = "Drupal\payment\Plugin\Core\Entity\PaymentStorageController",
  *   },
  *   entity_keys = {
+ *     "bundle" = "bundle",
  *     "id" = "id",
  *     "uuid" = "uuid",
  *   },
@@ -63,6 +64,14 @@ class Payment extends EntityNG implements PaymentInterface {
   protected $statuses = array();
 
   /**
+   * Overrides Entity::__construct().
+   */
+  public function __construct(array $values, $entity_type, $bundle = FALSE, $translations = array()) {
+    parent::__construct($values, $entity_type, $bundle, $translations);
+    $this->context = \Drupal::service('plugin.manager.payment.context')->createInstance($this->bundle());
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function label($langcode = NULL) {
@@ -71,15 +80,6 @@ class Payment extends EntityNG implements PaymentInterface {
     return t('Payment !id', array(
       '!id' => $this->id(),
     ));
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setPaymentContext(PaymentContextInterface $context) {
-    $this->context = $context;
-
-    return $this;
   }
 
   /**

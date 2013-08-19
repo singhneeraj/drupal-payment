@@ -20,16 +20,6 @@ use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
 interface PaymentInterface extends EntityInterface, ExecutableInterface {
 
   /**
-   * Sets the machine name of the context that created this Payment, such as a
-   * payment form, or a module.
-   *
-   * @param \Drupal\payment\Plugin\payment\context\PaymentContextInterface $context
-   *
-   * @return \Drupal\payment\Plugin\Core\Entity\PaymentInterface
-   */
-  public function setPaymentContext(PaymentContextInterface $context);
-
-  /**
    * Gets the machine name of the context that created this Payment, such as a
    * payment form, or a module.
    *

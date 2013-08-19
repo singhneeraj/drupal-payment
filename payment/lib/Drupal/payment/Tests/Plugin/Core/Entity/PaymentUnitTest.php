@@ -9,6 +9,7 @@ namespace Drupal\payment\Tests\Plugin\Core\Entity;
 
 use Drupal\payment\Plugin\Core\Entity\PaymentInterface;
 use Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface;
+use Drupal\payment\Plugin\payment\Context\PaymentContextInterface;
 use Drupal\payment\Generate;
 use Drupal\simpletest\DrupalUnitTestBase;
 
@@ -35,7 +36,10 @@ class PaymentUnitTest extends DrupalUnitTestBase {
    */
   function setUp() {
     parent::setUp();
-    $this->payment = entity_create('payment', array());
+    $this->bundle = 'payment_unavailable';
+    $this->payment = entity_create('payment', array(
+      'bundle' => $this->bundle,
+    ));
   }
 
   /**
@@ -46,12 +50,19 @@ class PaymentUnitTest extends DrupalUnitTestBase {
   }
 
   /**
-   * Tests setPaymentContext() and getPaymentContext().
+   * Tests bundle().
+   */
+  function testBundle() {
+    $this->assertIdentical($this->payment->bundle(), $this->bundle);
+  }
+
+  /**
+   * Tests getPaymentContext().
    */
   function testGetPaymentContext() {
-    $context = \Drupal::service('plugin.manager.payment.context')->createInstance('payment_unavailable');
-    $this->assertTrue($this->payment->setPaymentContext($context) instanceof PaymentInterface);
-    $this->assertIdentical($this->payment->getPaymentContext(), $context);
+    if ($this->assertTrue($this->payment->getPaymentContext() instanceof PaymentContextInterface)) {
+      $this->assertIdentical($this->payment->getPaymentContext()->getPluginId(), $this->bundle);
+    }
   }
 
   /**

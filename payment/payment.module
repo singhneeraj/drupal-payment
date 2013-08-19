@@ -324,11 +324,18 @@ function payment_element_info() {
  */
 function payment_entity_bundle_info() {
   $bundles = array();
-  $manager = \Drupal::service('plugin.manager.payment.payment_method');
-  foreach ($manager->getDefinitions() as $plugin_id => $definition) {
-    $bundles['payment_method'][$plugin_id] = array(
-      'label' => $definition['label'],
-    );
+
+  $map = array(
+    'payment' => 'plugin.manager.payment.context',
+    'payment_method' => 'plugin.manager.payment.payment_method',
+  );
+  foreach ($map as $entity_type => $manager_service) {
+    $manager = \Drupal::service('plugin.manager.payment.context');
+    foreach ($manager->getDefinitions() as $plugin_id => $definition) {
+      $bundles[$entity_type][$plugin_id] = array(
+        'label' => $definition['label'],
+      );
+    }
   }
 
   return $bundles;

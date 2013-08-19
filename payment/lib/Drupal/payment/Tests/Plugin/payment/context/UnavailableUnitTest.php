@@ -65,7 +65,9 @@ class UnavailableUnitTest extends DrupalUnitTestBase {
    * Tests setPayment() and getPayment().
    */
   function testGetPayment() {
-    $payment = entity_create('payment', array());
+    $payment = entity_create('payment', array(
+      'context' => $this->context,
+    ));
     $this->assertTrue($this->context->setPayment($payment) instanceof PaymentContextInterface );
     $this->assertTrue($this->context->getPayment() === $payment);
   }

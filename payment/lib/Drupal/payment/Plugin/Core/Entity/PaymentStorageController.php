@@ -19,6 +19,9 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
    * {@inheritdoc}
    */
   function create(array $values) {
+    if (isset($values['context']) && !isset($values['bundle'])) {
+      $values['bundle'] = $values['context']->getPluginId();
+    }
     $payment = parent::create($values);
     $payment->setStatus(\Drupal::service('plugin.manager.payment.status')->createInstance('payment_created'));
 
@@ -34,7 +37,7 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
     $statuses = $this->loadPaymentStatuses(array_keys($queried_entities));
     foreach ($queried_entities as $id => $queried_entity) {
       $queried_entities[$id] = (object) array(
-        'context' => $queried_entity->context_plugin_id ? $manager->createInstance($queried_entity->context_plugin_id) : NULL,
+        'bundle' => $queried_entity->bundle,
         'currencyCode' => $queried_entity->currency_code,
         'id' => (int) $queried_entity->id,
         'lineItems' => $line_items[$id],
@@ -91,7 +94,7 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
    */
   protected function mapToStorageRecord(EntityInterface $entity) {
     $record = new \stdClass();
-    $record->context_plugin_id = $entity->getPaymentContext() ? $entity->getPaymentContext()->getPluginId() : NULL;
+    $record->bundle = $entity->bundle();
     $record->currency_code = $entity->id();
     $record->id = $entity->id();
     $record->payment_method_id = $entity->getPaymentMethodId();
