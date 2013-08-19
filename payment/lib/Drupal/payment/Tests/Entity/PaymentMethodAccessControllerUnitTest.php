@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\Core\Entity\PaymentMethodAccessControllerUnitTest.
+ * Contains class \Drupal\payment\Tests\Entity\PaymentMethodAccessControllerUnitTest.
  */
 
-namespace Drupal\payment\Tests\Plugin\Core\Entity;
+namespace Drupal\payment\Tests\Entity;
 
 use Drupal\payment\AccessibleInterfaceUnitTestBase;
 use Drupal\payment\Generate;

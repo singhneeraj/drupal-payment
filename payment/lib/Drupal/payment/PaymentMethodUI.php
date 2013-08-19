@@ -10,7 +10,7 @@ namespace Drupal\payment;
 use Drupal\Component\Uuid\Uuid;
 use Drupal\Core\Controller\ControllerInterface;
 use Drupal\Core\Entity\EntityManager;
-use Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface;
+use Drupal\payment\Entity\PaymentMethodInterface;
 use Drupal\payment\Plugin\payment\method\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -52,7 +52,7 @@ class PaymentMethodUI implements ControllerInterface {
   /**
    * Enables a payment method.
    *
-   * @param \Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface
+   * @param \Drupal\payment\Entity\PaymentMethodInterface
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
    */
@@ -66,7 +66,7 @@ class PaymentMethodUI implements ControllerInterface {
   /**
    * Disables a payment method.
    *
-   * @param \Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface
+   * @param \Drupal\payment\Entity\PaymentMethodInterface
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
    */

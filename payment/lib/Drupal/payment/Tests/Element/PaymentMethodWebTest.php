@@ -34,7 +34,7 @@ class PaymentMethodWebTest extends WebTestBase {
   /**
    * Creates a payment method.
    *
-   * @return \Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface
+   * @return \Drupal\payment\Entity\PaymentMethodInterface
    */
   public function createPaymentMethod() {
     $payment_method = Generate::createPaymentMethod(2, $this->container

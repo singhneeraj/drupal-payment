@@ -2,16 +2,16 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\Core\Entity\PaymentMethodUnitTest.
+ * Contains class \Drupal\payment\Tests\Entity\PaymentMethodUnitTest.
  */
 
-namespace Drupal\payment\Tests\Plugin\Core\Entity;
+namespace Drupal\payment\Tests\Entity;
 
-use Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface;
+use Drupal\payment\Entity\PaymentMethodInterface;
 use Drupal\simpletest\DrupalUnitTestBase;
 
 /**
- * Tests \Drupal\payment\Plugin\Core\Entity\PaymentMethod.
+ * Tests \Drupal\payment\Entity\PaymentMethod.
  */
 class PaymentMethodUnitTest extends DrupalUnitTestBase {
 
@@ -23,7 +23,7 @@ class PaymentMethodUnitTest extends DrupalUnitTestBase {
   static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Plugin\Core\Entity\PaymentMethod unit test',
+      'name' => '\Drupal\payment\Entity\PaymentMethod unit test',
       'group' => 'Payment',
     );
   }

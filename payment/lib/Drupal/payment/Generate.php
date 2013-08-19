@@ -20,10 +20,10 @@ class Generate {
    *
    * @param integer $uid
    *   The user ID of the payment's owner.
-   * @param \Drupal\payment\Plugin\Core\Entity\PaymentMethod $payment_method
+   * @param \Drupal\payment\Entity\PaymentMethod $payment_method
    *   An optional payment method to set. Defaults to Unavailable.
    *
-   * @return \Drupal\payment\Plugin\Core\Entity\Payment
+   * @return \Drupal\payment\Entity\Payment
    */
   static function createPayment($uid, PaymentMethod $payment_method = NULL) {
     $context_manager = \Drupal::service('plugin.manager.payment.context');
@@ -81,7 +81,7 @@ class Generate {
    * @param \Drupal\payment\Plugin\payment\method\PaymentMethodInterface $plugin
    *   An optional plugin to set. Defaults to payment_unavailable.
    *
-   * @return \Drupal\payment\Plugin\Core\Entity\PaymentMethod
+   * @return \Drupal\payment\Entity\PaymentMethod
    */
   static function createPaymentMethod($uid, PaymentMethodInterface $plugin = NULL) {
     $name = Random::name();

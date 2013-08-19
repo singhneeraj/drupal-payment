@@ -10,7 +10,7 @@ namespace Drupal\payment\Element;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\ReplaceCommand;
-use Drupal\payment\Plugin\Core\Entity\PaymentInterface;
+use Drupal\payment\Entity\PaymentInterface;
 
 /**
  * Provides form callbacks for the payment_method form element.
@@ -23,7 +23,7 @@ class PaymentMethod {
   public static function process(array $element, array &$form_state, array $form) {
     // Validate the element configuration.
     if (!($element['#default_value'] instanceof PaymentInterface)) {
-      throw new \InvalidArgumentException('The default value does not implement \Drupal\payment\Plugin\Core\Entity\PaymentInterface.');
+      throw new \InvalidArgumentException('The default value does not implement \Drupal\payment\Entity\PaymentInterface.');
     }
 
     static::initialize($element, $form_state);
@@ -146,7 +146,7 @@ class PaymentMethod {
    *
    * @param array $element
    * @param array $form_state
-   * @param \Drupal\payment\Plugin\Core\Entity\PaymentInterface $payment
+   * @param \Drupal\payment\Entity\PaymentInterface $payment
    */
   protected static function setPayment(array $element, array &$form_state, PaymentInterface $payment) {
     $form_state['payment_method'][$element['#name']]['payment'] = $payment;
@@ -158,7 +158,7 @@ class PaymentMethod {
    * @param array $element
    * @param array $form_state
    *
-   * @return \Drupal\payment\Plugin\Core\Entity\PaymentInterface
+   * @return \Drupal\payment\Entity\PaymentInterface
    */
   public static function getPayment(array $element, array &$form_state) {
     return $form_state['payment_method'][$element['#name']]['payment'];

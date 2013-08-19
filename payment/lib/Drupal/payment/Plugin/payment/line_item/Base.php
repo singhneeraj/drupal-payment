@@ -7,7 +7,7 @@
 namespace Drupal\payment\Plugin\payment\line_item;
 
 use Drupal\Component\Plugin\PluginBase;
-use Drupal\payment\Plugin\Core\Entity\PaymentInterface;
+use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 
 /**

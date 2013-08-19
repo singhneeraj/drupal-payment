@@ -5,13 +5,13 @@
  * Contains class \Drupal\payment\Tests\PaymentAccessControllerUnitTest.
  */
 
-namespace Drupal\payment\Tests\Plugin\Core\Entity;
+namespace Drupal\payment\Tests\Entity;
 
 use Drupal\payment\AccessibleInterfaceUnitTestBase;
 use Drupal\payment\Generate;
 
 /**
- * Tests \Drupal\payment\Plugin\Core\Entity\PaymentAccessController.
+ * Tests \Drupal\payment\Entity\PaymentAccessController.
  */
 class PaymentAccessControllerUnitTest extends AccessibleInterfaceUnitTestBase {
 
@@ -23,7 +23,7 @@ class PaymentAccessControllerUnitTest extends AccessibleInterfaceUnitTestBase {
   static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Plugin\Core\Entity\PaymentAccessController unit test',
+      'name' => '\Drupal\payment\Entity\PaymentAccessController unit test',
       'group' => 'Payment',
     );
   }

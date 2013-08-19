@@ -8,12 +8,12 @@ namespace Drupal\payment\Plugin\payment\method;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\payment\PaymentProcessingInterface;
-use Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface as EntityPaymentMethodInterface;
+use Drupal\payment\Entity\PaymentMethodInterface as EntityPaymentMethodInterface;
 
 /**
  * A payment method plugin (the logic behind a payment method entity).
  *
- * @see \Drupal\payment\Plugin\Core\Entity\PaymentMethod
+ * @see \Drupal\payment\Entity\PaymentMethod
  */
 interface PaymentMethodInterface extends PaymentProcessingInterface, PluginInspectionInterface {
 
@@ -28,7 +28,7 @@ interface PaymentMethodInterface extends PaymentProcessingInterface, PluginInspe
   /**
    * sets the payment method the plugin instance is for.
    *
-   * @param \Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface $payment_method
+   * @param \Drupal\payment\Entity\PaymentMethodInterface $payment_method
    *
    * @return \Drupal\payment\Plugin\payment\method\PaymentMethodInterface
    */
@@ -37,7 +37,7 @@ interface PaymentMethodInterface extends PaymentProcessingInterface, PluginInspe
   /**
    * Gets the payment method the plugin instance is for.
    *
-   * @return \Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface
+   * @return \Drupal\payment\Entity\PaymentMethodInterface
    */
   public function getPaymentMethod();
 

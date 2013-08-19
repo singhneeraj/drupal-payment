@@ -2,18 +2,18 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\Core\Entity\PaymentStorageControllerWebTest.
+ * Contains class \Drupal\payment\Tests\Entity\PaymentStorageControllerWebTest.
  */
 
-namespace Drupal\payment\Tests\Plugin\Core\Entity;
+namespace Drupal\payment\Tests\Entity;
 
-use Drupal\payment\Plugin\Core\Entity\PaymentInterface;
+use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\payment\context\PaymentContextInterface;
 use Drupal\payment\Generate;
 use Drupal\simpletest\WebTestBase;
 
 /**
- * Tests \Drupal\payment\Plugin\Core\Entity\PaymentStorageController.
+ * Tests \Drupal\payment\Entity\PaymentStorageController.
  */
 class PaymentStorageControllerWebTest extends WebTestBase {
 
@@ -25,7 +25,7 @@ class PaymentStorageControllerWebTest extends WebTestBase {
   static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Plugin\Core\Entity\PaymentStorageController web test',
+      'name' => '\Drupal\payment\Entity\PaymentStorageController web test',
       'group' => 'Payment',
     );
   }

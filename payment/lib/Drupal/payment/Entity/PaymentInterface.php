@@ -2,14 +2,14 @@
 
 /**
  * @file
- * Definition of Drupal\payment\Plugin\Core\Entity\PaymentInterface.
+ * Definition of Drupal\payment\Entity\PaymentInterface.
  */
 
-namespace Drupal\payment\Plugin\Core\Entity;
+namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Executable\ExecutableInterface;
-use Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface;
+use Drupal\payment\Entity\PaymentMethodInterface;
 use Drupal\payment\Plugin\payment\context\PaymentContextInterface;
 use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
@@ -32,7 +32,7 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
    *
    * @param string $currencyCode
    *
-   * @return \Drupal\payment\Plugin\Core\Entity\PaymentInterface
+   * @return \Drupal\payment\Entity\PaymentInterface
    */
   public function setCurrencyCode($currencyCode);
 
@@ -50,7 +50,7 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
    *   Values are \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
    *   objects.
    *
-   * @return \Drupal\payment\Plugin\Core\Entity\PaymentInterface
+   * @return \Drupal\payment\Entity\PaymentInterface
    */
   public function setLineItems(array $line_items);
 
@@ -59,7 +59,7 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
    *
    * @param \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface $line_item
    *
-   * @return \Drupal\payment\Plugin\Core\Entity\PaymentInterface
+   * @return \Drupal\payment\Entity\PaymentInterface
    */
   public function setLineItem(PaymentLineItemInterface $line_item);
 
@@ -98,7 +98,7 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
    * @param array $statuses
    *   \Drupal\payment\Plugin\payment\status\PaymentStatusInterface objects.
    *
-   * @return \Drupal\payment\Plugin\Core\Entity\PaymentInterface
+   * @return \Drupal\payment\Entity\PaymentInterface
    */
   public function setStatuses(array $statuses);
 
@@ -109,7 +109,7 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
    * @param bool $notify
    *   Whether or not to trigger a notification event.
    *
-   * @return \Drupal\payment\Plugin\Core\Entity\PaymentInterface
+   * @return \Drupal\payment\Entity\PaymentInterface
    */
   public function setStatus(PaymentStatusInterface $status, $notify = TRUE);
 
@@ -132,7 +132,7 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
    *
    * @param string $id
    *
-   * @return \Drupal\payment\Plugin\Core\Entity\PaymentInterface
+   * @return \Drupal\payment\Entity\PaymentInterface
    */
   public function setPaymentMethodId($id);
 
@@ -148,7 +148,7 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
    *
    * @param string $brand_name
    *
-   * @return \Drupal\payment\Plugin\Core\Entity\PaymentInterface
+   * @return \Drupal\payment\Entity\PaymentInterface
    */
   public function setPaymentMethodBrand($brand_name);
 
@@ -162,7 +162,7 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
   /**
    * Gets the payment method entity.
    *
-   * @return \Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface
+   * @return \Drupal\payment\Entity\PaymentMethodInterface
    */
   public function getPaymentMethod();
 
@@ -171,7 +171,7 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
    *
    * @param int $uid
    *
-   * @return \Drupal\payment\Plugin\Core\Entity\PaymentInterface
+   * @return \Drupal\payment\Entity\PaymentInterface
    */
   public function setOwnerId($id);
 

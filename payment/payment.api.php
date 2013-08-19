@@ -5,8 +5,8 @@
  * Hook documentation.
  */
 
-use Drupal\payment\Plugin\Core\Entity\PaymentInterface;
-use Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface;
+use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\Entity\PaymentMethodInterface;
 use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
 
 /**
@@ -57,7 +57,7 @@ function hook_payment_context_alter(array &$definitions) {
  *
  * @see Payment::setStatus()
  *
- * @param \Drupal\payment\Plugin\Core\Entity\PaymentInterface $payment
+ * @param \Drupal\payment\Entity\PaymentInterface $payment
  * @param \Drupal\payment\Plugin\payment\status\PaymentStatusInterface $previous_status
  *   The status the payment had before the new one was set. This may be
  *   identical to the current/new status.
@@ -73,7 +73,7 @@ function hook_payment_status_set(PaymentInterface $payment, PaymentStatusInterfa
  *
  * @see \Drupal\payment\Plugin\payment\method\Base::resume()
  *
- * @param \Drupal\payment\Plugin\Core\Entity\PaymentInterface $payment
+ * @param \Drupal\payment\Entity\PaymentInterface $payment
  */
 function hook_payment_pre_resume_context(PaymentInterface $payment) {
   if ($payment->getStatus()->isOrHasAncestor('payment_success')) {
@@ -89,10 +89,10 @@ function hook_payment_pre_resume_context(PaymentInterface $payment) {
  *
  * @see \Drupal\payment\PaymentProcessingInterface::paymentOperationAccess()
  *
- * @param \Drupal\payment\Plugin\Core\Entity\PaymentInterface $payment
+ * @param \Drupal\payment\Entity\PaymentInterface $payment
  *   $payment->getPaymentMethod() contains the method currently configured, but NOT the
  *   method that $payment should be tested against, which is $payment_method.
- * @param \Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface $payment_method
+ * @param \Drupal\payment\Entity\PaymentMethodInterface $payment_method
  * @param string $operation
  * @param string $payment_method_brand
  *   See \Drupal\payment\PaymentProcessingInterface for the available brands.
@@ -107,7 +107,7 @@ function hook_payment_operation_access(PaymentInterface $payment, PaymentMethodI
  *
  * @see \Drupal\payment\PaymentProcessingInterface::executePaymentOperation()
  *
- * @param \Drupal\payment\Plugin\Core\Entity\PaymentInterface $payment
+ * @param \Drupal\payment\Entity\PaymentInterface $payment
  * @param string $operation
  * @param string $payment_method_brand
  *   See \Drupal\payment\PaymentProcessingInterface for the available brands.

@@ -6,7 +6,7 @@
 
 namespace Drupal\payment;
 
-use Drupal\payment\Plugin\Core\Entity\PaymentInterface;
+use Drupal\payment\Entity\PaymentInterface;
 
 /**
  * Defines anything that can process payments.
@@ -46,7 +46,7 @@ interface PaymentProcessingInterface {
    *
    * @param array $form
    * @param array $form_state
-   * @param \Drupal\payment\Plugin\Core\Entity\PaymentInterface $payment
+   * @param \Drupal\payment\Entity\PaymentInterface $payment
    *
    * @return array
    *   A render array.
@@ -58,7 +58,7 @@ interface PaymentProcessingInterface {
    *
    * @see \Drupal\payment\Annotations\PaymentMethod
    *
-   * @param \Drupal\payment\Plugin\Core\Entity\PaymentInterface $payment
+   * @param \Drupal\payment\Entity\PaymentInterface $payment
    * @param string $operation
    *   See \Drupal\payment\Annotations\PaymentMethod::operations for the
    *   definition of available operations.
@@ -74,7 +74,7 @@ interface PaymentProcessingInterface {
    *
    * @see \Drupal\payment\Annotations\PaymentMethod
    *
-   * @param \Drupal\payment\Plugin\Core\Entity\PaymentInterface $payment
+   * @param \Drupal\payment\Entity\PaymentInterface $payment
    * @param string $operation
    *   See \Drupal\payment\Annotations\PaymentMethod::operations for the
    *   definition of available operations.

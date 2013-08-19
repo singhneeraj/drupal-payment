@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains Drupal\payment\Plugin\Core\Entity\PaymentMethodDeleteFormController.
+ * Contains Drupal\payment\Entity\PaymentMethodDeleteFormController.
  */
 
-namespace Drupal\payment\Plugin\Core\Entity;
+namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;
 

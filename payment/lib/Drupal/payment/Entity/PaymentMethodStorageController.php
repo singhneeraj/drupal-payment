@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains Drupal\payment\Plugin\Core\Entity\PaymentMethodStorageController.
+ * Contains Drupal\payment\Entity\PaymentMethodStorageController.
  */
 
-namespace Drupal\payment\Plugin\Core\Entity;
+namespace Drupal\payment\Entity;
 
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\Entity\ConfigStorageController;
@@ -18,7 +18,7 @@ class PaymentMethodStorageController extends ConfigStorageController {
   /**
    * {@inheritdoc}
    *
-   * @see \Drupal\payment\Plugin\Core\Entity\PaymentMethod::getExportProperties
+   * @see \Drupal\payment\Entity\PaymentMethod::getExportProperties
    */
   protected function buildQuery($ids, $revision_id = FALSE) {
     $payment_methods = parent::buildQuery($ids, $revision_id);

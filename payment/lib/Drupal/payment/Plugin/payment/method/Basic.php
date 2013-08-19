@@ -9,7 +9,7 @@ namespace Drupal\payment\Plugin\payment\method;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Annotation\Translation;
 use Drupal\payment\Annotations\PaymentMethod;
-use Drupal\payment\Plugin\Core\Entity\PaymentInterface;
+use Drupal\payment\Entity\PaymentInterface;
 
 /**
  * A basic payment method that does not transfer money.

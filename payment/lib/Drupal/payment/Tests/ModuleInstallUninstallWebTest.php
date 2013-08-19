@@ -7,7 +7,7 @@
 
 namespace Drupal\payment\Tests;
 
-use Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface;
+use Drupal\payment\Entity\PaymentMethodInterface;
 use Drupal\simpletest\WebTestBase;
 
 /**

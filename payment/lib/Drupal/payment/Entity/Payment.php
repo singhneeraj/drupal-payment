@@ -2,16 +2,16 @@
 
 /**
  * @file
- * Definition of Drupal\payment\Plugin\Core\Entity\Payment.
+ * Definition of Drupal\payment\Entity\Payment.
  */
 
-namespace Drupal\payment\Plugin\Core\Entity;
+namespace Drupal\payment\Entity;
 
 use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Entity\Annotation\EntityType;
 use Drupal\Core\Entity\EntityNG;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
-use Drupal\payment\Plugin\Core\Entity\PaymentInterface;
+use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\payment\context\PaymentContextInterface;
 use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
@@ -23,8 +23,8 @@ use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
  *   base_table = "payment",
  *   bundle_label = @Translation("Payment context"),
  *   controllers = {
- *     "access" = "Drupal\payment\Plugin\Core\Entity\PaymentAccessController",
- *     "storage" = "Drupal\payment\Plugin\Core\Entity\PaymentStorageController",
+ *     "access" = "Drupal\payment\Entity\PaymentAccessController",
+ *     "storage" = "Drupal\payment\Entity\PaymentStorageController",
  *   },
  *   entity_keys = {
  *     "bundle" = "bundle",

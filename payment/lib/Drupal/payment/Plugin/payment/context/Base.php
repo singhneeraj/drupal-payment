@@ -8,7 +8,7 @@ namespace Drupal\payment\Plugin\payment\context;
 
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\payment\Plugin\payment\context\PaymentContextInterface;
-use Drupal\payment\Plugin\Core\Entity\PaymentInterface;
+use Drupal\payment\Entity\PaymentInterface;
 
 /**
  * A base context.
@@ -18,7 +18,7 @@ abstract class Base extends PluginBase implements PaymentContextInterface {
   /**
    * The payment this context is of.
    *
-   * @var \Drupal\payment\Plugin\Core\Entity\PaymentInterface
+   * @var \Drupal\payment\Entity\PaymentInterface
    */
   protected $payment;
 

@@ -2,18 +2,18 @@
 
 /**
  * @file
- * Definition of Drupal\payment\Plugin\Core\Entity\PaymentMethod.
+ * Definition of Drupal\payment\Entity\PaymentMethod.
  */
 
-namespace Drupal\payment\Plugin\Core\Entity;
+namespace Drupal\payment\Entity;
 
 use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\Annotation\EntityType;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
 use Drupal\payment\Plugin\payment\method\PaymentMethodInterface as PluginPaymentMethodInterface;
-use Drupal\payment\Plugin\Core\Entity\PaymentInterface;
-use Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface;
+use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\Entity\PaymentMethodInterface;
 
 /**
  * Defines a payment method entity.
@@ -22,13 +22,13 @@ use Drupal\payment\Plugin\Core\Entity\PaymentMethodInterface;
  *   bundle_label = @Translation("Payment method type"),
  *   config_prefix = "payment.payment_method",
  *   controllers = {
- *     "access" = "Drupal\payment\Plugin\Core\Entity\PaymentMethodAccessController",
+ *     "access" = "Drupal\payment\Entity\PaymentMethodAccessController",
  *     "form" = {
- *       "default" = "Drupal\payment\Plugin\Core\Entity\PaymentMethodFormController",
- *       "delete" = "Drupal\payment\Plugin\Core\Entity\PaymentMethodDeleteFormController"
+ *       "default" = "Drupal\payment\Entity\PaymentMethodFormController",
+ *       "delete" = "Drupal\payment\Entity\PaymentMethodDeleteFormController"
  *     },
- *     "list" = "Drupal\payment\Plugin\Core\Entity\PaymentMethodListController",
- *     "storage" = "Drupal\payment\Plugin\Core\Entity\PaymentMethodStorageController",
+ *     "list" = "Drupal\payment\Entity\PaymentMethodListController",
+ *     "storage" = "Drupal\payment\Entity\PaymentMethodStorageController",
  *   },
  *   entity_keys = {
  *     "id" = "id",
