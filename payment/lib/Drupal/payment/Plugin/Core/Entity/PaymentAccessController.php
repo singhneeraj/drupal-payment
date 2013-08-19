@@ -20,7 +20,7 @@ class PaymentAccessController extends EntityAccessController {
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $payment, $operation, $langcode, AccountInterface $account) {
-    return user_access('payment.payment.' . $operation . '.any', $account) || user_access('payment.payment.' . $operation . '.own', $account) && $account->id() == $payment->getOwnerId();
+    return $account->hasPermission('payment.payment.' . $operation . '.any') || $account->hasPermission('payment.payment.' . $operation . '.own') && $account->id() == $payment->getOwnerId();
   }
 
   /**
@@ -36,8 +36,8 @@ class PaymentAccessController extends EntityAccessController {
    * {@inheritdoc}
    */
   protected function getCache($cid, $operation, $langcode, AccountInterface $account) {
-    // Disable the cache, because the intensive operations are cached in
-    // user_access() already and the results of all other operations are too
-    // volatile to be cached.
+    // Disable the cache, because the intensive operations are cached elsewhere
+    // already and the results of all other operations are too volatile to be
+    // cached.
   }
 }

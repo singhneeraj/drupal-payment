@@ -45,13 +45,13 @@ class PaymentMethodAccessControllerUnitTest extends AccessibleInterfaceUnitTestB
     $this->assertDataAccess(Generate::createPaymentMethod(1), 'a payment method', 'update', $authenticated, array('payment.payment_method.update.any'));
 
     // Update a payment method that belongs to user 2.
-    $this->assertDataAccess(Generate::createPaymentMethod($authenticated->uid), 'a payment method', 'update', $authenticated, array('payment.payment_method.update.own'));
+    $this->assertDataAccess(Generate::createPaymentMethod($authenticated->id()), 'a payment method', 'update', $authenticated, array('payment.payment_method.update.own'));
 
     // Delete a payment method that belongs to user 1.
     $this->assertDataAccess(Generate::createPaymentMethod(1), 'a payment method', 'delete', $authenticated, array('payment.payment_method.delete.any'));
 
     // Delete a payment method that belongs to user 2.
-    $this->assertDataAccess(Generate::createPaymentMethod($authenticated->uid), 'a payment method', 'delete', $authenticated, array('payment.payment_method.delete.own'));
+    $this->assertDataAccess(Generate::createPaymentMethod($authenticated->id()), 'a payment method', 'delete', $authenticated, array('payment.payment_method.delete.own'));
 
     // Enable an enabled payment method that belongs to user 1.
     $payment_method = Generate::createPaymentMethod(1);
@@ -61,7 +61,7 @@ class PaymentMethodAccessControllerUnitTest extends AccessibleInterfaceUnitTestB
     ));
 
     // Enable an enabled payment method that belongs to user 2.
-    $payment_method = Generate::createPaymentMethod($authenticated->uid);
+    $payment_method = Generate::createPaymentMethod($authenticated->id());
     $this->assertDataAccess($payment_method, 'an enabled payment method', 'enable', $authenticated, array('payment.payment_method.update.own'), array(
       'root' => FALSE,
       'authenticated_with_permissions' => FALSE,
@@ -73,7 +73,7 @@ class PaymentMethodAccessControllerUnitTest extends AccessibleInterfaceUnitTestB
     $this->assertDataAccess($payment_method, 'a disabled payment method', 'enable', $authenticated, array('payment.payment_method.update.any'));
 
     // Enable a disabled payment method that belongs to user 2.
-    $payment_method = Generate::createPaymentMethod($authenticated->uid);
+    $payment_method = Generate::createPaymentMethod($authenticated->id());
     $payment_method->disable();
     $this->assertDataAccess($payment_method, 'a disabled payment method', 'enable', $authenticated, array('payment.payment_method.update.own'));
 
@@ -86,7 +86,7 @@ class PaymentMethodAccessControllerUnitTest extends AccessibleInterfaceUnitTestB
     ));
 
     // Disable a disabled payment method that belongs to user 2.
-    $payment_method = Generate::createPaymentMethod($authenticated->uid);
+    $payment_method = Generate::createPaymentMethod($authenticated->id());
     $payment_method->disable();
     $this->assertDataAccess($payment_method, 'a disabled payment method', 'disable', $authenticated, array('payment.payment_method.update.own'), array(
       'root' => FALSE,
@@ -98,7 +98,7 @@ class PaymentMethodAccessControllerUnitTest extends AccessibleInterfaceUnitTestB
     $this->assertDataAccess($payment_method, 'a disabled payment method', 'disable', $authenticated, array('payment.payment_method.update.any'));
 
     // Enable am enabled payment method that belongs to user 2.
-    $payment_method = Generate::createPaymentMethod($authenticated->uid);
+    $payment_method = Generate::createPaymentMethod($authenticated->id());
     $this->assertDataAccess($payment_method, 'a disabled payment method', 'disable', $authenticated, array('payment.payment_method.update.own'));
 
     // Clone a payment method that belongs to user 1.
@@ -107,12 +107,12 @@ class PaymentMethodAccessControllerUnitTest extends AccessibleInterfaceUnitTestB
 
     // Clone a payment method that belongs to user 2.
     // @todo Test this with a controller that actually has create permissions.
-    // $this->assertDataAccess(Generate::createPaymentMethod($authenticated->uid), 'a payment method', 'clone', $authenticated, array('payment.payment_method.view.own', 'payment.payment_method.create.Drupal\\payment\\PaymentMethodControllerUnavailable'));
+    // $this->assertDataAccess(Generate::createPaymentMethod($authenticated->id()), 'a payment method', 'clone', $authenticated, array('payment.payment_method.view.own', 'payment.payment_method.create.Drupal\\payment\\PaymentMethodControllerUnavailable'));
 
     // View a payment method that belongs to user 1.
     $this->assertDataAccess(Generate::createPaymentMethod(1), 'a payment method', 'view', $authenticated, array('payment.payment_method.view.any'));
 
     // View a payment method that belongs to user 2.
-    $this->assertDataAccess(Generate::createPaymentMethod($authenticated->uid), 'a payment method', 'view', $authenticated, array('payment.payment_method.view.own'));
+    $this->assertDataAccess(Generate::createPaymentMethod($authenticated->id()), 'a payment method', 'view', $authenticated, array('payment.payment_method.view.own'));
   }
 }

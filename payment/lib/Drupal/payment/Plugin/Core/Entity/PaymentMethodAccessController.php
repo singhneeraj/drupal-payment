@@ -12,42 +12,42 @@ use Drupal\Core\Entity\EntityAccessController;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Defines the default list controller for ConfigEntity objects.
+ * Checks access for payment methods.
  */
 class PaymentMethodAccessController extends EntityAccessController {
 
   /**
    * {@inheritdoc}
    */
-  protected function checkAccess(EntityInterface $entity, $operation, $langcode, AccountInterface $account) {
+  protected function checkAccess(EntityInterface $payment_method, $operation, $langcode, AccountInterface $account) {
     if ($operation == 'enable') {
-      return !$entity->status() && $entity->access('update', $account);
+      return !$payment_method->status() && $payment_method->access('update', $account);
     }
     elseif ($operation == 'disable') {
-      return $entity->status() && $entity->access('update', $account);
+      return $payment_method->status() && $payment_method->access('update', $account);
     }
     elseif ($operation == 'duplicate') {
-      return $entity->access('create', $account) && $entity->access('view', $account);
+      return $this->createAccess($payment_method->bundle(), $account) && $payment_method->access('view', $account);
     }
     else {
       $permission = 'payment.payment_method.' . $operation;
-      return user_access($permission . '.any', $account) || user_access($permission . '.own', $account) && $entity->getOwnerId() == $account->id();
+      return $account->hasPermission($permission . '.any') || $account->hasPermission($permission . '.own') && $payment_method->getOwnerId() == $account->id();
     }
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return user_access('payment.payment_method.create.' . $entity_bundle, $account);
+  protected function checkCreateAccess(AccountInterface $account, array $context, $bundle = NULL) {
+    return $account->hasPermission('payment.payment_method.create.' . $bundle);
   }
 
   /**
    * {@inheritdoc}
    */
   protected function getCache($cid, $operation, $langcode, AccountInterface $account) {
-    // Disable the cache, because the intensive operations are cached in
-    // user_access() already and the results of all other operations are too
-    // volatile to be cached.
+    // Disable the cache, because the intensive operations are cached elsewhere
+    // already and the results of all other operations are too volatile to
+    // cache.
   }
 }
