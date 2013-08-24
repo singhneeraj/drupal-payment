@@ -121,21 +121,6 @@ function payment_menu() {
 }
 
 /**
- * Implements hook_local_actions().
- */
-function payment_local_actions() {
-  $items = array();
-  $items[] = array(
-    'appears_on' => array('payment.payment_method.list'),
-    'route_name' => 'payment.payment_method.select',
-    'title' => t('Add payment method'),
-
-  );
-
-  return $items;
-}
-
-/**
  * Implements hook_permission().
  *
  * @see \Drupal\payment\PaymentMethodAccessController
