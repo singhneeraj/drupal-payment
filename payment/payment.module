@@ -371,22 +371,6 @@ function payment_payment_delete(PaymentInterface $payment) {
 }
 
 /**
- * Check if a user has access to perform a certain payment method operation and
- * do additional token validation.
- *
- * @see payment_method_access
- *
- * @param string $token
- *   A token to validate, that was generated with value "payment_method".
- * @param string $operation
- * @param PaymentMethod $payment_method
- * @param stdClass $account
- */
-function payment_method_access_token($token, $operation, PaymentMethod $payment_method = NULL, $account = NULL) {
-  return drupal_valid_token($token, 'payment') && payment_method_access($operation, $payment_method, $account);
-}
-
-/**
  * Implements title callback for hook_menu().
  *
  * @param string $plugin_id
