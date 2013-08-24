@@ -49,4 +49,11 @@ abstract class Base extends PluginBase implements PaymentContextInterface {
     $handler->invokeAll('payment_pre_resume_context', $this->getPayment());
     // @todo Invoke Rules event.
   }
+
+  /**
+   * {@inheritdoc
+   */
+  public static function getOperations() {
+    return array();
+  }
 }

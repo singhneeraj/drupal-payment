@@ -61,3 +61,16 @@ payment.payment_status.view:
     _controller: '\Drupal\payment\PaymentStatusUI::listing'
   requirements:
     _permission: 'payment.payment_status.view'
+
+payment.payment_context.list:
+  pattern: '/admin/config/services/payment/context'
+  defaults:
+    _controller: '\Drupal\payment\PaymentContextUI::listing'
+  requirements:
+    _permission: 'access administration pages'
+
+# Add a dummy item for Field UI to attach local tasks to.
+payment.payment_context.configure:
+  pattern: '/admin/config/services/payment/context/{bundle}'
+  requirements:
+    _access: 'TRUE'

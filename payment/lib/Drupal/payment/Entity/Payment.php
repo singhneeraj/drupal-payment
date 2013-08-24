@@ -34,7 +34,8 @@ use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
  *   fieldable = TRUE,
  *   id = "payment",
  *   label = @Translation("Payment"),
- *   module = "payment"
+ *   module = "payment",
+ *   route_base_path = "admin/config/services/payment/context/{bundle}"
  * )
  */
 class Payment extends EntityNG implements PaymentInterface {

@@ -662,9 +662,29 @@ function payment_update_8204(array &$sandbox) {
 }
 
 /**
- * Removes unneeded 7.x-1.x content and configuration.
+ * Upgrades user role permissions.
  */
 function payment_update_8205(array &$sandbox) {
+  $config_storage = \Drupal::service('config.storage');
+  $names = $config_storage->listAll('user.role');
+  foreach ($names as $name) {
+    $config = \Drupal::config($name);
+    $permissions = $config->get('permissions');
+    $position = array_search('payment.payment.administer', $permissions);
+    if ($position !== FALSE) {
+      unset($permissions[$position]);
+      $permissions[] = 'administer payment display';
+      $permissions[] = 'administer payment fields';
+      $permissions[] = 'administer payment form display';
+    }
+    $config->set('permissions', $permissions);
+  }
+}
+
+/**
+ * Removes unneeded 7.x-1.x content and configuration.
+ */
+function payment_update_8206(array &$sandbox) {
   update_variable_del('payment_debug');
 
   // For payment_update_8200().

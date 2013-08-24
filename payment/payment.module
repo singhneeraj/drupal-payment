@@ -90,6 +90,18 @@ function payment_menu() {
     'file path' => drupal_get_path('module', 'system'),
   );
 
+  // Payment types.
+  $items['admin/config/services/payment/context'] = array(
+    'title' => 'Payment types',
+    'route_name' => 'payment.payment_context.list',
+  );
+  // Add a dummy item for Field UI to attach local tasks to.
+  $items['admin/config/services/payment/context/%'] = array(
+    'route_name' => 'payment.payment_context.configure',
+    'title arguments' => array(5),
+    'title callback' => 'payment_plugin_label',
+  );
+
   // Payment methods.
   $items['admin/config/services/payment/method'] = array(
     'route_name' => 'payment.payment_method.list',
@@ -124,23 +136,6 @@ function payment_local_actions() {
 }
 
 /**
- * Implement hook_menu_alter().
- */
-function payment_menu_alter(&$items) {
-  // Make "Manage fields" the default local task.
-  if (isset($items['admin/config/services/payment/payment/fields'])) {
-    $items['admin/config/services/payment/payment'] = array(
-      'title' => 'Payments',
-      'type' => MENU_NORMAL_ITEM,
-    ) + $items['admin/config/services/payment/payment/fields'];
-    $items['admin/config/services/payment/payment/fields'] = array(
-      'title' => 'Manage fields',
-      'type' => MENU_DEFAULT_LOCAL_TASK,
-    );
-  }
-}
-
-/**
  * Implements hook_permission().
  *
  * @see \Drupal\payment\PaymentMethodAccessController
@@ -149,9 +144,6 @@ function payment_permission() {
   $permissions = array(
     'payment.global.administer' => array(
       'title' => t('Administer global Payment configuration'),
-    ),
-    'payment.payment.administer' => array(
-      'title' => t('Administer payment configuration'),
     ),
     'payment.payment.view.any' => array(
       'title' => t('View any payment'),
@@ -407,4 +399,19 @@ function payment_payment_delete(PaymentInterface $payment) {
  */
 function payment_method_access_token($token, $operation, PaymentMethod $payment_method = NULL, $account = NULL) {
   return drupal_valid_token($token, 'payment') && payment_method_access($operation, $payment_method, $account);
+}
+
+/**
+ * Implements title callback for hook_menu().
+ *
+ * @param string $plugin_id
+ *
+ * @return string
+ */
+function payment_plugin_label($plugin_id) {
+  $manager = \Drupal::service('plugin.manager.payment.context');
+  $definition = $manager->getDefinition($plugin_id);
+  if ($definition) {
+    return $definition['label'];
+  }
 }
