@@ -1,3 +1,0 @@
-name = Payment
-core = 8.x
-dependencies[] = currency
