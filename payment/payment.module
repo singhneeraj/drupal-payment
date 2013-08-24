@@ -127,9 +127,6 @@ function payment_menu() {
  */
 function payment_permission() {
   $permissions = array(
-    'payment.global.administer' => array(
-      'title' => t('Administer global Payment configuration'),
-    ),
     'payment.payment.view.any' => array(
       'title' => t('View any payment'),
     ),

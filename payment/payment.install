@@ -670,6 +670,14 @@ function payment_update_8205(array &$sandbox) {
   foreach ($names as $name) {
     $config = \Drupal::config($name);
     $permissions = $config->get('permissions');
+
+    // Upgrade payment.global.administer.
+    $position = array_search('payment.global.administer', $permissions);
+    if ($position !== FALSE) {
+      unset($permissions[$position]);
+    }
+
+    // Upgrade payment.payment.administer.
     $position = array_search('payment.payment.administer', $permissions);
     if ($position !== FALSE) {
       unset($permissions[$position]);
@@ -678,6 +686,7 @@ function payment_update_8205(array &$sandbox) {
       $permissions[] = 'administer payment form display';
     }
     $config->set('permissions', $permissions);
+    $config->save();
   }
 }
 
