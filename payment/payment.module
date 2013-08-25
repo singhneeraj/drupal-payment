@@ -203,36 +203,39 @@ function payment_hook_info() {
  * Implements hook_field_extra_fields().
  */
 function payment_field_extra_fields() {
-  $field['payment']['payment'] = array(
-    'form' => array(
-      'payment_line_items' => array(
-        'label' => t('Line items'),
-        'weight' => 0,
+  $manager = \Drupal::service('plugin.manager.payment.context');
+  foreach (array_keys($manager->getDefinitions()) as $plugin_id) {
+    $field['payment'][$plugin_id] = array(
+      'form' => array(
+        'payment_line_items' => array(
+          'label' => t('Line items'),
+          'weight' => 0,
+        ),
+        'payment_method' => array(
+          'label' => t('Payment method selection and configuration'),
+          'weight' => 0,
+        ),
+        'payment_status' => array(
+          'label' => t('Status'),
+          'weight' => 0,
+        ),
       ),
-      'payment_method' => array(
-        'label' => t('Payment method selection and configuration'),
-        'weight' => 0,
+      'display' => array(
+        'payment_line_items' => array(
+          'label' => t('Line items'),
+          'weight' => 0,
+        ),
+        'payment_method' => array(
+          'label' => t('Payment method label'),
+          'weight' => 0,
+        ),
+        'payment_status_items' => array(
+          'label' => t('Status items'),
+          'weight' => 0,
+        ),
       ),
-      'payment_status' => array(
-        'label' => t('Status'),
-        'weight' => 0,
-      ),
-    ),
-    'display' => array(
-      'payment_line_items' => array(
-        'label' => t('Line items'),
-        'weight' => 0,
-      ),
-      'payment_method' => array(
-        'label' => t('Payment method (generic title)'),
-        'weight' => 0,
-      ),
-      'payment_status_items' => array(
-        'label' => t('Status items'),
-        'weight' => 0,
-      ),
-    ),
-  );
+    );
+  }
 
   return $field;
 }
