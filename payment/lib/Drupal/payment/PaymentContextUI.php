@@ -63,7 +63,6 @@ class PaymentContextUI implements ControllerInterface {
    */
   public function listing() {
     $account = \Drupal::request()->attributes->get('_account');
-    $entity_definition = $this->entityManager->getDefinition('payment');
     $table = array(
       '#empty' => t('There are no available payment types.'),
       '#header' => array(t('Type'), t('Description'), t('Operations')),
