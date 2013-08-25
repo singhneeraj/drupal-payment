@@ -1,37 +1,37 @@
 <?php
 
 /**
- * Contains \Drupal\payment\Plugin\payment\context\PaymentContextInterface .
+ * Contains \Drupal\payment\Plugin\payment\type\PaymentTypeInterface .
  */
 
-namespace Drupal\payment\Plugin\payment\context;
+namespace Drupal\payment\Plugin\payment\type;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\payment\Entity\PaymentInterface;
 
 /**
- * A payment context plugin.
+ * A payment type plugin.
  */
-interface PaymentContextInterface extends PluginInspectionInterface {
+interface PaymentTypeInterface extends PluginInspectionInterface {
 
   /**
-   * Sets the ID of the payment this context is of.
+   * Sets the ID of the payment this pluhin is of.
    *
    * @param \Drupal\payment\Entity\PaymentInterface $payment
    *
-   * @return \Drupal\payment\Plugin\payment\context\PaymentContextInterface
+   * @return \Drupal\payment\Plugin\payment\type\PaymentTypeInterface
    */
   public function setPayment(PaymentInterface $payment);
 
   /**
-   * Gets the ID of the payment this context is of.
+   * Gets the ID of the payment this plugin is of.
    *
    * @return \Drupal\payment\Entity\PaymentInterface
    */
   public function getPayment();
 
   /**
-   * Returns the description of the payment this context is of.
+   * Returns the description of the payment this plugin is of.
    *
    * @param string $language_code
    *   The code of the language to return the description in.
@@ -43,7 +43,7 @@ interface PaymentContextInterface extends PluginInspectionInterface {
   /**
    * Resumes the payer's context workflow.
    */
-  public function resume();
+  public function resumeContext();
 
   /**
    * Provides an array of information to build a list of operation links.

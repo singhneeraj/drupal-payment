@@ -9,7 +9,7 @@ namespace Drupal\payment\Tests\Entity;
 
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Entity\PaymentMethodInterface;
-use Drupal\payment\Plugin\payment\Context\PaymentContextInterface;
+use Drupal\payment\Plugin\payment\type\PaymentTypeInterface;
 use Drupal\payment\Generate;
 use Drupal\simpletest\DrupalUnitTestBase;
 
@@ -90,11 +90,11 @@ class PaymentUnitTest extends DrupalUnitTestBase {
   }
 
   /**
-   * Tests getPaymentContext().
+   * Tests getPaymentType().
    */
-  protected function testGetPaymentContext() {
-    if ($this->assertTrue($this->payment->getPaymentContext() instanceof PaymentContextInterface)) {
-      $this->assertIdentical($this->payment->getPaymentContext()->getPluginId(), $this->bundle);
+  protected function testGetPaymentType() {
+    if ($this->assertTrue($this->payment->getPaymentType() instanceof PaymentTypeInterface)) {
+      $this->assertIdentical($this->payment->getPaymentType()->getPluginId(), $this->bundle);
     }
   }
 

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Contains \Drupal\payment\Plugin\payment\context\Manager.
+ * Contains \Drupal\payment\Plugin\payment\type\Manager.
  */
 
-namespace Drupal\payment\Plugin\payment\context;
+namespace Drupal\payment\Plugin\payment\type;
 
 use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Core\Cache\CacheBackendInterface;
@@ -13,9 +13,9 @@ use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**
- * Manages discovery and instantiation of payment context plugins.
+ * Manages discovery and instantiation of payment type plugins.
  *
- * @see \Drupal\payment\Plugin\payment\context\ContextInterface
+ * @see \Drupal\payment\Plugin\payment\type\PaymentTypeInterface
  */
 class Manager extends DefaultPluginManager {
 
@@ -36,9 +36,9 @@ class Manager extends DefaultPluginManager {
     $annotation_namespaces = array(
       'Drupal\payment\Annotations' => drupal_get_path('module', 'payment') . '/lib',
     );
-    parent::__construct('Plugin/payment/context', $namespaces, $annotation_namespaces, 'Drupal\payment\Annotations\PaymentContext');
-    $this->alterInfo($module_handler, 'payment_context');
-    $this->setCacheBackend($cache_backend, $language_manager, 'payment_context');
+    parent::__construct('Plugin/payment/type', $namespaces, $annotation_namespaces, 'Drupal\payment\Annotations\PaymentType');
+    $this->alterInfo($module_handler, 'payment_type');
+    $this->setCacheBackend($cache_backend, $language_manager, 'payment_type');
   }
 
   /**

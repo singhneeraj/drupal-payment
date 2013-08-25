@@ -8,7 +8,7 @@
 namespace Drupal\payment\Tests\Entity;
 
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Plugin\payment\context\PaymentContextInterface;
+use Drupal\payment\Plugin\payment\type\PaymentTypeInterface;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -43,7 +43,7 @@ class PaymentStorageControllerWebTest extends WebTestBase {
     $this->assertTrue($payment instanceof PaymentInterface);
     $this->assertTrue(is_int($payment->getOwnerId()));
     $this->assertEqual(count($payment->validate()), 0);
-    $this->assertTrue($payment->getPaymentContext() instanceof PaymentContextInterface);
+    $this->assertTrue($payment->getPaymentType() instanceof PaymentTypeInterface);
 
     // Test saving a payment.
     $this->assertFalse($payment->id());

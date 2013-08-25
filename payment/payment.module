@@ -76,13 +76,13 @@ function payment_menu() {
   );
 
   // Payment types.
-  $items['admin/config/services/payment/context'] = array(
+  $items['admin/config/services/payment/type'] = array(
     'title' => 'Payment types',
-    'route_name' => 'payment.payment_context.list',
+    'route_name' => 'payment.payment_type.list',
   );
   // Add a dummy item for Field UI to attach local tasks to.
-  $items['admin/config/services/payment/context/%'] = array(
-    'route_name' => 'payment.payment_context.configure',
+  $items['admin/config/services/payment/type/%'] = array(
+    'route_name' => 'payment.payment_type.configure',
     'title arguments' => array(5),
     'title callback' => 'payment_plugin_label',
   );
@@ -171,7 +171,7 @@ function payment_permission() {
  * Implements hook_hook_info().
  */
 function payment_hook_info() {
-  $hooks['payment_context_alter'] = array(
+  $hooks['payment_type_alter'] = array(
     'group' => 'payment',
   );
   $hooks['payment_line_item_alter'] = array(
@@ -203,7 +203,7 @@ function payment_hook_info() {
  * Implements hook_field_extra_fields().
  */
 function payment_field_extra_fields() {
-  $manager = \Drupal::service('plugin.manager.payment.context');
+  $manager = \Drupal::service('plugin.manager.payment.type');
   foreach (array_keys($manager->getDefinitions()) as $plugin_id) {
     $field['payment'][$plugin_id] = array(
       'form' => array(
@@ -290,11 +290,11 @@ function payment_entity_bundle_info() {
   $bundles = array();
 
   $map = array(
-    'payment' => 'plugin.manager.payment.context',
+    'payment' => 'plugin.manager.payment.type',
     'payment_method' => 'plugin.manager.payment.method',
   );
   foreach ($map as $entity_type => $manager_service) {
-    $manager = \Drupal::service('plugin.manager.payment.context');
+    $manager = \Drupal::service('plugin.manager.payment.type');
     foreach ($manager->getDefinitions() as $plugin_id => $definition) {
       $bundles[$entity_type][$plugin_id] = array(
         'label' => $definition['label'],
@@ -363,7 +363,7 @@ function payment_payment_delete(PaymentInterface $payment) {
  * @return string
  */
 function payment_plugin_label($plugin_id) {
-  $manager = \Drupal::service('plugin.manager.payment.context');
+  $manager = \Drupal::service('plugin.manager.payment.type');
   $definition = $manager->getDefinition($plugin_id);
   if ($definition) {
     return $definition['label'];

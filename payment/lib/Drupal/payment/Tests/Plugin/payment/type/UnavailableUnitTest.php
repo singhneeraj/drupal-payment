@@ -2,29 +2,26 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Tests\Plugin\payment\context\UnavailableUnitTest.
+ * Contains \Drupal\payment\Tests\Plugin\payment\type\UnavailableUnitTest.
  */
 
-namespace Drupal\payment\Tests\Plugin\payment\context;
+namespace Drupal\payment\Tests\Plugin\payment\type;
 
-use Drupal\payment\Plugin\payment\context\PaymentContextInterface ;
+use Drupal\payment\Plugin\payment\type\PaymentTypeInterface ;
 use Drupal\simpletest\DrupalUnitTestBase;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Tests \Drupal\payment\Plugin\payment\status\Base.
- *
- * @todo Convert this to a unit test once contexts accept payments instead of
- * payment IDs.
  */
 class UnavailableUnitTest extends DrupalUnitTestBase {
 
   /**
-   * The context to test.
+   * The payment type to test.
    *
-   * @var \Drupal\payment\Plugin\payment\context\Unavailable
+   * @var \Drupal\payment\Plugin\payment\type\Unavailable
    */
-  protected $context;
+  protected $type;
 
   /**
    * {@inheritdoc}
@@ -37,7 +34,7 @@ class UnavailableUnitTest extends DrupalUnitTestBase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Plugin\payment\context\Unavailable unit test',
+      'name' => '\Drupal\payment\Plugin\payment\type\Unavailable unit test',
       'group' => 'Payment',
     );
   }
@@ -47,7 +44,7 @@ class UnavailableUnitTest extends DrupalUnitTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->context = $this->container->get('plugin.manager.payment.context')->createInstance('payment_unavailable', array());
+    $this->type = $this->container->get('plugin.manager.payment.type')->createInstance('payment_unavailable', array());
   }
 
   /**
@@ -55,7 +52,7 @@ class UnavailableUnitTest extends DrupalUnitTestBase {
    */
   protected function testResume() {
     try {
-      $this->context->resume();
+      $this->type->resumeContext();
       $this->assertTrue(FALSE);
     }
     catch (NotFoundHttpException $exception) {
@@ -67,7 +64,7 @@ class UnavailableUnitTest extends DrupalUnitTestBase {
    * Tests paymentDescription().
    */
   protected function testPaymentDescription() {
-    $this->assertTrue(strlen($this->context->paymentDescription()));
+    $this->assertTrue(strlen($this->type->paymentDescription()));
 
   }
 
@@ -76,9 +73,9 @@ class UnavailableUnitTest extends DrupalUnitTestBase {
    */
   protected function testGetPayment() {
     $payment = entity_create('payment', array(
-      'context' => $this->context,
+      'type' => $this->type,
     ));
-    $this->assertTrue($this->context->setPayment($payment) instanceof PaymentContextInterface );
-    $this->assertTrue($this->context->getPayment() === $payment);
+    $this->assertTrue($this->type->setPayment($payment) instanceof PaymentTypeInterface );
+    $this->assertTrue($this->type->getPayment() === $payment);
   }
 }

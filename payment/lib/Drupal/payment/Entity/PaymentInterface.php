@@ -19,12 +19,11 @@ use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
 interface PaymentInterface extends EntityInterface, ExecutableInterface {
 
   /**
-   * Gets the machine name of the context that created this Payment, such as a
-   * payment form, or a module.
+   * Gets the payment's type plugin.
    *
-   * @return string
+   * @return \Drupal\payment\Plugin\payment\type\PaymentTypeInterface
    */
-  public function getPaymentContext();
+  public function getPaymentType();
 
   /**
    * Sets the ISO 4217 currency code of the payment amount.

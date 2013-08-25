@@ -44,12 +44,12 @@ function hook_payment_line_item_alter(array &$definitions) {
 }
 
 /**
- * Alters context plugins.
+ * Alters payment type plugins.
  *
  * @param array $definitions
  *   Keys are plugin IDs. Values are plugin definitions.
  */
-function hook_payment_context_alter(array &$definitions) {
+function hook_payment_type_alter(array &$definitions) {
 }
 
 /**
@@ -69,13 +69,13 @@ function hook_payment_status_set(PaymentInterface $payment, PaymentStatusInterfa
 }
 
 /**
- * Executes before the payment context is resumed.
+ * Executes before the payment type's original context is resumed.
  *
  * @see \Drupal\payment\Plugin\payment\method\Base::resume()
  *
  * @param \Drupal\payment\Entity\PaymentInterface $payment
  */
-function hook_payment_pre_resume_context(PaymentInterface $payment) {
+function hook_payment_type_pre_resume_context(PaymentInterface $payment) {
   if ($payment->getStatus()->isOrHasAncestor('payment_success')) {
     drupal_set_message(t('Your payment was successfully completed.'));
   }

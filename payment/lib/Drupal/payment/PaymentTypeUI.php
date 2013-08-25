@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\PaymentContextUI.
+ * Contains \Drupal\payment\PaymentTypeUI.
  */
 
 namespace Drupal\payment;
@@ -10,13 +10,13 @@ namespace Drupal\payment;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Controller\ControllerInterface;
-use Drupal\payment\Plugin\payment\context\Manager;
+use Drupal\payment\Plugin\payment\type\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Returns responses for payment context routes.
+ * Returns responses for payment type routes.
  */
-class PaymentContextUI implements ControllerInterface {
+class PaymentTypeUI implements ControllerInterface {
 
   /**
    * The entity manager.
@@ -33,30 +33,30 @@ class PaymentContextUI implements ControllerInterface {
   protected $moduleHandler;
 
   /**
-   * The payment context manager.
+   * The payment type plugin manager.
    *
-   * @var \Drupal\payment\Plugin\payment\context\Manager
+   * @var \Drupal\payment\Plugin\payment\type\Manager
    */
-  protected $paymentContextManager;
+  protected $paymentTypeManager;
 
   /**
    * Constructor.
    */
-  public function __construct(ModuleHandler $module_handler, EntityManager $entity_manager, Manager $payment_context_manager) {
+  public function __construct(ModuleHandler $module_handler, EntityManager $entity_manager, Manager $payment_type_manager) {
     $this->moduleHandler = $module_handler;
     $this->entityManager = $entity_manager;
-    $this->paymentContextManager = $payment_context_manager;
+    $this->paymentTypeManager = $payment_type_manager;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('module_handler'), $container->get('plugin.manager.entity'), $container->get('plugin.manager.payment.context'));
+    return new static($container->get('module_handler'), $container->get('plugin.manager.entity'), $container->get('plugin.manager.payment.type'));
   }
 
   /**
-   * Displays a list of available payment contexts.
+   * Displays a list of available payment types.
    *
    * @return array
    *   A render array.
@@ -68,10 +68,10 @@ class PaymentContextUI implements ControllerInterface {
       '#header' => array(t('Type'), t('Description'), t('Operations')),
       '#type' => 'table',
     );
-    $definitions = $this->paymentContextManager->getDefinitions();
+    $definitions = $this->paymentTypeManager->getDefinitions();
     unset($definitions['payment_unavailable']);
-    foreach ($definitions as $plugin_id => $context_definition) {
-      $class = $context_definition['class'];
+    foreach ($definitions as $plugin_id => $definition) {
+      $class = $definition['class'];
       $operations = $class::getOperations();
       if ($this->moduleHandler->moduleExists('field_ui')) {
         $admin_path = $this->entityManager->getAdminPath('payment', $plugin_id);
@@ -95,10 +95,10 @@ class PaymentContextUI implements ControllerInterface {
         }
       }
       $table[$plugin_id]['label'] = array(
-        '#markup' => $context_definition['label'],
+        '#markup' => $definition['label'],
       );
       $table[$plugin_id]['description'] = array(
-        '#markup' => isset($context_definition['description']) ? $context_definition['description'] : NULL,
+        '#markup' => isset($definition['description']) ? $definition['description'] : NULL,
       );
       $table[$plugin_id]['operations'] = array(
         '#links' => $operations,

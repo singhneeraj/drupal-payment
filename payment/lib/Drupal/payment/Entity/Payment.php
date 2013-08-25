@@ -12,7 +12,7 @@ use Drupal\Core\Entity\Annotation\EntityType;
 use Drupal\Core\Entity\EntityNG;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Plugin\payment\context\PaymentContextInterface;
+use Drupal\payment\Plugin\payment\type\PaymentTypeInterface;
 use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
 
@@ -21,7 +21,7 @@ use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
  *
  * @EntityType(
  *   base_table = "payment",
- *   bundle_label = @Translation("Payment context"),
+ *   bundle_label = @Translation("Payment type"),
  *   controllers = {
  *     "access" = "Drupal\payment\Entity\PaymentAccessController",
  *     "storage" = "Drupal\payment\Entity\PaymentStorageController",
@@ -35,17 +35,17 @@ use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
  *   id = "payment",
  *   label = @Translation("Payment"),
  *   module = "payment",
- *   route_base_path = "admin/config/services/payment/context/{bundle}"
+ *   route_base_path = "admin/config/services/payment/type/{bundle}"
  * )
  */
 class Payment extends EntityNG implements PaymentInterface {
 
   /**
-   * The payment context.
+   * The payment type.
    *
-   * @var \Drupal\payment\Plugin\payment\context\PaymentContextInterface
+   * @var \Drupal\payment\Plugin\payment\type\PaymentTypeInterface
    */
-  protected $context;
+  protected $type;
 
   /**
    * Line items.
@@ -71,21 +71,21 @@ class Payment extends EntityNG implements PaymentInterface {
    */
   public function __construct(array $values, $entity_type, $bundle = FALSE, $translations = array()) {
     parent::__construct($values, $entity_type, $bundle, $translations);
-    $this->context = \Drupal::service('plugin.manager.payment.context')->createInstance($this->bundle());
+    $this->type = \Drupal::service('plugin.manager.payment.type')->createInstance($this->bundle());
   }
 
   /**
    * {@inheritdoc}
    */
   public function label($langcode = NULL) {
-    return $this->getPaymentContext()->paymentDescription($langcode);
+    return $this->getPaymentType()->paymentDescription($langcode);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getPaymentContext() {
-    return $this->context;
+  public function getPaymentType() {
+    return $this->type;
   }
 
   /**

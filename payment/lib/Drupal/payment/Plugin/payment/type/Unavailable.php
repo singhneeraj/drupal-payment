@@ -1,20 +1,20 @@
 <?php
 
 /**
- * Contains \Drupal\payment\Plugin\payment\context\Unavailable.
+ * Contains \Drupal\payment\Plugin\payment\type\Unavailable.
  */
 
-namespace Drupal\payment\Plugin\payment\context;
+namespace Drupal\payment\Plugin\payment\type;
 
 
 use Drupal\Core\Annotation\Translation;
-use Drupal\payment\Annotations\PaymentContext;
+use Drupal\payment\Annotations\PaymentType;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * An unavailable context.
+ * An unavailable payment type.
  *
- * @PaymentContext(
+ * @PaymentType(
  *   id = "payment_unavailable",
  *   label = @Translation("Unavailable")
  * )
@@ -24,8 +24,8 @@ class Unavailable extends Base {
   /**
    * {@inheritdoc}
    */
-  public function resume() {
-    parent::resume();
+  public function resumeContext() {
+    parent::resumeContext();
     throw new NotFoundHttpException();
 
   }

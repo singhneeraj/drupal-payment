@@ -399,13 +399,6 @@ function payment_update_8200(array &$sandbox) {
   db_drop_index('payment', 'pid');
   db_add_index('payment', 'id', array('id'));
 
-  // Rename context_data to context_configuration.
-  db_change_field('payment', 'context_data', 'context_configuration', array(
-    'type' => 'blob',
-    'size' => 'big',
-    'serialize' => TRUE,
-  ));
-
   // Rename pmid to payment_method_id and convert numeric IDs to entity names.
   db_change_field('payment', 'pmid', 'payment_method_id', array(
     'type' => 'varchar',
@@ -696,7 +689,7 @@ function payment_update_8206(array &$sandbox) {
   update_variable_del('payment_debug');
 
   // For payment_update_8200().
-  db_drop_field('payment', 'context_configuration');
+  db_drop_field('payment', 'context_data');
   db_drop_field('payment', 'description');
   db_drop_field('payment', 'description_arguments');
   db_drop_field('payment', 'finish_callback');

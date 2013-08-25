@@ -33,7 +33,7 @@ class PaymentMethodCreateAccessCheck implements AccessCheckInterface {
   /**
    * The payment method manager.
    *
-   * @var \Drupal\payment\Plugin\payment\context\Manager
+   * @var \Drupal\payment\Plugin\payment\type\Manager
    */
   protected $paymentMethodManager;
 

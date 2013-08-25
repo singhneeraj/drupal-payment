@@ -17,7 +17,7 @@ class ManagerUnitTest extends DrupalUnitTestBase {
   /**
    * The payment line item plugin manager.
    *
-   * @var \Drupal\payment\Plugin\payment\context\Manager
+   * @var \Drupal\payment\Plugin\payment\type\Manager
    */
   protected $manager;
 

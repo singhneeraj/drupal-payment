@@ -1,22 +1,22 @@
 <?php
 
 /**
- * Contains \Drupal\payment\Plugin\payment\context\Base.
+ * Contains \Drupal\payment\Plugin\payment\type\Base.
  */
 
-namespace Drupal\payment\Plugin\payment\context;
+namespace Drupal\payment\Plugin\payment\type;
 
 use Drupal\Component\Plugin\PluginBase;
-use Drupal\payment\Plugin\payment\context\PaymentContextInterface;
+use Drupal\payment\Plugin\payment\type\PaymentTypeInterface;
 use Drupal\payment\Entity\PaymentInterface;
 
 /**
- * A base context.
+ * A base payment type.
  */
-abstract class Base extends PluginBase implements PaymentContextInterface {
+abstract class Base extends PluginBase implements PaymentTypeInterface {
 
   /**
-   * The payment this context is of.
+   * The payment this type is of.
    *
    * @var \Drupal\payment\Entity\PaymentInterface
    */
@@ -44,9 +44,9 @@ abstract class Base extends PluginBase implements PaymentContextInterface {
    * Child classes are required to override this method and explicitly resume
    * the context workflow.
    */
-  function resume() {
+  function resumeContext() {
     $handler = \Drupal::moduleHandler();
-    $handler->invokeAll('payment_pre_resume_context', $this->getPayment());
+    $handler->invokeAll('payment_type_pre_resume_context', $this->getPayment());
     // @todo Invoke Rules event.
   }
 

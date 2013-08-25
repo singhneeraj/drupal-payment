@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Annotations\PaymentContext.
+ * Contains \Drupal\payment\Annotations\PaymentType.
  */
 
 namespace Drupal\payment\Annotations;
@@ -10,11 +10,11 @@ namespace Drupal\payment\Annotations;
 use Drupal\Component\Annotation\Plugin;
 
 /**
- * Defines a payment context plugin annotation.
+ * Defines a payment type plugin annotation.
  *
  * @Annotation
  */
-class PaymentContext extends Plugin {
+class PaymentType extends Plugin {
 
   /**
    * The translated human-readable plugin description (optional).

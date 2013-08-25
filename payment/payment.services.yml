@@ -1,6 +1,6 @@
 services:
-  plugin.manager.payment.context:
-    class: Drupal\payment\Plugin\payment\context\Manager
+  plugin.manager.payment.type:
+    class: Drupal\payment\Plugin\payment\type\Manager
     arguments: ['@container.namespaces', '@cache.cache', '@language_manager', '@module_handler']
   plugin.manager.payment.line_item:
     class: Drupal\payment\Plugin\payment\line_item\Manager

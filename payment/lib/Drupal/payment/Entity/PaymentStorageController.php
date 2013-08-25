@@ -19,8 +19,8 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
    * {@inheritdoc}
    */
   function create(array $values) {
-    if (isset($values['context']) && !isset($values['bundle'])) {
-      $values['bundle'] = $values['context']->getPluginId();
+    if (isset($values['type']) && !isset($values['bundle'])) {
+      $values['bundle'] = $values['type']->getPluginId();
     }
     $payment = parent::create($values);
     $payment->setStatus(\Drupal::service('plugin.manager.payment.status')->createInstance('payment_created'));

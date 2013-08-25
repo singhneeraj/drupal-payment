@@ -12,7 +12,7 @@ use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Form\FormInterface;
 use Drupal\payment\Element\PaymentMethod;
 use Drupal\payment\Generate;
-use Drupal\payment\Plugin\payment\context\Manager;
+use Drupal\payment\Plugin\payment\type\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class PaymentMethodElement implements ControllerInterface, FormInterface {
@@ -25,25 +25,18 @@ class PaymentMethodElement implements ControllerInterface, FormInterface {
   protected $entityManager;
 
   /**
-   * The entity manager.
-   *
-   * @var \Drupal\payment\Plugin\payment\context\Manager
-   */
-  protected $contextManager;
-
-  /**
    * Constructor.
    */
-  function __construct(EntityManager $entity_manager, Manager $context_manager) {
+  function __construct(EntityManager $entity_manager, Manager $type_manager) {
     $this->entityManager = $entity_manager;
-    $this->contextManager = $context_manager;
+    $this->typeManager = $type_manager;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('plugin.manager.entity'), $container->get('plugin.manager.payment.context'));
+    return new static($container->get('plugin.manager.entity'), $container->get('plugin.manager.payment.type'));
   }
 
   /**

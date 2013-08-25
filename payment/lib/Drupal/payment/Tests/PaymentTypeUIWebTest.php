@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\PaymentContextUIWebTest.
+ * Contains class \Drupal\payment\Tests\PaymentTypeUIWebTest.
  */
 
 namespace Drupal\payment\Tests;
@@ -10,9 +10,9 @@ namespace Drupal\payment\Tests;
 use Drupal\simpletest\WebTestBase ;
 
 /**
- * Tests the payment context UI.
+ * Tests the payment type UI.
  */
-class PaymentContextUIWebTest extends WebTestBase {
+class PaymentTypeUIWebTest extends WebTestBase {
 
   /**
    * {@inheritdoc}
@@ -25,7 +25,7 @@ class PaymentContextUIWebTest extends WebTestBase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => 'Payment context UI',
+      'name' => 'Payment type UI',
       'group' => 'Payment',
     );
   }
@@ -36,20 +36,20 @@ class PaymentContextUIWebTest extends WebTestBase {
   protected function testOverview() {
     $admin = $this->drupalCreateUser(array('access administration pages'));
 
-    // Test the context listing.
+    // Test the plugin listing.
     $this->drupalGet('admin/config/services/payment');
     $this->assertNoLink('Payment types');
-    $this->drupalGet('admin/config/services/payment/context');
+    $this->drupalGet('admin/config/services/payment/type');
     $this->assertResponse('403');
     $this->drupalLogin($admin);
     $this->drupalGet('admin/config/services/payment');
     $this->assertLink('Payment types');
-    $this->drupalGet('admin/config/services/payment/context');
+    $this->drupalGet('admin/config/services/payment/type');
     $this->assertResponse('200');
     $this->assertText(t('Test type'));
 
-    // Test the dummy context route.
-    $this->drupalGet('admin/config/services/payment/context/payment_test');
+    // Test the dummy payment type route.
+    $this->drupalGet('admin/config/services/payment/type/payment_test');
     $this->assertResponse('404');
 
     // Test field operations.
@@ -59,7 +59,7 @@ class PaymentContextUIWebTest extends WebTestBase {
       'administer payment fields' => t('Manage fields'),
       'administer payment form display' => t('Manage form display'),
     );
-    $path = 'admin/config/services/payment/context';
+    $path = 'admin/config/services/payment/type';
     foreach ($links as $permission => $text) {
       $this->drupalLogin($admin);
       $this->drupalGet($path);
@@ -72,7 +72,7 @@ class PaymentContextUIWebTest extends WebTestBase {
       $this->assertTitle('Test type | Drupal');
     }
 
-    // Test a context-specific operation.
+    // Test a type-specific operation.
     $this->drupalLogin($admin);
     $this->drupalGet($path);
     $this->assertResponse('200');

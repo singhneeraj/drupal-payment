@@ -1,19 +1,19 @@
 <?php
 
 /**
- * Contains \Drupal\payment_test\Plugin\payment\context\PaymentTest.
+ * Contains \Drupal\payment_test\Plugin\payment\type\PaymentTest.
  */
 
-namespace Drupal\payment_test\Plugin\payment\context;
+namespace Drupal\payment_test\Plugin\payment\type;
 
 use Drupal\Core\Annotation\Translation;
-use Drupal\payment\Annotations\PaymentContext;
-use Drupal\payment\Plugin\payment\context\Base;
+use Drupal\payment\Annotations\PaymentType;
+use Drupal\payment\Plugin\payment\type\Base;
 
 /**
- * A testing context.
+ * A testing payment type.
  *
- * @PaymentContext(
+ * @PaymentType(
  *   id = "payment_test",
  *   label = @Translation("Test type")
  * )

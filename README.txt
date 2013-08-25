@@ -21,5 +21,4 @@ GENERAL CONFIGURATION
 To get started, you need to create at least one payment method. In order to do
 that, you need to enable at least one module that provides payment method
 plugins. Any other module that works with Payment and requires payments to be
-made (also known as a context), such as a web shop, can then use this payment
-method automatically.
+made, such as a web shop, can then use this payment method automatically.
