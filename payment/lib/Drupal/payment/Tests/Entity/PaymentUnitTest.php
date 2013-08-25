@@ -79,7 +79,7 @@ class PaymentUnitTest extends DrupalUnitTestBase {
    * Tests label().
    */
   protected function testLabel() {
-    $this->assertIdentical($this->payment->label(), 'Payment ');
+    $this->assertIdentical($this->payment->label(), 'Unavailable');
   }
 
   /**

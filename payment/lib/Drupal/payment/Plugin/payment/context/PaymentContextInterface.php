@@ -33,9 +33,12 @@ interface PaymentContextInterface extends PluginInspectionInterface {
   /**
    * Returns the description of the payment this context is of.
    *
+   * @param string $language_code
+   *   The code of the language to return the description in.
+   *
    * @param string
    */
-  public function paymentDescription();
+  public function paymentDescription($language_code = NULL);
 
   /**
    * Resumes the payer's context workflow.

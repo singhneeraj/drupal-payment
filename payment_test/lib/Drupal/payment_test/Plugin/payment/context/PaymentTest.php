@@ -23,7 +23,7 @@ class PaymentTest extends Base {
   /**
    * {@inheritdoc}
    */
-  public function paymentDescription() {
+  public function paymentDescription($language_code = NULL) {
     return '';
   }
 

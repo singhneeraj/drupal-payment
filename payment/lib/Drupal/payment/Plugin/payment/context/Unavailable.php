@@ -33,7 +33,9 @@ class Unavailable extends Base {
   /**
    * {@inheritdoc}
    */
-  public function paymentDescription() {
-    return t('Unavailable');
+  public function paymentDescription($language_code = NULL) {
+    return t('Unavailable', array(), array(
+      'langcode' => $language_code,
+    ));
   }
 }

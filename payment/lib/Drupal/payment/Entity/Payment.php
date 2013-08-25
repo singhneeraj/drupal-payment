@@ -78,11 +78,7 @@ class Payment extends EntityNG implements PaymentInterface {
    * {@inheritdoc}
    */
   public function label($langcode = NULL) {
-    // @todo Delegate this to the context plugin, once contexts have been
-    // converted to plugins.
-    return t('Payment !id', array(
-      '!id' => $this->id(),
-    ));
+    return $this->getPaymentContext()->paymentDescription($langcode);
   }
 
   /**
