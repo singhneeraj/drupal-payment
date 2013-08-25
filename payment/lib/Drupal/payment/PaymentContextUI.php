@@ -66,7 +66,7 @@ class PaymentContextUI implements ControllerInterface {
     $entity_definition = $this->entityManager->getDefinition('payment');
     $table = array(
       '#empty' => t('There are no available payment types.'),
-      '#header' => array(t('Type'), t('Operations')),
+      '#header' => array(t('Type'), t('Description'), t('Operations')),
       '#type' => 'table',
     );
     $definitions = $this->paymentContextManager->getDefinitions();
@@ -97,6 +97,9 @@ class PaymentContextUI implements ControllerInterface {
       }
       $table[$plugin_id]['label'] = array(
         '#markup' => $context_definition['label'],
+      );
+      $table[$plugin_id]['description'] = array(
+        '#markup' => isset($context_definition['description']) ? $context_definition['description'] : NULL,
       );
       $table[$plugin_id]['operations'] = array(
         '#links' => $operations,

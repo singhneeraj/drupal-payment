@@ -17,6 +17,13 @@ use Drupal\Component\Annotation\Plugin;
 class PaymentContext extends Plugin {
 
   /**
+   * The translated human-readable plugin description (optional).
+   *
+   * @var string
+   */
+  public $description;
+
+  /**
    * The plugin ID.
    *
    * @var string
