@@ -284,7 +284,7 @@ function payment_method_options() {
  */
 function payment_method_controller_options() {
   $options = array();
-  $definitions = \Drupal::service('plugin.manager.payment.payment_method')->getDefinitions();
+  $definitions = \Drupal::service('plugin.manager.payment.method')->getDefinitions();
   unset($definitions['payment_unavailable']);
   foreach ($definitions as $plugin_id => $definition) {
     $options[$plugin_id] = $definition['title'];

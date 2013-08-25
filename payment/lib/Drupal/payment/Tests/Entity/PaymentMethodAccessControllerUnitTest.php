@@ -40,7 +40,7 @@ class PaymentMethodAccessControllerUnitTest extends AccessibleInterfaceUnitTestB
     $authenticated = $user_storage_controller->create(array());
 
     // Create a new payment method.
-    $manager = $this->container->get('plugin.manager.payment.payment_method');
+    $manager = $this->container->get('plugin.manager.payment.method');
     $plugin = $manager->createInstance('payment_basic');
     $this->assertDataAccess(Generate::createPaymentMethod(0, $plugin), 'a payment method', 'create', $authenticated, array('payment.payment_method.create.payment_basic'));
 

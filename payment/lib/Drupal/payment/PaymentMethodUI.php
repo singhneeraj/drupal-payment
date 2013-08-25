@@ -46,7 +46,7 @@ class PaymentMethodUI implements ControllerInterface {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('plugin.manager.entity'), $container->get('plugin.manager.payment.payment_method'));
+    return new static($container->get('plugin.manager.entity'), $container->get('plugin.manager.payment.method'));
   }
 
   /**

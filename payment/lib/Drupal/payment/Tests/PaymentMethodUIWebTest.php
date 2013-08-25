@@ -132,7 +132,7 @@ class PaymentMethodUIWebTest extends WebTestBase {
     $this->drupalLogin($this->drupalCreateUser(array('payment.payment_method.create.' . $plugin_id)));
     $this->drupalGet('admin/config/services/payment/method-add');
     $this->assertResponse(200);
-    $definition = $this->container->get('plugin.manager.payment.payment_method')->getDefinition($plugin_id);
+    $definition = $this->container->get('plugin.manager.payment.method')->getDefinition($plugin_id);
     $this->assertText($definition['label']);
   }
 

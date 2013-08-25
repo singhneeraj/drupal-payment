@@ -38,7 +38,7 @@ class PaymentMethodWebTest extends WebTestBase {
    */
   protected function createPaymentMethod() {
     $payment_method = Generate::createPaymentMethod(2, $this->container
-      ->get('plugin.manager.payment.payment_method')
+      ->get('plugin.manager.payment.method')
       ->createInstance('payment_basic')
       ->setMessageText($this->randomName()));
     $payment_method->save();

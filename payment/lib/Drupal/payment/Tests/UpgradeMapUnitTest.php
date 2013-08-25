@@ -45,7 +45,7 @@ class UpgradeMapUnitTest extends DrupalUnitTestBase {
    */
   protected function testPaymentMethod() {
     module_load_install('payment');
-    $manager = $this->container->get('plugin.manager.payment.payment_method');
+    $manager = $this->container->get('plugin.manager.payment.method');
     $pluginIds = array_keys($manager->getDefinitions());
     $this->assertFalse(array_diff(payment_upgrade_8x2x_map_payment_method(), $pluginIds));
   }

@@ -154,7 +154,7 @@ function payment_permission() {
       'title' => t('View payment status overview'),
     ),
   );
-  $definitions = \Drupal::service('plugin.manager.payment.payment_method')->getDefinitions();
+  $definitions = \Drupal::service('plugin.manager.payment.method')->getDefinitions();
   unset($definitions['payment_unavailable']);
   foreach ($definitions as $plugin_id => $definition) {
     $permissions['payment.payment_method.create.' . $plugin_id] = array(
@@ -291,7 +291,7 @@ function payment_entity_bundle_info() {
 
   $map = array(
     'payment' => 'plugin.manager.payment.context',
-    'payment_method' => 'plugin.manager.payment.payment_method',
+    'payment_method' => 'plugin.manager.payment.method',
   );
   foreach ($map as $entity_type => $manager_service) {
     $manager = \Drupal::service('plugin.manager.payment.context');
