@@ -17,21 +17,6 @@ module_load_include('inc', 'payment', 'payment.ui');
 define('PAYMENT_LINE_ITEM_TOKEN_PREFIX', 'line_item-');
 
 /**
- * Implements hook_module_implements_alter().
- */
-function payment_module_implements_alter(array &$implementations, $hook) {
-  if ($hook == 'payment_method_load') {
-    // Commerce Payment has a function called commerce_payment_method_load(),
-    // which looks like Commerce's implementation of
-    // hook_payment_method_load(), but in fact is a Commerce Payment CRUD
-    // function.
-    // @todo Commerce 8.x-2.x will likely use entity_load() instead, so we will
-    //   no longer need this workaround.
-    unset($implementations['commerce']);
-  }
-}
-
-/**
  * Implements hook_menu().
  *
  * @see payment_views_default_views()
