@@ -15,12 +15,22 @@ use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
  */
 class BaseUnitTest extends DrupalUnitTestBase {
 
+  /**
+   * The payment status plugin manager.
+   *
+   * @var \Drupal\payment\Plugin\payment\status\Manager
+   */
+  public $manager;
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = array('payment');
 
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => '\Drupal\payment\Plugin\payment\status\Base unit test',
@@ -31,16 +41,16 @@ class BaseUnitTest extends DrupalUnitTestBase {
   /**
    * {@inheritdoc
    */
-  function setup() {
+  protected function setup() {
     parent::setUp();
-    $this->manager = \Drupal::service('plugin.manager.payment.status');
+    $this->manager = $this->container->get('plugin.manager.payment.status');
     $this->status = $this->manager->createInstance('payment_created');
   }
 
   /**
    * Tests setCreated() and getCreated().
    */
-  function testGetCreated() {
+  protected function testGetCreated() {
     $created = 123;
     $this->assertTrue($this->status->setCreated($created) instanceof PaymentStatusInterface);
     $this->assertIdentical($this->status->getCreated(), $created);
@@ -49,7 +59,7 @@ class BaseUnitTest extends DrupalUnitTestBase {
   /**
    * Tests setPaymentId() and getPaymentId().
    */
-  function testGetPaymentId() {
+  protected function testGetPaymentId() {
     $id = 7;
     $this->assertTrue($this->status->setPaymentId($id) instanceof PaymentStatusInterface);
     $this->assertIdentical($this->status->getPaymentId(), $id);
@@ -58,7 +68,7 @@ class BaseUnitTest extends DrupalUnitTestBase {
   /**
    * Tests setId() and getId().
    */
-  function testGetId() {
+  protected function testGetId() {
     $id= 7;
     $this->assertTrue($this->status->setId($id) instanceof PaymentStatusInterface);
     $this->assertIdentical($this->status->getId(), $id);
@@ -67,7 +77,7 @@ class BaseUnitTest extends DrupalUnitTestBase {
   /**
    * Tests getChildren().
    */
-  function testGetChildren() {
+  protected function testGetChildren() {
     $status = $this->manager->createInstance('payment_no_money_transferred');
     $expected = array('payment_created', 'payment_failed', 'payment_pending');
     $this->assertEqual($status->getChildren(), $expected);
@@ -76,7 +86,7 @@ class BaseUnitTest extends DrupalUnitTestBase {
   /**
    * Tests getDescendants().
    */
-  function testGetDescendants() {
+  protected function testGetDescendants() {
     $status = $this->manager->createInstance('payment_no_money_transferred');
     $expected = array('payment_created', 'payment_failed', 'payment_pending', 'payment_authorization_failed', 'payment_cancelled', 'payment_expired');
     $this->assertEqual($status->getDescendants(), $expected);
@@ -85,7 +95,7 @@ class BaseUnitTest extends DrupalUnitTestBase {
   /**
    * Tests getAncestors().
    */
-  function testGetAncestors() {
+  protected function testGetAncestors() {
     $status = $this->manager->createInstance('payment_authorization_failed');
     $expected = array('payment_failed', 'payment_no_money_transferred');
     $this->assertEqual($status->getAncestors(), $expected);
@@ -94,7 +104,7 @@ class BaseUnitTest extends DrupalUnitTestBase {
   /**
    * Tests hasAncestor().
    */
-  function testHasAncestor() {
+  protected function testHasAncestor() {
     $status = $this->manager->createInstance('payment_failed');
     $this->assertTrue($status->isOrHasAncestor('payment_no_money_transferred'));
   }
@@ -102,7 +112,7 @@ class BaseUnitTest extends DrupalUnitTestBase {
   /**
    * Tests isOrHasAncestor().
    */
-  function testIsOrHasAncestor() {
+  protected function testIsOrHasAncestor() {
     $status = $this->manager->createInstance('payment_failed');
     $this->assertTrue($status->isOrHasAncestor('payment_failed'));
     $this->assertTrue($status->isOrHasAncestor('payment_no_money_transferred'));

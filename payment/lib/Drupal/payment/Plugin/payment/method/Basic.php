@@ -46,7 +46,7 @@ class Basic extends Base {
    * @param string $status
    *   The plugin ID of the payment status to set.
    *
-   * @return \Drupal\payment\Plugin\payment\method\PaymentInterface
+   * @return \Drupal\payment\Plugin\payment\method\Basic
    */
   public function setStatus($status) {
     $this->configuration['status'] = $status;

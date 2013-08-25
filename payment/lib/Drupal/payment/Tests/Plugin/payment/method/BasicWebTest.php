@@ -14,12 +14,15 @@ use Drupal\simpletest\WebTestBase;
  */
 class BasicWebTest extends WebTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = array('payment');
 
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => '\Drupal\payment\Plugin\payment\method\Basic web test',
@@ -30,17 +33,17 @@ class BasicWebTest extends WebTestBase {
   /**
    * {@inheritdoc
    */
-  function setUp() {
+  protected function setUp() {
     parent::setUp();
     $this->methodEntity = entity_create('payment_method', array());
-    $this->method = \Drupal::service('plugin.manager.payment.payment_method')->createInstance('payment_basic');
+    $this->method = $this->container->get('plugin.manager.payment.payment_method')->createInstance('payment_basic');
     $this->method->setPaymentMethod($this->methodEntity);
   }
 
   /**
    * Tests paymentFormElements().
    */
-  function testPaymentFormElements() {
+  protected function testPaymentFormElements() {
     $this->method->setMessageText('Hello [site:name]!');
     $form = array();
     $form_state = array();

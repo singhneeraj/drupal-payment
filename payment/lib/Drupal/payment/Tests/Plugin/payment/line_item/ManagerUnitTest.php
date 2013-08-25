@@ -14,12 +14,22 @@ use Drupal\simpletest\DrupalUnitTestBase;
  */
 class ManagerUnitTest extends DrupalUnitTestBase {
 
+  /**
+   * The payment line item plugin manager.
+   *
+   * @var \Drupal\payment\Plugin\payment\context\Manager
+   */
+  protected $manager;
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = array('payment');
 
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => '\Drupal\payment\Plugin\payment\line_item\Manager unit test',
@@ -30,15 +40,15 @@ class ManagerUnitTest extends DrupalUnitTestBase {
   /**
    * {@inheritdoc
    */
-  function setUp() {
+  protected function setUp() {
     parent::setUp();
-    $this->manager = \Drupal::service('plugin.manager.payment.line_item');
+    $this->manager = $this->container->get('plugin.manager.payment.line_item');
   }
 
   /**
    * Tests getDefinitions().
    */
-  function testGetDefinitions() {
+  protected function testGetDefinitions() {
     // Test the default line item plugins.
     $definitions = $this->manager->getDefinitions();
     $this->assertEqual(count($definitions), 1);
@@ -51,7 +61,7 @@ class ManagerUnitTest extends DrupalUnitTestBase {
   /**
    * Tests createInstance().
    */
-  function testCreateInstance() {
+  protected function testCreateInstance() {
     $id = 'payment_basic';
     $this->assertEqual($this->manager->createInstance($id)->getPluginId(), $id);
     $this->assertEqual($this->manager->createInstance('ThisIdDoesNotExist')->getPluginId(), $id);

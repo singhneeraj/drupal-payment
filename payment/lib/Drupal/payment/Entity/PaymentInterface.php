@@ -10,7 +10,6 @@ namespace Drupal\payment\Entity;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Executable\ExecutableInterface;
 use Drupal\payment\Entity\PaymentMethodInterface;
-use Drupal\payment\Plugin\payment\context\PaymentContextInterface;
 use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
 
@@ -76,7 +75,7 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
    * @param string $name
    *   The line item's machine name.
    *
-   * @return PaymentLineItem
+   * @return \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
    */
   public function getLineItem($name);
 
@@ -90,7 +89,7 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
    *   Values are \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
    *   objects.
    */
-  public function getLineItemsByType($type);
+  public function getLineItemsByType($plugin_id);
 
   /**
    * Sets all statuses.
@@ -169,7 +168,7 @@ interface PaymentInterface extends EntityInterface, ExecutableInterface {
   /**
    * Sets the ID of the user who owns this payment.
    *
-   * @param int $uid
+   * @param int $id
    *
    * @return \Drupal\payment\Entity\PaymentInterface
    */

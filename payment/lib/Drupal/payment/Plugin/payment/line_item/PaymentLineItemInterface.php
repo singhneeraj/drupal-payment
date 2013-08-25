@@ -16,7 +16,7 @@ interface PaymentLineItemInterface extends PluginInspectionInterface {
   /**
    * Sets the ID of the payment the line item belongs to.
    *
-   * @param $int $payment_id
+   * @param int $payment_id
    *
    * @return \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
    */
@@ -109,6 +109,9 @@ interface PaymentLineItemInterface extends PluginInspectionInterface {
 
   /**
    * Builds the form elements for this line item.
+   *
+   * @param array $form
+   * @param array $form_state
    *
    * @return array
    *   A render array.

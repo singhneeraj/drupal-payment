@@ -166,12 +166,17 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
 
   /**
    * Checks a payment's currency against this plugin.
+   *
+   * @param \Drupal\payment\Entity\PaymentInterface $payment
+   * @param string $operation
+   * @param string $payment_method_brand
+   *
+   * @return bool
    */
   protected function paymentOperationAccessCurrency(PaymentInterface $payment, $operation, $payment_method_brand) {
     if (!$payment->id()) {
       return FALSE;
     }
-    $currencies = $this->currencies();
     // Confirm the payment's currency is supported.
     $currencies = $this->currencies();
     if (!empty($currencies) && !isset($currencies[$payment->id()])) {
@@ -192,6 +197,7 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
    *
    * @param \Drupal\payment\Entity\PaymentInterface $payment
    * @param string $operation
+   * @param string $payment_method_brand
    *
    * @return bool
    */

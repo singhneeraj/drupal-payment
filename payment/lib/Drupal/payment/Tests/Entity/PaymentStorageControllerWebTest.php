@@ -9,7 +9,6 @@ namespace Drupal\payment\Tests\Entity;
 
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\payment\context\PaymentContextInterface;
-use Drupal\payment\Generate;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -17,12 +16,15 @@ use Drupal\simpletest\WebTestBase;
  */
 class PaymentStorageControllerWebTest extends WebTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = array('payment');
 
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => '\Drupal\payment\Entity\PaymentStorageController web test',
@@ -33,7 +35,7 @@ class PaymentStorageControllerWebTest extends WebTestBase {
   /**
    * Tests CRUD();
    */
-  function testCRUD() {
+  protected function testCRUD() {
     // Test creating a payment.
     $payment = entity_create('payment', array(
       'bundle' => 'payment_unavailable',

@@ -15,12 +15,22 @@ use Drupal\simpletest\DrupalUnitTestBase;
  */
 class BasicUnitTest extends DrupalUnitTestBase {
 
+  /**
+   * The line item to test.
+   *
+   * @var \Drupal\payment\Plugin\payment\line_item\Basic
+   */
+  protected $lineItem;
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = array('payment', 'payment_test');
 
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => '\Drupal\payment\Plugin\payment\line_item\Basic unit test',
@@ -31,16 +41,15 @@ class BasicUnitTest extends DrupalUnitTestBase {
   /**
    * {@inheritdoc
    */
-  function setUp() {
+  protected function setUp() {
     parent::setUp();
-    $this->manager = \Drupal::service('plugin.manager.payment.line_item');
-    $this->lineItem = $this->manager->createInstance('payment_basic');
+    $this->lineItem = $this->container->get('plugin.manager.payment.line_item')->createInstance('payment_basic');
   }
 
   /**
    * Tests setAmount() and getAmount().
    */
-  function testGetAmount() {
+  protected function testGetAmount() {
     $amount = 5.3;
     $this->assertTrue($this->lineItem->setAmount($amount) instanceof PaymentLineItemInterface);
     $this->assertIdentical($this->lineItem->getAmount(), $amount);
@@ -49,7 +58,7 @@ class BasicUnitTest extends DrupalUnitTestBase {
   /**
    * Tests setQuantity() and getQuantity().
    */
-  function testGetQuantity() {
+  protected function testGetQuantity() {
     $quantity = 7;
     $this->assertTrue($this->lineItem->setQuantity($quantity) instanceof PaymentLineItemInterface);
     $this->assertIdentical($this->lineItem->getQuantity(), $quantity);
@@ -58,7 +67,7 @@ class BasicUnitTest extends DrupalUnitTestBase {
   /**
    * Tests getTotalAmount().
    */
-  function testGetTotalAmount() {
+  protected function testGetTotalAmount() {
     $amount= 7;
     $quantity = 7;
     $this->lineItem->setAmount($amount);
@@ -69,7 +78,7 @@ class BasicUnitTest extends DrupalUnitTestBase {
   /**
    * Tests setName() and getName().
    */
-  function testGetName() {
+  protected function testGetName() {
     $name = $this->randomName();
     $this->assertTrue($this->lineItem->setName($name) instanceof PaymentLineItemInterface);
     $this->assertIdentical($this->lineItem->getName(), $name);
@@ -78,7 +87,7 @@ class BasicUnitTest extends DrupalUnitTestBase {
   /**
    * Tests setDescription() and getDescription().
    */
-  function testGetDescription() {
+  protected function testGetDescription() {
     $description = $this->randomName();
     $this->assertTrue($this->lineItem->setDescription($description) instanceof PaymentLineItemInterface);
     $this->assertIdentical($this->lineItem->getDescription(), $description);
@@ -87,7 +96,7 @@ class BasicUnitTest extends DrupalUnitTestBase {
   /**
    * Tests setPaymentId() and getPaymentId().
    */
-  function testGetPaymentId() {
+  protected function testGetPaymentId() {
     $payment_id = mt_rand();
     $this->assertTrue($this->lineItem->setPaymentId($payment_id) instanceof PaymentLineItemInterface);
     $this->assertEqual($this->lineItem->getPaymentId(), $payment_id);

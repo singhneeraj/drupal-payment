@@ -15,12 +15,15 @@ use Drupal\simpletest\WebTestBase ;
  */
 class PaymentMethodUIWebTest extends WebTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = array('payment');
 
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => 'Payment method UI',
@@ -31,7 +34,7 @@ class PaymentMethodUIWebTest extends WebTestBase {
   /**
    * Tests the different UI components.
    */
-  public function testUI() {
+  protected function testUI() {
     $this->doTestList();
     $this->doTestEnableDisable();
     $this->doTestDuplicate();
@@ -43,7 +46,7 @@ class PaymentMethodUIWebTest extends WebTestBase {
   /**
    * Tests the list.
    */
-  function doTestList() {
+  protected function doTestList() {
     $this->drupalGet('admin/config/services/payment/method');
     $this->assertResponse(403);
     $this->drupalLogin($this->drupalCreateUser(array('payment.payment_method.view.any')));
@@ -54,7 +57,7 @@ class PaymentMethodUIWebTest extends WebTestBase {
   /**
    * Tests enabling/disabling.
    */
-  function doTestEnableDisable() {
+  protected function doTestEnableDisable() {
     $this->drupalLogout();
     // Confirm that there are no enable/disable links without the required
     // permissions.
@@ -80,7 +83,7 @@ class PaymentMethodUIWebTest extends WebTestBase {
   /**
    * Tests duplication.
    */
-  function doTestDuplicate() {
+  protected function doTestDuplicate() {
     $this->drupalLogout();
     $id = 'collect_on_delivery';
     $plugin = entity_load('payment_method', $id)->getPlugin();
@@ -101,7 +104,7 @@ class PaymentMethodUIWebTest extends WebTestBase {
   /**
    * Tests deletion.
    */
-  function doTestDelete() {
+  protected function doTestDelete() {
     $this->drupalLogout();
     $id = 'collect_on_delivery';
 
@@ -121,7 +124,7 @@ class PaymentMethodUIWebTest extends WebTestBase {
   /**
    * Tests selecting.
    */
-  function doTestAddSelect() {
+  protected function doTestAddSelect() {
     $this->drupalLogout();
     $plugin_id = 'payment_basic';
     $this->drupalGet('admin/config/services/payment/method-add');
@@ -129,14 +132,14 @@ class PaymentMethodUIWebTest extends WebTestBase {
     $this->drupalLogin($this->drupalCreateUser(array('payment.payment_method.create.' . $plugin_id)));
     $this->drupalGet('admin/config/services/payment/method-add');
     $this->assertResponse(200);
-    $definition = \Drupal::service('plugin.manager.payment.payment_method')->getDefinition($plugin_id);
+    $definition = $this->container->get('plugin.manager.payment.payment_method')->getDefinition($plugin_id);
     $this->assertText($definition['label']);
   }
 
   /**
    * Tests adding.
    */
-  function doTestAdd() {
+  protected function doTestAdd() {
     $this->drupalLogout();
     $plugin_id = 'payment_basic';
     $this->drupalGet('admin/config/services/payment/method-add/' . $plugin_id);

@@ -14,12 +14,22 @@ use Drupal\simpletest\DrupalUnitTestBase;
  */
 class ManagerUnitTest extends DrupalUnitTestBase {
 
+  /**
+   * The payment status plugin manager.
+   *
+   * @var \Drupal\payment\Plugin\payment\status\Manager
+   */
+  public $manager;
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = array('payment');
 
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => '\Drupal\payment\Plugin\payment\status\Manager unit test',
@@ -30,15 +40,15 @@ class ManagerUnitTest extends DrupalUnitTestBase {
   /**
    * {@inheritdoc
    */
-  function setUp() {
+  protected function setUp() {
     parent::setUp();
-    $this->manager = \Drupal::service('plugin.manager.payment.status');
+    $this->manager = $this->container->get('plugin.manager.payment.status');
   }
 
   /**
    * Tests getDefinitions().
    */
-  function testGetDefinitions() {
+  protected function testGetDefinitions() {
     // Test the default status plugins.
     $definitions = $this->manager->getDefinitions();
     $this->assertEqual(count($definitions), 10);
@@ -51,7 +61,7 @@ class ManagerUnitTest extends DrupalUnitTestBase {
   /**
    * Tests createInstance().
    */
-  function testCreateInstance() {
+  protected function testCreateInstance() {
     $id = 'payment_unknown';
     $this->assertEqual($this->manager->createInstance($id)->getPluginId(), $id);
     $this->assertEqual($this->manager->createInstance('ThisIdDoesNotExist')->getPluginId(), $id);
@@ -60,7 +70,7 @@ class ManagerUnitTest extends DrupalUnitTestBase {
   /**
    * Tests options().
    */
-  function testOptions() {
+  protected function testOptions() {
     $this->assertTrue($this->manager->options());
   }
 }

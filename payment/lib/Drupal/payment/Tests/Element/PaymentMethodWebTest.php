@@ -23,7 +23,7 @@ class PaymentMethodWebTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => 'payment_method element',
@@ -36,7 +36,7 @@ class PaymentMethodWebTest extends WebTestBase {
    *
    * @return \Drupal\payment\Entity\PaymentMethodInterface
    */
-  public function createPaymentMethod() {
+  protected function createPaymentMethod() {
     $payment_method = Generate::createPaymentMethod(2, $this->container
       ->get('plugin.manager.payment.payment_method')
       ->createInstance('payment_basic')
@@ -49,7 +49,9 @@ class PaymentMethodWebTest extends WebTestBase {
   /**
    * Tests the element.
    */
-  function testElement() {
+  protected function testElement() {
+    $state = $this->container->get('state');
+
     // Test the presence of default elements without available payment methods.
     $this->drupalGet('payment_test-element-payment-method');
     $this->assertNoFieldByName('payment_method[select][payment_method_id]');
@@ -91,7 +93,7 @@ class PaymentMethodWebTest extends WebTestBase {
 
     // Submit the form through a regular submission.
     $this->drupalPost(NULL, array(), t('Submit'));
-    $payment_method_id = \Drupal::state()->get('payment_test_method_form_element');
+    $payment_method_id = $state->get('payment_test_method_form_element');
     $this->assertEqual($payment_method_id, $payment_method_2->id());
 
     // Choose a payment method through an AJAX submission.
@@ -115,7 +117,7 @@ class PaymentMethodWebTest extends WebTestBase {
 
     // Submit the form through an AJAX submission.
     $this->drupalPost(NULL, array(), t('Submit'));
-    $payment_method_id = \Drupal::state()->get('payment_test_method_form_element');
+    $payment_method_id = $state->get('payment_test_method_form_element');
     $this->assertEqual($payment_method_id, $payment_method_2->id());
   }
 }

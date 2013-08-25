@@ -19,12 +19,22 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class UnavailableUnitTest extends DrupalUnitTestBase {
 
+  /**
+   * The context to test.
+   *
+   * @var \Drupal\payment\Plugin\payment\context\Unavailable
+   */
+  protected $context;
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = array('payment');
 
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => '\Drupal\payment\Plugin\payment\context\Unavailable unit test',
@@ -35,15 +45,15 @@ class UnavailableUnitTest extends DrupalUnitTestBase {
   /**
    * {@inheritdoc
    */
-  function setUp() {
+  protected function setUp() {
     parent::setUp();
-    $this->context = \Drupal::service('plugin.manager.payment.context')->createInstance('payment_unavailable', array());
+    $this->context = $this->container->get('plugin.manager.payment.context')->createInstance('payment_unavailable', array());
   }
 
   /**
    * Tests resume().
    */
-  function testResume() {
+  protected function testResume() {
     try {
       $this->context->resume();
       $this->assertTrue(FALSE);
@@ -56,7 +66,7 @@ class UnavailableUnitTest extends DrupalUnitTestBase {
   /**
    * Tests paymentDescription().
    */
-  function testPaymentDescription() {
+  protected function testPaymentDescription() {
     $this->assertTrue(strlen($this->context->paymentDescription()));
 
   }
@@ -64,7 +74,7 @@ class UnavailableUnitTest extends DrupalUnitTestBase {
   /**
    * Tests setPayment() and getPayment().
    */
-  function testGetPayment() {
+  protected function testGetPayment() {
     $payment = entity_create('payment', array(
       'context' => $this->context,
     ));

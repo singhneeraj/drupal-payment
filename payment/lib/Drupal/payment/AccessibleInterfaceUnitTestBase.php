@@ -28,7 +28,7 @@ class AccessibleInterfaceUnitTestBase extends DrupalUnitTestBase {
     static $info = NULL;
 
     if (is_null($info)) {
-      $info = module_invoke_all('permission');
+      $info = $this->container->get('module_handler')->invokeAll('permission');
     }
 
     $labels = array();
@@ -76,6 +76,7 @@ class AccessibleInterfaceUnitTestBase extends DrupalUnitTestBase {
     $root = $user_storage_controller->create(array(
       'uid' => 1,
     ));
+    $uid = $authenticated->id();
 
     $comment = $data && isset($data->uid) ? ' with UID ' . $data->uid : NULL;
 
@@ -108,9 +109,7 @@ class AccessibleInterfaceUnitTestBase extends DrupalUnitTestBase {
       }
       $role->save();
       $authenticated->addRole($role->id());
-      $with = $permissions ? 'with' : 'without';
       $can = $access['authenticated_with_permissions'] ? 'can' : 'cannot';
-      $uid = $authenticated->id();
       $this->assertEqual($data->access($operation, $authenticated), $access['authenticated_with_permissions'], "An authenticated user (UID $uid) $can perform operation <strong>$operation</strong> on <strong>$data_label</strong>$comment with permission(s) " . $this->permissionLabel($permissions));
     }
 
@@ -124,8 +123,8 @@ class AccessibleInterfaceUnitTestBase extends DrupalUnitTestBase {
       $role = $user_role_storage_controller->create(array(
         'id' => $this->randomName(),
       ));
-      foreach ($assert_permissions as $permission) {
-        $role->grantPermission($permission);
+      foreach ($assert_permissions as $assert_permission) {
+        $role->grantPermission($assert_permission);
       }
       $role->save();
       $authenticated->addRole($role->id());

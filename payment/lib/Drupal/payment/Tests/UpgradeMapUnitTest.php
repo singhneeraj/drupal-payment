@@ -14,12 +14,15 @@ use Drupal\simpletest\DrupalUnitTestBase;
  */
 class UpgradeMapUnitTest extends DrupalUnitTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = array('payment');
 
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => 'Upgrade maps',
@@ -30,9 +33,9 @@ class UpgradeMapUnitTest extends DrupalUnitTestBase {
   /**
    * Tests payment_upgrade_8x2x_map_status().
    */
-  function testStatus() {
+  protected function testStatus() {
     module_load_install('payment');
-    $manager = \Drupal::service('plugin.manager.payment.status');
+    $manager = $this->container->get('plugin.manager.payment.status');
     $pluginIds = array_keys($manager->getDefinitions());
     $this->assertFalse(array_diff(payment_upgrade_8x2x_map_status(), $pluginIds));
   }
@@ -40,9 +43,9 @@ class UpgradeMapUnitTest extends DrupalUnitTestBase {
   /**
    * Tests payment_upgrade_8x2x_map_payment_method().
    */
-  function testPaymentMethod() {
+  protected function testPaymentMethod() {
     module_load_install('payment');
-    $manager = \Drupal::service('plugin.manager.payment.payment_method');
+    $manager = $this->container->get('plugin.manager.payment.payment_method');
     $pluginIds = array_keys($manager->getDefinitions());
     $this->assertFalse(array_diff(payment_upgrade_8x2x_map_payment_method(), $pluginIds));
   }

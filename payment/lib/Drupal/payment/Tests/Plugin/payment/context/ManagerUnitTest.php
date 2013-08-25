@@ -14,12 +14,15 @@ use Drupal\simpletest\DrupalUnitTestBase;
  */
 class ManagerUnitTest extends DrupalUnitTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = array('payment');
 
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => '\Drupal\payment\Plugin\payment\context\Manager unit test',
@@ -28,19 +31,11 @@ class ManagerUnitTest extends DrupalUnitTestBase {
   }
 
   /**
-   * {@inheritdoc
-   */
-  function setUp() {
-    parent::setUp();
-    $this->manager = \Drupal::service('plugin.manager.payment.context');
-  }
-
-  /**
    * Tests getDefinitions().
    */
-  function testGetDefinitions() {
+  protected function testGetDefinitions() {
     // Test the default line item plugins.
-    $definitions = $this->manager->getDefinitions();
+    $definitions = $this->container->get('plugin.manager.payment.context')->getDefinitions();
     $this->assertEqual(count($definitions), 1);
     foreach ($definitions as $definition) {
       $this->assertIdentical(strpos($definition['id'], 'payment_'), 0);
@@ -51,9 +46,10 @@ class ManagerUnitTest extends DrupalUnitTestBase {
   /**
    * Tests createInstance().
    */
-  function testCreateInstance() {
+  protected function testCreateInstance() {
     $id = 'payment_unavailable';
-    $this->assertEqual($this->manager->createInstance($id)->getPluginId(), $id);
-    $this->assertEqual($this->manager->createInstance('ThisIdDoesNotExist')->getPluginId(), $id);
+    $manager = $this->container->get('plugin.manager.payment.context');
+    $this->assertEqual($manager->createInstance($id)->getPluginId(), $id);
+    $this->assertEqual($manager->createInstance('ThisIdDoesNotExist')->getPluginId(), $id);
   }
 }

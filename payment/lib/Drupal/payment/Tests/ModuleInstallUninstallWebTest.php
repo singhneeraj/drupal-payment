@@ -15,12 +15,15 @@ use Drupal\simpletest\WebTestBase;
  */
 class ModuleInstallUninstallWebTest extends WebTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = array('payment');
 
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => 'Module installation and uninstallation',
@@ -31,8 +34,9 @@ class ModuleInstallUninstallWebTest extends WebTestBase {
   /**
    * Test installation and uninstallation.
    */
-  function testInstallationAndUninstallation() {
-    $this->assertTrue(module_exists('payment'));
+  protected function testInstallationAndUninstallation() {
+    $handler = $this->container->get('module_handler');
+    $this->assertTrue($handler->moduleExists('payment'));
 
     // Test default configuration.
     $names = array('collect_on_delivery', 'no_payment_required');
@@ -41,8 +45,8 @@ class ModuleInstallUninstallWebTest extends WebTestBase {
       $this->assertTrue($payment_method instanceof PaymentMethodInterface);
     }
 
-    module_disable(array('payment'));
-    module_uninstall(array('payment'));
-    $this->assertFalse(module_exists('payment'));
+    $handler->disable(array('payment'));
+    $handler->uninstall(array('payment'));
+    $this->assertFalse($handler->moduleExists('payment'));
   }
 }

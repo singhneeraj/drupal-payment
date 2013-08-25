@@ -15,7 +15,10 @@ use Drupal\payment\Plugin\payment\method\PaymentMethodInterface as PluginPayment
  */
 class UpgradePathWithContentWebTest extends UpgradePathTestBase {
 
-  static function getInfo() {
+  /**
+   * {@inheritdoc}
+   */
+  public static function getInfo() {
     return array(
       'description' => '',
       'name'  => 'Upgrade path (with existing content and configuration)',
@@ -26,7 +29,7 @@ class UpgradePathWithContentWebTest extends UpgradePathTestBase {
   /**
    * {@inheritdoc}
    */
-  function setUp() {
+  public function setUp() {
     $this->databaseDumpFiles = array(
       drupal_get_path('module', 'payment') . '/../payment-database-dump.php',
       drupal_get_path('module', 'payment') . '/../payment-database-dump-content.php',
@@ -37,7 +40,7 @@ class UpgradePathWithContentWebTest extends UpgradePathTestBase {
   /**
    * Tests a successful upgrade.
    */
-  function testPaymentUpgrade() {
+  protected function testPaymentUpgrade() {
     $this->assertTrue($this->performUpgrade(), 'The upgrade was completed successfully.');
 
     // Test payment integrity.

@@ -18,10 +18,8 @@ class PaymentMethodDeleteFormController extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getQuestion() {
-    $payment_method = $this->getEntity();
-
     return t('Do you really want to delete %label?', array(
-      '%label' => $payment_method->label(),
+      '%label' => $this->getEntity()->label(),
     ));
   }
 

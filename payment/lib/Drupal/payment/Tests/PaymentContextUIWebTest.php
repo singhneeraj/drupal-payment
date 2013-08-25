@@ -14,12 +14,15 @@ use Drupal\simpletest\WebTestBase ;
  */
 class PaymentContextUIWebTest extends WebTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = array('field_ui', 'payment_test');
 
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => 'Payment context UI',
@@ -30,7 +33,7 @@ class PaymentContextUIWebTest extends WebTestBase {
   /**
    * Tests administrative overview.
    */
-  public function testOverview() {
+  protected function testOverview() {
     $admin = $this->drupalCreateUser(array('access administration pages'));
 
     // Test the context listing.

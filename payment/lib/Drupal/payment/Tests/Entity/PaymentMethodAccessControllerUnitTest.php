@@ -15,12 +15,15 @@ use Drupal\payment\Generate;
  */
 class PaymentMethodAccessControllerUnitTest extends AccessibleInterfaceUnitTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = array('payment', 'system', 'user');
 
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => '\Drupal\payment\PaymentMethodAccessController unit test',
@@ -31,13 +34,13 @@ class PaymentMethodAccessControllerUnitTest extends AccessibleInterfaceUnitTestB
   /**
    * Tests access control.
    */
-  function testAccessControl() {
+  protected function testAccessControl() {
     $entity_manager = $this->container->get('plugin.manager.entity');
     $user_storage_controller = $entity_manager->getStorageController('user');
     $authenticated = $user_storage_controller->create(array());
 
     // Create a new payment method.
-    $manager = \Drupal::service('plugin.manager.payment.payment_method');
+    $manager = $this->container->get('plugin.manager.payment.payment_method');
     $plugin = $manager->createInstance('payment_basic');
     $this->assertDataAccess(Generate::createPaymentMethod(0, $plugin), 'a payment method', 'create', $authenticated, array('payment.payment_method.create.payment_basic'));
 

@@ -14,7 +14,10 @@ use Drupal\system\Tests\Upgrade\UpgradePathTestBase;
  */
 class UpgradePathWithoutContentWebTest extends UpgradePathTestBase {
 
-  static function getInfo() {
+  /**
+   * {@inheritdoc}
+   */
+  public static function getInfo() {
     return array(
       'description' => '',
       'name'  => 'Upgrade path (without existing content and configuration)',
@@ -25,7 +28,7 @@ class UpgradePathWithoutContentWebTest extends UpgradePathTestBase {
   /**
    * {@inheritdoc}
    */
-  function setUp() {
+  public function setUp() {
     $this->databaseDumpFiles[] = drupal_get_path('module', 'payment') . '/../payment-database-dump.php';
     parent::setUp();
   }
@@ -33,7 +36,7 @@ class UpgradePathWithoutContentWebTest extends UpgradePathTestBase {
   /**
    * Tests a successful upgrade.
    */
-  function testPaymentUpgrade() {
+  protected function testPaymentUpgrade() {
     $this->assertTrue($this->performUpgrade(), 'The upgrade was completed successfully.');
   }
 }

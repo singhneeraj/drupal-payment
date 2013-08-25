@@ -112,7 +112,7 @@ class PaymentMethodFormController extends EntityFormController {
   /**
    * Checks if a payment method with a particular ID already exists.
    *
-   * @param name $id
+   * @param string $id
    *
    * @return bool
    */

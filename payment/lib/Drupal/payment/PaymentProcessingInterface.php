@@ -78,6 +78,8 @@ interface PaymentProcessingInterface {
    * @param string $operation
    *   See \Drupal\payment\Annotations\PaymentMethod::operations for the
    *   definition of available operations.
+   * @param string $payment_method_brand
+   *   See self::brandOptions for the available brands.
    */
   function executePaymentOperation(PaymentInterface $payment, $operation, $payment_method_brand);
 }

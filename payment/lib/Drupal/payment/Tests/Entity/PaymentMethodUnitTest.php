@@ -15,12 +15,29 @@ use Drupal\simpletest\DrupalUnitTestBase;
  */
 class PaymentMethodUnitTest extends DrupalUnitTestBase {
 
-  public static $modules = array('payment', 'system');
+  /**
+   * The payment method plugin manager.
+   *
+   * @var \Drupal\payment\Plugin\payment\method\Manager
+   */
+  protected $manager;
 
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static $modules = array('payment', 'system');
+
+  /**
+   * The payment method to test on.
+   *
+   * @var \Drupal\payment\Entity\PaymentMethodInterface
+   */
+  protected $paymentMethod;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => '\Drupal\payment\Entity\PaymentMethod unit test',
@@ -31,16 +48,16 @@ class PaymentMethodUnitTest extends DrupalUnitTestBase {
   /**
    * {@inheritdoc
    */
-  function setUp() {
+  protected function setUp() {
     parent::setUp();
-    $this->manager = \Drupal::service('plugin.manager.payment.payment_method');
+    $this->manager = $this->container->get('plugin.manager.payment.payment_method');
     $this->paymentMethod = entity_create('payment_method', array());
   }
 
   /**
    * Tests setLabel() and label().
    */
-  function testLabel() {
+  protected function testLabel() {
     $label = $this->randomName();
     $this->assertTrue($this->paymentMethod->setLabel($label) instanceof PaymentMethodInterface);
     $this->assertIdentical($this->paymentMethod->label(), $label);
@@ -49,7 +66,7 @@ class PaymentMethodUnitTest extends DrupalUnitTestBase {
   /**
    * Tests setPlugin() and getPlugin().
    */
-  function testGetPlugin() {
+  protected function testGetPlugin() {
     $plugin = $this->manager->createInstance('payment_unavailable');
     $this->assertTrue($this->paymentMethod->setPlugin($plugin) instanceof PaymentMethodInterface);
     $this->assertIdentical($this->paymentMethod->getPlugin(), $plugin);
@@ -58,7 +75,7 @@ class PaymentMethodUnitTest extends DrupalUnitTestBase {
   /**
    * Tests setOwnerId() and getOwnerId().
    */
-  function testGetOwnerId() {
+  protected function testGetOwnerId() {
     $id = 9;
     $this->assertTrue($this->paymentMethod->setOwnerId($id) instanceof PaymentMethodInterface);
     $this->assertIdentical($this->paymentMethod->getOwnerId(), $id);
@@ -67,7 +84,7 @@ class PaymentMethodUnitTest extends DrupalUnitTestBase {
   /**
    * Tests setId() and id().
    */
-  function testId() {
+  protected function testId() {
     $id = 26;
     $this->assertTrue($this->paymentMethod->setId($id) instanceof PaymentMethodInterface);
     $this->assertIdentical($this->paymentMethod->id(), $id);
@@ -76,7 +93,7 @@ class PaymentMethodUnitTest extends DrupalUnitTestBase {
   /**
    * Tests setUuid() and uuid().
    */
-  function testUuid() {
+  protected function testUuid() {
     $uuid = 'foo';
     $this->assertTrue($this->paymentMethod->setUuid($uuid) instanceof PaymentMethodInterface);
     $this->assertIdentical($this->paymentMethod->uuid(), $uuid);
@@ -85,7 +102,7 @@ class PaymentMethodUnitTest extends DrupalUnitTestBase {
   /**
    * Tests currencies().
    */
-  function testCurrencies() {
+  protected function testCurrencies() {
     $this->paymentMethod->setPlugin($this->manager->createInstance('payment_unavailable'));
     $this->assertTrue(is_array($this->paymentMethod->currencies()));
   }
@@ -93,7 +110,7 @@ class PaymentMethodUnitTest extends DrupalUnitTestBase {
   /**
    * Tests paymentFormElements().
    */
-  function testPaymentFormElements() {
+  protected function testPaymentFormElements() {
     $this->paymentMethod->setPlugin($this->manager->createInstance('payment_unavailable'));
     $this->assertTrue(is_array($this->paymentMethod->currencies()));
   }

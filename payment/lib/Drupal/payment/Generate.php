@@ -20,13 +20,10 @@ class Generate {
    *
    * @param integer $uid
    *   The user ID of the payment's owner.
-   * @param \Drupal\payment\Entity\PaymentMethod $payment_method
-   *   An optional payment method to set. Defaults to Unavailable.
    *
-   * @return \Drupal\payment\Entity\Payment
+   * @return \Drupal\payment\Entity\PaymentInterface
    */
-  static function createPayment($uid, PaymentMethod $payment_method = NULL) {
-    $context_manager = \Drupal::service('plugin.manager.payment.context');
+  static function createPayment($uid) {
     $payment = entity_create('payment', array(
       'bundle' => 'payment_unavailable',
     ))->setPaymentMethodId('payment_unavailable')

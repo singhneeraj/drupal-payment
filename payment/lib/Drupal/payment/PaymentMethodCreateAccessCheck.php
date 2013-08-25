@@ -41,6 +41,7 @@ class PaymentMethodCreateAccessCheck implements AccessCheckInterface {
    * Constructor.
    *
    * @param \Drupal\Core\Entity\EntityManager $entity_manager
+   * @param \Drupal\payment\Plugin\payment\method\Manager $payment_method_manager
    */
   public function __construct(EntityManager $entity_manager, Manager $payment_method_manager) {
     $this->entityManager = $entity_manager;

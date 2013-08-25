@@ -14,12 +14,15 @@ use Drupal\simpletest\WebTestBase ;
  */
 class PaymentUIWebTest extends WebTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = array('payment');
 
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => 'Payment UI',
@@ -30,7 +33,7 @@ class PaymentUIWebTest extends WebTestBase {
   /**
    * Tests administrative overview.
    */
-  public function testOverview() {
+  protected function testOverview() {
     $this->drupalGet('admin/config/services');
     $this->assertNoLink('Payment');
     $this->drupalGet('admin/config/services/payment');

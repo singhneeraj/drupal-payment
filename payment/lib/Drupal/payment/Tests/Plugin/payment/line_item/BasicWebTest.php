@@ -15,12 +15,22 @@ use Drupal\simpletest\WebTestBase;
  */
 class BasicWebTest extends WebTestBase {
 
+  /**
+   * The line item to test.
+   *
+   * @var \Drupal\payment\Plugin\payment\line_item\Basic
+   */
+  protected $lineItem;
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = array('payment', 'payment_test');
 
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => '\Drupal\payment\Plugin\payment\line_item\Basic web test',
@@ -31,16 +41,15 @@ class BasicWebTest extends WebTestBase {
   /**
    * {@inheritdoc
    */
-  function setUp() {
+ protected function setUp() {
     parent::setUp();
-    $this->manager = \Drupal::service('plugin.manager.payment.line_item');
-    $this->lineItem = $this->manager->createInstance('payment_basic');
+    $this->lineItem = $this->container->get('plugin.manager.payment.line_item')->createInstance('payment_basic');
   }
 
   /**
    * Tests formElements().
    */
-  function testFormElements() {
+  protected function testFormElements() {
     $line_item_data = array(
       'line_item[amount][amount]' => '123.45',
       'line_item[quantity]' => '3',
@@ -70,7 +79,7 @@ class BasicWebTest extends WebTestBase {
   /**
    * Tests saveData(), loadData(), and deleteData().
    */
-  public function testData() {
+  protected function testData() {
     $name = $this->randomName();
     $payment_id = mt_rand();
     $description = $this->randomString();
@@ -92,7 +101,7 @@ class BasicWebTest extends WebTestBase {
   /**
    * Tests integration with payment entities.
    */
-  public function testPaymentEntityIntegration() {
+  protected function testPaymentEntityIntegration() {
     $description = $this->randomString();
     $name = $this->randomName();
     $payment = entity_create('payment', array(

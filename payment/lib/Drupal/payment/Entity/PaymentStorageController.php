@@ -32,7 +32,6 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
    * {@inheritdoc}
    */
   function attachLoad(&$queried_entities, $load_revision = FALSE) {
-    $manager = \Drupal::service('plugin.manager.payment.context');
     $line_items = $this->loadLineItems(array_keys($queried_entities));
     $statuses = $this->loadPaymentStatuses(array_keys($queried_entities));
     foreach ($queried_entities as $id => $queried_entity) {

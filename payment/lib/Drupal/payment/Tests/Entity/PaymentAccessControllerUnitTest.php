@@ -15,12 +15,15 @@ use Drupal\payment\Generate;
  */
 class PaymentAccessControllerUnitTest extends AccessibleInterfaceUnitTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = array('payment', 'system', 'user');
 
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => '\Drupal\payment\Entity\PaymentAccessController unit test',
@@ -31,7 +34,7 @@ class PaymentAccessControllerUnitTest extends AccessibleInterfaceUnitTestBase {
   /**
    * Tests access control.
    */
-  function testAccessControl() {
+  protected function testAccessControl() {
     $payment_1 = Generate::createPayment(1);
     $payment_2 = Generate::createPayment(2);
     $entity_manager = $this->container->get('plugin.manager.entity');

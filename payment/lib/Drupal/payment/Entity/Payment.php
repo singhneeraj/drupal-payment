@@ -52,7 +52,8 @@ class Payment extends EntityNG implements PaymentInterface {
    *
    * @var array
    *   Keys are line item machine names. Values are
-   *   Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface instances.
+   *   \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
+   *   objects.
    */
   protected $lineItems = array();
 
@@ -60,8 +61,8 @@ class Payment extends EntityNG implements PaymentInterface {
    * Payment statuses.
    *
    * @var array
-   *   Values are Drupal\payment\Plugin\payment\status\PaymentStatusInterface
-   *   instances.
+   *   Values are \Drupal\payment\Plugin\payment\status\PaymentStatusInterface
+   *   objects.
    */
   protected $statuses = array();
 
@@ -290,16 +291,14 @@ class Payment extends EntityNG implements PaymentInterface {
     $manager = \Drupal::service('plugin.manager.payment.status');
     // Preprocess the payment.
     $handler->invokeAll('payment_pre_execute', $this);
-    if ($handler->moduleExists('rules')) {
-      rules_invoke_event('payment_pre_execute', $this);
-    }
+    // @todo Invoke Rules event.
     // Execute the payment.
     if (count($this->validate())) {
       $this->setStatus($manager->createInstance('payment_failed'));
     }
     else {
       $this->setStatus($manager->createInstance('payment_pending'));
-      $this->getPaymentMethod()->executePaymentOperation('execute', $this);
+      $this->getPaymentMethod()->executePaymentOperation($this, 'execute', $this->getPaymentMethodBrand());
     }
   }
 

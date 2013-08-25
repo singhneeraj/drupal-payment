@@ -24,7 +24,7 @@ class PaymentLineItemWebTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => 'payment_line_item element',
@@ -40,7 +40,7 @@ class PaymentLineItemWebTest extends WebTestBase {
    *
    * @return array
    */
-  public function lineItemData(array $names) {
+  protected function lineItemData(array $names) {
     $data = array();
     foreach ($names as $name) {
       $data += array(
@@ -56,7 +56,7 @@ class PaymentLineItemWebTest extends WebTestBase {
   /**
    * Asserts the presence of the element's line item elements.
    */
-  function assertLineItemElements(array $names) {
+  protected function assertLineItemElements(array $names) {
     foreach (array_keys($this->lineItemData($names)) as $input_name) {
       $this->assertFieldByName($input_name);
     }
@@ -65,7 +65,7 @@ class PaymentLineItemWebTest extends WebTestBase {
   /**
    * Asserts the presence of the element's add more elements..
    */
-  function assertAddMore($present) {
+  protected function assertAddMore($present) {
     $elements = $this->xpath('//select[@name="line_item[add_more][type]"]');
     $this->assertEqual($present, isset($elements[0]));
     $elements = $this->xpath('//input[@id="edit-line-item-add-more-add"]');
@@ -78,7 +78,8 @@ class PaymentLineItemWebTest extends WebTestBase {
    * @todo Test deleting a line item once WebTestBase::drupalPostAjax() supports
    *   testing RemoveCommand.
    */
-  function testElement() {
+  protected function testElement() {
+    $state = $this->container->get('state');
     $names = array();
     foreach (Generate::createPaymentLineItems() as $line_item) {
       $names[] = $line_item->getName();
@@ -112,7 +113,7 @@ class PaymentLineItemWebTest extends WebTestBase {
       // Change the first line item's weight to be the highest.
       $name => count($names),
     ), t('Submit'));
-    $value = \Drupal::state()->get('payment_test_line_item_form_element');
+    $value = $state->get('payment_test_line_item_form_element');
     if ($this->assertTrue(is_array($value))) {
       /// We end up with one more line item than we originally had.
       $this->assertEqual(count($value), count($names));
@@ -136,7 +137,7 @@ class PaymentLineItemWebTest extends WebTestBase {
     $this->drupalPost(NULL, array(
       'line_item[line_items][payment_basic][plugin_form][description]' => $this->randomString(),
     ), t('Submit'));
-    $value = \Drupal::state()->get('payment_test_line_item_form_element');
+    $value = $state->get('payment_test_line_item_form_element');
     if ($this->assertTrue(is_array($value))) {
       $this->assertEqual(count($value), count($names) + 1);
       foreach ($value as $line_item) {

@@ -13,12 +13,15 @@ use Drupal\simpletest\WebTestBase ;
  */
 class PaymentStatusUIWebTest extends WebTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = array('payment');
 
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => 'Payment status UI',
@@ -29,7 +32,7 @@ class PaymentStatusUIWebTest extends WebTestBase {
   /**
    * Tests listing().
    */
-  function testListing() {
+  protected function testListing() {
     $path = 'admin/config/services/payment/status';
     $this->drupalGet($path);
     $this->assertResponse(403);

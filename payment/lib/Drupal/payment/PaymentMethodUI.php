@@ -107,7 +107,9 @@ class PaymentMethodUI implements ControllerInterface {
   /**
    * Displays a payment method add form.
    *
-   * @return string
+   * @param string $payment_method_plugin_id
+   *
+   * @return array
    */
   public function add($payment_method_plugin_id) {
     $plugin = $this->paymentMethodManager->createInstance($payment_method_plugin_id);
@@ -119,7 +121,9 @@ class PaymentMethodUI implements ControllerInterface {
   /**
    * Displays a payment method clone form.
    *
-   * @return string
+   * @param \Drupal\payment\Entity\PaymentMethodInterface $payment_method
+   *
+   * @return array
    */
   public function duplicate(PaymentMethodInterface $payment_method) {
     $clone = clone $payment_method;

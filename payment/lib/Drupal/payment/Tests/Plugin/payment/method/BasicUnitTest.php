@@ -15,12 +15,15 @@ use Drupal\simpletest\DrupalUnitTestBase;
  */
 class BasicUnitTest extends DrupalUnitTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = array('payment');
 
   /**
    * {@inheritdoc}
    */
-  static function getInfo() {
+  public static function getInfo() {
     return array(
       'description' => '',
       'name' => '\Drupal\payment\Plugin\payment\method\Basic unit test',
@@ -31,17 +34,17 @@ class BasicUnitTest extends DrupalUnitTestBase {
   /**
    * {@inheritdoc
    */
-  function setUp() {
+  protected function setUp() {
     parent::setUp();
     $this->methodEntity = entity_create('payment_method', array());
-    $this->method = \Drupal::service('plugin.manager.payment.payment_method')->createInstance('payment_basic');
+    $this->method = $this->container->get('plugin.manager.payment.payment_method')->createInstance('payment_basic');
     $this->method->setPaymentMethod($this->methodEntity);
   }
 
   /**
    * Tests setAmount() and getAmount().
    */
-  function testGetConfiguration() {
+  protected function testGetConfiguration() {
     $this->method->setMessageText('foo')
       ->setMessageTextFormat('bar')
       ->setStatus('baz')
@@ -57,7 +60,7 @@ class BasicUnitTest extends DrupalUnitTestBase {
   /**
    * Tests setPaymentMethod() and getPaymentMethod().
    */
-  function testGetPaymentMethod() {
+  protected function testGetPaymentMethod() {
     $payment_method = entity_create('payment_method', array());
     $this->assertTrue($this->method->setPaymentMethod($payment_method) instanceof PaymentMethodInterface);
     $this->assertIdentical($this->method->getPaymentMethod(), $payment_method);
@@ -66,7 +69,7 @@ class BasicUnitTest extends DrupalUnitTestBase {
   /**
    * Tests setMessageText() and getMessageText().
    */
-  function testGetMessageText() {
+  protected function testGetMessageText() {
     $text = $this->randomName();
     $this->assertTrue($this->method->setMessageText($text) instanceof PaymentMethodInterface);
     $this->assertIdentical($this->method->getMessageText(), $text);
@@ -75,7 +78,7 @@ class BasicUnitTest extends DrupalUnitTestBase {
   /**
    * Tests setMessageTextFormat() and getMessageTextFormat().
    */
-  function testGetMessageTextFormat() {
+  protected function testGetMessageTextFormat() {
     $format = $this->randomName();
     $this->assertTrue($this->method->setMessageTextFormat($format) instanceof PaymentMethodInterface);
     $this->assertIdentical($this->method->getMessageTextFormat(), $format);
@@ -84,7 +87,7 @@ class BasicUnitTest extends DrupalUnitTestBase {
   /**
    * Tests setStatus() and getStatus().
    */
-  function testGetStatus() {
+  protected function testGetStatus() {
     $status = $this->randomName();
     $this->assertTrue($this->method->setStatus($status) instanceof PaymentMethodInterface);
     $this->assertIdentical($this->method->getStatus(), $status);
@@ -93,7 +96,7 @@ class BasicUnitTest extends DrupalUnitTestBase {
   /**
    * Tests setBrandOption() and brandOptions().
    */
-  function testBrandOptions() {
+  protected function testBrandOptions() {
     $this->assertIdentical($this->method->brandOptions(), array(
       'default' => $this->methodEntity->label(),
     ));
@@ -107,7 +110,7 @@ class BasicUnitTest extends DrupalUnitTestBase {
   /**
    * Tests paymentMethodFormElements().
    */
-  function testPaymentMethodFormElements() {
+  protected function testPaymentMethodFormElements() {
     $form = array();
     $form_state = array();
     $this->assertTrue(is_array($this->method->paymentMethodFormElements($form, $form_state)));
@@ -116,7 +119,7 @@ class BasicUnitTest extends DrupalUnitTestBase {
   /**
    * Tests paymentOperationAccess().
    */
-  function testPaymentOperationAccess() {
+  protected function testPaymentOperationAccess() {
     $payment = entity_create('payment', array(
       'bundle' => 'payment_unavailable',
     ));
@@ -127,7 +130,7 @@ class BasicUnitTest extends DrupalUnitTestBase {
   /**
    * Tests executePaymentOperation().
    */
-  function testExecutePaymentOperation() {
+  protected function testExecutePaymentOperation() {
     $plugin_id = 'payment_unknown';
     $payment = entity_create('payment', array(
       'bundle' => 'payment_unavailable',

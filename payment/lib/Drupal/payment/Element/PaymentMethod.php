@@ -8,8 +8,6 @@
 namespace Drupal\payment\Element;
 
 use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\payment\Entity\PaymentInterface;
 
 /**
