@@ -665,25 +665,24 @@ function payment_update_8204(array &$sandbox) {
  * Upgrades user role permissions.
  */
 function payment_update_8205(array &$sandbox) {
+  $replacements = array(
+    'payment.global.administer' => array(),
+    'payment.payment.administer' => array('administer payment display', 'administer payment fields', 'administer payment form display'),
+  );
+  foreach (payment_upgrade_8x2x_map_payment_method() as $controller_name => $plugin_id) {
+    $replacements['payment.payment_method.create.' . $controller_name] = array('payment.payment_method.create.' . $plugin_id);
+  }
   $config_storage = \Drupal::service('config.storage');
   $names = $config_storage->listAll('user.role');
   foreach ($names as $name) {
     $config = \Drupal::config($name);
     $permissions = $config->get('permissions');
-
-    // Upgrade payment.global.administer.
-    $position = array_search('payment.global.administer', $permissions);
-    if ($position !== FALSE) {
-      unset($permissions[$position]);
-    }
-
-    // Upgrade payment.payment.administer.
-    $position = array_search('payment.payment.administer', $permissions);
-    if ($position !== FALSE) {
-      unset($permissions[$position]);
-      $permissions[] = 'administer payment display';
-      $permissions[] = 'administer payment fields';
-      $permissions[] = 'administer payment form display';
+    foreach ($replacements as $old_permission => $new_permissions) {
+      $position = array_search($old_permission, $permissions);
+      if ($position !== FALSE) {
+        unset($permissions[$position]);
+        $permissions = array_merge($permissions, $new_permissions);
+      }
     }
     $config->set('permissions', $permissions);
     $config->save();
