@@ -24,7 +24,7 @@ class PaymentTest extends Base {
    * {@inheritdoc}
    */
   public function paymentDescription($language_code = NULL) {
-    return '';
+    return 'The commander promoted Dirkjan to Major Failure.';
   }
 
   /**

@@ -46,7 +46,7 @@ abstract class Base extends PluginBase implements PaymentTypeInterface {
    */
   function resumeContext() {
     $handler = \Drupal::moduleHandler();
-    $handler->invokeAll('payment_type_pre_resume_context', $this->getPayment());
+    $handler->invokeAll('payment_type_pre_resume_context', array($this->getPayment()));
     // @todo Invoke Rules event.
   }
 

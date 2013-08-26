@@ -186,7 +186,7 @@ function payment_hook_info() {
   $hooks['payment_pre_operation'] = array(
     'group' => 'payment',
   );
-  $hooks['payment_pre_resume'] = array(
+  $hooks['payment_type_pre_resume_context'] = array(
     'group' => 'payment',
   );
   $hooks['payment_status_alter'] = array(

@@ -12,7 +12,7 @@ use Drupal\simpletest\DrupalUnitTestBase;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Tests \Drupal\payment\Plugin\payment\status\Base.
+ * Tests \Drupal\payment\Plugin\payment\status\Unavailable.
  */
 class UnavailableUnitTest extends DrupalUnitTestBase {
 
@@ -53,10 +53,10 @@ class UnavailableUnitTest extends DrupalUnitTestBase {
   protected function testResume() {
     try {
       $this->type->resumeContext();
-      $this->assertTrue(FALSE);
+      $this->assert(FALSE);
     }
     catch (NotFoundHttpException $exception) {
-      $this->assertTrue(TRUE);
+      $this->assert(TRUE);
     }
   }
 
@@ -65,17 +65,5 @@ class UnavailableUnitTest extends DrupalUnitTestBase {
    */
   protected function testPaymentDescription() {
     $this->assertTrue(strlen($this->type->paymentDescription()));
-
-  }
-
-  /**
-   * Tests setPayment() and getPayment().
-   */
-  protected function testGetPayment() {
-    $payment = entity_create('payment', array(
-      'type' => $this->type,
-    ));
-    $this->assertTrue($this->type->setPayment($payment) instanceof PaymentTypeInterface );
-    $this->assertTrue($this->type->getPayment() === $payment);
   }
 }
