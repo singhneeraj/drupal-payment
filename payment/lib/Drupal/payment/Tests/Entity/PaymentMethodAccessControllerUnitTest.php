@@ -36,6 +36,7 @@ class PaymentMethodAccessControllerUnitTest extends AccessibleInterfaceUnitTestB
    */
   protected function testAccessControl() {
     $entity_manager = $this->container->get('plugin.manager.entity');
+    $payment_method_manager = $this->container->get('plugin.manager.payment.method');
     $user_storage_controller = $entity_manager->getStorageController('user');
     $authenticated = $user_storage_controller->create(array());
 
@@ -105,12 +106,10 @@ class PaymentMethodAccessControllerUnitTest extends AccessibleInterfaceUnitTestB
     $this->assertDataAccess($payment_method, 'a disabled payment method', 'disable', $authenticated, array('payment.payment_method.update.own'));
 
     // Clone a payment method that belongs to user 1.
-    // @todo Test this with a controller that actually has create permissions.
-    // $this->assertDataAccess(Generate::createPaymentMethod(1), 'a payment method', 'clone', $authenticated, array('payment.payment_method.view.any', 'payment.payment_method.create.Drupal\\payment\\PaymentMethodControllerUnavailable'));
+    $this->assertDataAccess(Generate::createPaymentMethod(1, $payment_method_manager->createInstance('payment_basic')), 'a payment method', 'duplicate', $authenticated, array('payment.payment_method.view.any', 'payment.payment_method.create.payment_basic'));
 
     // Clone a payment method that belongs to user 2.
-    // @todo Test this with a controller that actually has create permissions.
-    // $this->assertDataAccess(Generate::createPaymentMethod($authenticated->id()), 'a payment method', 'clone', $authenticated, array('payment.payment_method.view.own', 'payment.payment_method.create.Drupal\\payment\\PaymentMethodControllerUnavailable'));
+    $this->assertDataAccess(Generate::createPaymentMethod($authenticated->id(), $payment_method_manager->createInstance('payment_basic')), 'a payment method', 'duplicate', $authenticated, array('payment.payment_method.view.own', 'payment.payment_method.create.payment_basic'));
 
     // View a payment method that belongs to user 1.
     $this->assertDataAccess(Generate::createPaymentMethod(1), 'a payment method', 'view', $authenticated, array('payment.payment_method.view.any'));
