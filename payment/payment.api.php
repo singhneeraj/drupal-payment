@@ -64,7 +64,7 @@ function hook_payment_type_alter(array &$definitions) {
  *
  * @return NULL
  */
-function hook_payment_status_set(PaymentInterface $payment, PaymentStatusInterface $previous_status) {
+function hook_payment_status_set(PaymentInterface $payment, PaymentStatusInterface $previous_status = NULL) {
   // Notify the site administrator, for instance.
 }
 

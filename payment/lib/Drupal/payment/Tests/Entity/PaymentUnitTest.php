@@ -35,7 +35,7 @@ class PaymentUnitTest extends DrupalUnitTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('payment', 'system');
+  public static $modules = array('payment', 'payment_test', 'system');
 
   /**
    * The payment to test with.
@@ -149,8 +149,9 @@ class PaymentUnitTest extends DrupalUnitTestBase {
    */
   protected function testGetStatus() {
     $status = $this->statusManager->createInstance('payment_created');
-    // @todo Test notifications.
     $this->assertTrue($this->payment->setStatus($status, FALSE) instanceof PaymentInterface);
+    $state = $this->container->get('state');
+    $this->assertEqual($state->get('payment_test_payment_status_set'), TRUE);
     $this->assertEqual($this->payment->getStatus(), $status);
   }
 

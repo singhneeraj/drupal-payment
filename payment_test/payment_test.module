@@ -6,6 +6,7 @@
  */
 
 use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
 
 /**
  * Implements hook_payment_form_alter().
@@ -26,10 +27,10 @@ function payment_test_payment_validate(Payment $payment, PaymentMethod $payment_
 }
 
 /**
- * Implements hook_payment_status_change().
+ * Implements hook_payment_status_set().
  */
-function payment_test_payment_status_change(Payment $payment, PaymentStatusItem $previous_status_item) {
-  $payment->payment_test_payment_status_change = TRUE;
+function payment_test_payment_status_set(PaymentInterface $payment, PaymentStatusInterface $previous_status = NULL) {
+  \Drupal::state()->set('payment_test_payment_status_set', TRUE);
 }
 
 /**
