@@ -280,6 +280,13 @@ function payment_element_info() {
     '#value' => array(),
   );
 
+  // Line item display.
+  $elements['payment_line_items_display'] = array(
+    // A \Drupal\payment\Entity\PaymentInterface object (required).
+    '#payment' => NULL,
+    '#pre_render' => array(array('\Drupal\payment\Element\PaymentLineItemsDisplay', 'preRender')),
+  );
+
   return $elements;
 }
 

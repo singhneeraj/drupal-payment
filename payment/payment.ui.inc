@@ -192,49 +192,6 @@ function payment_form_payment_delete_submit(array $form, array &$form_state) {
 }
 
 /**
- * Return a render array containing a Payment's line items.
- *
- * @param Payment $payment
- *
- * @return array
- */
-function payment_line_items(Payment $payment) {
-  $rows = array();
-  foreach ($payment->line_items as $name => $line_item) {
-    $rows[] = array(
-      'data' => array(
-        t($line_item->description, $line_item->description_arguments),
-        $line_item->quantity,
-        payment_amount_human_readable($line_item->unitAmount(TRUE), $payment->currency_code),
-        payment_amount_human_readable($line_item->totalAmount(TRUE), $payment->currency_code),
-        t('!amount (!percentage%)', array(
-          '!amount' => payment_amount_human_readable($line_item->amount * $line_item->tax_rate, $payment->currency_code),
-          '!percentage' => $line_item->tax_rate * 100,
-        )),
-      ),
-      'class' => array('payment-line_item-' . $name),
-    );
-  }
-  $rows[] = array(
-    'data' => array(array(
-      'data' => t('Total amount'),
-      'colspan' => 3,
-      ), payment_amount_human_readable($payment->totalAmount(TRUE), $payment->currency_code), '',
-    ),
-    'class' => array('payment-line_item-total'),
-  );
-  $build = array(
-    '#type' => 'markup',
-    '#markup' => theme('table', array(
-      'header' => array(t('Description'), t('Quantity'), t('Amount'), t('Total'), t('Tax')),
-      'rows' => $rows,
-    )),
-  );
-
-  return $build;
-}
-
-/**
  * Return a render array containing a Payment's status items.
  *
  * @param Payment $payment
