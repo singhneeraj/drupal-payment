@@ -52,45 +52,6 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
   /**
    * {@inheritdoc}
    */
-  public function baseFieldDefinitions() {
-    $fields = parent::baseFieldDefinitions();
-    $fields['currencyCode'] = array(
-      'label' => t('Currency code'),
-      'type' => 'string_field',
-    );
-    $fields['id'] = array(
-      'label' => t('Payment ID'),
-      'type' => 'integer_field',
-      'read-only' => TRUE,
-    );
-    $fields['paymentMethodId'] = array(
-      'label' => t('Payment method ID'),
-      'type' => 'string_field',
-    );
-    $fields['paymentMethodBrand'] = array(
-      'label' => t('Payment method brand name'),
-      'type' => 'string_field',
-    );
-    $fields['ownerId'] = array(
-      'label' => t('Owner'),
-      'type' => 'entity_reference_field',
-      'settings' => array(
-        'target_type' => 'user',
-        'default_value' => 0,
-      ),
-    );
-    $fields['uuid'] = array(
-      'label' => t('UUID'),
-      'read-only' => TRUE,
-      'type' => 'uuid_field',
-    );
-
-    return $fields;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function mapToStorageRecord(EntityInterface $entity) {
     $record = new \stdClass();
     $record->bundle = $entity->bundle();

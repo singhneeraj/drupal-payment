@@ -330,4 +330,43 @@ class Payment extends EntityNG implements PaymentInterface {
     $controller->deleteLineItems(array_keys($entities));
     $controller->deletePaymentStatuses(array_keys($entities));
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function baseFieldDefinitions($entity_type) {
+    $fields = parent::baseFieldDefinitions($entity_type);
+    $fields['currencyCode'] = array(
+      'label' => t('Currency code'),
+      'type' => 'string_field',
+    );
+    $fields['id'] = array(
+      'label' => t('Payment ID'),
+      'type' => 'integer_field',
+      'read-only' => TRUE,
+    );
+    $fields['paymentMethodId'] = array(
+      'label' => t('Payment method ID'),
+      'type' => 'string_field',
+    );
+    $fields['paymentMethodBrand'] = array(
+      'label' => t('Payment method brand name'),
+      'type' => 'string_field',
+    );
+    $fields['ownerId'] = array(
+      'label' => t('Owner'),
+      'type' => 'entity_reference_field',
+      'settings' => array(
+        'target_type' => 'user',
+        'default_value' => 0,
+      ),
+    );
+    $fields['uuid'] = array(
+      'label' => t('UUID'),
+      'read-only' => TRUE,
+      'type' => 'uuid_field',
+    );
+
+    return $fields;
+  }
 }
