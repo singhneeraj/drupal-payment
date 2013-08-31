@@ -287,6 +287,13 @@ function payment_element_info() {
     '#pre_render' => array(array('\Drupal\payment\Element\PaymentLineItemsDisplay', 'preRender')),
   );
 
+  // Payment statuses display.
+  $elements['payment_statuses_display'] = array(
+    // A \Drupal\payment\Entity\PaymentInterface object (required).
+    '#payment' => NULL,
+    '#pre_render' => array(array('\Drupal\payment\Element\PaymentStatusesDisplay', 'preRender')),
+  );
+
   return $elements;
 }
 

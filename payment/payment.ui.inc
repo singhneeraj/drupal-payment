@@ -192,31 +192,6 @@ function payment_form_payment_delete_submit(array $form, array &$form_state) {
 }
 
 /**
- * Return a render array containing a Payment's status items.
- *
- * @param Payment $payment
- *
- * @return array
- */
-function payment_status_items(Payment $payment) {
-  $status = payment_status_info($payment->getStatus()->status, TRUE);
-  $rows = array();
-  foreach (array_reverse($payment->statuses) as $status_item) {
-    $status = payment_status_info($status_item->status);
-    $rows[] = array($status->title, format_date($status_item->created));
-  }
-  $build['status_items'] = array(
-    '#type' => 'markup',
-    '#markup' => theme('table', array(
-      'header' => array(t('Status'), t('Date')),
-      'rows' => $rows,
-    )),
-  );
-
-  return $build;
-}
-
-/**
  * Return payment methods for use in form elements.
  *
  * @return array
