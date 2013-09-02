@@ -76,6 +76,15 @@ class PaymentUnitTest extends DrupalUnitTestBase {
   }
 
   /**
+   * Tests getChangedTime().
+   */
+  protected function testGetChangedTime() {
+    $status = $this->statusManager->createInstance('payment_succes');
+    $this->payment->setStatus($status);
+    $this->assertIdentical($this->payment->getChangedTime(), $status->getCreated());
+  }
+
+  /**
    * Tests label().
    */
   protected function testLabel() {

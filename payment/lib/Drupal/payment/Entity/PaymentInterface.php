@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Entity;
 
+use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Executable\ExecutableInterface;
 use Drupal\payment\Entity\PaymentMethodInterface;
@@ -16,7 +17,7 @@ use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
 /**
  * Defines a payment entity type .
  */
-interface PaymentInterface extends EntityInterface, ExecutableInterface {
+interface PaymentInterface extends EntityChangedInterface, EntityInterface, ExecutableInterface {
 
   /**
    * Gets the payment's type plugin.

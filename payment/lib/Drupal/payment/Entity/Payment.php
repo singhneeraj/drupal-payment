@@ -77,6 +77,13 @@ class Payment extends EntityNG implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
+  public function getChangedTime() {
+    return $this->getStatus()->getCreated();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function label($langcode = NULL) {
     return $this->getPaymentType()->paymentDescription($langcode);
   }
