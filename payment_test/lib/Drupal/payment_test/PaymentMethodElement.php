@@ -7,7 +7,7 @@
 
 namespace Drupal\payment_test;
 
-use Drupal\Core\Controller\ControllerInterface;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Form\FormInterface;
 use Drupal\payment\Element\PaymentMethod;
@@ -15,7 +15,7 @@ use Drupal\payment\Generate;
 use Drupal\payment\Plugin\payment\type\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class PaymentMethodElement implements ControllerInterface, FormInterface {
+class PaymentMethodElement implements ContainerInjectionInterface, FormInterface {
 
   /**
    * The entity manager.

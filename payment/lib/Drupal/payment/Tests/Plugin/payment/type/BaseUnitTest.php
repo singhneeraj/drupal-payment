@@ -25,7 +25,7 @@ class BaseUnitTest extends DrupalUnitTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('payment', 'payment_test');
+  public static $modules = array('field', 'payment', 'payment_test');
 
   /**
    * {@inheritdoc}

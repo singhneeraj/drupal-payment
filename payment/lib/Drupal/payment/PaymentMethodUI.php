@@ -8,7 +8,7 @@
 namespace Drupal\payment;
 
 use Drupal\Component\Uuid\Uuid;
-use Drupal\Core\Controller\ControllerInterface;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\payment\Entity\PaymentMethodInterface;
 use Drupal\payment\Plugin\payment\method\Manager;
@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 /**
  * Returns responses for payment method routes.
  */
-class PaymentMethodUI implements ControllerInterface {
+class PaymentMethodUI implements ContainerInjectionInterface {
 
   /**
    * The entity manager.

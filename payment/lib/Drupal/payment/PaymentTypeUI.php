@@ -9,14 +9,14 @@ namespace Drupal\payment;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Extension\ModuleHandler;
-use Drupal\Core\Controller\ControllerInterface;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\payment\Plugin\payment\type\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Returns responses for payment type routes.
  */
-class PaymentTypeUI implements ControllerInterface {
+class PaymentTypeUI implements ContainerInjectionInterface {
 
   /**
    * The entity manager.

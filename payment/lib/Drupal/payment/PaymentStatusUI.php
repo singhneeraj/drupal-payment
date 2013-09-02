@@ -7,14 +7,14 @@
 
 namespace Drupal\payment;
 
-use Drupal\Core\Controller\ControllerInterface;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\payment\Plugin\payment\status\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Returns responses for payment status routes.
  */
-class PaymentStatusUI implements ControllerInterface {
+class PaymentStatusUI implements ContainerInjectionInterface {
 
   /**
    * The payment status plugin manager.

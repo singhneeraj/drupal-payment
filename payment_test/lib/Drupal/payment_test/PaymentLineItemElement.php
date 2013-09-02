@@ -7,13 +7,13 @@
 
 namespace Drupal\payment_test;
 
-use Drupal\Core\Controller\ControllerInterface;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormInterface;
 use Drupal\payment\Element\PaymentLineItem;
 use Drupal\payment\Generate;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class PaymentLineItemElement implements ControllerInterface, FormInterface {
+class PaymentLineItemElement implements ContainerInjectionInterface, FormInterface {
 
   /**
    * {@inheritdoc}
