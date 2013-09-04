@@ -221,16 +221,20 @@ function payment_field_extra_fields() {
         ),
       ),
       'display' => array(
-        'payment_line_items' => array(
-          'label' => t('Line items'),
-          'weight' => 0,
-        ),
-        'payment_method' => array(
+        'method' => array(
           'label' => t('Payment method label'),
           'weight' => 0,
         ),
-        'payment_status_items' => array(
+        'line_items' => array(
+          'label' => t('Line items'),
+          'weight' => 0,
+        ),
+        'statuses' => array(
           'label' => t('Status items'),
+          'weight' => 0,
+        ),
+        'links' => array(
+          'label' => t('Links'),
           'weight' => 0,
         ),
       ),

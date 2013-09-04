@@ -7,7 +7,8 @@
 
 namespace Drupal\payment;
 
-use Drupal\payment\Plugin\payment\method\PaymentMethodInterface;
+use Drupal\payment\Entity\PaymentMethodInterface as PaymentMethodEntityInterface;
+use Drupal\payment\Plugin\payment\method\PaymentMethodInterface as PaymentMethodPluginInterface;
 use Drupal\Component\Utility\Random;
 
 /**
@@ -23,10 +24,15 @@ class Generate {
    *
    * @return \Drupal\payment\Entity\PaymentInterface
    */
-  static function createPayment($uid) {
+  static function createPayment($uid, PaymentMethodEntityInterface $payment_method = NULL) {
+    if (!$payment_method) {
+      $payment_method = self::createPaymentMethod($uid);
+      $payment_method->save();
+    }
     $payment = entity_create('payment', array(
       'bundle' => 'payment_unavailable',
-    ))->setPaymentMethodId('payment_unavailable')
+    ))->setPaymentMethodId($payment_method->id())
+      ->setPaymentMethodBrand('default')
       ->setOwnerId($uid)
       ->setLineItems(static::createPaymentLineItems());
 
@@ -80,7 +86,7 @@ class Generate {
    *
    * @return \Drupal\payment\Entity\PaymentMethod
    */
-  static function createPaymentMethod($uid, PaymentMethodInterface $plugin = NULL) {
+  static function createPaymentMethod($uid, PaymentMethodPluginInterface $plugin = NULL) {
     $name = Random::name();
     $plugin = $plugin ? $plugin : \Drupal::service('plugin.manager.payment.method')->createInstance('payment_unavailable', array(
       'foo' => 'bar',

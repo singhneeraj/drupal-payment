@@ -24,6 +24,10 @@ use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
  *   bundle_label = @Translation("Payment type"),
  *   controllers = {
  *     "access" = "Drupal\payment\Entity\PaymentAccessController",
+ *     "form" = {
+ *       "delete" = "Drupal\payment\Entity\PaymentDeleteFormController"
+ *     },
+ *     "render" = "Drupal\payment\Entity\PaymentRenderController",
  *     "storage" = "Drupal\payment\Entity\PaymentStorageController",
  *   },
  *   entity_keys = {
@@ -34,6 +38,9 @@ use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
  *   fieldable = TRUE,
  *   id = "payment",
  *   label = @Translation("Payment"),
+ *   links = {
+ *     "canonical" = "/payment/{payment}"
+ *   },
  *   module = "payment",
  *   route_base_path = "admin/config/services/payment/type/{bundle}"
  * )

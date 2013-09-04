@@ -41,6 +41,7 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
         'id' => (int) $queried_entity->id,
         'lineItems' => $line_items[$id],
         'ownerId' => (int) $queried_entity->owner_id,
+        'paymentMethodBrand' => $queried_entity->payment_method_brand,
         'paymentMethodId' => $queried_entity->payment_method_id,
         'statuses' => $statuses[$id],
         'uuid' => $queried_entity->uuid,
@@ -57,6 +58,7 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
     $record->bundle = $entity->bundle();
     $record->currency_code = $entity->id();
     $record->id = $entity->id();
+    $record->payment_method_brand = $entity->getPaymentMethodBrand();
     $record->payment_method_id = $entity->getPaymentMethodId();
     $record->first_payment_status_id = current($entity->getStatuses())->getId();
     $record->last_payment_status_id = $entity->getStatus()->getId();

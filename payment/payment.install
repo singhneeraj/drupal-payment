@@ -119,6 +119,10 @@ function payment_schema() {
         'type' => 'varchar',
         'length' => 255,
       ),
+      'payment_method_brand' => array(
+        'type' => 'varchar',
+        'length' => 255,
+      ),
       'first_payment_status_id' => array(
         'description' => "The {payment_status_item}.id of this payment's first status item.",
         'type' => 'int',
@@ -457,6 +461,12 @@ function payment_update_8200(array &$sandbox) {
     'type' => 'varchar',
   ));
   db_add_index('payment', 'uuid', array('uuid'));
+
+  // Add the payment method brand.
+  db_add_field('payment', 'payment_method_brand', array(
+    'type' => 'varchar',
+    'length' => 255,
+  ));
 }
 
 /**

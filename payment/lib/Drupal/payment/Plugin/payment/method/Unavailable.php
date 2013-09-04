@@ -96,6 +96,10 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
    * {@inheritdoc}
    */
   public function brandOptions() {
-    return array();
+    $definition = $this->getPluginDefinition();
+
+    return array(
+      'default' => $definition['label'],
+    );
   }
 }

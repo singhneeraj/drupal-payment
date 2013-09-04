@@ -1,3 +1,24 @@
+payment.payment.view:
+  pattern: '/payment/{payment}'
+  defaults:
+    _entity_view: 'payment.full'
+  requirements:
+    _entity_access: 'payment.view'
+
+payment.payment.delete:
+  pattern: '/payment/{payment}/delete'
+  defaults:
+    _entity_form: 'payment.delete'
+  requirements:
+    _entity_access: 'payment.delete'
+
+payment.payment.execute_operation:
+  pattern: '/payment/{payment}/operation/{operation}'
+  defaults:
+    _controller: '\Drupal\payment\PaymentUI::executeOperation'
+  requirements:
+    _payment_operation_access: 'payment.operation'
+
 payment.payment_method.list:
   pattern: '/admin/config/services/payment/method'
   defaults:

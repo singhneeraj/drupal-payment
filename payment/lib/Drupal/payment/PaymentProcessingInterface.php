@@ -67,7 +67,7 @@ interface PaymentProcessingInterface {
    *
    * @return bool
    */
-  function paymentOperationAccess(PaymentInterface $payment, $operation, $payment_method_brand);
+  public function paymentOperationAccess(PaymentInterface $payment, $operation, $payment_method_brand);
 
   /**
    * Executes a payment operation.
@@ -81,5 +81,5 @@ interface PaymentProcessingInterface {
    * @param string $payment_method_brand
    *   See self::brandOptions for the available brands.
    */
-  function executePaymentOperation(PaymentInterface $payment, $operation, $payment_method_brand);
+  public function executePaymentOperation(PaymentInterface $payment, $operation, $payment_method_brand);
 }
