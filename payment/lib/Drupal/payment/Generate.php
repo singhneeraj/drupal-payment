@@ -17,6 +17,26 @@ use Drupal\Component\Utility\Random;
 class Generate {
 
   /**
+   * The random data generator.
+   *
+   * @var \Drupal\Component\Utility\Random
+   */
+  protected static $random;
+
+  /**
+   * Gets the random data generator.
+   *
+   * @return \Drupal\Component\Utility\Random
+   */
+  protected static function getRandom() {
+    if (!static::$random) {
+      static::$random = new Random();
+    }
+
+    return static::$random;
+  }
+
+  /**
    * Creates a payment.
    *
    * @param integer $uid
@@ -56,21 +76,21 @@ class Generate {
       // The Dutch guilder has 100 subunits, which is most common, but is no
       // longer in circulation.
         ->setCurrencyCode('NLG')
-        ->setDescription(Random::string()),
+        ->setDescription(static::getRandom()->string()),
       $line_item_manager->createInstance('payment_basic', array())
         ->setName('bar')
         ->setAmount(5.5)
       // The Japanese yen has 1000 subunits.
         ->setCurrencyCode('JPY')
         ->setQuantity(2)
-        ->setDescription(Random::string()),
+        ->setDescription(static::getRandom()->string()),
       $line_item_manager->createInstance('payment_basic', array())
         ->setName('baz')
         ->setAmount(1.1)
       // The Malagasy ariary has 5 subunits, which is non-decimal.
         ->setCurrencyCode('MGA')
         ->setQuantity(3)
-        ->setDescription(Random::string()),
+        ->setDescription(static::getRandom()->string()),
     );
 
     return $line_items;
@@ -87,7 +107,7 @@ class Generate {
    * @return \Drupal\payment\Entity\PaymentMethod
    */
   static function createPaymentMethod($uid, PaymentMethodPluginInterface $plugin = NULL) {
-    $name = Random::name();
+    $name = static::getRandom()->name();
     $plugin = $plugin ? $plugin : \Drupal::service('plugin.manager.payment.method')->createInstance('payment_unavailable', array(
       'foo' => 'bar',
     ));
