@@ -68,11 +68,8 @@ function payment_menu() {
 
   // Administration section.
   $items['admin/config/services/payment'] = array(
+    'route_name' => 'payment.admin',
     'title' => 'Payment',
-    'page callback' => 'system_admin_menu_block_page',
-    'access arguments' => array('access administration pages'),
-    'file' => 'system.admin.inc',
-    'file path' => drupal_get_path('module', 'system'),
   );
 
   // Payment types.
