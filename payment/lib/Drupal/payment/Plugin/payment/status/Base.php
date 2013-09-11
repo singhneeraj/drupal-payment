@@ -81,54 +81,34 @@ abstract class Base extends PluginBase implements PaymentStatusInterface {
    * {@inheritdoc}
    */
   function getAncestors(){
-    if (isset($this->pluginDefinition['parent_id'])) {
-      $manager = \Drupal::service('plugin.manager.payment.status');
-      $parent = $this->pluginDefinition['parent_id'];
-      return array_unique(array_merge(array($parent), $manager->createInstance($parent)->getAncestors()));
-    }
-    return array();
+    return \Drupal::service('plugin.manager.payment.status')->getAncestors($this->getPluginId());
   }
 
   /**
    * {@inheritdoc}
    */
   public function getChildren() {
-    $manager = \Drupal::service('plugin.manager.payment.status');
-    $children = array();
-    foreach ($manager->getDefinitions() as $definition) {
-      if (isset($definition['parent_id']) && $definition['parent_id'] == $this->getPluginId()) {
-        $children[] = $definition['id'];
-      }
-    }
-
-    return $children;
+    return \Drupal::service('plugin.manager.payment.status')->getChildren($this->getPluginId());
   }
 
   /**
    * {@inheritdoc}
    */
   function getDescendants() {
-    $manager = \Drupal::service('plugin.manager.payment.status');
-    $children = $this->getChildren();
-    $descendants = $children;
-    foreach ($children as $child) {
-      $descendants = array_merge($descendants, $manager->createInstance($child)->getDescendants());
-    }
-
-    return array_unique($descendants);
+    return \Drupal::service('plugin.manager.payment.status')->getDescendants($this->getPluginId());
   }
 
   /**
    * {@inheritdoc}
    */
   function hasAncestor($plugin_id) {
-    return in_array($plugin_id, $this->getAncestors());
+    return \Drupal::service('plugin.manager.payment.status')->hasAncestor($this->getPluginId(), $plugin_id);
   }
 
   /**
    * {@inheritdoc}
    */
   function isOrHasAncestor($plugin_id) {
-    return $this->getPluginId() == $plugin_id|| $this->hasAncestor($plugin_id);
+    return \Drupal::service('plugin.manager.payment.status')->isOrHasAncestor($this->getPluginId(), $plugin_id);
   }
 }

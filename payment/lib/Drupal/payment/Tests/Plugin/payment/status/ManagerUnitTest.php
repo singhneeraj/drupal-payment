@@ -73,4 +73,43 @@ class ManagerUnitTest extends DrupalUnitTestBase {
   protected function testOptions() {
     $this->assertTrue($this->manager->options());
   }
+
+  /**
+   * Tests getChildren().
+   */
+  protected function testGetChildren() {
+    $expected = array('payment_created', 'payment_failed', 'payment_pending');
+    $this->assertEqual($this->manager->getChildren('payment_no_money_transferred'), $expected);
+  }
+
+  /**
+   * Tests getDescendants().
+   */
+  protected function testGetDescendants() {
+    $expected = array('payment_created', 'payment_failed', 'payment_pending', 'payment_authorization_failed', 'payment_cancelled', 'payment_expired');
+    $this->assertEqual($this->manager->getDescendants('payment_no_money_transferred'), $expected);
+  }
+
+  /**
+   * Tests getAncestors().
+   */
+  protected function testGetAncestors() {
+    $expected = array('payment_failed', 'payment_no_money_transferred');
+    $this->assertEqual($this->manager->getAncestors('payment_authorization_failed'), $expected);
+  }
+
+  /**
+   * Tests hasAncestor().
+   */
+  protected function testHasAncestor() {
+    $this->assertTrue($this->manager->isOrHasAncestor('payment_failed', 'payment_no_money_transferred'));
+  }
+
+  /**
+   * Tests isOrHasAncestor().
+   */
+  protected function testIsOrHasAncestor() {
+    $this->assertTrue($this->manager->isOrHasAncestor('payment_failed', 'payment_failed'));
+    $this->assertTrue($this->manager->isOrHasAncestor('payment_failed', 'payment_no_money_transferred'));
+  }
 }

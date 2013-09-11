@@ -143,4 +143,85 @@ class Manager extends DefaultPluginManager {
   protected function sort(array $definition_a, array $definition_b) {
     return strcmp($definition_a['label'], $definition_b['label']);
   }
+
+  /**
+   * Gets a payment status's ancestors.
+   *
+   * @param string $plugin_id
+   *
+   * @return array
+   *   The plugin IDs of this status's ancestors.
+   */
+  function getAncestors($plugin_id) {
+    $definition = $this->getDefinition($plugin_id);
+    if (isset($definition['parent_id'])) {
+      $parent_id = $definition['parent_id'];
+      return array_unique(array_merge(array($parent_id), $this->getAncestors($parent_id)));
+    }
+    return array();
+  }
+
+  /**
+   * Gets a payment status's children.
+   *
+   * @param string $plugin_id
+   *
+   * @return array
+   *   The plugin IDs of this status's children.
+   */
+  public function getChildren($plugin_id) {
+    $child_plugin_ids = array();
+    foreach ($this->getDefinitions() as $definition) {
+      if (isset($definition['parent_id']) && $definition['parent_id'] == $plugin_id) {
+        $child_plugin_ids[] = $definition['id'];
+      }
+    }
+
+    return $child_plugin_ids;
+  }
+
+  /**
+   * Get a payment status's descendants.
+   *
+   * @param string $plugin_id
+   *
+   * @return array
+   *   The machine names of this status's descendants.
+   */
+  function getDescendants($plugin_id) {
+    $child_plugin_ids = $this->getChildren($plugin_id);
+    $descendant_plugin_ids = $child_plugin_ids;
+    foreach ($child_plugin_ids as $child_plugin_id) {
+      $descendant_plugin_ids = array_merge($descendant_plugin_ids, $this->getDescendants($child_plugin_id));
+    }
+
+    return array_unique($descendant_plugin_ids);
+  }
+
+  /**
+   * Checks if a status has a given other status as one of its ancestors.
+   *
+   * @param string $plugin_id
+   * @param string $ancestor_plugin_id
+   *   The payment status plugin ID to check against.
+   *
+   * @return boolean
+   */
+  function hasAncestor($plugin_id, $ancestor_plugin_id) {
+    return in_array($ancestor_plugin_id, $this->getAncestors($plugin_id));
+  }
+
+  /**
+   * Checks if the status is equal to a given other status or has it one of
+   * its ancestors.
+   *
+   * @param string $plugin_id
+   * @param string $ancestor_plugin_id
+   *   The payment status plugin ID to check against.
+   *
+   * @return boolean
+   */
+  function isOrHasAncestor($plugin_id, $ancestor_plugin_id) {
+    return $plugin_id == $ancestor_plugin_id|| $this->hasAncestor($plugin_id, $ancestor_plugin_id);
+  }
 }
