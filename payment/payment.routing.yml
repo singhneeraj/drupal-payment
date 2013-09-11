@@ -3,7 +3,7 @@ payment.admin:
   defaults:
     _content: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
   requirements:
-    _permission: 'payment.payment.view.any'
+    _permission: 'access administration pages'
 
 payment.payment.admin_list:
   pattern: '/admin/content/payment'
