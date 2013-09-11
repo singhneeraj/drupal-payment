@@ -38,9 +38,9 @@ class PaymentStatus extends Plugin {
   public $label;
 
   /**
-   * The plugin ID.
+   * The plugin ID of the parent status.
    *
    * @var string
    */
-  public $parentID;
+  public $parent_id;
 }

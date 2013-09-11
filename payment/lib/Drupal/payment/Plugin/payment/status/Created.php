@@ -16,7 +16,7 @@ use Drupal\payment\Plugin\payment\status\Base;
  * @PaymentStatus(
  *   id = "payment_created",
  *   label = @Translation("Created"),
- *   parentId = "payment_no_money_transferred"
+ *   parent_id = "payment_no_money_transferred"
  * )
  */
 class Created extends Base {

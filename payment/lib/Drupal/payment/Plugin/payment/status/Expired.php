@@ -16,7 +16,7 @@ use Drupal\payment\Plugin\payment\status\Base;
  * @PaymentStatus(
  *   id = "payment_expired",
  *   label = @Translation("Expired"),
- *   parentId = "payment_failed"
+ *   parent_id = "payment_failed"
  * )
  */
 class Expired extends Base {

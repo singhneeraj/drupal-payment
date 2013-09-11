@@ -81,9 +81,9 @@ abstract class Base extends PluginBase implements PaymentStatusInterface {
    * {@inheritdoc}
    */
   function getAncestors(){
-    if (isset($this->pluginDefinition['parentId'])) {
+    if (isset($this->pluginDefinition['parent_id'])) {
       $manager = \Drupal::service('plugin.manager.payment.status');
-      $parent = $this->pluginDefinition['parentId'];
+      $parent = $this->pluginDefinition['parent_id'];
       return array_unique(array_merge(array($parent), $manager->createInstance($parent)->getAncestors()));
     }
     return array();
@@ -96,7 +96,7 @@ abstract class Base extends PluginBase implements PaymentStatusInterface {
     $manager = \Drupal::service('plugin.manager.payment.status');
     $children = array();
     foreach ($manager->getDefinitions() as $definition) {
-      if (isset($definition['parentId']) && $definition['parentId'] == $this->getPluginId()) {
+      if (isset($definition['parent_id']) && $definition['parent_id'] == $this->getPluginId()) {
         $children[] = $definition['id'];
       }
     }

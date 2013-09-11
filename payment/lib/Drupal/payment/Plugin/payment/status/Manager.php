@@ -79,8 +79,8 @@ class Manager extends DefaultPluginManager {
       $definitions = $this->getDefinitions();
       uasort($definitions, array($this, 'sort'));
       foreach ($definitions as $plugin_id => $definition) {
-        if (!empty($definition['parentId'])) {
-          $children[$definition['parentId']][] = $plugin_id;
+        if (!empty($definition['parent_id'])) {
+          $children[$definition['parent_id']][] = $plugin_id;
         }
         else {
           $parents[] = $plugin_id;

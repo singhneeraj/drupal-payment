@@ -16,7 +16,7 @@ use Drupal\payment\Plugin\payment\status\Base;
  * @PaymentStatus(
  *   id = "payment_cancelled",
  *   label = @Translation("Cancelled"),
- *   parentId = "payment_failed"
+ *   parent_id = "payment_failed"
  * )
  */
 class Cancelled extends Base {

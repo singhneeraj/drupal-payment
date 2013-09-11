@@ -16,7 +16,7 @@ use Drupal\payment\Plugin\payment\status\Base;
  * @PaymentStatus(
  *   id = "payment_authorization_failed",
  *   label = @Translation("Authorization failed"),
- *   parentId = "payment_failed"
+ *   parent_id = "payment_failed"
  * )
  */
 class AuthorizationFailed extends Base {
