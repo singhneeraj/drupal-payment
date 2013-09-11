@@ -56,7 +56,7 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
   protected function mapToStorageRecord(EntityInterface $entity) {
     $record = new \stdClass();
     $record->bundle = $entity->bundle();
-    $record->currency_code = $entity->id();
+    $record->currency_code = $entity->getCurrencyCode();
     $record->id = $entity->id();
     $record->payment_method_brand = $entity->getPaymentMethodBrand();
     $record->payment_method_id = $entity->getPaymentMethodId();

@@ -22,8 +22,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  *     "access_denied" = {
  *       "label" = @Translation("Nobody has permission to perform this operation.")
  *     },
- *     "foo" = {
- *       "label" = @Translation("Foo")
+ *     "foo_bar" = {
+ *       "label" = @Translation("FooBarOperation")
  *     }
  *   }
  * )

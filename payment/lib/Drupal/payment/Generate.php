@@ -51,7 +51,8 @@ class Generate {
     }
     $payment = entity_create('payment', array(
       'bundle' => 'payment_unavailable',
-    ))->setPaymentMethodId($payment_method->id())
+    ))->setCurrencyCode('EUR')
+      ->setPaymentMethodId($payment_method->id())
       ->setPaymentMethodBrand('default')
       ->setOwnerId($uid)
       ->setLineItems(static::createPaymentLineItems());

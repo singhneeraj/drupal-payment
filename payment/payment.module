@@ -71,6 +71,11 @@ function payment_menu() {
     'route_name' => 'payment.admin',
     'title' => 'Payment',
   );
+  $items['admin/content/payments'] = array(
+    'route_name' => 'payment.payment.admin_list',
+    'title' => 'Payments',
+    'type' => MENU_LOCAL_TASK,
+  );
 
   // Payment types.
   $items['admin/config/services/payment/type'] = array(

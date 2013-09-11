@@ -27,6 +27,7 @@ use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
  *     "form" = {
  *       "delete" = "Drupal\payment\Entity\PaymentDeleteFormController"
  *     },
+ *     "list" = "Drupal\payment\Entity\PaymentListController",
  *     "render" = "Drupal\payment\Entity\PaymentRenderController",
  *     "storage" = "Drupal\payment\Entity\PaymentStorageController",
  *   },
