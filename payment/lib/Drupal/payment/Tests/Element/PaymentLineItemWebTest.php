@@ -92,14 +92,14 @@ class PaymentLineItemWebTest extends WebTestBase {
     $this->assertAddMore(TRUE);
 
     // Add a line item through a regular submission.
-    $this->drupalPost(NULL, array(
+    $this->drupalPostForm(NULL, array(
       'line_item[add_more][type]' => $type,
     ), t('Add a line item'));
     $this->assertLineItemElements(array_merge($names, array($type)));
     $this->assertAddMore(FALSE);
 
     // Delete a line item through a regular submission.
-    $this->drupalPost(NULL, array(), t('Delete'));
+    $this->drupalPostForm(NULL, array(), t('Delete'));
     $this->assertLineItemElements($names);
     $elements = $this->xpath('//input[@name="line_item[line_items][' . $type . '][weight]"]');
     $this->assertFalse(isset($elements[0]));
@@ -109,7 +109,7 @@ class PaymentLineItemWebTest extends WebTestBase {
     // regular submission.
     $name = 'line_item[line_items][' . reset($names) . '][weight]';
     $this->assertFieldByXPath('//select[@name="' . $name . '"]/option[@value="0" and @selected="selected"]');
-    $this->drupalPost(NULL, array(
+    $this->drupalPostForm(NULL, array(
       // Change the first line item's weight to be the highest.
       $name => count($names),
     ), t('Submit'));
@@ -125,7 +125,7 @@ class PaymentLineItemWebTest extends WebTestBase {
     }
 
     // Add a line item through an AJAX submission.
-    $this->drupalPostAJAX('payment_test-element-payment-line-item', array(
+    $this->drupalPostAjaxForm('payment_test-element-payment-line-item', array(
       'line_item[add_more][type]' => $type,
     ), array(
       'op' => t('Add a line item'),
@@ -134,7 +134,7 @@ class PaymentLineItemWebTest extends WebTestBase {
     $this->assertAddMore(FALSE);
 
     // Test the element's value through an AJAX submission.
-    $this->drupalPost(NULL, array(
+    $this->drupalPostForm(NULL, array(
       'line_item[line_items][payment_basic][plugin_form][description]' => $this->randomString(),
     ), t('Submit'));
     $value = $state->get('payment_test_line_item_form_element');

@@ -33,10 +33,7 @@ class Manager extends DefaultPluginManager {
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, LanguageManager $language_manager, ModuleHandlerInterface $module_handler) {
-    $annotation_namespaces = array(
-      'Drupal\payment\Annotations' => drupal_get_path('module', 'payment') . '/lib',
-    );
-    parent::__construct('Plugin/payment/type', $namespaces, $annotation_namespaces, 'Drupal\payment\Annotations\PaymentType');
+    parent::__construct('Plugin/payment/type', $namespaces, '\Drupal\payment\Annotations\PaymentType');
     $this->alterInfo($module_handler, 'payment_type');
     $this->setCacheBackend($cache_backend, $language_manager, 'payment_type');
   }

@@ -65,14 +65,14 @@ class BasicWebTest extends WebTestBase {
     // Test valid values.
     $data = $line_item_data;
     $data['line_item[description]'] = 'FooBar';
-    $this->drupalPost('payment_test-plugin-payment-line_item-payment_basic', $data, t('Submit'));
+    $this->drupalPostForm('payment_test-plugin-payment-line_item-payment_basic', $data, t('Submit'));
     $this->assertUrl('user', array(), 'Valid values trigger form submission.');
 
     // Test a non-integer quantity.
     $values =  array(
       'line_item[quantity]' => $this->randomName(2),
     );
-    $this->drupalPost('payment_test-plugin-payment-line_item-payment_basic', $values, t('Submit'));
+    $this->drupalPostForm('payment_test-plugin-payment-line_item-payment_basic', $values, t('Submit'));
     $this->assertFieldByXPath('//input[@name="line_item[quantity]" and contains(@class, "error")]');
   }
 

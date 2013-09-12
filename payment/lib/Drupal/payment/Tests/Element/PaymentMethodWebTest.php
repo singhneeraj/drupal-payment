@@ -74,7 +74,7 @@ class PaymentMethodWebTest extends WebTestBase {
     $this->assertNoText(t('There are no available payment methods.'));
 
     // Choose a payment method through a regular submission.
-    $this->drupalPost(NULL, array(
+    $this->drupalPostForm(NULL, array(
       'payment_method[select][payment_method_id]' => $payment_method_1->id() . ':default',
     ), t('Choose payment method'));
     $this->assertFieldByName('payment_method[select][payment_method_id]');
@@ -83,7 +83,7 @@ class PaymentMethodWebTest extends WebTestBase {
     $this->assertNoText($payment_method_2->getPlugin()->getMessageText());
 
     // Change the payment method through a regular submission.
-    $this->drupalPost(NULL, array(
+    $this->drupalPostForm(NULL, array(
       'payment_method[select][payment_method_id]' => $payment_method_2->id() . ':default',
     ), t('Choose payment method'));
     $this->assertFieldByName('payment_method[select][payment_method_id]');
@@ -92,12 +92,12 @@ class PaymentMethodWebTest extends WebTestBase {
     $this->assertNoText($payment_method_1->getPlugin()->getMessageText());
 
     // Submit the form through a regular submission.
-    $this->drupalPost(NULL, array(), t('Submit'));
+    $this->drupalPostForm(NULL, array(), t('Submit'));
     $payment_method_id = $state->get('payment_test_method_form_element');
     $this->assertEqual($payment_method_id, $payment_method_2->id());
 
     // Choose a payment method through an AJAX submission.
-    $this->drupalPostAJAX('payment_test-element-payment-method', array(
+    $this->drupalPostAjaxForm('payment_test-element-payment-method', array(
       'payment_method[select][payment_method_id]' => $payment_method_1->id() . ':default',
     ), 'payment_method[select][payment_method_id]');
     $this->assertFieldByName('payment_method[select][payment_method_id]');
@@ -107,7 +107,7 @@ class PaymentMethodWebTest extends WebTestBase {
     $this->verbose($this->drupalGetContent());
 
     // Change the payment method through an AJAX submission.
-    $this->drupalPostAjax(NULL, array(
+    $this->drupalPostAjaxForm(NULL, array(
       'payment_method[select][payment_method_id]' => $payment_method_2->id() . ':default',
     ), 'payment_method[select][payment_method_id]');
     $this->assertFieldByName('payment_method[select][payment_method_id]');
@@ -116,7 +116,7 @@ class PaymentMethodWebTest extends WebTestBase {
     $this->assertNoText($payment_method_1->getPlugin()->getMessageText());
 
     // Submit the form through an AJAX submission.
-    $this->drupalPost(NULL, array(), t('Submit'));
+    $this->drupalPostForm(NULL, array(), t('Submit'));
     $payment_method_id = $state->get('payment_test_method_form_element');
     $this->assertEqual($payment_method_id, $payment_method_2->id());
   }

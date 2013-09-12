@@ -117,7 +117,7 @@ class PaymentMethodUIWebTest extends WebTestBase {
     $this->drupalLogin($this->drupalCreateUser(array('payment.payment_method.view.any', 'payment.payment_method.delete.any')));
     $this->drupalGet('admin/config/services/payment/method');
     $this->clickLink(t('Delete'));
-    $this->drupalPost(NULL, array(), t('Confirm'));
+    $this->drupalPostForm(NULL, array(), t('Confirm'));
     $this->assertFalse((bool) entity_load('payment_method', $id));
   }
 
@@ -151,7 +151,7 @@ class PaymentMethodUIWebTest extends WebTestBase {
     $this->assertFieldByXPath('//form[@id="payment-basic-payment-method-form"]');
 
     // Test form validation.
-    $this->drupalPost(NULL, array(
+    $this->drupalPostForm(NULL, array(
       'owner' => '',
     ), t('Save'));
     $this->assertFieldByXPath('//input[@id="edit-label" and contains(@class, "error")]');
@@ -162,7 +162,7 @@ class PaymentMethodUIWebTest extends WebTestBase {
     $label = $this->randomString();;
     $brand_option = $this->randomString();
     $id = strtolower($this->randomName());
-    $this->drupalPost(NULL, array(
+    $this->drupalPostForm(NULL, array(
       'label' => $label,
       'id' => $id,
       'owner' => $user->label(),
