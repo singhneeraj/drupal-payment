@@ -1,0 +1,134 @@
+<?php
+
+/**
+ * @file
+ * Contains Drupal\payment\Entity\PaymentStatusFormController.
+ */
+
+namespace Drupal\payment\Entity;
+
+use Drupal\Core\Entity\EntityFormController;
+use Drupal\payment\Plugin\payment\status\Config;
+use Drupal\payment\Plugin\payment\status\Manager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/**
+ * Provides the payment status form.
+ */
+class PaymentStatusFormController extends EntityFormController {
+
+  /**
+   * The payment status manager.
+   *
+   * @var \Drupal\payment\Plugin\payment\status\Manager
+   */
+  protected $paymentStatusManager;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(Manager $payment_status_manager) {
+    $this->paymentStatusManager = $payment_status_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static($container->get('plugin.manager.payment.status'));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function form(array $form, array &$form_state) {
+    $payment_status = $this->getEntity();
+    $form['label'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Label'),
+      '#default_value' => $payment_status->label(),
+      '#maxlength' => 255,
+      '#required' => TRUE,
+    );
+    $form['id'] = array(
+      '#default_value' => $payment_status->id(),
+      '#disabled' => (bool) $payment_status->id(),
+      '#machine_name' => array(
+        'source' => array('label'),
+        'exists' => array($this, 'PaymentStatusIdExists'),
+      ),
+      '#maxlength' => 255,
+      '#type' => 'machine_name',
+      '#required' => TRUE,
+    );
+    $form['parent_id'] = array(
+      '#default_value' => $payment_status->getParentId(),
+      '#empty_value' => '',
+      '#options' => $this->paymentStatusManager->options(),
+      '#title' => t('Parent status'),
+      '#type' => 'select',
+    );
+    $form['description'] = array(
+      '#type' => 'textarea',
+      '#title' => t('Description'),
+      '#default_value' => $payment_status->getDescription(),
+      '#maxlength' => 255,
+    );
+
+    return parent::form($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submit(array $form, array &$form_state) {
+    parent::submit($form, $form_state);
+    $values = $form_state['values'];
+    $this->getEntity()->setId($values['id'])
+      ->setLabel($values['label'])
+      ->setParentId($values['parent_id'])
+      ->setDescription($values['description']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function save(array $form, array &$form_state) {
+    $payment_status = $this->getEntity();
+    $payment_status->save();
+    drupal_set_message(t('@label has been saved.', array(
+      '@label' => $payment_status->label()
+    )));
+    $form_state['redirect'] = 'admin/config/services/payment/status';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function delete(array $form, array &$form_state) {
+    $form_state['redirect'] = array('admin/config/services/payment/status/delete/' . $this->getEntity()->id());
+  }
+
+  /**
+   * Checks if a payment method with a particular ID already exists.
+   *
+   * @param string $id
+   *
+   * @return bool
+   */
+  function paymentStatusIdExists($id) {
+    return (bool) entity_load('payment_status', $id);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function actions(array $form, array &$form_state) {
+    $actions = parent::actions($form, $form_state);
+    if (!$this->getEntity()->id()) {
+      unset($actions['delete']);
+    }
+
+    return $actions;
+  }
+}

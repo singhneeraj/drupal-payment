@@ -3,3 +3,9 @@ payment.payment_method.add:
   title: 'Add payment method'
   appears_on:
     - payment.payment_method.list
+
+payment.payment_status.add:
+  route_name: payment.payment_status.add
+  title: 'Add payment status'
+  appears_on:
+    - payment.payment_status.list

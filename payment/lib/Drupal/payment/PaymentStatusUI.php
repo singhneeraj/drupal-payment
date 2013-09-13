@@ -8,6 +8,7 @@
 namespace Drupal\payment;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\EntityManager;
 use Drupal\payment\Plugin\payment\status\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -17,24 +18,43 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class PaymentStatusUI implements ContainerInjectionInterface {
 
   /**
+   * The entity manager.
+   *
+   * @var \Drupal\Core\Entity\EntityManager
+   */
+  protected $entityManager;
+
+  /**
    * The payment status plugin manager.
    *
    * @var \Drupal\payment\Plugin\payment\status\Manager
    */
-  protected $manager;
+  protected $paymentStatusManager;
 
   /**
    * Constructor.
    */
-  public function __construct(Manager $payment_status_manager) {
-    $this->manager = $payment_status_manager;
+  public function __construct(EntityManager $entity_manager, Manager $payment_status_manager) {
+    $this->entityManager = $entity_manager;
+    $this->paymentStatusManager = $payment_status_manager;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('plugin.manager.payment.status'));
+    return new static($container->get('plugin.manager.entity'), $container->get('plugin.manager.payment.status'));
+  }
+
+  /**
+   * Displays a payment status add form.
+   *
+   * @return array
+   */
+  public function add() {
+    $payment_status = $this->entityManager->getStorageController('payment_status')->create(array());
+
+    return drupal_get_form($this->entityManager->getFormController('payment_status', 'default')->setEntity($payment_status));
   }
 
   /**
@@ -44,9 +64,9 @@ class PaymentStatusUI implements ContainerInjectionInterface {
    */
   public function listing() {
     return array(
-      '#header' => array(t('Title'), t('Description')),
+      '#header' => array(t('Title'), t('Description'), t('Operations')),
       '#type' => 'table',
-    ) + $this->listingLevel($this->manager->hierarchy(), 0);
+    ) + $this->listingLevel($this->paymentStatusManager->hierarchy(), 0);
   }
 
   /**
@@ -64,7 +84,8 @@ class PaymentStatusUI implements ContainerInjectionInterface {
   protected function listingLevel(array $hierarchy, $depth) {
     $rows = array();
     foreach ($hierarchy as $plugin_id => $children) {
-      $definition = $this->manager->getDefinition($plugin_id);
+      $definition = $this->paymentStatusManager->getDefinition($plugin_id);
+      $class = $definition['class'];
       $rows[$plugin_id] = array(
         'label' => array(
           '#markup' => theme('indentation', array(
@@ -73,6 +94,10 @@ class PaymentStatusUI implements ContainerInjectionInterface {
         ),
         'description' => array(
           '#markup' => $definition['description'],
+        ),
+        'operations' => array(
+          '#type' => 'operations',
+          '#links' => $class::getOperations($plugin_id),
         ),
       );
       $rows = array_merge($rows, $this->listingLevel($children, $depth + 1));

@@ -16,3 +16,16 @@ payment.payment_method.*:
       type: boolean
     uuid:
       type: string
+
+payment.payment_status.*:
+  type: mapping
+  label: 'Payment status'
+  mapping:
+    id:
+      type: string
+    label:
+      type: label
+    parentId:
+      type: string
+    uuid:
+      type: string

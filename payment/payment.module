@@ -100,7 +100,7 @@ function payment_menu() {
 
   // Payment status overview.
   $items['admin/config/services/payment/status'] = array(
-    'route_name' => 'payment.payment_status.view',
+    'route_name' => 'payment.payment_status.list',
     'title' => 'Payment statuses',
   );
 
@@ -152,8 +152,8 @@ function payment_permission() {
     'payment.payment_method.view.own' => array(
       'title' => t('View own payment methods'),
     ),
-    'payment.payment_status.view' => array(
-      'title' => t('View payment status overview'),
+    'payment.payment_status.administer' => array(
+      'title' => t('Administer payment statuses'),
     ),
   );
   $definitions = \Drupal::service('plugin.manager.payment.method')->getDefinitions();

@@ -111,4 +111,11 @@ abstract class Base extends PluginBase implements PaymentStatusInterface {
   function isOrHasAncestor($plugin_id) {
     return \Drupal::service('plugin.manager.payment.status')->isOrHasAncestor($this->getPluginId(), $plugin_id);
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getOperations($plugin_id) {
+    return array();
+  }
 }

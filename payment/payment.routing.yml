@@ -92,12 +92,33 @@ payment.payment_method.duplicate:
   requirements:
     _entity_access: 'payment_method.duplicate'
 
-payment.payment_status.view:
+payment.payment_status.list:
   pattern: '/admin/config/services/payment/status'
   defaults:
     _controller: '\Drupal\payment\PaymentStatusUI::listing'
   requirements:
-    _permission: 'payment.payment_status.view'
+    _permission: 'payment.payment_status.administer'
+
+payment.payment_status.add:
+  pattern: '/admin/config/services/payment/status/add'
+  defaults:
+    _controller: '\Drupal\payment\PaymentStatusUI::add'
+  requirements:
+    _permission: 'payment.payment_status.administer'
+
+payment.payment_status.edit:
+  pattern: '/admin/config/services/payment/status/edit/{payment_status}'
+  defaults:
+    _entity_form: 'payment_status.default'
+  requirements:
+    _entity_access: 'payment_status.update'
+
+payment.payment_status.delete:
+  pattern: '/admin/config/services/payment/status/delete/{payment_status}'
+  defaults:
+    _entity_form: 'payment_status.delete'
+  requirements:
+    _entity_access: 'payment_status.delete'
 
 payment.payment_type.list:
   pattern: '/admin/config/services/payment/type'
