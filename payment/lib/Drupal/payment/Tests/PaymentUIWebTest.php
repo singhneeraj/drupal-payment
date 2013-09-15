@@ -88,6 +88,9 @@ class PaymentUIWebTest extends WebTestBase {
     $this->drupalLogin($this->drupalCreateUser(array('payment.payment.delete.any')));
     $this->drupalGet($path);
     if ($this->assertResponse('200')) {
+      $this->clickLink(t('Cancel'));
+      $this->assertUrl('payment/' . $payment->id());
+      $this->drupalGet($path);
       $this->drupalPostForm(NULL, array(), t('Delete'));
       $this->assertResponse('200');
       $this->assertFalse((bool) $this->container->get('plugin.manager.entity')->getStorageController('payment')->loadUnchanged($payment->id()));

@@ -26,8 +26,10 @@ class PaymentMethodDeleteFormController extends EntityConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getCancelPath() {
-    return 'admin/config/services/payment/method';
+  public function getCancelRoute() {
+    return array(
+      'route_name' => 'payment.payment_method.list',
+    );
   }
 
   /**

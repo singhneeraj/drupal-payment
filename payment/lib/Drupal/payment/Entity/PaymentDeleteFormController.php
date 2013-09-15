@@ -52,9 +52,13 @@ class PaymentDeleteFormController extends EntityNGConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getCancelPath() {
-    $uri = $this->getEntity()->uri();
-    return $this->urlGenerator->generateFromPath($uri['path'], $uri['options']);
+  public function getCancelRoute() {
+    return array(
+      'route_name' => 'payment.payment.view',
+      'route_parameters' => array(
+        'payment' => $this->getEntity()->id(),
+      ),
+    );
   }
 
   /**
