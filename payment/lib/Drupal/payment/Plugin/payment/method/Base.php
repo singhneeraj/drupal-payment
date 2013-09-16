@@ -29,8 +29,8 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
     $configuration += array(
-      'messageText' => '',
-      'messageTextFormat' => 'plain_text',
+      'message_text' => '',
+      'message_text_format' => 'plain_text',
     );
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -66,7 +66,7 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
    * @return \Drupal\payment\Plugin\payment\method\PaymentMethodInterface
    */
   public function setMessageText($text) {
-    $this->configuration['messageText'] = $text;
+    $this->configuration['message_text'] = $text;
 
     return $this;
   }
@@ -77,7 +77,7 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
    * @return string
    */
   public function getMessageText() {
-    return $this->configuration['messageText'];
+    return $this->configuration['message_text'];
   }
 
   /**
@@ -89,7 +89,7 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
    * @return \Drupal\payment\Plugin\payment\method\PaymentMethodInterface
    */
   public function setMessageTextFormat($format) {
-    $this->configuration['messageTextFormat'] = $format;
+    $this->configuration['message_text_format'] = $format;
 
     return $this;
   }
@@ -100,7 +100,7 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
    * @return string
    */
   public function getMessageTextFormat() {
-    return $this->configuration['messageTextFormat'];
+    return $this->configuration['message_text_format'];
   }
 
   /**

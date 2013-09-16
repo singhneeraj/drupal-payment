@@ -34,7 +34,7 @@ class Basic extends Base {
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
     $configuration += array(
-      'brandOption' => '',
+      'brand_option' => '',
       'status' => '',
     );
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -79,7 +79,7 @@ class Basic extends Base {
     $elements['#element_validate'][] = array($this, 'paymentMethodFormElementsValidateBasic');
 
     $elements['brand'] = array(
-      '#default_value' => $this->configuration['brandOption'],
+      '#default_value' => $this->configuration['brand_option'],
       '#description' => t('The label that payers will see when choosing a payment method. Defaults to the payment method label.'),
       '#title' => t('Brand label'),
       '#type' => 'textfield',
@@ -136,7 +136,7 @@ class Basic extends Base {
    */
   public function brandOptions() {
     return array(
-      'default' => $this->configuration['brandOption'] ? $this->configuration['brandOption'] : $this->getPaymentMethod()->label(),
+      'default' => $this->configuration['brand_option'] ? $this->configuration['brand_option'] : $this->getPaymentMethod()->label(),
     );
   }
 
@@ -148,7 +148,7 @@ class Basic extends Base {
    * @return \Drupal\payment\Plugin\payment\method\PaymentMethodInterface
    */
   public function setBrandOption($label) {
-    $this->configuration['brandOption'] = $label;
+    $this->configuration['brand_option'] = $label;
 
     return $this;
   }

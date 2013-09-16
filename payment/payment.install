@@ -657,7 +657,7 @@ function payment_update_8204(array &$sandbox) {
       ->set('uuid', $uuid->generate());
     if ($plugin_id == 'payment_basic') {
       $config->set('pluginConfiguration', array(
-        'brandOption' => $payment_method_data->title_generic,
+        'brand_option' => $payment_method_data->title_generic,
       ));
     }
     $config->save();

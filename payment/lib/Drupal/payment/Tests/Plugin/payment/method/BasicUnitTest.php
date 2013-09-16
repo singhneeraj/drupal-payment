@@ -50,9 +50,9 @@ class BasicUnitTest extends DrupalUnitTestBase {
       ->setStatus('baz')
       ->setBrandOption('Foo');
     $this->assertEqual($this->method->getConfiguration(), array(
-      'brandOption' => 'Foo',
-      'messageText' => 'foo',
-      'messageTextFormat' => 'bar',
+      'brand_option' => 'Foo',
+      'message_text' => 'foo',
+      'message_text_format' => 'bar',
       'status' => 'baz',
     ));
   }
