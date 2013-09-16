@@ -55,7 +55,7 @@ class PaymentMethodFormController extends EntityFormController {
       '#title' => t('Owner'),
       '#default_value' => $payment_method->getOwnerId() ? entity_load('user', $payment_method->getOwnerId())->label() : $user->label(),
       '#maxlength' => 255,
-      '#autocomplete_route_name' => 'user_autocomplete',
+      '#autocomplete_route_name' => 'user.autocomplete',
       '#required' => TRUE,
     );
     $form['plugin_form'] = $payment_method->getPlugin()->paymentMethodFormElements($form, $form_state);
