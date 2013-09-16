@@ -38,6 +38,26 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
+  public function defaultConfiguration() {
+    return array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getConfiguration() {
+    return array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setConfiguration(array $configuration) {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function setPaymentMethod(EntityPaymentMethodInterface $payment_method) {
     $this->paymentMethod = $payment_method;
 
@@ -69,13 +89,6 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
    * {@inheritdoc}
    */
   function executePaymentOperation(PaymentInterface $payment, $operation, $payment_method_brand) {
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getConfiguration() {
-    return array();
   }
 
   /**

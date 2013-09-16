@@ -32,12 +32,11 @@ class Basic extends Base {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
-    $configuration += array(
+  public function defaultConfiguration() {
+    return parent::defaultConfiguration() + array(
       'brand_option' => '',
       'status' => '',
     );
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
   /**

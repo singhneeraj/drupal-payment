@@ -28,11 +28,18 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
-    $configuration += array(
+    $configuration += $this->defaultConfiguration();
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function defaultConfiguration() {
+    return array(
       'message_text' => '',
       'message_text_format' => 'plain_text',
     );
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
   /**
@@ -40,6 +47,13 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
    */
   public function getConfiguration() {
     return $this->configuration;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setConfiguration(array $configuration) {
+    return $this->configuration = $configuration;
   }
 
   /**

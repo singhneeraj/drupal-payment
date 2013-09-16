@@ -18,15 +18,36 @@ abstract class Base extends PluginBase implements PaymentStatusInterface {
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
-    $configuration += array(
-      'created' => NULL,
-      'id' => 0,
-      'paymentId' => 0,
-    );
+    $configuration += $this->defaultConfiguration();
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     if (!$this->getCreated()) {
       $this->setCreated(time());
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function defaultConfiguration() {
+    return array(
+      'created' => NULL,
+      'id' => 0,
+      'paymentId' => 0,
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getConfiguration() {
+    return $this->configuration;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setConfiguration(array $configuration) {
+    return $this->configuration = $configuration;
   }
 
   /**

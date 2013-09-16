@@ -6,6 +6,7 @@
 
 namespace Drupal\payment\Plugin\payment\method;
 
+use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\payment\PaymentProcessingInterface;
 use Drupal\payment\Entity\PaymentMethodInterface as EntityPaymentMethodInterface;
@@ -15,15 +16,7 @@ use Drupal\payment\Entity\PaymentMethodInterface as EntityPaymentMethodInterface
  *
  * @see \Drupal\payment\Entity\PaymentMethod
  */
-interface PaymentMethodInterface extends PaymentProcessingInterface, PluginInspectionInterface {
-
-  /**
-   * Gets the plugin configuration.
-   *
-   * @return array
-   *  The data is not allowed to contain objects.
-   */
-  public function getConfiguration();
+interface PaymentMethodInterface extends PaymentProcessingInterface, PluginInspectionInterface, ConfigurablePluginInterface {
 
   /**
    * sets the payment method the plugin instance is for.

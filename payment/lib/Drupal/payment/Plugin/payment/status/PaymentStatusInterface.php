@@ -6,12 +6,13 @@
 
 namespace Drupal\payment\plugin\payment\status;
 
+use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 
 /**
  * A payment status plugin.
  */
-interface PaymentStatusInterface extends PluginInspectionInterface {
+interface PaymentStatusInterface extends PluginInspectionInterface, ConfigurablePluginInterface {
 
   /**
    * Sets the created date and time.

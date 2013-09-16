@@ -6,12 +6,13 @@
 
 namespace Drupal\payment\plugin\payment\line_item;
 
+use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 
 /**
  * A payment line item.
  */
-interface PaymentLineItemInterface extends PluginInspectionInterface {
+interface PaymentLineItemInterface extends PluginInspectionInterface, ConfigurablePluginInterface {
 
   /**
    * Sets the ID of the payment the line item belongs to.
