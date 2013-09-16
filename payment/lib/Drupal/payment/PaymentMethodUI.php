@@ -126,12 +126,10 @@ class PaymentMethodUI implements ContainerInjectionInterface {
    * @return array
    */
   public function duplicate(PaymentMethodInterface $payment_method) {
-    $clone = clone $payment_method;
-    $uuid = new Uuid();
-    $clone->setId('')
-      ->setUuid($uuid->generate())
+    $clone = $payment_method
+      ->createDuplicate()
       ->setLabel(t('!label (duplicate)', array(
-        '!label' => $clone->label(),
+        '!label' => $payment_method->label(),
       )));
 
     return drupal_get_form($this->entityManager->getFormController('payment_method', 'default')->setEntity($clone));

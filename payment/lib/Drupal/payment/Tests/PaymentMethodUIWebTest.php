@@ -85,20 +85,38 @@ class PaymentMethodUIWebTest extends WebTestBase {
    */
   protected function doTestDuplicate() {
     $this->drupalLogout();
-    $id = 'collect_on_delivery';
-    $plugin = entity_load('payment_method', $id)->getPlugin();
+    $entity_id = 'collect_on_delivery';
+    $plugin_id = 'payment_basic';
+    $storage = $this->container->get('plugin.manager.entity')->getStorageController('payment_method');
 
-    $this->drupalGet('admin/config/services/payment/method/' . $id . '/duplicate');
-    $this->assertResponse(403);
+    // Test that only the original exists.
+    $this->assertTrue((bool) $storage->load($entity_id));
+    $this->assertFalse((bool) $storage->load($entity_id . '_duplicate'));
+
+    // Test insufficient permissions.
     $this->drupalLogin($this->drupalCreateUser(array('payment.payment_method.view.any')));
     $this->drupalGet('admin/config/services/payment/method');
-    $this->assertNoLink(t('Duplicate'));
+    $this->assertNoLinkByHref(t('admin/config/services/payment/method/' . $entity_id . '/duplicate'));
+    $this->drupalGet('admin/config/services/payment/method/' . $entity_id . '/duplicate');
+    $this->assertResponse(403);
+    $this->drupalLogin($this->drupalCreateUser(array('payment.payment_method.view.any')));
+    $this->drupalGet('admin/config/services/payment/method/' . $entity_id . '/duplicate');
+    $this->assertResponse(403);
+    $this->drupalLogin($this->drupalCreateUser(array('payment.payment_method.create.' . $plugin_id)));
+    $this->drupalGet('admin/config/services/payment/method/' . $entity_id . '/duplicate');
+    $this->assertResponse(403);
 
-    $this->drupalLogin($this->drupalCreateUser(array('payment.payment_method.view.any', 'payment.payment_method.create.' . $plugin->getPluginId())));
+    // Test sufficient permissions.
+    $this->drupalLogin($this->drupalCreateUser(array('payment.payment_method.view.any', 'payment.payment_method.create.' . $plugin_id)));
     $this->drupalGet('admin/config/services/payment/method');
     $this->clickLink(t('Duplicate'));
     $this->assertResponse(200);
     $this->assertFieldByXPath('//form[@id="payment-basic-payment-method-form"]');
+    $this->drupalPostForm(NULL, array(
+      'id' => $entity_id . '_duplicate',
+    ), t('Save'));
+    $this->assertTrue((bool) $storage->load($entity_id));
+    $this->assertTrue((bool) $storage->load($entity_id . '_duplicate'));
   }
 
   /**
