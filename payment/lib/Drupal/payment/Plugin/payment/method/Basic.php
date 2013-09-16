@@ -15,7 +15,7 @@ use Drupal\payment\Entity\PaymentInterface;
  * A basic payment method that does not transfer money.
  *
  * @PaymentMethod(
- *   description = "A payment method type that always successfully executes payments, but never actually transfers money.",
+ *   description = @Translation("A payment method type that always successfully executes payments, but never actually transfers money."),
  *   id = "payment_basic",
  *   label = @Translation("Basic"),
  *   module = "payment",
