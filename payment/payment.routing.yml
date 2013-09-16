@@ -1,12 +1,12 @@
 payment.admin:
-  pattern: '/admin/config/services/payment'
+  path: '/admin/config/services/payment'
   defaults:
     _content: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
   requirements:
     _permission: 'access administration pages'
 
 payment.payment.admin_list:
-  pattern: '/admin/content/payment'
+  path: '/admin/content/payment'
   defaults:
     _content: '\Drupal\Core\Entity\Controller\EntityListController::listing'
     entity_type: 'payment'
@@ -15,28 +15,28 @@ payment.payment.admin_list:
     _permission: 'payment.payment.view.any'
 
 payment.payment.view:
-  pattern: '/payment/{payment}'
+  path: '/payment/{payment}'
   defaults:
     _entity_view: 'payment.full'
   requirements:
     _entity_access: 'payment.view'
 
 payment.payment.delete:
-  pattern: '/payment/{payment}/delete'
+  path: '/payment/{payment}/delete'
   defaults:
     _entity_form: 'payment.delete'
   requirements:
     _entity_access: 'payment.delete'
 
 payment.payment.execute_operation:
-  pattern: '/payment/{payment}/operation/{operation}'
+  path: '/payment/{payment}/operation/{operation}'
   defaults:
     _controller: '\Drupal\payment\PaymentUI::executeOperation'
   requirements:
     _payment_operation_access: 'payment.operation'
 
 payment.payment_method.list:
-  pattern: '/admin/config/services/payment/method'
+  path: '/admin/config/services/payment/method'
   defaults:
     _content: '\Drupal\Core\Entity\Controller\EntityListController::listing'
     entity_type: 'payment_method'
@@ -44,84 +44,84 @@ payment.payment_method.list:
     _permission: 'payment.payment_method.view.any'
 
 payment.payment_method.select:
-  pattern: '/admin/config/services/payment/method-add'
+  path: '/admin/config/services/payment/method-add'
   defaults:
     _controller: '\Drupal\payment\PaymentMethodUI::select'
   requirements:
     _payment_method_create_access: 'TRUE'
 
 payment.payment_method.add:
-  pattern: '/admin/config/services/payment/method-add/{payment_method_plugin_id}'
+  path: '/admin/config/services/payment/method-add/{payment_method_plugin_id}'
   defaults:
     _controller: '\Drupal\payment\PaymentMethodUI::add'
   requirements:
     _payment_method_create_access: 'TRUE'
 
 payment.payment_method.edit:
-  pattern: '/admin/config/services/payment/method/{payment_method}'
+  path: '/admin/config/services/payment/method/{payment_method}'
   defaults:
     _entity_form: 'payment_method.default'
   requirements:
     _entity_access: 'payment_method.update'
 
 payment.payment_method.enable:
-  pattern: '/admin/config/services/payment/method/{payment_method}/enable'
+  path: '/admin/config/services/payment/method/{payment_method}/enable'
   defaults:
     _controller: '\Drupal\payment\PaymentMethodUI::enable'
   requirements:
     _entity_access: 'payment_method.enable'
 
 payment.payment_method.disable:
-  pattern: '/admin/config/services/payment/method/{payment_method}/disable'
+  path: '/admin/config/services/payment/method/{payment_method}/disable'
   defaults:
     _controller: '\Drupal\payment\PaymentMethodUI::disable'
   requirements:
     _entity_access: 'payment_method.disable'
 
 payment.payment_method.delete:
-  pattern: '/admin/config/services/payment/method/{payment_method}/delete'
+  path: '/admin/config/services/payment/method/{payment_method}/delete'
   defaults:
     _entity_form: 'payment_method.delete'
   requirements:
     _entity_access: 'payment_method.delete'
 
 payment.payment_method.duplicate:
-  pattern: '/admin/config/services/payment/method/{payment_method}/duplicate'
+  path: '/admin/config/services/payment/method/{payment_method}/duplicate'
   defaults:
     _controller: '\Drupal\payment\PaymentMethodUI::duplicate'
   requirements:
     _entity_access: 'payment_method.duplicate'
 
 payment.payment_status.list:
-  pattern: '/admin/config/services/payment/status'
+  path: '/admin/config/services/payment/status'
   defaults:
     _controller: '\Drupal\payment\PaymentStatusUI::listing'
   requirements:
     _permission: 'payment.payment_status.administer'
 
 payment.payment_status.add:
-  pattern: '/admin/config/services/payment/status/add'
+  path: '/admin/config/services/payment/status/add'
   defaults:
     _controller: '\Drupal\payment\PaymentStatusUI::add'
   requirements:
     _permission: 'payment.payment_status.administer'
 
 payment.payment_status.edit:
-  pattern: '/admin/config/services/payment/status/edit/{payment_status}'
+  path: '/admin/config/services/payment/status/edit/{payment_status}'
   defaults:
     _entity_form: 'payment_status.default'
   requirements:
     _entity_access: 'payment_status.update'
 
 payment.payment_status.delete:
-  pattern: '/admin/config/services/payment/status/delete/{payment_status}'
+  path: '/admin/config/services/payment/status/delete/{payment_status}'
   defaults:
     _entity_form: 'payment_status.delete'
   requirements:
     _entity_access: 'payment_status.delete'
 
 payment.payment_type.list:
-  pattern: '/admin/config/services/payment/type'
+  path: '/admin/config/services/payment/type'
   defaults:
     _controller: '\Drupal\payment\PaymentTypeUI::listing'
   requirements:
@@ -129,6 +129,6 @@ payment.payment_type.list:
 
 # Add a dummy item for Field UI to attach local tasks to.
 payment.payment_type.configure:
-  pattern: '/admin/config/services/payment/type/{bundle}'
+  path: '/admin/config/services/payment/type/{bundle}'
   requirements:
     _access: 'TRUE'
