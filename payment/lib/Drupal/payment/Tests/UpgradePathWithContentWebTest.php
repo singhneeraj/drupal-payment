@@ -64,8 +64,8 @@ class UpgradePathWithContentWebTest extends UpgradePathTestBase {
       $this->assertTrue(is_int($payment_method->getOwnerId()));
       $this->assertTrue($payment_method->getPlugin() instanceof PluginPaymentMethodInterface);
       if ($payment_method->getPlugin()->getPluginId() == 'payment_basic') {
-        $brand_options = $payment_method->brandOptions();
-        $this->assertTrue(strlen(reset($brand_options)));
+        $brand_options = $payment_method->brands();
+        $this->assertTrue(count(reset($brand_options)));
       }
     }
   }

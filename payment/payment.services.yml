@@ -16,7 +16,3 @@ services:
     class: Drupal\payment\PaymentMethodCreateAccessCheck
     tags:
       - { name: access_check }
-  payment.payment_operation_access_check:
-    class: Drupal\payment\PaymentOperationAccessCheck
-    tags:
-      - { name: access_check }

@@ -8,6 +8,7 @@ namespace Drupal\payment\Plugin\payment\method;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Annotation\Translation;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Annotations\PaymentMethod;
 use Drupal\payment\Entity\PaymentInterface;
 
@@ -18,13 +19,7 @@ use Drupal\payment\Entity\PaymentInterface;
  *   description = @Translation("A payment method type that always successfully executes payments, but never actually transfers money."),
  *   id = "payment_basic",
  *   label = @Translation("Basic"),
- *   module = "payment",
- *   operations = {
- *     "execute" = {
- *       "interrupts_execution" = "false",
- *       "label" = @Translation("Execute")
- *     }
- *   }
+ *   module = "payment"
  * )
  */
 class Basic extends Base {
@@ -64,13 +59,6 @@ class Basic extends Base {
   }
 
   /**
-   * {@inheritdoc}.
-   */
-  public function currencies() {
-    return array();
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function paymentMethodFormElements(array $form, array &$form_state) {
@@ -100,42 +88,34 @@ class Basic extends Base {
   public function paymentMethodFormElementsValidateBasic(array $element, array &$form_state, array $form) {
     $values = NestedArray::getValue($form_state['values'], $element['#parents']);
     $this->setStatus($values['status'])
-      ->setBrandOption($values['brand']);
+      ->setBrandLabel($values['brand']);
   }
 
   /**
    * {@inheritdoc}
    */
-  function paymentOperationAccess(PaymentInterface $payment, $operation, $payment_method_brand) {
-    // This plugin only supports the execute operation.
-    return $operation == 'execute' && parent::paymentOperationAccess($payment, $operation, $payment_method_brand);
+  public function executePaymentAccess(PaymentInterface $payment, $payment_method_brand, AccountInterface $account = NULL) {
+    return $payment_method_brand == 'default' && parent::executePaymentAccess($payment, $payment_method_brand, $account);
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function paymentOperationAccessCurrency(PaymentInterface $payment, $operation, $payment_method_brand) {
-    // This plugin supports any currency.
-    return TRUE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  function executePaymentOperation(PaymentInterface $payment, $operation, $payment_method_brand) {
-    if ($this->paymentOperationAccess($payment, $operation, $payment_method_brand)) {
-      if ($operation == 'execute') {
-        $payment->setStatus(\Drupal::service('plugin.manager.payment.status')->createInstance($this->getStatus()));
-      }
+  public function executePayment(PaymentInterface $payment) {
+    if ($this->executePaymentAccess($payment, $payment->getPaymentMethodBrand())) {
+      $payment->setStatus(\Drupal::service('plugin.manager.payment.status')->createInstance($this->getStatus()));
     }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function brandOptions() {
+  public function brands() {
     return array(
-      'default' => $this->configuration['brand_option'] ? $this->configuration['brand_option'] : $this->getPaymentMethod()->label(),
+      'default' => array(
+        'currencies' => array(),
+        'label' => $this->configuration['brand_option'] ? $this->configuration['brand_option'] : $this->getPaymentMethod()->label(),
+      ),
     );
   }
 
@@ -146,7 +126,7 @@ class Basic extends Base {
    *
    * @return \Drupal\payment\Plugin\payment\method\PaymentMethodInterface
    */
-  public function setBrandOption($label) {
+  public function setBrandLabel($label) {
     $this->configuration['brand_option'] = $label;
 
     return $this;

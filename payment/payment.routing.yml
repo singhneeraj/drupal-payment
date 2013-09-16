@@ -28,13 +28,6 @@ payment.payment.delete:
   requirements:
     _entity_access: 'payment.delete'
 
-payment.payment.execute_operation:
-  path: '/payment/{payment}/operation/{operation}'
-  defaults:
-    _controller: '\Drupal\payment\PaymentUI::executeOperation'
-  requirements:
-    _payment_operation_access: 'payment.operation'
-
 payment.payment_method.list:
   path: '/admin/config/services/payment/method'
   defaults:

@@ -191,9 +191,8 @@ class PaymentMethodUIWebTest extends WebTestBase {
       $this->assertEqual($payment_method->label(), $label);
       $this->assertEqual($payment_method->id(), $id);
       $this->assertEqual($payment_method->getOwnerId(), $user->id());
-      $this->assertEqual($payment_method->brandOptions(), array(
-        'default' => $brand_option,
-      ));
+      $brands = $payment_method->brands();
+      $this->assertEqual($brands['default']['label'], $brand_option);
     }
   }
 }

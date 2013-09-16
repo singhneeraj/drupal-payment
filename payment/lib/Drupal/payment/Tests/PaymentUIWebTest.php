@@ -58,8 +58,6 @@ class PaymentUIWebTest extends WebTestBase {
       $this->assertText(t('Payment method'));
       $this->assertText(t('€24.20'));
       $this->assertText($payment_method->label());
-      $this->assertLinkByHref('payment/1/operation/foo_bar');
-      $this->assertNoLinkByHref('payment/1/operation/access_denied');
     }
     $this->drupalLogout();
 
@@ -72,14 +70,7 @@ class PaymentUIWebTest extends WebTestBase {
     if ($this->assertResponse('200')) {
       $this->assertText(t('Payment method'));
       $this->assertText(t('Status'));
-      $this->assertLinkByHref('payment/1/operation/foo_bar');
-      $this->assertNoLinkByHref('payment/1/operation/access_denied');
     }
-
-    // Perform a payment operation.
-    $this->clickLink('FooBarOperation');
-    $this->assertResponse('200');
-    $this->assertEqual($this->container->get('state')->get('payment_test_execute_operation'), 'foo_bar');
 
     // Delete a payment.
     $path = 'payment/' . $payment->id() . '/delete';

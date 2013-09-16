@@ -8,6 +8,7 @@ namespace Drupal\payment\Plugin\payment\method;
 
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Annotation\Translation;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Annotations\PaymentMethod;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Entity\PaymentMethodInterface as EntityPaymentMethodInterface;
@@ -81,14 +82,14 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
-  function paymentOperationAccess(PaymentInterface $payment, $operation, $payment_method_brand) {
+  public function executePaymentAccess(PaymentInterface $payment, $payment_method_brand, AccountInterface $account = NULL) {
     return FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
-  function executePaymentOperation(PaymentInterface $payment, $operation, $payment_method_brand) {
+  public function executePayment(PaymentInterface $payment) {
   }
 
   /**
@@ -108,11 +109,13 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
-  public function brandOptions() {
+  public function brands() {
     $definition = $this->getPluginDefinition();
 
     return array(
-      'default' => $definition['label'],
+      'default' => array(
+        'label' => $definition['label'],
+      ),
     );
   }
 }

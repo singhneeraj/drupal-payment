@@ -21,6 +21,20 @@ class BasicUnitTest extends DrupalUnitTestBase {
   public static $modules = array('field', 'payment');
 
   /**
+   * The payment method plugin.
+   *
+   * @var \Drupal\payment\Plugin\payment\method\Basic
+   */
+  protected $method;
+
+  /**
+   * The payment method entity.
+   *
+   * @var \Drupal\payment\Entity\PaymentMethodInterface
+   */
+  protected $methodEntity;
+
+  /**
    * {@inheritdoc}
    */
   public static function getInfo() {
@@ -48,7 +62,7 @@ class BasicUnitTest extends DrupalUnitTestBase {
     $this->method->setMessageText('foo')
       ->setMessageTextFormat('bar')
       ->setStatus('baz')
-      ->setBrandOption('Foo');
+      ->setBrandLabel('Foo');
     $this->assertEqual($this->method->getConfiguration(), array(
       'brand_option' => 'Foo',
       'message_text' => 'foo',
@@ -94,17 +108,15 @@ class BasicUnitTest extends DrupalUnitTestBase {
   }
 
   /**
-   * Tests setBrandOption() and brandOptions().
+   * Tests setBrandLabel() and brands().
    */
-  protected function testBrandOptions() {
-    $this->assertIdentical($this->method->brandOptions(), array(
-      'default' => $this->methodEntity->label(),
-    ));
+  protected function testBrands() {
+    $brands = $this->method->brands();
+    $this->assertIdentical($brands['default']['label'], $this->methodEntity->label());
     $label = $this->randomName();
-    $this->assertTrue($this->method->setbrandOption($label) instanceof PaymentMethodInterface);
-    $this->assertIdentical($this->method->brandOptions(), array(
-      'default' => $label,
-    ));
+    $this->assertTrue($this->method->setBrandLabel($label) instanceof PaymentMethodInterface);
+    $brands = $this->method->brands();
+    $this->assertIdentical($brands['default']['label'], $label);
   }
 
   /**
@@ -117,26 +129,25 @@ class BasicUnitTest extends DrupalUnitTestBase {
   }
 
   /**
-   * Tests paymentOperationAccess().
+   * Tests executePaymentAccess().
    */
-  protected function testPaymentOperationAccess() {
+  protected function testExecutePaymentAccess() {
     $payment = entity_create('payment', array(
       'bundle' => 'payment_unavailable',
     ));
-    $this->assertTrue($this->method->paymentOperationAccess($payment, 'execute', 'default'));
-    $this->assertFalse($this->method->paymentOperationAccess($payment, $this->randomName(), 'default'));
+    $this->assertTrue($this->method->executePaymentAccess($payment, 'default'));
   }
 
   /**
-   * Tests executePaymentOperation().
+   * Tests executePayment().
    */
-  protected function testExecutePaymentOperation() {
+  protected function testExecutePayment() {
     $plugin_id = 'payment_unknown';
     $payment = entity_create('payment', array(
       'bundle' => 'payment_unavailable',
-    ));
+    ))->setPaymentMethodBrand('default');
     $this->method->setStatus($plugin_id);
-    $this->method->executePaymentOperation($payment, 'execute', 'default');
-    $this->assertTrue($payment->getStatus()->getPluginId() == $plugin_id);
+    $this->method->executePayment($payment);
+    $this->assertEqual($payment->getStatus()->getPluginId(), $plugin_id);
   }
 }

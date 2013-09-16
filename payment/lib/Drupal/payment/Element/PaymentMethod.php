@@ -31,9 +31,9 @@ class PaymentMethod {
     $payment_method_options = array();
     $payment_method_ids = empty($element['#payment_method_ids']) ? NULL : $element['#payment_method_ids'];
     foreach (entity_load_multiple('payment_method', $payment_method_ids) as $payment_method) {
-      foreach ($payment_method->brandOptions() as $brand_name => $label) {
-        if ($payment_method->paymentOperationAccess($payment, 'execute', $brand_name)) {
-          $payment_method_options[$payment_method->id() . ':' . $brand_name] = $label;
+      foreach ($payment_method->brands() as $payment_method_brand => $info) {
+        if ($payment_method->executePaymentAccess($payment, $payment_method_brand)) {
+          $payment_method_options[$payment_method->id() . ':' . $payment_method_brand] = $info['label'];
         }
       }
     }

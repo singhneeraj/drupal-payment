@@ -40,23 +40,12 @@ class PaymentTest extends Base {
   /**
    * {@inheritdoc}
    */
-  public function brandOptions() {
+  public function brands() {
     return array(
-      'default' => 'Test method',
+      'default' => array(
+        'currencies' => array(),
+        'label' => 'Test method',
+      ),
     );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function paymentOperationAccess(PaymentInterface $payment, $operation, $payment_method_brand) {
-    return $operation != 'access_denied';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  function executePaymentOperation(PaymentInterface $payment, $operation, $payment_method_brand) {
-    \Drupal::state()->set('payment_test_execute_operation', $operation);
   }
 }

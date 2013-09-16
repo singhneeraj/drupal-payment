@@ -51,23 +51,4 @@ class Manager extends DefaultPluginManager {
       return parent::createInstance('payment_unavailable', $configuration);
     }
   }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function processDefinition(&$definition, $plugin_id) {
-    parent::processDefinition($definition, $plugin_id);
-    // Merge in default operation values.
-    foreach ($definition['operations'] as $operation => &$operation_definition) {
-      if (empty($operation_definition['label'])) {
-        throw new \InvalidArgumentException(String::format('Plugin !plugin_id does not define a label for operation !operation.', array(
-          '!operation' => $operation,
-          '!plugin_id' => $plugin_id,
-        )));
-      }
-      $operation_definition += array(
-        'interrupts_execution' => TRUE,
-      );
-    }
-  }
 }

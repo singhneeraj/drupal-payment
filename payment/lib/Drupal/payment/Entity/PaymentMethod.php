@@ -11,6 +11,7 @@ use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\Annotation\EntityType;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Plugin\payment\method\PaymentMethodInterface as PluginPaymentMethodInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Entity\PaymentMethodInterface;
@@ -196,22 +197,8 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
-  function paymentOperationAccess(PaymentInterface $payment, $operation, $payment_method_brand) {
-    return $this->getPlugin()->paymentOperationAccess($payment, $operation, $payment_method_brand);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  function executePaymentOperation(PaymentInterface $payment, $operation, $payment_method_brand) {
-    return $this->getPlugin()->executePaymentOperation($payment, $operation, $payment_method_brand);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  function brandOptions() {
-    return $this->getPlugin()->brandOptions();
+  function brands() {
+    return $this->getPlugin()->brands();
   }
 
   /**
@@ -286,5 +273,19 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
    */
   function __clone() {
     $this->setPlugin(clone $this->getPlugin());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function executePaymentAccess(PaymentInterface $payment, $payment_method_brand, AccountInterface $account = NULL) {
+    return $this->getPlugin()->executePaymentAccess($payment, $payment_method_brand, $account);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function executePayment(PaymentInterface $payment) {
+    $this->getPlugin()->executePayment($payment);
   }
 }

@@ -6,23 +6,13 @@
 
 namespace Drupal\payment;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
 
 /**
  * Defines anything that can process payments.
  */
 interface PaymentProcessingInterface {
-
-  /**
-   * Returns the supported currencies.
-   *
-   * @var array
-   *   Keys are ISO 4217 currency codes. Values are associative arrays with
-   *   keys "minimum" and "maximum", whose values are the minimum and maximum
-   *   amount supported for the specified currency. Leave empty to allow all
-   *   currencies.
-   */
-  public function currencies();
 
   /**
    * Returns the available brand names.
@@ -33,9 +23,11 @@ interface PaymentProcessingInterface {
    * brands and direct debit.
    *
    * @return array
-   *  Keys are machine names. Values are human-readable brand names.
+   *  Keys are machine names. Values are associative arrays with at least the
+   *  following keys:
+   *  - label (required): the translated human-readable label.
    */
-  public function brandOptions();
+  public function brands();
 
   /**
    * Returns the form elements to configure payments.
@@ -54,32 +46,25 @@ interface PaymentProcessingInterface {
   public function paymentFormElements(array $form, array &$form_state, PaymentInterface $payment);
 
   /**
-   * Checks access to execute a payment operation.
+   * Checks if a payment can be executed.
    *
    * @see \Drupal\payment\Annotations\PaymentMethod
    *
    * @param \Drupal\payment\Entity\PaymentInterface $payment
-   * @param string $operation
-   *   See \Drupal\payment\Annotations\PaymentMethod::operations for the
-   *   definition of available operations.
    * @param string $payment_method_brand
    *   See self::brandOptions for the available brands.
+   * @param \Drupal\Core\Session\AccountInterface $account
    *
    * @return bool
    */
-  public function paymentOperationAccess(PaymentInterface $payment, $operation, $payment_method_brand);
+  public function executePaymentAccess(PaymentInterface $payment, $payment_method_brand, AccountInterface $account = NULL);
 
   /**
-   * Executes a payment operation.
+   * Executes a payment.
    *
    * @see \Drupal\payment\Annotations\PaymentMethod
    *
    * @param \Drupal\payment\Entity\PaymentInterface $payment
-   * @param string $operation
-   *   See \Drupal\payment\Annotations\PaymentMethod::operations for the
-   *   definition of available operations.
-   * @param string $payment_method_brand
-   *   See self::brandOptions for the available brands.
    */
-  public function executePaymentOperation(PaymentInterface $payment, $operation, $payment_method_brand);
+  public function executePayment(PaymentInterface $payment);
 }

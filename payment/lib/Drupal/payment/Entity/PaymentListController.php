@@ -56,29 +56,4 @@ class PaymentListController extends EntityListController {
 
     return $row;
   }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getOperations(EntityInterface $payment) {
-    $operations = parent::getOperations($payment);
-
-    // Show the payment method plugin's payment operations as links.
-    $plugin = $payment->getPaymentMethod()->getPlugin();
-    $definition = $plugin->getPluginDefinition();
-    foreach ($definition['operations'] as $operation => $operation_info) {
-      if ($plugin->paymentOperationAccess($payment, $operation, $payment->getPaymentMethodBrand())) {
-        // @todo Add CSRF protection once https://drupal.org/node/1798296 is
-        //   in.
-        $uri = $payment->uri();
-        $operations[$operation] = array(
-          'title' => $operation_info['label'],
-          'href' => $uri['path'] . '/operation/' . $operation,
-          'options' => $uri['options'],
-        );
-      }
-    }
-
-    return $operations;
-  }
 }

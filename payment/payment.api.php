@@ -5,6 +5,7 @@
  * Hook documentation.
  */
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Entity\PaymentMethodInterface;
 use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
@@ -85,31 +86,30 @@ function hook_payment_type_pre_resume_context(PaymentInterface $payment) {
 }
 
 /**
- * Checks access for performing a payment method operation on a payment.
- *
- * @see \Drupal\payment\PaymentProcessingInterface::paymentOperationAccess()
+ * Checks access for executing a payment.
  *
  * @param \Drupal\payment\Entity\PaymentInterface $payment
- *   $payment->getPaymentMethod() contains the method currently configured, but NOT the
- *   method that $payment should be tested against, which is $payment_method.
+ *   $payment->getPaymentMethod() contains the method currently configured, but
+ *   NOT the method that $payment should be tested against, which is
+ *   $payment_method.
  * @param \Drupal\payment\Entity\PaymentMethodInterface $payment_method
- * @param string $operation
  * @param string $payment_method_brand
  *   See \Drupal\payment\PaymentProcessingInterface for the available brands.
+ * @param \Drupal\Core\Session\AccountInterface $account
  *
  * @return boolean
  *   Whether the operation can be performed on the payment.
+ *
+ * @see \Drupal\payment\Plugin\payment\method\Base::executePaymentAccess()
+ * @see \Drupal\payment\Plugin\payment\method\Base::executePaymentAccessEvent()
  */
-function hook_payment_operation_access(PaymentInterface $payment, PaymentMethodInterface $payment_method, $operation, $payment_method_brand) {}
+function hook_payment_pre_execute_access(PaymentInterface $payment, PaymentMethodInterface $payment_method, $payment_method_brand, AccountInterface $account) {}
 
 /**
- * Executes before a payment method operation is performed on a payment.
- *
- * @see \Drupal\payment\PaymentProcessingInterface::executePaymentOperation()
+ * Executes before a payment is executed.
  *
  * @param \Drupal\payment\Entity\PaymentInterface $payment
- * @param string $operation
- * @param string $payment_method_brand
- *   See \Drupal\payment\PaymentProcessingInterface for the available brands.
+ *
+ * @see \Drupal\payment\Plugin\payment\method\Base::executePayment()
  */
-function hook_payment_pre_operation(PaymentInterface $payment, $operation, $payment_method_brand) {}
+function hook_payment_pre_execute(PaymentInterface $payment) {}

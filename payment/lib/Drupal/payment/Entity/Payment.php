@@ -298,18 +298,15 @@ class Payment extends EntityNG implements PaymentInterface {
    * {@inheritdoc}
    */
   public function execute() {
-    $handler = \Drupal::moduleHandler();
     $manager = \Drupal::service('plugin.manager.payment.status');
-    // Preprocess the payment.
-    $handler->invokeAll('payment_pre_execute', $this);
-    // @todo Invoke Rules event.
     // Execute the payment.
-    if (count($this->validate())) {
-      $this->setStatus($manager->createInstance('payment_failed'));
+    if ($this->getPaymentMethod()->executePaymentAccess($this, $this->getPaymentMethodBrand())) {
+      $this->setStatus($manager->createInstance('payment_pending'));
+      $this->getPaymentMethod()->executePayment($this);
     }
     else {
-      $this->setStatus($manager->createInstance('payment_pending'));
-      $this->getPaymentMethod()->executePaymentOperation($this, 'execute', $this->getPaymentMethodBrand());
+      $this->setStatus($manager->createInstance('payment_failed'));
+      $this->getPaymentType()->resumeContext();
     }
   }
 
