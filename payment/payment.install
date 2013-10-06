@@ -644,7 +644,7 @@ function payment_update_8204(array &$sandbox) {
     ->fields('pm')
     ->execute()
     ->fetchAllAssoc('name');
-  $uuid = new Uuid();
+  $uuid = \Drupal::service('uuid');
   foreach ($payment_methods_data as $payment_method_data) {
     $plugin_id = isset($map[$payment_method_data->controller_class_name]) ? $map[$payment_method_data->controller_class_name] : '';
     $config = \Drupal::config('payment.payment_method.' . $payment_method_data->name);

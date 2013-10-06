@@ -7,14 +7,14 @@
 
 namespace Drupal\payment\Entity;
 
-use Drupal\Core\Entity\EntityNGConfirmFormBase;
+use Drupal\Core\Entity\ContentEntityConfirmFormBase;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides the payments status deletion form.
  */
-class PaymentStatusDeleteFormController extends EntityNGConfirmFormBase {
+class PaymentStatusDeleteFormController extends ContentEntityConfirmFormBase {
 
   /**
    * The URL generator.
@@ -52,8 +52,10 @@ class PaymentStatusDeleteFormController extends EntityNGConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getCancelPath() {
-    return 'admin/config/services/payment/status';
+  public function getCancelRoute() {
+    return array(
+      'route_name' => 'payment.payment_status.list',
+    );
   }
 
   /**

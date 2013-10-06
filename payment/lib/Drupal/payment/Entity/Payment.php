@@ -9,7 +9,7 @@ namespace Drupal\payment\Entity;
 
 use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Entity\Annotation\EntityType;
-use Drupal\Core\Entity\EntityNG;
+use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\payment\type\PaymentTypeInterface;
@@ -46,7 +46,7 @@ use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
  *   route_base_path = "admin/config/services/payment/type/{bundle}"
  * )
  */
-class Payment extends EntityNG implements PaymentInterface {
+class Payment extends ContentEntityBase implements PaymentInterface {
 
   /**
    * The payment type.
@@ -347,7 +347,6 @@ class Payment extends EntityNG implements PaymentInterface {
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions($entity_type) {
-    $fields = parent::baseFieldDefinitions($entity_type);
     $fields['currencyCode'] = array(
       'label' => t('Currency code'),
       'type' => 'string_field',

@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Entity;
 
+use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\Entity\ConfigStorageController;
@@ -31,8 +32,8 @@ class PaymentStatusStorageController extends ConfigStorageController {
   /**
    * {@inheritdoc}
    */
-  public function __construct($entity_type, array $entity_info, ConfigFactory $config_factory, StorageInterface $config_storage, QueryFactory $entity_query_factory, Manager $payment_status_manager) {
-    parent::__construct($entity_type, $entity_info, $config_factory, $config_storage, $entity_query_factory);
+  public function __construct($entity_type, array $entity_info, ConfigFactory $config_factory, StorageInterface $config_storage, QueryFactory $entity_query_factory, Manager $payment_status_manager, UuidInterface $uuid_service) {
+    parent::__construct($entity_type, $entity_info, $config_factory, $config_storage, $entity_query_factory, $uuid_service);
     $this->paymentStatusManager = $payment_status_manager;
   }
 
@@ -40,7 +41,7 @@ class PaymentStatusStorageController extends ConfigStorageController {
    * {@inheritdoc}
    */
   public static function createInstance(ContainerInterface $container, $entity_type, array $entity_info) {
-    return new static($entity_type, $entity_info,$container->get('config.factory'), $container->get('config.storage'), $container->get('entity.query'), $container->get('plugin.manager.payment.status'));
+    return new static($entity_type, $entity_info,$container->get('config.factory'), $container->get('config.storage'), $container->get('entity.query'), $container->get('plugin.manager.payment.status'), $container->get('uuid'));
   }
 
   /**

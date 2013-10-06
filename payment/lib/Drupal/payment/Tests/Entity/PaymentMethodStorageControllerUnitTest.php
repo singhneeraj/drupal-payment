@@ -40,7 +40,6 @@ class PaymentMethodStorageControllerUnitTest extends DrupalUnitTestBase {
     $payment_method = entity_create('payment_method', array());
     $this->assertTrue($payment_method instanceof PaymentMethodInterface);
     $this->assertTrue(is_int($payment_method->getOwnerId()));
-    $this->assertEqual(count($payment_method->validate()), 0);
   }
 
   /**

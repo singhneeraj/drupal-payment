@@ -45,7 +45,6 @@ class ModuleInstallUninstallWebTest extends WebTestBase {
       $this->assertTrue($payment_method instanceof PaymentMethodInterface);
     }
 
-    $handler->disable(array('payment'));
     $handler->uninstall(array('payment'));
     $this->assertFalse($handler->moduleExists('payment'));
   }
