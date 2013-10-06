@@ -51,7 +51,7 @@ class PaymentMethod {
       if (count($payment_method_options) == 1) {
         list($payment_method_id, $brand_name) = explode(':', key($payment_method_options));
         $payment->setPaymentMethodId($payment_method_id);
-        $payment->setPaymentMethodId($brand_name);
+        $payment->setPaymentMethodBrand($brand_name);
         $element['payment_method_id'] = array(
           '#type' => 'value',
           '#value' => $payment->getPaymentMethodId(),
@@ -100,7 +100,7 @@ class PaymentMethod {
         '#id' => static::getElementId($element, $form_state),
         '#type' => 'container',
       );
-      if ($payment->getPaymentMethodId()) {
+      if ($payment->getPaymentMethod()) {
         $element['payment_method_form'] += $payment->getPaymentMethod()->paymentFormElements($form, $form_state, $payment);
       }
     }

@@ -240,7 +240,9 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function getPaymentMethod() {
-    return entity_load('payment_method', $this->getPaymentMethodId());
+    if ($this->getPaymentMethodId()) {
+      return entity_load('payment_method', $this->getPaymentMethodId());
+    }
   }
 
   /**

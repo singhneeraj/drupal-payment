@@ -18,11 +18,16 @@ use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 class PaymentLineItem {
 
   /**
+   * An unlimited cardinality.
+   */
+  const CARDINALITY_UNLIMITED = -1;
+
+  /**
    * Implements form #process callback.
    */
   public static function process(array $element, array &$form_state, array $form) {
     // Validate the element configuration.
-    if (count($element['#default_value']) > $element['#cardinality']) {
+    if ($element['#cardinality'] != self::CARDINALITY_UNLIMITED && count($element['#default_value']) > $element['#cardinality']) {
       throw new \InvalidArgumentException('The number of default line items can not be higher than the cardinality.');
     }
     foreach ($element['#default_value'] as $line_item) {
@@ -40,6 +45,7 @@ class PaymentLineItem {
       '#header' => array(t('Line item'), t('Weight'), t('Operations')),
       '#tabledrag' => array(array('order', 'self', 'payment-line-item-weight')),
       '#type' => 'table',
+      '#tree' => TRUE,
     );
 
     foreach (array_values($line_items) as $delta => $line_item) {
@@ -77,7 +83,7 @@ class PaymentLineItem {
 
     // "Add more line items" button.
     $element['add_more'] = array(
-      '#access' => $element['#cardinality'] == 0 || count($line_items) < $element['#cardinality'],
+      '#access' => $element['#cardinality'] == self::CARDINALITY_UNLIMITED || count($line_items) < $element['#cardinality'],
       '#attributes' => array(
         'class' => array('payment-add-more'),
       ),
@@ -115,23 +121,25 @@ class PaymentLineItem {
     // Reorder line items based on their weight elements.
     $line_items = array();
     $values = NestedArray::getValue($form_state['values'], $element['#parents']);
-    foreach ($values['line_items'] as $name => $line_item_values) {
-      $line_items[$name] = $line_item_values['weight'];
+    if ($values['line_items']) {
+      foreach ($values['line_items'] as $name => $line_item_values) {
+        $line_items[$name] = $line_item_values['weight'];
+      }
+      asort($line_items);
+      foreach (static::getLineItems($element, $form_state) as $line_item) {
+        $line_items[$line_item->getName()] = $line_item;
+      }
+      static::setLineItems($element, $form_state, array_values($line_items));
     }
-    asort($line_items);
-    foreach (static::getLineItems($element, $form_state) as $line_item) {
-      $line_items[$line_item->getName()] = $line_item;
-    }
-    static::setLineItems($element, $form_state, array_values($line_items));
   }
 
   /**
    * Implements form #submit callback.
    */
   public static function addMoreSubmit(array &$form, array &$form_state) {
-    $parents = array_slice($form_state['triggering_element']['#parents'], 0, -2);
+    $parents = array_slice($form_state['triggering_element']['#array_parents'], 0, -2);
     $root_element = NestedArray::getValue($form, $parents);
-    $values = NestedArray::getValue($form_state['values'], $parents);
+    $values = NestedArray::getValue($form_state['values'], array_slice($form_state['triggering_element']['#parents'], 0, -2));
     $line_item = \Drupal::service('plugin.manager.payment.line_item')
       ->createInstance($values['add_more']['type'])
       ->setName(static::createLineItemName($root_element, $form_state, $values['add_more']['type']));
@@ -145,7 +153,7 @@ class PaymentLineItem {
    * Implements form AJAX callback.
    */
   public static function addMoreAjaxSubmit(array &$form, array &$form_state) {
-    $parents = array_slice($form_state['triggering_element']['#parents'], 0, -2);
+    $parents = array_slice($form_state['triggering_element']['#array_parents'], 0, -2);
     $root_element = NestedArray::getValue($form, $parents);
 
     return array_intersect_key($root_element, array_flip(element_children($root_element)));
@@ -155,10 +163,10 @@ class PaymentLineItem {
    * Implements form #submit callback.
    */
   public static function deleteSubmit(array &$form, array &$form_state) {
-    $root_element_parents  = array_slice($form_state['triggering_element']['#parents'], 0, -3);
+    $root_element_parents  = array_slice($form_state['triggering_element']['#array_parents'], 0, -3);
     $root_element = NestedArray::getValue($form, $root_element_parents);
     $line_items = array_values(static::getLineItems($root_element, $form_state));
-    $parents = $form_state['triggering_element']['#parents'];
+    $parents = $form_state['triggering_element']['#array_parents'];
     $line_item_name = $parents[count($parents) - 2];
     foreach ($line_items as $i => $line_item) {
       if ($line_item->getName() == $line_item_name) {
@@ -173,9 +181,9 @@ class PaymentLineItem {
    * Implements form AJAX callback.
    */
   public static function deleteAjaxSubmit(array &$form, array &$form_state) {
-    $root_element_parents  = array_slice($form_state['triggering_element']['#parents'], 0, -3);
+    $root_element_parents  = array_slice($form_state['triggering_element']['#array_parents'], 0, -3);
     $root_element = NestedArray::getValue($form, $root_element_parents);
-    $parents = $form_state['triggering_element']['#parents'];
+    $parents = $form_state['triggering_element']['#array_parents'];
     $line_item_name = $parents[count($parents) - 2];
     $response = new AjaxResponse();
     $response->addCommand(new RemoveCommand('#' . $root_element['#id'] . ' .payment-line-item-name-' . $line_item_name));

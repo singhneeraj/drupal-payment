@@ -65,6 +65,7 @@ class PaymentLineItemsDisplay {
         ),
       );
     }
+    $currency = entity_load('currency', $payment->getCurrencyCode());
     $element['table']['payment_total'] = array(
       '#attributes' => array(
         'class' => array('payment-amount'),
