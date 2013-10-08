@@ -137,17 +137,4 @@ class BasicUnitTest extends DrupalUnitTestBase {
     ));
     $this->assertTrue($this->method->executePaymentAccess($payment, 'default'));
   }
-
-  /**
-   * Tests executePayment().
-   */
-  protected function testExecutePayment() {
-    $plugin_id = 'payment_unknown';
-    $payment = entity_create('payment', array(
-      'bundle' => 'payment_unavailable',
-    ))->setPaymentMethodBrand('default');
-    $this->method->setStatus($plugin_id);
-    $this->method->executePayment($payment);
-    $this->assertEqual($payment->getStatus()->getPluginId(), $plugin_id);
-  }
 }

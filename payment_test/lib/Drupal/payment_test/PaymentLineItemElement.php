@@ -33,7 +33,8 @@ class PaymentLineItemElement implements ContainerInjectionInterface, FormInterfa
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
-    $form['line_item'] = array(
+    // Nest the element to make sure that works.
+    $form['container']['line_item'] = array(
       '#cardinality' => 4,
       '#default_value' => Generate::createPaymentLineItems(),
       '#type' => 'payment_line_items',
@@ -56,6 +57,6 @@ class PaymentLineItemElement implements ContainerInjectionInterface, FormInterfa
    * {@inheritdoc}
    */
   public function submitForm(array &$form, array &$form_state) {
-    $value = \Drupal::state()->set('payment_test_line_item_form_element', PaymentLineItem::getLineItems($form['line_item'], $form_state));
+    $value = \Drupal::state()->set('payment_test_line_item_form_element', PaymentLineItem::getLineItems($form['container']['line_item'], $form_state));
   }
 }

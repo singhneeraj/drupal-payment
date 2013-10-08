@@ -53,7 +53,7 @@ class PaymentStorageController extends DatabaseStorageControllerNG implements Pa
   /**
    * {@inheritdoc}
    */
-  protected function mapToStorageRecord(EntityInterface $entity) {
+  protected function mapToStorageRecord(EntityInterface $entity, $table_key = 'data_table') {
     $record = new \stdClass();
     $record->bundle = $entity->bundle();
     $record->currency_code = $entity->getCurrencyCode();

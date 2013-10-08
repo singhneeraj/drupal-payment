@@ -7,12 +7,12 @@
 
 namespace Drupal\payment;
 
-use Drupal\Core\Access\AccessibleInterface;
+use Drupal\Core\TypedData\AccessibleInterface;
 use Drupal\simpletest\DrupalUnitTestBase;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Provides tools to test \Drupal\Core\Access\AccessibleInterface objects.
+ * Provides tools to test \Drupal\Core\TypedData\AccessibleInterface objects.
  */
 class AccessibleInterfaceUnitTestBase extends DrupalUnitTestBase {
 
@@ -42,7 +42,7 @@ class AccessibleInterfaceUnitTestBase extends DrupalUnitTestBase {
   /**
    * Tests access to typed data.
    *
-   * @param \Drupal\Core\Access\AccessibleInterface $data
+   * @param \Drupal\Core\TypedData\AccessibleInterface $data
    * @param string $data_label
    *   The entity's human-readable type.
    * @param string $operation

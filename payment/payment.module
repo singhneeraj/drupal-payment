@@ -5,6 +5,7 @@
  * Hook implementations and shared functions.
  */
 
+use Drupal\payment\Element\PaymentLineItem;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\payment\line_item\Basic;
 
@@ -271,9 +272,10 @@ function payment_element_info() {
     '#attached' => array(
       'css' => array(drupal_get_path('module', 'payment') . '/css/payment.css'),
     ),
-    // The number of values this element allows, which must be at least as much
-    // as the number of line items in the default value. Enter 0 for unlimited.
-    '#cardinality' => 0,
+    // The number of values this element allows, which must be at least as many
+    // as the number of line items in the default value. For unlimited values,
+    // use \Drupal\payment\Element\PaymentLineItem::CARDINALITY_UNLIMITED.
+    '#cardinality' => PaymentLineItem::CARDINALITY_UNLIMITED,
     // An array of
     // \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
     // objects.

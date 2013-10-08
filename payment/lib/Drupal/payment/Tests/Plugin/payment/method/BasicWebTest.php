@@ -8,6 +8,7 @@
 namespace Drupal\payment\Tests\Plugin\payment\method;
 
 use Drupal\simpletest\WebTestBase;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Tests \Drupal\payment\Plugin\payment\method\Basic.
@@ -54,5 +55,26 @@ class BasicWebTest extends WebTestBase {
     if ($this->assertTrue(is_array($elements))) {
       $this->assertIdentical($elements['message']['#markup'], "<p>Hello Drupal!</p>\n");
     }
+  }
+
+  /**
+   * Tests executePayment().
+   */
+  protected function testExecutePayment() {
+    $plugin_id = 'payment_unknown';
+    $payment = entity_create('payment', array(
+      'bundle' => 'payment_unavailable',
+    ))->setPaymentMethodBrand('default');
+    $this->method->setStatus($plugin_id);
+    $exception = FALSE;
+    try {
+      $this->method->executePayment($payment);
+    }
+    catch (NotFoundHttpException $e) {
+      $exception = TRUE;
+
+    }
+    $this->assertTrue($exception);
+    $this->assertEqual($payment->getStatus()->getPluginId(), $plugin_id);
   }
 }

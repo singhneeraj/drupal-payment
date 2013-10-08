@@ -53,7 +53,7 @@ abstract class Base extends PluginBase implements PaymentTypeInterface {
   /**
    * {@inheritdoc
    */
-  public static function getOperations() {
+  public static function getOperations($plugin_id) {
     return array();
   }
 }

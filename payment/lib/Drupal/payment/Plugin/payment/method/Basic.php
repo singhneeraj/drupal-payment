@@ -104,7 +104,9 @@ class Basic extends Base {
   public function executePayment(PaymentInterface $payment) {
     if ($this->executePaymentAccess($payment, $payment->getPaymentMethodBrand())) {
       $payment->setStatus(\Drupal::service('plugin.manager.payment.status')->createInstance($this->getStatus()));
+      $payment->save();
     }
+    $payment->getPaymentType()->resumeContext();
   }
 
   /**

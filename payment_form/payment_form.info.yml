@@ -4,5 +4,6 @@ core: 8.x
 type: module
 package: Payment
 dependencies:
+  - entity_reference
   - field
   - payment

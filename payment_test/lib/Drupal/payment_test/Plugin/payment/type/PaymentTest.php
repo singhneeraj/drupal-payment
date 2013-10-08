@@ -30,7 +30,7 @@ class PaymentTest extends Base {
   /**
    * {@inheritdoc
    */
-  public static function getOperations() {
+  public static function getOperations($plugin_id) {
     return array(
       'foo_bar' => array(
         'title' => t('FooBar'),

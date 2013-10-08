@@ -44,12 +44,17 @@ class PaymentListController extends EntityListController {
     }
     $row['data']['amount'] = $currency->format($payment->getAmount());
 
-    $payment_method = entity_load('payment_method', $payment->getPaymentMethodId());
-    $row['data']['payment_method'] = $payment_method->label();
+    $row['data']['payment_method'] = $payment->getPaymentMethod() ? $payment->getPaymentMethod()->label() : t('Unavailable');
 
-    $owner = entity_load('user', $payment->getOwnerId());
-    $uri = $owner->uri();
-    $row['data']['owner'] = l($owner->label(), $uri['path'], $uri['options']);
+    if ($payment->getOwner()) {
+      $owner = $payment->getOwner();
+      $uri = $owner->uri();
+      $owner_data = l($owner->label(), $uri['path'], $uri['options']);
+    }
+    else {
+      $owner_data = t('Unavailable');
+    }
+    $row['data']['owner'] = $owner_data;
 
     $operations = $this->buildOperations($payment);
     $row['data']['operations']['data'] = $operations;

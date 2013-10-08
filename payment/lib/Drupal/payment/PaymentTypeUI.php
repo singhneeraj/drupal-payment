@@ -72,7 +72,7 @@ class PaymentTypeUI implements ContainerInjectionInterface {
     unset($definitions['payment_unavailable']);
     foreach ($definitions as $plugin_id => $definition) {
       $class = $definition['class'];
-      $operations = $class::getOperations();
+      $operations = $class::getOperations($plugin_id);
       if ($this->moduleHandler->moduleExists('field_ui')) {
         $admin_path = $this->entityManager->getAdminPath('payment', $plugin_id);
         if ($account->hasPermission('administer payment fields')) {

@@ -79,6 +79,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    */
   public function __construct(array $values, $entity_type, $bundle = FALSE, $translations = array()) {
     parent::__construct($values, $entity_type, $bundle, $translations);
+    \Drupal::service('plugin.manager.payment.type')->clearCachedDefinitions();
     $this->type = \Drupal::service('plugin.manager.payment.type')->createInstance($this->bundle());
   }
 
@@ -381,5 +382,12 @@ class Payment extends ContentEntityBase implements PaymentInterface {
     );
 
     return $fields;
+  }
+
+  /**
+   * Clones the instance.
+   */
+  function __clone() {
+    $this->type = clone $this->getPaymentType();
   }
 }

@@ -41,6 +41,7 @@ class PaymentUIWebTest extends WebTestBase {
     $payment_method->save();
     $payment = Generate::createPayment(2, $payment_method);
     $payment->save();
+    $payment = entity_load_unchanged('payment', $payment->id());
 
     // View the administrative listing.
     $this->drupalLogin($this->drupalCreateUser(array('access content overview')));
