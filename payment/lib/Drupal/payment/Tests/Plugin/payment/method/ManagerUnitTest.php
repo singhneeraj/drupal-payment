@@ -66,4 +66,12 @@ class ManagerUnitTest extends DrupalUnitTestBase {
     $this->assertEqual($this->manager->createInstance($id)->getPluginId(), $id);
     $this->assertEqual($this->manager->createInstance('ThisIdDoesNotExist')->getPluginId(), $id);
   }
+
+  /**
+   * Tests options().
+   */
+  protected function testOptions() {
+    $options = $this->manager->options();
+    $this->assertTrue(strlen($options['payment_basic']));
+  }
 }

@@ -6,17 +6,6 @@
  */
 
 /**
- * Menu page callback: show a payment.
- *
- * @param Payment $payment
- *
- * @return array
- */
-function payment_page_payment_view(Payment $payment) {
-  return entity_view('payment', array($payment));
-}
-
-/**
  * Builds common elements for a payment add/edit form.
  *
  * Note that this is not a form build callback and that this function was not
@@ -169,29 +158,6 @@ function payment_form_standalone_submit(array $form, array &$form_state) {
 }
 
 /**
- * Implements form build callback: payment deletion form.
- */
-function payment_form_payment_delete(array $form, array &$form_state, Payment $payment) {
-  $form_state['payment'] = $payment;
-
-  return confirm_form($form, t('Do you really want to delete payment !pid?', array(
-    '!pid' => $payment->pid,
-  )), 'payment/' . $payment->pid, t('Existing information that uses this payment, such as a webshop order, may become unusable. This action cannot be undone.'), t('Delete payment'));
-}
-
-/**
- * Implements form submit callback for payment_form_payment_delete().
- */
-function payment_form_payment_delete_submit(array $form, array &$form_state) {
-  $payment = $form_state['payment'];
-  entity_delete('payment', $payment->pid);
-  $form_state['redirect'] = '<front>';
-  drupal_set_message(t('Payment !pid has been deleted.', array(
-    '!pid' => $payment->pid,
-  )));
-}
-
-/**
  * Return payment methods for use in form elements.
  *
  * @return array
@@ -203,25 +169,6 @@ function payment_method_options() {
     $options[$payment_method->pmid] = check_plain($payment_method->title_specific);
   }
   asort($options);
-
-  return $options;
-}
-
-/**
- * Return payment method controllerss for use in form elements.
- *
- * @return array
- *   Keys are payment method controller class names. Values are controller
- *   titles.
- */
-function payment_method_controller_options() {
-  $options = array();
-  $definitions = \Drupal::service('plugin.manager.payment.method')->getDefinitions();
-  unset($definitions['payment_unavailable']);
-  foreach ($definitions as $plugin_id => $definition) {
-    $options[$plugin_id] = $definition['title'];
-  }
-  natcasesort($options);
 
   return $options;
 }

@@ -24,17 +24,6 @@ define('PAYMENT_LINE_ITEM_TOKEN_PREFIX', 'line_item-');
  */
 function payment_menu() {
   // Payment pages.
-  $items['payment/%entity_object'] = array(
-    'load arguments' => array('payment'),
-    'title' => 'Payment',
-    'title callback' => 'payment_title',
-    'title arguments' => array(1),
-    'page callback' => 'payment_page_payment_view',
-    'page arguments' => array(1),
-    'access callback' => 'payment_access',
-    'access arguments' => array('view', 1),
-    'file' => 'payment.ui.inc',
-  );
   $items['payment/%entity_object/view'] = array(
     'load arguments' => array('payment'),
     'title' => 'View',
@@ -52,18 +41,6 @@ function payment_menu() {
     'type' => MENU_LOCAL_TASK,
     'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
     'weight' => -9,
-    'file' => 'payment.ui.inc',
-  );
-  $items['payment/%entity_object/delete'] = array(
-    'load arguments' => array('payment'),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('payment_form_payment_delete', 1),
-    'access callback' => 'payment_access',
-    'access arguments' => array('delete', 1),
-    'title' => 'Delete',
-    'type' => MENU_LOCAL_TASK,
-    'context' => MENU_CONTEXT_INLINE,
-    'weight' => -8,
     'file' => 'payment.ui.inc',
   );
 

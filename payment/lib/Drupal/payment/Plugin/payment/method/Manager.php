@@ -51,4 +51,22 @@ class Manager extends DefaultPluginManager {
       return parent::createInstance('payment_unavailable', $configuration);
     }
   }
+
+  /**
+   * Returns payment method options.
+   *
+   * @return array
+   *   Keys are plugin IDs. Values are plugin labels.
+   */
+  function options() {
+    $options = array();
+    $definitions = $this->getDefinitions();
+    unset($definitions['payment_unavailable']);
+    foreach ($definitions as $plugin_id => $definition) {
+      $options[$plugin_id] = $definition['label'];
+    }
+    natcasesort($options);
+
+    return $options;
+  }
 }
