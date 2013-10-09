@@ -9,7 +9,7 @@ namespace Drupal\payment_test;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormInterface;
-use Drupal\payment\Element\PaymentLineItem;
+use Drupal\payment\Element\PaymentLineItemsInput;
 use Drupal\payment\Generate;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -37,7 +37,7 @@ class PaymentLineItemElement implements ContainerInjectionInterface, FormInterfa
     $form['container']['line_item'] = array(
       '#cardinality' => 4,
       '#default_value' => Generate::createPaymentLineItems(),
-      '#type' => 'payment_line_items',
+      '#type' => 'payment_line_items_input',
     );
     $form['submit'] = array(
       '#type' => 'submit',

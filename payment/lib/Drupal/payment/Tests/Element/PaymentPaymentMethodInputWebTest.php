@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\PaymentMethodWebTest.
+ * Contains class \Drupal\payment\Tests\PaymentPaymentMethodInputWebTest.
  */
 
 namespace Drupal\payment\Tests\Element;
@@ -11,9 +11,9 @@ use Drupal\payment\Generate;
 use Drupal\simpletest\WebTestBase ;
 
 /**
- * Tests the payment_method element.
+ * Tests the payment_payment_method_input element.
  */
-class PaymentMethodWebTest extends WebTestBase {
+class PaymentPaymentMethodInputWebTest extends WebTestBase {
 
   /**
    * {@inheritdoc}
@@ -26,7 +26,7 @@ class PaymentMethodWebTest extends WebTestBase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => 'payment_method element',
+      'name' => 'payment_payment_method_input element',
       'group' => 'Payment',
     );
   }

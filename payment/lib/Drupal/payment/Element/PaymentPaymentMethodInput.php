@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Element\PaymentMethod.
+ * Contains \Drupal\payment\Element\PaymentPaymentMethodInput.
  */
 
 namespace Drupal\payment\Element;
@@ -11,9 +11,9 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\payment\Entity\PaymentInterface;
 
 /**
- * Provides form callbacks for the payment_method form element.
+ * Provides form callbacks for the payment_payment_method_input form element.
  */
-class PaymentMethod {
+class PaymentPaymentMethodInput {
 
   /**
    * Implements form #process callback.

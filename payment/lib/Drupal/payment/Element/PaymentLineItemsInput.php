@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Element\PaymentLineItem.
+ * Contains \Drupal\payment\Element\PaymentLineItemsInput.
  */
 
 namespace Drupal\payment\Element;
@@ -13,9 +13,9 @@ use Drupal\Core\Ajax\RemoveCommand;
 use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 
 /**
- * Provides form callbacks for the payment_line_item form element.
+ * Provides form callbacks for the payment_line_items_input form element.
  */
-class PaymentLineItem {
+class PaymentLineItemsInput {
 
   /**
    * An unlimited cardinality.

@@ -10,7 +10,7 @@ namespace Drupal\payment_test;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Form\FormInterface;
-use Drupal\payment\Element\PaymentMethod;
+use Drupal\payment\Element\PaymentPaymentMethodInput;
 use Drupal\payment\Generate;
 use Drupal\payment\Plugin\payment\type\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -56,7 +56,7 @@ class PaymentMethodElement implements ContainerInjectionInterface, FormInterface
     $form['payment_method'] = array(
       '#default_value' => $payment,
       '#required' => TRUE,
-      '#type' => 'payment_method',
+      '#type' => 'payment_payment_method_input',
     );
     $form['submit'] = array(
       '#type' => 'submit',

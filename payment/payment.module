@@ -5,7 +5,7 @@
  * Hook implementations and shared functions.
  */
 
-use Drupal\payment\Element\PaymentLineItem;
+use Drupal\payment\Element\PaymentLineItemsInput;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\payment\line_item\Basic;
 
@@ -229,7 +229,7 @@ function payment_field_extra_fields() {
  */
 function payment_element_info() {
   // A payment method selection and configuration element for a payment.
-  $elements['payment_method'] = array(
+  $elements['payment_payment_method_input'] = array(
     // A \Drupal\payment\Plugin'Core\Entity\PaymentInterface object.
     '#default_value' => NULL,
     '#input' => TRUE,
@@ -238,28 +238,28 @@ function payment_element_info() {
     // valid, the element will not expand to a select list, but will appear to
     // the user as if there only is one payment method available at all.
     '#payment_method_ids' => array(),
-    '#process' => array(array('\Drupal\payment\Element\PaymentMethod', 'process')),
+    '#process' => array(array('\Drupal\payment\Element\PaymentPaymentMethodInput', 'process')),
     '#tree' => TRUE,
   );
 
   // Line item configuration. Use
-  // \Drupal\payment\Element\PaymentLineItem::getLineItems() to get the
+  // \Drupal\payment\Element\PaymentLineItemsInput::getLineItems() to get the
   // 'return' value.
-  $elements['payment_line_items'] = array(
+  $elements['payment_line_items_input'] = array(
     '#attached' => array(
       'css' => array(drupal_get_path('module', 'payment') . '/css/payment.css'),
     ),
     // The number of values this element allows, which must be at least as many
     // as the number of line items in the default value. For unlimited values,
-    // use \Drupal\payment\Element\PaymentLineItem::CARDINALITY_UNLIMITED.
-    '#cardinality' => PaymentLineItem::CARDINALITY_UNLIMITED,
+    // use \Drupal\payment\Element\PaymentLineItemsInput::CARDINALITY_UNLIMITED.
+    '#cardinality' => PaymentLineItemsInput::CARDINALITY_UNLIMITED,
     // An array of
     // \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
     // objects.
     '#default_value' => array(),
-    '#element_validate' => array(array('\Drupal\payment\Element\PaymentLineItem', 'validate')),
+    '#element_validate' => array(array('\Drupal\payment\Element\PaymentLineItemsInput', 'validate')),
     '#input' => TRUE,
-    '#process' => array('form_process_container', array('\Drupal\payment\Element\PaymentLineItem', 'process')),
+    '#process' => array('form_process_container', array('\Drupal\payment\Element\PaymentLineItemsInput', 'process')),
     '#tree' => TRUE,
     '#theme_wrappers' => array('container'),
     '#value' => array(),

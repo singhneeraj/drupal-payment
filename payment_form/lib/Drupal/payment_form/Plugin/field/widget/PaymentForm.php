@@ -12,7 +12,7 @@ use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Entity\Field\FieldItemListInterface;
 use Drupal\field\Annotation\FieldWidget;
 use Drupal\field\Plugin\Type\Widget\WidgetBase;
-use Drupal\payment\Element\PaymentLineItem;
+use Drupal\payment\Element\PaymentLineItemsInput;
 
 /**
  * A payment configuration widget.
@@ -66,7 +66,7 @@ class PaymentForm extends WidgetBase {
     $element['line_items'] = array(
       '#cardinality' => $this->fieldDefinition->getFieldCardinality(),
       '#default_value' => $line_items,
-      '#type' => 'payment_line_items',
+      '#type' => 'payment_line_items_input',
     );
 
     return $element;
@@ -78,7 +78,7 @@ class PaymentForm extends WidgetBase {
   public function massageFormValues(array $values, array $form, array &$form_state) {
     $element = NestedArray::getValue($form, array_merge(array_slice($values['array_parents'], count($form['#array_parents'])), array('line_items')));
 
-    return PaymentLineItem::getLineItems($element, $form_state);
+    return PaymentLineItemsInput::getLineItems($element, $form_state);
   }
 
 }

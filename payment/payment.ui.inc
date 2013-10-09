@@ -46,7 +46,7 @@ function payment_form_embedded(array &$form_state, Payment $payment, array $pmid
   $elements['payment_line_items'] = payment_line_items($payment);
   $elements['payment_method'] = array(
     '#access' => payment_status_is_or_has_ancestor($payment->getStatus()->status, PAYMENT_STATUS_NEW),
-    '#type' => 'payment_method',
+    '#type' => 'payment_payment_method_input',
     '#title' => t('Payment method'),
     '#required' => TRUE,
     '#pmids' => $pmids,

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\PaymentLineItemWebTest.
+ * Contains class \Drupal\payment\Tests\PaymentLineItemsInputWebTest.
  */
 
 namespace Drupal\payment\Tests\Element;
@@ -12,9 +12,9 @@ use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 use Drupal\simpletest\WebTestBase ;
 
 /**
- * Tests the payment_line_item element.
+ * Tests the payment_line_items_input element.
  */
-class PaymentLineItemWebTest extends WebTestBase {
+class PaymentLineItemsInputWebTest extends WebTestBase {
 
   /**
    * {@inheritdoc}
@@ -27,7 +27,7 @@ class PaymentLineItemWebTest extends WebTestBase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => 'payment_line_item element',
+      'name' => 'payment_line_items_input element',
       'group' => 'Payment',
     );
   }
