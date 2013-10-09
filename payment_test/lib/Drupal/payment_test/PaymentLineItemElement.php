@@ -57,6 +57,6 @@ class PaymentLineItemElement implements ContainerInjectionInterface, FormInterfa
    * {@inheritdoc}
    */
   public function submitForm(array &$form, array &$form_state) {
-    $value = \Drupal::state()->set('payment_test_line_item_form_element', PaymentLineItem::getLineItems($form['container']['line_item'], $form_state));
+    $value = \Drupal::state()->set('payment_test_line_item_form_element', PaymentLineItemsInput::getLineItems($form['container']['line_item'], $form_state));
   }
 }

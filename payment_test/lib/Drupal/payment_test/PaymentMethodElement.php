@@ -76,6 +76,6 @@ class PaymentMethodElement implements ContainerInjectionInterface, FormInterface
    * {@inheritdoc}
    */
   public function submitForm(array &$form, array &$form_state) {
-    $value = \Drupal::state()->set('payment_test_method_form_element', PaymentMethod::getPayment($form['payment_method'], $form_state)->getPaymentMethodId());
+    $value = \Drupal::state()->set('payment_test_method_form_element', PaymentPaymentMethodInput::getPayment($form['payment_method'], $form_state)->getPaymentMethodId());
   }
 }
