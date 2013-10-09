@@ -6,3 +6,4 @@ package: Payment
 dependencies:
   - field
   - payment
+hidden: true
