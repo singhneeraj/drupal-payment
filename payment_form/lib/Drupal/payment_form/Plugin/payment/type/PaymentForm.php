@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  * The payment form field payment type.
  *
  * @PaymentType(
- *   description = @Translation("An instance of the payment form field."),
  *   id = "payment_form",
  *   label = @Translation("Payment form field")
  * )
@@ -43,24 +42,5 @@ class PaymentForm extends Base {
     $instance = entity_load('field_instance', $instance_id);
 
     return $instance->label();
-  }
-
-  /**
-   * {@inheritdoc
-   */
-  public static function getOperations($plugin_id) {
-    $operations = array();
-    if (\Drupal::moduleHandler()->moduleExists('field_ui')) {
-      $instance_id = substr($plugin_id, 13);
-      $instance = \Drupal::entityManager()->getStorageController('field_instance')->load($instance_id);
-      $uri = $instance->uri();
-      $operations['payment_form_field_edit'] = array(
-        'href' => $uri['path'],
-        'options' => $uri['options'],
-        'title' => t('Edit payment form field'),
-      );
-    }
-
-    return $operations;
   }
 }
