@@ -21,6 +21,13 @@ payment.payment.view:
   requirements:
     _entity_access: 'payment.view'
 
+payment.payment.edit:
+  path: '/payment/{payment}/edit'
+  defaults:
+    _entity_form: 'payment.edit'
+  requirements:
+    _entity_access: 'payment.update'
+
 payment.payment.delete:
   path: '/payment/{payment}/delete'
   defaults:

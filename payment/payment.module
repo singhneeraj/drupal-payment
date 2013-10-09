@@ -32,16 +32,11 @@ function payment_menu() {
     'weight' => -10,
   );
   $items['payment/%entity_object/edit'] = array(
-    'load arguments' => array('payment'),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('payment_form_standalone', 1),
-    'access callback' => 'payment_access',
-    'access arguments' => array('update', 1),
+    'route_name' => 'payment.payment.edit',
     'title' => 'Edit',
     'type' => MENU_LOCAL_TASK,
     'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
     'weight' => -9,
-    'file' => 'payment.ui.inc',
   );
 
   // Administration section.

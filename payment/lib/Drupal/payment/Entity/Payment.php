@@ -25,7 +25,8 @@ use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
  *   controllers = {
  *     "access" = "Drupal\payment\Entity\PaymentAccessController",
  *     "form" = {
- *       "delete" = "Drupal\payment\Entity\PaymentDeleteFormController"
+ *       "delete" = "Drupal\payment\Entity\PaymentDeleteFormController",
+ *       "edit" = "Drupal\payment\Entity\PaymentEditFormController"
  *     },
  *     "list" = "Drupal\payment\Entity\PaymentListController",
  *     "render" = "Drupal\payment\Entity\PaymentRenderController",
@@ -40,7 +41,8 @@ use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
  *   id = "payment",
  *   label = @Translation("Payment"),
  *   links = {
- *     "canonical" = "/payment/{payment}"
+ *     "canonical" = "/payment/{payment}",
+ *     "edit-form" = "/payment/{payment}/edit"
  *   },
  *   module = "payment",
  *   route_base_path = "admin/config/services/payment/type/{bundle}"

@@ -73,6 +73,22 @@ class PaymentUIWebTest extends WebTestBase {
       $this->assertText(t('Status'));
     }
 
+    // Update the payment.
+    $path = 'payment/' . $payment->id() . '/edit';
+    $this->drupalGet($path);
+    $this->assertResponse('403');
+    $this->drupalLogin($this->drupalCreateUser(array('payment.payment.update.any')));
+    $this->drupalGet($path);
+    if ($this->assertResponse('200')) {
+      $this->assertFieldByXPath('//select[@name="status_plugin_id"]');
+      $this->drupalPostForm(NULL, array(
+        'status_plugin_id' => 'payment_cancelled',
+      ), t('Save'));
+    }
+    $this->assertUrl('payment/' . $payment->id());
+    $payment = entity_load_unchanged('payment', $payment->id());
+    $this->assertEqual($payment->getStatus()->getPluginId(), 'payment_cancelled');
+
     // Delete a payment.
     $path = 'payment/' . $payment->id() . '/delete';
     $this->drupalGet($path);
