@@ -9,9 +9,6 @@ use Drupal\payment\Element\PaymentLineItemsInput;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\payment\line_item\Basic;
 
-// Load include files that contain hooks or callback code.
-module_load_include('inc', 'payment', 'payment.ui');
-
 /**
  * The prefix for payment line item tokens.
  */
