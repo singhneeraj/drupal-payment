@@ -166,6 +166,13 @@ class PaymentStorageController extends FieldableDatabaseStorageController implem
           $status->setId($record['id']);
         }
       }
+      db_update('payment')
+        ->condition('id', $payment_id)
+        ->fields(array(
+          'first_payment_status_id' => reset($entity_statuses)->getId(),
+          'last_payment_status_id' => end($entity_statuses)->getId(),
+        ))
+        ->execute();
     }
   }
 
