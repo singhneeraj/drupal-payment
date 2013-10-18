@@ -6,9 +6,6 @@
 
 namespace Drupal\payment\Plugin\payment\type;
 
-
-use Drupal\Core\Annotation\Translation;
-use Drupal\payment\Annotations\PaymentType;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**

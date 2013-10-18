@@ -5,12 +5,10 @@
  * Contains \Drupal\payment_form\Plugin\field\formatter\PaymentForm.
  */
 
-namespace Drupal\payment_form\Plugin\field\formatter;
+namespace Drupal\payment_form\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Entity\Field\FieldItemListInterface;
-use Drupal\field\Annotation\FieldFormatter;
-use Drupal\Core\Annotation\Translation;
-use Drupal\field\Plugin\Type\Formatter\FormatterBase;
+use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Entity\Field\FieldInterface;
 
 /**

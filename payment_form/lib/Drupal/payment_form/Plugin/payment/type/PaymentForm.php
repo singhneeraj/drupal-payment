@@ -6,8 +6,6 @@
 
 namespace Drupal\payment_form\Plugin\payment\type;
 
-use Drupal\Core\Annotation\Translation;
-use Drupal\payment\Annotations\PaymentType;
 use Drupal\payment\Plugin\payment\type\Base;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 

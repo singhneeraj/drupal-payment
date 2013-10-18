@@ -7,8 +7,6 @@
 
 namespace Drupal\payment\Entity;
 
-use Drupal\Core\Annotation\Translation;
-use Drupal\Core\Entity\Annotation\EntityType;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
 use Drupal\payment\Entity\PaymentInterface;

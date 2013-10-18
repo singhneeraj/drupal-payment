@@ -5,13 +5,11 @@
  * Definition of Drupal\payment_form\Plugin\field\widget\PaymentForm.
  */
 
-namespace Drupal\payment_form\Plugin\field\widget;
+namespace Drupal\payment_form\Plugin\Field\FieldWidget;
 
 use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Entity\Field\FieldItemListInterface;
-use Drupal\field\Annotation\FieldWidget;
-use Drupal\field\Plugin\Type\Widget\WidgetBase;
+use Drupal\Core\Field\WidgetBase;
 use Drupal\payment\Element\PaymentLineItemsInput;
 
 /**

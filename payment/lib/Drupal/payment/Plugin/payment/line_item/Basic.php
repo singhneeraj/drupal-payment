@@ -7,8 +7,6 @@
 namespace Drupal\payment\Plugin\payment\line_item;
 
 use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\Annotation\Translation;
-use Drupal\payment\Annotations\PaymentLineItem;
 use Drupal\payment\Plugin\payment\line_item\Base;
 
 /**

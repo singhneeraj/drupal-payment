@@ -7,9 +7,7 @@
 namespace Drupal\payment\Plugin\payment\method;
 
 use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\payment\Annotations\PaymentMethod;
 use Drupal\payment\Entity\PaymentInterface;
 
 /**

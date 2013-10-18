@@ -7,9 +7,7 @@
 
 namespace Drupal\payment\Entity;
 
-use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
-use Drupal\Core\Entity\Annotation\EntityType;
 
 /**
  * Defines a payment status entity.

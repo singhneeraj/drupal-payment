@@ -6,8 +6,6 @@
 
 namespace Drupal\payment_form\Plugin\field\field_type;
 
-use Drupal\Core\Annotation\Translation;
-use Drupal\Core\Entity\Annotation\FieldType;
 use Drupal\currency\Entity\Currency;
 use Drupal\field\FieldInterface;
 use Drupal\field\Plugin\Type\FieldType\ConfigFieldItemBase;

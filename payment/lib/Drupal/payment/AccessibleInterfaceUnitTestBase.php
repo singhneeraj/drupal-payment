@@ -7,7 +7,7 @@
 
 namespace Drupal\payment;
 
-use Drupal\Core\TypedData\AccessibleInterface;
+use Drupal\Core\Access\AccessibleInterface;
 use Drupal\simpletest\DrupalUnitTestBase;
 use Drupal\Core\Session\AccountInterface;
 
@@ -42,7 +42,7 @@ class AccessibleInterfaceUnitTestBase extends DrupalUnitTestBase {
   /**
    * Tests access to typed data.
    *
-   * @param \Drupal\Core\TypedData\AccessibleInterface $data
+   * @param \Drupal\Core\Access\AccessibleInterface $data
    * @param string $data_label
    *   The entity's human-readable type.
    * @param string $operation
@@ -66,7 +66,7 @@ class AccessibleInterfaceUnitTestBase extends DrupalUnitTestBase {
    *
    * @return NULL
    */
-  function assertDataAccess(AccessibleInterface $data, $data_label, $operation, AccountInterface $authenticated, array $permissions = array(), array $access = array()) {
+  function assertDataAccess(\Drupal\Core\Access\AccessibleInterface $data, $data_label, $operation, AccountInterface $authenticated, array $permissions = array(), array $access = array()) {
     $entity_manager = $this->container->get('plugin.manager.entity');
     $user_storage_controller = $entity_manager->getStorageController('user');
     $user_role_storage_controller = $entity_manager->getStorageController('user_role');

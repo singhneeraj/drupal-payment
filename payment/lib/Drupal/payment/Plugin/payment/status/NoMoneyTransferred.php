@@ -6,8 +6,6 @@
 
 namespace Drupal\payment\Plugin\payment\status;
 
-use Drupal\Core\Annotation\Translation;
-use Drupal\payment\Annotations\PaymentStatus;
 use Drupal\payment\Plugin\payment\status\Base;
 
 /**
