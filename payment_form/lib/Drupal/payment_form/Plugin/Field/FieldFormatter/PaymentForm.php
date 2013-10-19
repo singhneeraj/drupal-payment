@@ -7,9 +7,8 @@
 
 namespace Drupal\payment_form\Plugin\Field\FieldFormatter;
 
-use Drupal\Core\Entity\Field\FieldItemListInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
-use Drupal\Core\Entity\Field\FieldInterface;
 
 /**
  * A payment form formatter.

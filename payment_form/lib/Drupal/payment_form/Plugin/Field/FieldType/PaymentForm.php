@@ -4,11 +4,11 @@
  * Contains Drupal\payment_form\Plugin\field\field_type\PaymentForm.
  */
 
-namespace Drupal\payment_form\Plugin\field\field_type;
+namespace Drupal\payment_form\Plugin\Field\FieldType;
 
+use Drupal\Core\Field\ConfigFieldItemBase;
 use Drupal\currency\Entity\Currency;
 use Drupal\field\FieldInterface;
-use Drupal\field\Plugin\Type\FieldType\ConfigFieldItemBase;
 
 /**
  * Defines a payment form field.

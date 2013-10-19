@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains class \Drupal\payment_form\Tests\Plugin\field\widget\PaymentFormWebTest.
+ * Contains class \Drupal\payment_form\Tests\Plugin\Field\FieldWidget\PaymentFormWebTest.
  */
 
-namespace Drupal\payment_form\Tests\Plugin\field\widget;
+namespace Drupal\payment_form\Tests\Plugin\Field\FieldWidget;
 
 use Drupal\simpletest\WebTestBase;
 
@@ -25,7 +25,7 @@ class PaymentFormWebTest extends WebTestBase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment_form\Plugin\field\widget\PaymentForm web test',
+      'name' => '\Drupal\payment_form\Plugin\Field\FieldWidget\PaymentForm web test',
       'group' => 'Payment Form Field',
     );
   }

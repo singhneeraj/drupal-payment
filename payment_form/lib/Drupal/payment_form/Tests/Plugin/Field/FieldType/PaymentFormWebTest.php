@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains class \Drupal\payment_form\Tests\Plugin\field\field_type\PaymentFormWebTest.
+ * Contains class \Drupal\payment_form\Tests\Plugin\Field\FieldType\PaymentFormWebTest.
  */
 
-namespace Drupal\payment_form\Tests\Plugin\field\field_type;
+namespace Drupal\payment_form\Tests\Plugin\Field\FieldType;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\payment\Generate;
@@ -28,7 +28,7 @@ class PaymentFormWebTest extends WebTestBase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment_form\Plugin\field\field_type\PaymentForm web test',
+      'name' => '\Drupal\payment_form\Plugin\Field\FieldType\PaymentForm web test',
       'group' => 'Payment Form Field',
     );
   }

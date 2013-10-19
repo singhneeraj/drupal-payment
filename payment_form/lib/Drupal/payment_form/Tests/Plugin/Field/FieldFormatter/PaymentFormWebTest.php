@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\field\formatter\PaymentFormWebTest.
+ * Contains class \Drupal\payment\Tests\Plugin\Field\FieldFormatter\PaymentFormWebTest.
  */
 
-namespace Drupal\payment_form\Tests\Plugin\field\formatter;
+namespace Drupal\payment_form\Tests\Plugin\Field\FieldFormatter;
 
 use Drupal\payment\Generate;
 use Drupal\payment_form\Plugin\payment\type\PaymentForm;
@@ -48,7 +48,7 @@ class PaymentFormWebTest extends WebTestBase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Plugin\field\formatter\PaymentForm web test',
+      'name' => '\Drupal\payment\Plugin\Field\FieldFormatter\PaymentForm web test',
       'group' => 'Payment Form Field',
     );
   }
