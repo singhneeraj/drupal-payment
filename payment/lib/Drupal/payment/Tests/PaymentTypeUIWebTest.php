@@ -69,7 +69,7 @@ class PaymentTypeUIWebTest extends WebTestBase {
       $this->drupalGet($path);
       $this->clickLink($text);
       $this->assertResponse('200');
-      $this->assertTitle('Test type | Drupal');
+      $this->assertTitle($text . ' | Drupal');
     }
 
     // Test a type-specific operation.

@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Entity\PaymentRenderController.
+ * Contains \Drupal\payment\Entity\PaymentViewBuilder.
  */
 
 namespace Drupal\payment\Entity;
 
-use Drupal\Core\Entity\EntityRenderController;
+use Drupal\Core\Entity\EntityViewBuilder;
 
 /**
  * Render controller for payments.
  */
-class PaymentRenderController extends EntityRenderController {
+class PaymentViewBuilder extends EntityViewBuilder {
 
   /**
    * Overrides Drupal\Core\Entity\EntityRenderController::buildContent().

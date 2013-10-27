@@ -98,10 +98,13 @@ class PaymentMethodUI implements ContainerInjectionInterface {
         );
       }
     }
-
-    return theme('admin_block_content', array(
+    $rendered_content = theme('admin_block_content', array(
       'content' => $items,
     ));
+
+    return array(
+      '#markup' => $rendered_content,
+    );
   }
 
   /**

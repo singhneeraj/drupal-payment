@@ -8,6 +8,7 @@
 namespace Drupal\payment_form\Tests\Plugin\Field\FieldType;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\field\FieldInterface;
 use Drupal\payment\Generate;
 use Drupal\payment\plugin\payment\line_item\PaymentLineItemInterface;
 use Drupal\simpletest\WebTestBase;
@@ -40,7 +41,7 @@ class PaymentFormWebTest extends WebTestBase {
     // Create the field and field instance.
     $field_name = strtolower($this->randomName());
     entity_create('field_entity', array(
-      'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+      'cardinality' => FieldInterface::CARDINALITY_UNLIMITED,
       'entity_type' => 'user',
       'name' => $field_name,
       'type' => 'payment_form',

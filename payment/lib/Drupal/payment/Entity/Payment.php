@@ -27,7 +27,7 @@ use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
  *       "edit" = "Drupal\payment\Entity\PaymentEditFormController"
  *     },
  *     "list" = "Drupal\payment\Entity\PaymentListController",
- *     "render" = "Drupal\payment\Entity\PaymentRenderController",
+ *     "view_builder" = "Drupal\payment\Entity\PaymentViewBuilder",
  *     "storage" = "Drupal\payment\Entity\PaymentStorageController",
  *   },
  *   entity_keys = {
