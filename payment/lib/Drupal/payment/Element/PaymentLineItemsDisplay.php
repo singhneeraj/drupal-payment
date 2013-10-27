@@ -55,13 +55,13 @@ class PaymentLineItemsDisplay {
           '#attributes' => array(
             'class' => array('payment-line-item-amount'),
           ),
-          '#markup' => $currency->format($line_item->getAmount()),
+          '#markup' => $currency->format($currency->roundAmount($line_item->getAmount())),
         ),
         'total' => array(
           '#attributes' => array(
             'class' => array('payment-line-item-amount-total'),
           ),
-          '#markup' => $currency->format($line_item->getTotalAmount()),
+          '#markup' => $currency->format($currency->roundAmount($line_item->getTotalAmount())),
         ),
       );
     }
@@ -81,7 +81,7 @@ class PaymentLineItemsDisplay {
         '#attributes' => array(
           'class' => array('payment-amount-total'),
         ),
-        '#markup' => $currency->format($payment->getAmount()),
+        '#markup' => $currency->format($currency->roundAmount($payment->getAmount())),
       ),
     );
 
