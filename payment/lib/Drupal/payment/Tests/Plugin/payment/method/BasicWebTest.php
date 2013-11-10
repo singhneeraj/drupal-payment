@@ -37,7 +37,7 @@ class BasicWebTest extends WebTestBase {
   protected function setUp() {
     parent::setUp();
     $this->methodEntity = entity_create('payment_method', array());
-    $this->method = $this->container->get('plugin.manager.payment.method')->createInstance('payment_basic');
+    $this->method = \Drupal::service('plugin.manager.payment.method')->createInstance('payment_basic');
     $this->method->setPaymentMethod($this->methodEntity);
   }
 

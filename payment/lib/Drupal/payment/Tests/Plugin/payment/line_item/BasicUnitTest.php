@@ -43,7 +43,7 @@ class BasicUnitTest extends DrupalUnitTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->lineItem = $this->container->get('plugin.manager.payment.line_item')->createInstance('payment_basic');
+    $this->lineItem = \Drupal::service('plugin.manager.payment.line_item')->createInstance('payment_basic');
   }
 
   /**

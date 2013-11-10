@@ -7,6 +7,7 @@
 
 namespace Drupal\payment_form\Tests\Plugin\Field\FieldWidget;
 
+use Drupal\field\Field;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -50,7 +51,7 @@ class PaymentFormWebTest extends WebTestBase {
       'default_value_input[field_' . $field_name . '][line_items][line_items][payment_basic][plugin_form][description]' => $this->randomString(),
     ), t('Save settings'));
     // Get all payment_form fields.
-    $field_names = $this->container->get('entity.query')->get('field_entity')
+    $field_names = \Drupal::entityQuery('field_entity')
       ->condition('type', 'payment_form')
       ->execute();
     $this->assertTrue(in_array('user.field_' . $field_name, $field_names));
@@ -65,8 +66,8 @@ class PaymentFormWebTest extends WebTestBase {
       'field_' . $field_name . '[line_items][line_items][payment_basic][plugin_form][description]' => $description,
     ), t('Save'));
     drupal_flush_all_caches();
-    $this->container->get('field.info')->flush();
-    $user_storage = $this->container->get('plugin.manager.entity')->getStorageController('user');
+    Field::fieldInfo()->flush();
+    $user_storage = \Drupal::entityManager()->getStorageController('user');
     $user = $user_storage->loadUnchanged($user->id());
     $line_item = $user->{'field_' . $field_name}[0]->line_item;
     $this->assertEqual($line_item->getDescription(), $description);

@@ -37,7 +37,7 @@ class PaymentStatusAccessControllerUnitTest extends AccessibleInterfaceUnitTestB
   protected function testAccessControl() {
     $payment_1 = Generate::createPayment(1);
     $payment_2 = Generate::createPayment(2);
-    $entity_manager = $this->container->get('plugin.manager.entity');
+    $entity_manager = \Drupal::entityManager();
     $user_storage_controller = $entity_manager->getStorageController('user');
     $authenticated = $user_storage_controller->create(array(
       'uid' => 2,

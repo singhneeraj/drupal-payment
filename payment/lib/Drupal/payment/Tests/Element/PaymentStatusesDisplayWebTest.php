@@ -36,7 +36,7 @@ class PaymentStatusesDisplayWebTest extends WebTestBase {
    */
   protected function testElement() {
     $payment = Generate::createPayment(2)
-      ->setStatus($this->container->get('plugin.manager.payment.status')->createInstance('payment_failed'));
+      ->setStatus(\Drupal::service('plugin.manager.payment.status')->createInstance('payment_failed'));
     $element = array(
       '#statuses' => $payment->getStatuses(),
       '#type' => 'payment_statuses_display',

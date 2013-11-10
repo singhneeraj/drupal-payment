@@ -37,8 +37,7 @@ class PaymentPaymentMethodInputWebTest extends WebTestBase {
    * @return \Drupal\payment\Entity\PaymentMethodInterface
    */
   protected function createPaymentMethod() {
-    $payment_method = Generate::createPaymentMethod(2, $this->container
-      ->get('plugin.manager.payment.method')
+    $payment_method = Generate::createPaymentMethod(2, \Drupal::service('plugin.manager.payment.method')
       ->createInstance('payment_basic')
       ->setMessageText($this->randomName()));
     $payment_method->save();
@@ -50,7 +49,7 @@ class PaymentPaymentMethodInputWebTest extends WebTestBase {
    * Tests the element.
    */
   protected function testElement() {
-    $state = $this->container->get('state');
+    $state = \Drupal::state();
 
     // Test the presence of default elements without available payment methods.
     $this->drupalGet('payment_test-element-payment-method');

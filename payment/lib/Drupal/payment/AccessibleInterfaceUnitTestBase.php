@@ -28,7 +28,7 @@ class AccessibleInterfaceUnitTestBase extends DrupalUnitTestBase {
     static $info = NULL;
 
     if (is_null($info)) {
-      $info = $this->container->get('module_handler')->invokeAll('permission');
+      $info = \Drupal::moduleHandler()->invokeAll('permission');
     }
 
     $labels = array();
@@ -67,7 +67,7 @@ class AccessibleInterfaceUnitTestBase extends DrupalUnitTestBase {
    * @return NULL
    */
   function assertDataAccess(\Drupal\Core\Access\AccessibleInterface $data, $data_label, $operation, AccountInterface $authenticated, array $permissions = array(), array $access = array()) {
-    $entity_manager = $this->container->get('plugin.manager.entity');
+    $entity_manager = \Drupal::entityManager();
     $user_storage_controller = $entity_manager->getStorageController('user');
     $user_role_storage_controller = $entity_manager->getStorageController('user_role');
 

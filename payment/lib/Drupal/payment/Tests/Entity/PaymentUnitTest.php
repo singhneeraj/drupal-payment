@@ -68,8 +68,8 @@ class PaymentUnitTest extends DrupalUnitTestBase {
   protected function setUp() {
     parent::setUp();
     $this->bundle = 'payment_unavailable';
-    $this->lineItemManager = $this->container->get('plugin.manager.payment.line_item');
-    $this->statusManager = $this->container->get('plugin.manager.payment.status');
+    $this->lineItemManager = \Drupal::service('plugin.manager.payment.line_item');
+    $this->statusManager = \Drupal::service('plugin.manager.payment.status');
     $this->payment = entity_create('payment', array(
       'bundle' => $this->bundle,
     ));
@@ -159,7 +159,7 @@ class PaymentUnitTest extends DrupalUnitTestBase {
   protected function testGetStatus() {
     $status = $this->statusManager->createInstance('payment_created');
     $this->assertTrue($this->payment->setStatus($status, FALSE) instanceof PaymentInterface);
-    $state = $this->container->get('state');
+    $state = \Drupal::state();
     $this->assertEqual($state->get('payment_test_payment_status_set'), TRUE);
     $this->assertEqual($this->payment->getStatus(), $status);
   }

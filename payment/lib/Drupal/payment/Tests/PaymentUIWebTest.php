@@ -37,7 +37,7 @@ class PaymentUIWebTest extends WebTestBase {
    * Tests the payment UI.
    */
   protected function testPaymentUI() {
-    $payment_method = Generate::createPaymentMethod(2, $this->container->get('plugin.manager.payment.method')->createInstance('payment_test'));
+    $payment_method = Generate::createPaymentMethod(2, \Drupal::service('plugin.manager.payment.method')->createInstance('payment_test'));
     $payment_method->save();
     $payment = Generate::createPayment(2, $payment_method);
     $payment->save();
@@ -101,7 +101,7 @@ class PaymentUIWebTest extends WebTestBase {
       $this->drupalGet($path);
       $this->drupalPostForm(NULL, array(), t('Delete'));
       $this->assertResponse('200');
-      $this->assertFalse((bool) $this->container->get('plugin.manager.entity')->getStorageController('payment')->loadUnchanged($payment->id()));
+      $this->assertFalse((bool) \Drupal::entityManager()->getStorageController('payment')->loadUnchanged($payment->id()));
     }
   }
 }

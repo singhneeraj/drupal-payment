@@ -79,7 +79,7 @@ class PaymentLineItemsInputWebTest extends WebTestBase {
    *   testing RemoveCommand.
    */
   protected function testElement() {
-    $state = $this->container->get('state');
+    $state = \Drupal::state();
     $names = array();
     foreach (Generate::createPaymentLineItems() as $line_item) {
       $names[] = $line_item->getName();

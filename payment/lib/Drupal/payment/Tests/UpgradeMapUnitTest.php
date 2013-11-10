@@ -35,7 +35,7 @@ class UpgradeMapUnitTest extends DrupalUnitTestBase {
    */
   protected function testStatus() {
     module_load_install('payment');
-    $manager = $this->container->get('plugin.manager.payment.status');
+    $manager = \Drupal::service('plugin.manager.payment.status');
     $pluginIds = array_keys($manager->getDefinitions());
     $this->assertFalse(array_diff(payment_upgrade_8x2x_map_status(), $pluginIds));
   }
@@ -45,7 +45,7 @@ class UpgradeMapUnitTest extends DrupalUnitTestBase {
    */
   protected function testPaymentMethod() {
     module_load_install('payment');
-    $manager = $this->container->get('plugin.manager.payment.method');
+    $manager = \Drupal::service('plugin.manager.payment.method');
     $pluginIds = array_keys($manager->getDefinitions());
     $this->assertFalse(array_diff(payment_upgrade_8x2x_map_payment_method(), $pluginIds));
   }

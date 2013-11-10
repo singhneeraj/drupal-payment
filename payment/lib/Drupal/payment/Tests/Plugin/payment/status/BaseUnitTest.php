@@ -43,7 +43,7 @@ class BaseUnitTest extends DrupalUnitTestBase {
    */
   protected function setup() {
     parent::setUp();
-    $this->manager = $this->container->get('plugin.manager.payment.status');
+    $this->manager = \Drupal::service('plugin.manager.payment.status');
     $this->status = $this->manager->createInstance('payment_created');
   }
 

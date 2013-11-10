@@ -44,7 +44,7 @@ class UnavailableUnitTest extends DrupalUnitTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->type = $this->container->get('plugin.manager.payment.type')->createInstance('payment_unavailable', array());
+    $this->type = \Drupal::service('plugin.manager.payment.type')->createInstance('payment_unavailable', array());
   }
 
   /**

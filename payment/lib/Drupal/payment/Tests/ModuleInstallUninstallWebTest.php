@@ -35,7 +35,7 @@ class ModuleInstallUninstallWebTest extends WebTestBase {
    * Test installation and uninstallation.
    */
   protected function testInstallationAndUninstallation() {
-    $handler = $this->container->get('module_handler');
+    $handler = \Drupal::moduleHandler();
     $this->assertTrue($handler->moduleExists('payment'));
 
     // Test default configuration.

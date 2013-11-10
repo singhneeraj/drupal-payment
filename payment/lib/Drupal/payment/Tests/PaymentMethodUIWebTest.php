@@ -87,7 +87,7 @@ class PaymentMethodUIWebTest extends WebTestBase {
     $this->drupalLogout();
     $entity_id = 'collect_on_delivery';
     $plugin_id = 'payment_basic';
-    $storage = $this->container->get('plugin.manager.entity')->getStorageController('payment_method');
+    $storage = \Drupal::entityManager()->getStorageController('payment_method');
 
     // Test that only the original exists.
     $this->assertTrue((bool) $storage->load($entity_id));
@@ -150,7 +150,7 @@ class PaymentMethodUIWebTest extends WebTestBase {
     $this->drupalLogin($this->drupalCreateUser(array('payment.payment_method.create.' . $plugin_id)));
     $this->drupalGet('admin/config/services/payment/method-add');
     $this->assertResponse(200);
-    $definition = $this->container->get('plugin.manager.payment.method')->getDefinition($plugin_id);
+    $definition = \Drupal::service('plugin.manager.payment.method')->getDefinition($plugin_id);
     $this->assertText($definition['label']);
   }
 

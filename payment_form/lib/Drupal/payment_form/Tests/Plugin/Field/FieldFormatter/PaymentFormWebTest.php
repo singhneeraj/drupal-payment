@@ -59,7 +59,7 @@ class PaymentFormWebTest extends WebTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->paymentStorage = $this->container->get('plugin.manager.entity')->getStorageController('payment');
+    $this->paymentStorage = \Drupal::entityManager()->getStorageController('payment');
 
     // Create the field and field instance.
     $field_name = strtolower($this->randomName());
@@ -93,7 +93,7 @@ class PaymentFormWebTest extends WebTestBase {
     $this->user->save();
 
     // Create a payment method.
-    $plugin = $this->container->get('plugin.manager.payment.method')->createInstance('payment_basic');
+    $plugin = \Drupal::service('plugin.manager.payment.method')->createInstance('payment_basic');
     $plugin->setStatus($this->statusPluginId);
     Generate::createPaymentMethod(2, $plugin)
       ->save();

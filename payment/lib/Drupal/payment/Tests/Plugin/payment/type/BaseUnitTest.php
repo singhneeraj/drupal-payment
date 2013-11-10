@@ -43,8 +43,8 @@ class BaseUnitTest extends DrupalUnitTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->type = $this->container->get('plugin.manager.payment.type')->createInstance('payment_test', array());
-    $storage_controller = $this->container->get('plugin.manager.entity')->getStorageController('payment');
+    $this->type = \Drupal::service('plugin.manager.payment.type')->createInstance('payment_test', array());
+    $storage_controller = \Drupal::entityManager()->getStorageController('payment');
     $this->type->setPayment($storage_controller->create(array(
       'type' => $this->type,
     )));
@@ -55,7 +55,7 @@ class BaseUnitTest extends DrupalUnitTestBase {
    */
   protected function testResume() {
     $this->type->resumeContext();
-    $state = $this->container->get('state');
+    $state = \Drupal::state();
     $this->assertEqual($state->get('payment_test_payment_type_pre_resume_context'), TRUE);
   }
 

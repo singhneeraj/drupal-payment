@@ -41,7 +41,7 @@ class PaymentStatusUIWebTest extends WebTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->paymentStatusStorage = $this->container->get('plugin.manager.entity')->getStorageController('payment_status');
+    $this->paymentStatusStorage = \Drupal::entityManager()->getStorageController('payment_status');
   }
 
   /**
@@ -63,7 +63,7 @@ class PaymentStatusUIWebTest extends WebTestBase {
     $this->drupalLogin($this->drupalCreateUser(array('payment.payment_status.administer')));
     $this->drupalGet($path);
     $this->assertResponse(200);
-    $manager = $this->container->get('plugin.manager.payment.status');
+    $manager = \Drupal::service('plugin.manager.payment.status');
     foreach ($manager->getDefinitions() as $definition) {
       $this->assertText($definition['label']);
       if ($definition['description']) {

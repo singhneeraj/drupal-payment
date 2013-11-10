@@ -42,7 +42,7 @@ class ManagerUnitTest extends DrupalUnitTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->manager = $this->container->get('plugin.manager.payment.status');
+    $this->manager = \Drupal::service('plugin.manager.payment.status');
   }
 
   /**

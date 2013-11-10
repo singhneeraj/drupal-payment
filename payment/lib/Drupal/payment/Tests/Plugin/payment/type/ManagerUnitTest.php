@@ -35,7 +35,7 @@ class ManagerUnitTest extends DrupalUnitTestBase {
    */
   protected function testGetDefinitions() {
     // Test the default line item plugins.
-    $definitions = $this->container->get('plugin.manager.payment.type')->getDefinitions();
+    $definitions = \Drupal::service('plugin.manager.payment.type')->getDefinitions();
     $this->assertEqual(count($definitions), 1);
     foreach ($definitions as $definition) {
       $this->assertIdentical(strpos($definition['id'], 'payment_'), 0);
@@ -48,7 +48,7 @@ class ManagerUnitTest extends DrupalUnitTestBase {
    */
   protected function testCreateInstance() {
     $id = 'payment_unavailable';
-    $manager = $this->container->get('plugin.manager.payment.type');
+    $manager = \Drupal::service('plugin.manager.payment.type');
     $this->assertEqual($manager->createInstance($id)->getPluginId(), $id);
     $this->assertEqual($manager->createInstance('ThisIdDoesNotExist')->getPluginId(), $id);
   }

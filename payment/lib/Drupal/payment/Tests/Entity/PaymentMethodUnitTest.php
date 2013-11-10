@@ -50,7 +50,7 @@ class PaymentMethodUnitTest extends DrupalUnitTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->manager = $this->container->get('plugin.manager.payment.method');
+    $this->manager = \Drupal::service('plugin.manager.payment.method');
     $this->paymentMethod = entity_create('payment_method', array());
   }
 

@@ -35,13 +35,13 @@ class PaymentMethodAccessControllerUnitTest extends AccessibleInterfaceUnitTestB
    * Tests access control.
    */
   protected function testAccessControl() {
-    $entity_manager = $this->container->get('plugin.manager.entity');
-    $payment_method_manager = $this->container->get('plugin.manager.payment.method');
+    $entity_manager = \Drupal::entityManager();
+    $payment_method_manager = \Drupal::service('plugin.manager.payment.method');
     $user_storage_controller = $entity_manager->getStorageController('user');
     $authenticated = $user_storage_controller->create(array());
 
     // Create a new payment method.
-    $manager = $this->container->get('plugin.manager.payment.method');
+    $manager = \Drupal::service('plugin.manager.payment.method');
     $plugin = $manager->createInstance('payment_basic');
     $this->assertDataAccess(Generate::createPaymentMethod(0, $plugin), 'a payment method', 'create', $authenticated, array('payment.payment_method.create.payment_basic'));
 
