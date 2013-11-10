@@ -9,6 +9,7 @@ namespace Drupal\payment;
 
 use Drupal\Core\Access\AccessCheckInterface;
 use Drupal\Core\Entity\EntityManager;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Plugin\payment\method\Manager;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,7 +59,7 @@ class PaymentMethodCreateAccessCheck implements AccessCheckInterface {
   /**
    * {@inheritdoc}
    */
-  public function access(Route $route, Request $request) {
+  public function access(Route $route, Request $request, AccountInterface $account) {
     if ($request->attributes->has('payment_method_plugin_id')) {
       $plugin_ids = array($request->attributes->get('payment_method_plugin_id'));
     }
@@ -68,7 +69,7 @@ class PaymentMethodCreateAccessCheck implements AccessCheckInterface {
       $plugin_ids = array_keys($definitions);
     }
     foreach ($plugin_ids as $plugin_id) {
-      if ($this->entityManager->getAccessController('payment_method')->createAccess($plugin_id)) {
+      if ($this->entityManager->getAccessController('payment_method')->createAccess($plugin_id, $account)) {
         return TRUE;
       }
     }
