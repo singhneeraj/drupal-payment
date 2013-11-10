@@ -9,6 +9,7 @@ namespace Drupal\payment\Plugin\payment\method;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\Payment;
 
 /**
  * A basic payment method that does not transfer money.
@@ -74,7 +75,7 @@ class Basic extends Base {
       '#title' => t('Final payment status'),
       '#description' => t('The status to give a payment after being processed by this payment method.'),
       '#default_value' => $this->getStatus() ? $this->getStatus() : 'payment_success',
-      '#options' => \Drupal::service('plugin.manager.payment.status')->options(),
+      '#options' => Payment::statusManager()->options(),
     );
 
     return $elements;
@@ -101,7 +102,7 @@ class Basic extends Base {
    */
   public function executePayment(PaymentInterface $payment) {
     if ($this->executePaymentAccess($payment, $payment->getPaymentMethodBrand())) {
-      $payment->setStatus(\Drupal::service('plugin.manager.payment.status')->createInstance($this->getStatus()));
+      $payment->setStatus(Payment::statusManager()->createInstance($this->getStatus()));
       $payment->save();
     }
     $payment->getPaymentType()->resumeContext();

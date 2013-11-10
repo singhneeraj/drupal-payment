@@ -7,6 +7,7 @@
 
 use Drupal\payment\Element\PaymentLineItemsInput;
 use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\Payment;
 use Drupal\payment\Plugin\payment\line_item\Basic;
 
 /**
@@ -124,7 +125,7 @@ function payment_permission() {
       'title' => t('Administer payment statuses'),
     ),
   );
-  $definitions = \Drupal::service('plugin.manager.payment.method')->getDefinitions();
+  $definitions = Payment::methodManager()->getDefinitions();
   unset($definitions['payment_unavailable']);
   foreach ($definitions as $plugin_id => $definition) {
     $permissions['payment.payment_method.create.' . $plugin_id] = array(
@@ -173,7 +174,7 @@ function payment_hook_info() {
  * Implements hook_field_extra_fields().
  */
 function payment_field_extra_fields() {
-  $manager = \Drupal::service('plugin.manager.payment.type');
+  $manager = Payment::typeManager();
   foreach (array_keys($manager->getDefinitions()) as $plugin_id) {
     $field['payment'][$plugin_id] = array(
       'form' => array(
@@ -283,7 +284,7 @@ function payment_entity_bundle_info() {
     'payment_method' => 'plugin.manager.payment.method',
   );
   foreach ($map as $entity_type => $manager_service) {
-    $manager = \Drupal::service('plugin.manager.payment.type');
+    $manager = Payment::typeManager();
     foreach ($manager->getDefinitions() as $plugin_id => $definition) {
       $bundles[$entity_type][$plugin_id] = array(
         'label' => $definition['label'],
@@ -352,7 +353,7 @@ function payment_payment_delete(PaymentInterface $payment) {
  * @return string
  */
 function payment_plugin_label($plugin_id) {
-  $manager = \Drupal::service('plugin.manager.payment.type');
+  $manager = Payment::typeManager();
   $definition = $manager->getDefinition($plugin_id);
   if ($definition) {
     return $definition['label'];

@@ -69,7 +69,7 @@ class Generate {
    *   objects.
    */
   static function createPaymentLineItems() {
-    $line_item_manager = \Drupal::service('plugin.manager.payment.line_item');
+    $line_item_manager = Payment::lineItemManager();
     $line_items = array(
       $line_item_manager->createInstance('payment_basic', array())
         ->setName('foo')
@@ -109,7 +109,7 @@ class Generate {
    */
   static function createPaymentMethod($uid, PaymentMethodPluginInterface $plugin = NULL) {
     $name = static::getRandom()->name();
-    $plugin = $plugin ? $plugin : \Drupal::service('plugin.manager.payment.method')->createInstance('payment_unavailable', array(
+    $plugin = $plugin ? $plugin : Payment::methodManager()->createInstance('payment_unavailable', array(
       'foo' => 'bar',
     ));
     $payment_method = entity_create('payment_method', array())

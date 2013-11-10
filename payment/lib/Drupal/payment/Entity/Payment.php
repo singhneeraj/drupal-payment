@@ -10,6 +10,7 @@ namespace Drupal\payment\Entity;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
 use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\Payment as PaymentServiceWrapper;
 use Drupal\payment\Plugin\payment\type\PaymentTypeInterface;
 use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
@@ -79,8 +80,8 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    */
   public function __construct(array $values, $entity_type, $bundle = FALSE, $translations = array()) {
     parent::__construct($values, $entity_type, $bundle, $translations);
-    \Drupal::service('plugin.manager.payment.type')->clearCachedDefinitions();
-    $this->type = \Drupal::service('plugin.manager.payment.type')->createInstance($this->bundle());
+    PaymentServiceWrapper::typeManager()->clearCachedDefinitions();
+    $this->type = PaymentServiceWrapper::typeManager()->createInstance($this->bundle());
   }
 
   /**
@@ -301,7 +302,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function execute() {
-    $manager = \Drupal::service('plugin.manager.payment.status');
+    $manager = PaymentServiceWrapper::statusManager();
     // Execute the payment.
     if ($this->getPaymentMethod()->executePaymentAccess($this, $this->getPaymentMethodBrand())) {
       $this->setStatus($manager->createInstance('payment_pending'));

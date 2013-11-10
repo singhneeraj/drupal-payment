@@ -6,6 +6,7 @@
  */
 
 namespace Drupal\payment\Tests;
+use Drupal\payment\Payment;
 use Drupal\simpletest\WebTestBase ;
 
 /**
@@ -63,7 +64,7 @@ class PaymentStatusUIWebTest extends WebTestBase {
     $this->drupalLogin($this->drupalCreateUser(array('payment.payment_status.administer')));
     $this->drupalGet($path);
     $this->assertResponse(200);
-    $manager = \Drupal::service('plugin.manager.payment.status');
+    $manager = Payment::statusManager();
     foreach ($manager->getDefinitions() as $definition) {
       $this->assertText($definition['label']);
       if ($definition['description']) {

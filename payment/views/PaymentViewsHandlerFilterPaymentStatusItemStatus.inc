@@ -1,4 +1,5 @@
 <?php
+use Drupal\payment\Payment;
 
 /**
  * Filter by status code, but show users their human-readable titles.
@@ -10,7 +11,7 @@ class PaymentViewsHandlerFilterPaymentStatusItemStatus extends views_handler_fil
    */
   function get_value_options() {
     if (!isset($this->value_options)) {
-      $this->value_options = \Drupal::service('plugin.manager.payment.status')->options();
+      $this->value_options = Payment::statusManager()->options();
     }
   }
 }

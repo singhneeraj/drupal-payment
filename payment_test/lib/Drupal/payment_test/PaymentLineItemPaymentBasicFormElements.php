@@ -9,6 +9,7 @@ namespace Drupal\payment_test;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormInterface;
+use Drupal\payment\Payment;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class PaymentLineItemPaymentBasicFormElements implements ContainerInjectionInterface, FormInterface {
@@ -31,7 +32,7 @@ class PaymentLineItemPaymentBasicFormElements implements ContainerInjectionInter
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
-    $manager = \Drupal::service('plugin.manager.payment.line_item');
+    $manager = Payment::lineItemManager();
     $line_item = $manager->createInstance('payment_basic');
     $form['line_item'] = $line_item->formElements($form, $form_state);
     $form['submit'] = array(

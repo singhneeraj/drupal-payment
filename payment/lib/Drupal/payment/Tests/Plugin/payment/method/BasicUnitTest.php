@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Tests\Plugin\payment\method;
 
+use Drupal\payment\Payment;
 use Drupal\payment\Plugin\payment\method\PaymentMethodInterface;
 use Drupal\simpletest\DrupalUnitTestBase;
 
@@ -51,7 +52,7 @@ class BasicUnitTest extends DrupalUnitTestBase {
   protected function setUp() {
     parent::setUp();
     $this->methodEntity = entity_create('payment_method', array());
-    $this->method = \Drupal::service('plugin.manager.payment.method')->createInstance('payment_basic');
+    $this->method = Payment::methodManager()->createInstance('payment_basic');
     $this->method->setPaymentMethod($this->methodEntity);
   }
 

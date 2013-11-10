@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Tests\Entity;
 
+use Drupal\payment\Payment;
 use Drupal\payment\Plugin\payment\method\PaymentMethodInterface as PluginPaymentMethodInterface;
 use Drupal\payment\Entity\PaymentMethodInterface;
 use Drupal\payment\Generate;
@@ -46,7 +47,7 @@ class PaymentMethodStorageControllerUnitTest extends DrupalUnitTestBase {
    * Tests save();
    */
   protected function testSave() {
-    $manager = \Drupal::service('plugin.manager.payment.method');
+    $manager = Payment::methodManager();
     $payment_method = Generate::createPaymentmethod(1, $manager->createInstance('payment_basic'));
     $payment_method->save();
     $payment_method_loaded = entity_load_unchanged('payment_method', $payment_method->id());

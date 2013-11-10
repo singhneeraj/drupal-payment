@@ -8,6 +8,7 @@
 namespace Drupal\payment\Tests;
 
 use Drupal\payment\Generate;
+use Drupal\payment\Payment;
 use Drupal\simpletest\WebTestBase ;
 
 /**
@@ -37,7 +38,7 @@ class PaymentUIWebTest extends WebTestBase {
    * Tests the payment UI.
    */
   protected function testPaymentUI() {
-    $payment_method = Generate::createPaymentMethod(2, \Drupal::service('plugin.manager.payment.method')->createInstance('payment_test'));
+    $payment_method = Generate::createPaymentMethod(2, Payment::methodManager()->createInstance('payment_test'));
     $payment_method->save();
     $payment = Generate::createPayment(2, $payment_method);
     $payment->save();

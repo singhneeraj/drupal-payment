@@ -8,6 +8,7 @@
 namespace Drupal\payment\Tests;
 
 use Drupal\payment\Entity\PaymentMethodInterface;
+use Drupal\payment\Payment;
 use Drupal\simpletest\WebTestBase ;
 
 /**
@@ -150,7 +151,7 @@ class PaymentMethodUIWebTest extends WebTestBase {
     $this->drupalLogin($this->drupalCreateUser(array('payment.payment_method.create.' . $plugin_id)));
     $this->drupalGet('admin/config/services/payment/method-add');
     $this->assertResponse(200);
-    $definition = \Drupal::service('plugin.manager.payment.method')->getDefinition($plugin_id);
+    $definition = Payment::methodManager()->getDefinition($plugin_id);
     $this->assertText($definition['label']);
   }
 

@@ -9,6 +9,7 @@ namespace Drupal\payment\Tests\Entity;
 
 use Drupal\payment\AccessibleInterfaceUnitTestBase;
 use Drupal\payment\Generate;
+use Drupal\payment\Payment;
 
 /**
  * Tests \Drupal\payment\PaymentMethodAccessController.
@@ -36,13 +37,12 @@ class PaymentMethodAccessControllerUnitTest extends AccessibleInterfaceUnitTestB
    */
   protected function testAccessControl() {
     $entity_manager = \Drupal::entityManager();
-    $payment_method_manager = \Drupal::service('plugin.manager.payment.method');
+    $payment_method_manager = Payment::methodManager();
     $user_storage_controller = $entity_manager->getStorageController('user');
     $authenticated = $user_storage_controller->create(array());
 
     // Create a new payment method.
-    $manager = \Drupal::service('plugin.manager.payment.method');
-    $plugin = $manager->createInstance('payment_basic');
+    $plugin = $payment_method_manager->createInstance('payment_basic');
     $this->assertDataAccess(Generate::createPaymentMethod(0, $plugin), 'a payment method', 'create', $authenticated, array('payment.payment_method.create.payment_basic'));
 
     // Update a payment method that belongs to user 1.

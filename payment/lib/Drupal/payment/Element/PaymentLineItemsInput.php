@@ -10,6 +10,7 @@ namespace Drupal\payment\Element;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\RemoveCommand;
+use Drupal\payment\Payment;
 use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 
 /**
@@ -90,7 +91,7 @@ class PaymentLineItemsInput {
       '#id' => drupal_html_id('payment-add-more'),
       '#type' => 'container',
     );
-    $manager = \Drupal::service('plugin.manager.payment.line_item');
+    $manager = Payment::lineItemManager();
     $element['add_more']['type'] = array(
       '#options' => $manager->options(),
       '#title' => t('Type'),
@@ -140,7 +141,7 @@ class PaymentLineItemsInput {
     $parents = array_slice($form_state['triggering_element']['#array_parents'], 0, -2);
     $root_element = NestedArray::getValue($form, $parents);
     $values = NestedArray::getValue($form_state['values'], array_slice($form_state['triggering_element']['#parents'], 0, -2));
-    $line_item = \Drupal::service('plugin.manager.payment.line_item')
+    $line_item = Payment::lineItemManager()
       ->createInstance($values['add_more']['type'])
       ->setName(static::createLineItemName($root_element, $form_state, $values['add_more']['type']));
     $line_items = static::getLineItems($root_element, $form_state);

@@ -7,6 +7,7 @@
 namespace Drupal\payment\Plugin\payment\status;
 
 use Drupal\Component\Plugin\PluginBase;
+use Drupal\payment\Payment;
 use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
 
 /**
@@ -102,35 +103,35 @@ abstract class Base extends PluginBase implements PaymentStatusInterface {
    * {@inheritdoc}
    */
   function getAncestors(){
-    return \Drupal::service('plugin.manager.payment.status')->getAncestors($this->getPluginId());
+    return Payment::statusManager()->getAncestors($this->getPluginId());
   }
 
   /**
    * {@inheritdoc}
    */
   public function getChildren() {
-    return \Drupal::service('plugin.manager.payment.status')->getChildren($this->getPluginId());
+    return Payment::statusManager()->getChildren($this->getPluginId());
   }
 
   /**
    * {@inheritdoc}
    */
   function getDescendants() {
-    return \Drupal::service('plugin.manager.payment.status')->getDescendants($this->getPluginId());
+    return Payment::statusManager()->getDescendants($this->getPluginId());
   }
 
   /**
    * {@inheritdoc}
    */
   function hasAncestor($plugin_id) {
-    return \Drupal::service('plugin.manager.payment.status')->hasAncestor($this->getPluginId(), $plugin_id);
+    return Payment::statusManager()->hasAncestor($this->getPluginId(), $plugin_id);
   }
 
   /**
    * {@inheritdoc}
    */
   function isOrHasAncestor($plugin_id) {
-    return \Drupal::service('plugin.manager.payment.status')->isOrHasAncestor($this->getPluginId(), $plugin_id);
+    return Payment::statusManager()->isOrHasAncestor($this->getPluginId(), $plugin_id);
   }
 
   /**

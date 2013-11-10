@@ -8,6 +8,7 @@
 namespace Drupal\payment\Tests\Element;
 
 use Drupal\payment\Generate;
+use Drupal\payment\Payment;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -36,7 +37,7 @@ class PaymentStatusesDisplayWebTest extends WebTestBase {
    */
   protected function testElement() {
     $payment = Generate::createPayment(2)
-      ->setStatus(\Drupal::service('plugin.manager.payment.status')->createInstance('payment_failed'));
+      ->setStatus(Payment::statusManager()->createInstance('payment_failed'));
     $element = array(
       '#statuses' => $payment->getStatuses(),
       '#type' => 'payment_statuses_display',

@@ -9,6 +9,7 @@ namespace Drupal\payment\Tests\Entity;
 
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Entity\PaymentMethodInterface;
+use Drupal\payment\Payment;
 use Drupal\payment\Plugin\payment\type\PaymentTypeInterface;
 use Drupal\payment\Generate;
 use Drupal\simpletest\DrupalUnitTestBase;
@@ -68,8 +69,8 @@ class PaymentUnitTest extends DrupalUnitTestBase {
   protected function setUp() {
     parent::setUp();
     $this->bundle = 'payment_unavailable';
-    $this->lineItemManager = \Drupal::service('plugin.manager.payment.line_item');
-    $this->statusManager = \Drupal::service('plugin.manager.payment.status');
+    $this->lineItemManager = Payment::lineItemManager();
+    $this->statusManager = Payment::statusManager();
     $this->payment = entity_create('payment', array(
       'bundle' => $this->bundle,
     ));

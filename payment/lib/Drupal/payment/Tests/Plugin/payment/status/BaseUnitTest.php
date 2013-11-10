@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Tests\Plugin\payment\status;
 
+use Drupal\payment\Payment;
 use Drupal\simpletest\DrupalUnitTestBase;
 use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
 
@@ -43,7 +44,7 @@ class BaseUnitTest extends DrupalUnitTestBase {
    */
   protected function setup() {
     parent::setUp();
-    $this->manager = \Drupal::service('plugin.manager.payment.status');
+    $this->manager = Payment::statusManager();
     $this->status = $this->manager->createInstance('payment_created');
   }
 

@@ -9,6 +9,7 @@ namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableDatabaseStorageController;
+use Drupal\payment\Payment as PaymentServiceWrapper;
 
 /**
  * Handles storage for payment entities.
@@ -23,7 +24,7 @@ class PaymentStorageController extends FieldableDatabaseStorageController implem
       $values['bundle'] = $values['type']->getPluginId();
     }
     $payment = parent::create($values);
-    $payment->setStatus(\Drupal::service('plugin.manager.payment.status')->createInstance('payment_created'));
+    $payment->setStatus(PaymentServiceWrapper::statusManager()->createInstance('payment_created'));
 
     return $payment;
   }
@@ -72,7 +73,7 @@ class PaymentStorageController extends FieldableDatabaseStorageController implem
    * {@inheritdoc}
    */
   public function loadLineItems(array $ids) {
-    $manager = \Drupal::service('plugin.manager.payment.line_item');
+    $manager = PaymentServiceWrapper::lineItemManager();
     $result = db_select('payment_line_item', 'pli')
       ->fields('pli')
       ->condition('payment_id', $ids)
@@ -129,7 +130,7 @@ class PaymentStorageController extends FieldableDatabaseStorageController implem
    * {@inheritdoc}
    */
   public function loadPaymentStatuses(array $ids) {
-    $manager = \Drupal::service('plugin.manager.payment.status');
+    $manager = PaymentServiceWrapper::statusManager();
     $result = db_select('payment_status', 'ps')
       ->fields('ps')
       ->condition('payment_id', $ids)

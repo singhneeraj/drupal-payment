@@ -8,6 +8,7 @@
 namespace Drupal\payment\Tests\Element;
 
 use Drupal\payment\Generate;
+use Drupal\payment\Payment;
 use Drupal\simpletest\WebTestBase ;
 
 /**
@@ -37,7 +38,7 @@ class PaymentPaymentMethodInputWebTest extends WebTestBase {
    * @return \Drupal\payment\Entity\PaymentMethodInterface
    */
   protected function createPaymentMethod() {
-    $payment_method = Generate::createPaymentMethod(2, \Drupal::service('plugin.manager.payment.method')
+    $payment_method = Generate::createPaymentMethod(2, Payment::methodManager()
       ->createInstance('payment_basic')
       ->setMessageText($this->randomName()));
     $payment_method->save();

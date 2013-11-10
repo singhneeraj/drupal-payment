@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Tests\Plugin\payment\type;
 
+use Drupal\payment\Payment;
 use Drupal\payment\Plugin\payment\type\PaymentTypeInterface ;
 use Drupal\simpletest\DrupalUnitTestBase;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -44,7 +45,7 @@ class UnavailableUnitTest extends DrupalUnitTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->type = \Drupal::service('plugin.manager.payment.type')->createInstance('payment_unavailable', array());
+    $this->type = Payment::typeManager()->createInstance('payment_unavailable', array());
   }
 
   /**

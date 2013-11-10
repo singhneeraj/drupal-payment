@@ -7,6 +7,7 @@
 
 use Drupal\field\Field;
 use Drupal\field\FieldInterface;
+use Drupal\payment\Payment;
 
 /**
  * Implements hook_entity_info_alter().
@@ -20,7 +21,7 @@ function payment_form_entity_info_alter(&$entity_info) {
  */
 function payment_form_field_entity_insert(FieldInterface $field) {
   if ($field->type == 'payment_form') {
-    \Drupal::service('plugin.manager.payment.type')->clearCachedDefinitions();
+    Payment::typeManager()->clearCachedDefinitions();
     payment_form_field_instance_reference_create($field);
   }
 }
@@ -30,7 +31,7 @@ function payment_form_field_entity_insert(FieldInterface $field) {
  */
 function payment_form_field_entity_update(FieldInterface $field) {
   if ($field->type == 'payment_form') {
-    \Drupal::service('plugin.manager.payment.type')->clearCachedDefinitions();
+    Payment::typeManager()->clearCachedDefinitions();
     payment_form_field_instance_reference_create($field);
   }
 }
@@ -40,7 +41,7 @@ function payment_form_field_entity_update(FieldInterface $field) {
  */
 function payment_form_field_entity_delete(FieldInterface $field) {
   if ($field->type == 'payment_form') {
-    \Drupal::service('plugin.manager.payment.type')->clearCachedDefinitions();
+    Payment::typeManager()->clearCachedDefinitions();
   }
 }
 

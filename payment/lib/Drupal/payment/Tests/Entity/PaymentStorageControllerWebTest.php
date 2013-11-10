@@ -8,6 +8,7 @@
 namespace Drupal\payment\Tests\Entity;
 
 use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\Payment;
 use Drupal\payment\Plugin\payment\type\PaymentTypeInterface;
 use Drupal\simpletest\WebTestBase;
 
@@ -50,7 +51,7 @@ class PaymentStorageControllerWebTest extends WebTestBase {
     // Test saving a payment.
     $this->assertFalse($payment->id());
     // Set an extra status, so we can test for status IDs later.
-    $payment->setStatus(\Drupal::service('plugin.manager.payment.status')->createInstance('payment_success'));
+    $payment->setStatus(Payment::statusManager()->createInstance('payment_success'));
     $payment->save();
     // @todo The ID should be an integer, but for some reason the entity field
     //   API returns a string.

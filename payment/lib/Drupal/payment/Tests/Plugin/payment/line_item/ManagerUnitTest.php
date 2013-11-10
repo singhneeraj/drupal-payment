@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Tests\Plugin\payment\line_item;
 
+use Drupal\payment\Payment;
 use Drupal\simpletest\DrupalUnitTestBase;
 
 /**
@@ -42,7 +43,7 @@ class ManagerUnitTest extends DrupalUnitTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->manager = \Drupal::service('plugin.manager.payment.line_item');
+    $this->manager = Payment::lineItemManager();
   }
 
   /**

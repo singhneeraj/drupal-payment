@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Tests;
 
+use Drupal\payment\Payment;
 use Drupal\simpletest\DrupalUnitTestBase;
 
 /**
@@ -35,7 +36,7 @@ class UpgradeMapUnitTest extends DrupalUnitTestBase {
    */
   protected function testStatus() {
     module_load_install('payment');
-    $manager = \Drupal::service('plugin.manager.payment.status');
+    $manager = Payment::statusManager();
     $pluginIds = array_keys($manager->getDefinitions());
     $this->assertFalse(array_diff(payment_upgrade_8x2x_map_status(), $pluginIds));
   }
@@ -45,7 +46,7 @@ class UpgradeMapUnitTest extends DrupalUnitTestBase {
    */
   protected function testPaymentMethod() {
     module_load_install('payment');
-    $manager = \Drupal::service('plugin.manager.payment.method');
+    $manager = Payment::methodManager();
     $pluginIds = array_keys($manager->getDefinitions());
     $this->assertFalse(array_diff(payment_upgrade_8x2x_map_payment_method(), $pluginIds));
   }

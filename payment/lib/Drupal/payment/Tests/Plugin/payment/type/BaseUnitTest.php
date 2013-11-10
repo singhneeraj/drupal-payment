@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Tests\Plugin\payment\type;
 
+use Drupal\payment\Payment;
 use Drupal\payment\Plugin\payment\type\PaymentTypeInterface ;
 use Drupal\simpletest\DrupalUnitTestBase;
 
@@ -43,7 +44,7 @@ class BaseUnitTest extends DrupalUnitTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->type = \Drupal::service('plugin.manager.payment.type')->createInstance('payment_test', array());
+    $this->type = Payment::typeManager()->createInstance('payment_test', array());
     $storage_controller = \Drupal::entityManager()->getStorageController('payment');
     $this->type->setPayment($storage_controller->create(array(
       'type' => $this->type,

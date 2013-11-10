@@ -9,6 +9,7 @@ namespace Drupal\payment_form\Tests\Plugin\Field\FieldFormatter;
 
 use Drupal\field\FieldInterface;
 use Drupal\payment\Generate;
+use Drupal\payment\Payment;
 use Drupal\payment_form\Plugin\payment\type\PaymentForm;
 use Drupal\simpletest\WebTestBase;
 
@@ -93,7 +94,7 @@ class PaymentFormWebTest extends WebTestBase {
     $this->user->save();
 
     // Create a payment method.
-    $plugin = \Drupal::service('plugin.manager.payment.method')->createInstance('payment_basic');
+    $plugin = Payment::methodManager()->createInstance('payment_basic');
     $plugin->setStatus($this->statusPluginId);
     Generate::createPaymentMethod(2, $plugin)
       ->save();

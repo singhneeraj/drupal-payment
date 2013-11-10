@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Tests\Plugin\payment\line_item;
 
+use Drupal\payment\Payment;
 use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 use Drupal\simpletest\DrupalUnitTestBase;
 
@@ -43,7 +44,7 @@ class BasicUnitTest extends DrupalUnitTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->lineItem = \Drupal::service('plugin.manager.payment.line_item')->createInstance('payment_basic');
+    $this->lineItem = Payment::lineItemManager()->createInstance('payment_basic');
   }
 
   /**
