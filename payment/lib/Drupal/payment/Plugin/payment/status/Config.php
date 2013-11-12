@@ -26,7 +26,6 @@ class Config extends Base {
 
       // Strip the base plugin ID and the colon.
       $entity_id = substr($plugin_id, 15);
-      // @todo Revisit this when config entities really support $entity->uri().
       $operations['update'] = array(
         'title' => t('Edit'),
         'href' => 'admin/config/services/payment/status/edit/' . $entity_id,

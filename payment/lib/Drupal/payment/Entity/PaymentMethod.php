@@ -207,60 +207,6 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
   }
 
   /**
-   * {@inheritdoc}
-   *
-   * Copied from \Drupal\Core\Entity\EntityNG.
-   *
-   * @todo Remove this once https://drupal.org/node/1818574 is fixed.
-   */
-  public function uri($rel = 'canonical') {
-    $entity_info = $this->entityInfo();
-
-    $link_templates = isset($entity_info['links']) ? $entity_info['links'] : array();
-
-    if (isset($link_templates[$rel])) {
-      $template = $link_templates[$rel];
-      $replacements = $this->uriPlaceholderReplacements();
-      $uri['path'] = str_replace(array_keys($replacements), array_values($replacements), $template);
-
-      // @todo Remove this once http://drupal.org/node/1888424 is in and we can
-      //   move the BC handling of / vs. no-/ to the generator.
-      $uri['path'] = trim($uri['path'], '/');
-
-      // Pass the entity data to url() so that alter functions do not need to
-      // look up this entity again.
-      $uri['options']['entity_type'] = $this->entityType;
-      $uri['options']['entity'] = $this;
-      return $uri;
-    }
-
-    // For a canonical link (that is, a link to self), look up the stack for
-    // default logic. Other relationship types are not supported by parent
-    // classes.
-    if ($rel == 'canonical') {
-      return parent::uri();
-    }
-  }
-
-  /**
-   * Copied from \Drupal\Core\Entity\EntityNG.
-   *
-   * @todo Remove this once https://drupal.org/node/1818574 is fixed.
-   */
-  protected function uriPlaceholderReplacements() {
-    if (empty($this->uriPlaceholderReplacements)) {
-      $this->uriPlaceholderReplacements = array(
-        '{entityType}' => $this->entityType(),
-        '{bundle}' => $this->bundle(),
-        '{id}' => $this->id(),
-        '{uuid}' => $this->uuid(),
-        '{' . $this->entityType() . '}' => $this->id(),
-      );
-    }
-    return $this->uriPlaceholderReplacements;
-  }
-
-  /**
    * Clones the instance.
    */
   function __clone() {
