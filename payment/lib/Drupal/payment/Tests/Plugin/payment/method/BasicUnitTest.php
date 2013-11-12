@@ -155,8 +155,10 @@ class BasicUnitTest extends UnitTestCase {
       ->method('invokeAll')
       ->will($this->returnValue(array(AccessInterface::ALLOW, AccessInterface::DENY)));
 
-    $this->assertTrue($payment_method_plugin->executePaymentAccess($payment, 'default'));
-    $this->assertFalse($payment_method_plugin->executePaymentAccess($payment, $this->randomName()));
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
+    $this->assertTrue($payment_method_plugin->executePaymentAccess($payment, 'default', $account));
+    $this->assertFalse($payment_method_plugin->executePaymentAccess($payment, $this->randomName(), $account));
   }
 
   /**
@@ -168,9 +170,6 @@ class BasicUnitTest extends UnitTestCase {
       ->setConstructorArgs(array(array(), '', array(), $this->moduleHandler, $this->token, $this->paymentStatusManager))
       ->setMethods(array('executePaymentAccess', 'getStatus'))
       ->getMock();
-    $payment_method_plugin->expects($this->once())
-      ->method('executePaymentAccess')
-      ->will($this->returnValue(TRUE));
     $payment_method_plugin->expects($this->once())
       ->method('getStatus')
       ->will($this->returnValue($payment_status_plugin_id));
@@ -194,9 +193,6 @@ class BasicUnitTest extends UnitTestCase {
     $payment->expects($this->once())
       ->method('getPaymentType')
       ->will($this->returnValue($payment_type));
-    $payment->expects($this->once())
-      ->method('getPaymentMethodBrand')
-      ->will($this->returnValue('default'));
     $payment->expects($this->once())
       ->method('setStatus')
       ->with($payment_status);

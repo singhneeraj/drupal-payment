@@ -62,7 +62,7 @@ interface PaymentProcessingInterface {
    *
    * @return bool
    */
-  public function executePaymentAccess(PaymentInterface $payment, $payment_method_brand, AccountInterface $account = NULL);
+  public function executePaymentAccess(PaymentInterface $payment, $payment_method_brand, AccountInterface $account);
 
   /**
    * Executes a payment.

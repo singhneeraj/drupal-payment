@@ -304,7 +304,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   public function execute() {
     $manager = PaymentServiceWrapper::statusManager();
     // Execute the payment.
-    if ($this->getPaymentMethod()->executePaymentAccess($this, $this->getPaymentMethodBrand())) {
+    if ($this->getPaymentMethod()->executePaymentAccess($this, $this->getPaymentMethodBrand(), \Drupal::currentUser())) {
       $this->setStatus($manager->createInstance('payment_pending'));
       $this->getPaymentMethod()->executePayment($this);
     }

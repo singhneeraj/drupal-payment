@@ -122,7 +122,9 @@ class UnavailableUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->assertFalse($this->paymentMethodPlugin->executePaymentAccess($payment, $this->randomName()));
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
+    $this->assertFalse($this->paymentMethodPlugin->executePaymentAccess($payment, $this->randomName(), $account));
   }
 
   /**

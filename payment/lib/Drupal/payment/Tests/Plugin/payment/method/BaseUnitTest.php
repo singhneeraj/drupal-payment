@@ -207,7 +207,8 @@ class BaseUnitTest extends UnitTestCase {
     $this->moduleHandler->expects($this->at(1))
       ->method('invokeAll')
       ->will($this->returnValue(array()));
-    $this->assertTrue($this->paymentMethodPlugin->executePaymentAccess($payment, $payment_method_brand));
-    $this->assertTrue($this->paymentMethodPlugin->executePaymentAccess($payment, $payment_method_brand));
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $this->assertTrue($this->paymentMethodPlugin->executePaymentAccess($payment, $payment_method_brand, $account));
+    $this->assertTrue($this->paymentMethodPlugin->executePaymentAccess($payment, $payment_method_brand, $account));
   }
 }

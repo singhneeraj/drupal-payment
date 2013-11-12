@@ -32,7 +32,7 @@ class PaymentPaymentMethodInput {
     $payment_method_ids = empty($element['#payment_method_ids']) ? NULL : $element['#payment_method_ids'];
     foreach (entity_load_multiple('payment_method', $payment_method_ids) as $payment_method) {
       foreach ($payment_method->brands() as $payment_method_brand => $info) {
-        if ($payment_method->executePaymentAccess($payment, $payment_method_brand)) {
+        if ($payment_method->executePaymentAccess($payment, $payment_method_brand, \Drupal::currentUser())) {
           $payment_method_options[$payment_method->id() . ':' . $payment_method_brand] = $info['label'];
         }
       }

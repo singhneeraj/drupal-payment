@@ -131,7 +131,7 @@ class Basic extends Base implements ContainerFactoryPluginInterface {
   /**
    * {@inheritdoc}
    */
-  public function executePaymentAccess(PaymentInterface $payment, $payment_method_brand, AccountInterface $account = NULL) {
+  public function executePaymentAccess(PaymentInterface $payment, $payment_method_brand, AccountInterface $account) {
     return $payment_method_brand == 'default' && parent::executePaymentAccess($payment, $payment_method_brand, $account);
   }
 
@@ -139,10 +139,8 @@ class Basic extends Base implements ContainerFactoryPluginInterface {
    * {@inheritdoc}
    */
   public function executePayment(PaymentInterface $payment) {
-    if ($this->executePaymentAccess($payment, $payment->getPaymentMethodBrand())) {
-      $payment->setStatus($this->paymentStatusManager->createInstance($this->getStatus()));
-      $payment->save();
-    }
+    $payment->setStatus($this->paymentStatusManager->createInstance($this->getStatus()));
+    $payment->save();
     $payment->getPaymentType()->resumeContext();
   }
 
