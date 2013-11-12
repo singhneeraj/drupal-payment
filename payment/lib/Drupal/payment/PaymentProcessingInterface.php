@@ -26,6 +26,11 @@ interface PaymentProcessingInterface {
    *  Keys are machine names. Values are associative arrays with at least the
    *  following keys:
    *  - label (required): the translated human-readable label.
+   *  - currencies (optional): An array of supported currencies. Keys are
+   *    currency codes, and values are arrays with the following keys:
+   *    - minimum (optional): the minimum amount for this currency.
+   *    - maximum (optional): the maximum amount for this currency.
+   *    Do not set this key to allow all currencies.
    */
   public function brands();
 

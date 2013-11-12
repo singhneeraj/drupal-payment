@@ -97,13 +97,15 @@ function hook_payment_type_pre_resume_context(PaymentInterface $payment) {
  *   See \Drupal\payment\PaymentProcessingInterface for the available brands.
  * @param \Drupal\Core\Session\AccountInterface $account
  *
- * @return boolean
- *   Whether the operation can be performed on the payment.
+ * @return bool|null
+ *   \Drupal\Core\Access\AccessInterface::ALLOW,
+ *   \Drupal\Core\Access\AccessInterface::DENY, or
+ *   \Drupal\Core\Access\AccessInterface::KILL.
  *
  * @see \Drupal\payment\Plugin\payment\method\Base::executePaymentAccess()
  * @see \Drupal\payment\Plugin\payment\method\Base::executePaymentAccessEvent()
  */
-function hook_payment_pre_execute_access(PaymentInterface $payment, PaymentMethodInterface $payment_method, $payment_method_brand, AccountInterface $account) {}
+function hook_payment_execute_access(PaymentInterface $payment, PaymentMethodInterface $payment_method, $payment_method_brand, AccountInterface $account) {}
 
 /**
  * Executes before a payment is executed.

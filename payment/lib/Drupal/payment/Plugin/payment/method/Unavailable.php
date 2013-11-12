@@ -88,6 +88,7 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
    * {@inheritdoc}
    */
   public function executePayment(PaymentInterface $payment) {
+    throw new \RuntimeException('This plugin cannot execute payments.');
   }
 
   /**

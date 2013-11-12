@@ -7,9 +7,13 @@
 namespace Drupal\payment\Plugin\payment\method;
 
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Utility\Token;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Payment;
+use Drupal\payment\Plugin\payment\status\Manager as PaymentStatusManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A basic payment method that does not transfer money.
@@ -21,7 +25,41 @@ use Drupal\payment\Payment;
  *   module = "payment"
  * )
  */
-class Basic extends Base {
+class Basic extends Base implements ContainerFactoryPluginInterface {
+
+  /**
+   * The payment status manager.
+   *
+   * @var \Drupal\payment\Plugin\payment\status\manager
+   */
+  protected $paymentStatusManager;
+
+  /**
+   * Constructor.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param array $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
+   * @param \Drupal\Core\Utility\Token $token
+   *   The token API.
+   */
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler, Token $token, PaymentStatusManager $payment_status_manager) {
+    $configuration += $this->defaultConfiguration();
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $module_handler, $token);
+    $this->paymentStatusManager = $payment_status_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, array $plugin_definition) {
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('module_handler'), $container->get('token'), $container->get('plugin.manager.payment.status'));
+  }
 
   /**
    * {@inheritdoc}
@@ -66,16 +104,16 @@ class Basic extends Base {
 
     $elements['brand'] = array(
       '#default_value' => $this->configuration['brand_option'],
-      '#description' => t('The label that payers will see when choosing a payment method. Defaults to the payment method label.'),
-      '#title' => t('Brand label'),
+      '#description' => $this->t('The label that payers will see when choosing a payment method. Defaults to the payment method label.'),
+      '#title' => $this->t('Brand label'),
       '#type' => 'textfield',
     );
     $elements['status'] = array(
       '#type' => 'select',
-      '#title' => t('Final payment status'),
-      '#description' => t('The status to give a payment after being processed by this payment method.'),
+      '#title' => $this->t('Final payment status'),
+      '#description' => $this->t('The status to give a payment after being processed by this payment method.'),
       '#default_value' => $this->getStatus() ? $this->getStatus() : 'payment_success',
-      '#options' => Payment::statusManager()->options(),
+      '#options' => $this->paymentStatusManager->options(),
     );
 
     return $elements;
@@ -102,7 +140,7 @@ class Basic extends Base {
    */
   public function executePayment(PaymentInterface $payment) {
     if ($this->executePaymentAccess($payment, $payment->getPaymentMethodBrand())) {
-      $payment->setStatus(Payment::statusManager()->createInstance($this->getStatus()));
+      $payment->setStatus($this->paymentStatusManager->createInstance($this->getStatus()));
       $payment->save();
     }
     $payment->getPaymentType()->resumeContext();
@@ -114,10 +152,18 @@ class Basic extends Base {
   public function brands() {
     return array(
       'default' => array(
-        'currencies' => array(),
         'label' => $this->configuration['brand_option'] ? $this->configuration['brand_option'] : $this->getPaymentMethod()->label(),
       ),
     );
+  }
+
+  /**
+   * Gets the brand option label.
+   *
+   * @return string
+   */
+  public function getBrandLabel() {
+    return$this->configuration['brand_option'];
   }
 
   /**

@@ -2,38 +2,53 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\payment\method\BasicUnitTest.
+ * Contains \Drupal\payment\Tests\Plugin\payment\method\BasicUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\payment\method;
 
-use Drupal\payment\Payment;
-use Drupal\payment\Plugin\payment\method\PaymentMethodInterface;
-use Drupal\simpletest\DrupalUnitTestBase;
+use Drupal\Core\Access\AccessInterface;
+use Drupal\Tests\UnitTestCase;
 
 /**
  * Tests \Drupal\payment\Plugin\payment\method\Basic.
  */
-class BasicUnitTest extends DrupalUnitTestBase {
+class BasicUnitTest extends UnitTestCase {
 
   /**
-   * {@inheritdoc}
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  public static $modules = array('field', 'payment');
+  protected $moduleHandler;
+
+  /**
+   * The token API.
+   *
+   * @var \Drupal\Core\Utility\Token
+   */
+  protected $token;
 
   /**
    * The payment method plugin.
    *
    * @var \Drupal\payment\Plugin\payment\method\Basic
    */
-  protected $method;
+  protected $paymentMethodPlugin;
 
   /**
    * The payment method entity.
    *
    * @var \Drupal\payment\Entity\PaymentMethodInterface
    */
-  protected $methodEntity;
+  protected $paymentMethodEntity;
+
+  /**
+   * The payment status manager.
+   *
+   * @var \Drupal\payment\Plugin\payment\status\manager
+   */
+  protected $paymentStatusManager;
 
   /**
    * {@inheritdoc}
@@ -49,93 +64,160 @@ class BasicUnitTest extends DrupalUnitTestBase {
   /**
    * {@inheritdoc
    */
-  protected function setUp() {
+  public function setUp() {
     parent::setUp();
-    $this->methodEntity = entity_create('payment_method', array());
-    $this->method = Payment::methodManager()->createInstance('payment_basic');
-    $this->method->setPaymentMethod($this->methodEntity);
+
+    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
+
+    $this->token = $this->getMockBuilder('\Drupal\Core\Utility\Token')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $this->paymentMethodEntity = $this->getMock('\Drupal\payment\Entity\PaymentMethodInterface');
+
+    $this->paymentStatusManager = $this->getMockBuilder('\Drupal\payment\Plugin\payment\status\Manager')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $this->paymentMethodPlugin = $this->getMockBuilder('\Drupal\payment\Plugin\payment\method\Basic')
+      ->setConstructorArgs(array(array(), '', array(), $this->moduleHandler, $this->token, $this->paymentStatusManager))
+      ->setMethods(array('t'))
+      ->getMock();
+    $this->paymentMethodPlugin->expects($this->any())
+      ->method('t')
+      ->will($this->returnArgument(0));
+    $this->paymentMethodPlugin->setPaymentMethod($this->paymentMethodEntity);
   }
 
   /**
-   * Tests setAmount() and getAmount().
+   * Tests defaultConfiguration().
    */
-  protected function testGetConfiguration() {
-    $this->method->setMessageText('foo')
-      ->setMessageTextFormat('bar')
-      ->setStatus('baz')
-      ->setBrandLabel('Foo');
-    $this->assertEqual($this->method->getConfiguration(), array(
-      'brand_option' => 'Foo',
-      'message_text' => 'foo',
-      'message_text_format' => 'bar',
-      'status' => 'baz',
-    ));
+  public function testDefaultConfiguration() {
+    $this->assertInternalType('array', $this->paymentMethodPlugin->defaultConfiguration());
   }
 
   /**
-   * Tests setPaymentMethod() and getPaymentMethod().
+   * Tests getStatus() setStatus().
    */
-  protected function testGetPaymentMethod() {
-    $payment_method = entity_create('payment_method', array());
-    $this->assertTrue($this->method->setPaymentMethod($payment_method) instanceof PaymentMethodInterface);
-    $this->assertIdentical($this->method->getPaymentMethod(), $payment_method);
-  }
-
-  /**
-   * Tests setMessageText() and getMessageText().
-   */
-  protected function testGetMessageText() {
-    $text = $this->randomName();
-    $this->assertTrue($this->method->setMessageText($text) instanceof PaymentMethodInterface);
-    $this->assertIdentical($this->method->getMessageText(), $text);
-  }
-
-  /**
-   * Tests setMessageTextFormat() and getMessageTextFormat().
-   */
-  protected function testGetMessageTextFormat() {
-    $format = $this->randomName();
-    $this->assertTrue($this->method->setMessageTextFormat($format) instanceof PaymentMethodInterface);
-    $this->assertIdentical($this->method->getMessageTextFormat(), $format);
-  }
-
-  /**
-   * Tests setStatus() and getStatus().
-   */
-  protected function testGetStatus() {
+  public function testGetStatus() {
     $status = $this->randomName();
-    $this->assertTrue($this->method->setStatus($status) instanceof PaymentMethodInterface);
-    $this->assertIdentical($this->method->getStatus(), $status);
-  }
-
-  /**
-   * Tests setBrandLabel() and brands().
-   */
-  protected function testBrands() {
-    $brands = $this->method->brands();
-    $this->assertIdentical($brands['default']['label'], $this->methodEntity->label());
-    $label = $this->randomName();
-    $this->assertTrue($this->method->setBrandLabel($label) instanceof PaymentMethodInterface);
-    $brands = $this->method->brands();
-    $this->assertIdentical($brands['default']['label'], $label);
+    $this->assertSame(spl_object_hash($this->paymentMethodPlugin), spl_object_hash($this->paymentMethodPlugin->setStatus($status)));
+    $this->assertSame($status, $this->paymentMethodPlugin->getStatus());
   }
 
   /**
    * Tests paymentMethodFormElements().
    */
-  protected function testPaymentMethodFormElements() {
+  public function testPaymentMethodFormElements() {
     $form = array();
     $form_state = array();
-    $this->assertTrue(is_array($this->method->paymentMethodFormElements($form, $form_state)));
+    $elements = $this->paymentMethodPlugin->paymentMethodFormElements($form, $form_state);
+    $this->assertInternalType('array', $elements);
+    foreach (array('brand', 'message', 'status') as $key) {
+      $this->assertArrayHasKey($key, $elements);
+      $this->assertInternalType('array', $elements[$key]);
+    }
   }
 
   /**
    * Tests executePaymentAccess().
    */
-  protected function testExecutePaymentAccess() {
-    $payment = entity_create('payment', array(
-      'bundle' => 'payment_unavailable',
-    ));
-    $this->assertTrue($this->method->executePaymentAccess($payment, 'default'));
+  public function testExecutePaymentAccess() {
+    $currency_code = 'EUR';
+    $valid_amount = 12.34;
+
+    $payment_method_plugin = $this->getMockBuilder('\Drupal\payment\Plugin\payment\method\Basic')
+      ->setConstructorArgs(array(array(), '', array(), $this->moduleHandler, $this->token, $this->paymentStatusManager))
+      ->setMethods(array('brands'))
+      ->getMock();
+    $payment_method_plugin->expects($this->once())
+      ->method('brands')
+      ->will($this->returnValue(array(
+        'default' => array()
+      )));
+    $payment_method_plugin->setPaymentMethod($this->paymentMethodEntity);
+
+    $this->paymentMethodEntity->expects($this->once())
+      ->method('status')
+      ->will($this->returnValue(TRUE));
+
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $payment->expects($this->once())
+      ->method('getCurrencyCode')
+      ->will($this->returnValue($currency_code));
+    $payment->expects($this->once())
+      ->method('getAmount')
+      ->will($this->returnValue($valid_amount));
+
+    $this->moduleHandler->expects($this->once())
+      ->method('invokeAll')
+      ->will($this->returnValue(array(AccessInterface::ALLOW, AccessInterface::DENY)));
+
+    $this->assertTrue($payment_method_plugin->executePaymentAccess($payment, 'default'));
+    $this->assertFalse($payment_method_plugin->executePaymentAccess($payment, $this->randomName()));
+  }
+
+  /**
+   * Tests executePayment().
+   */
+  public function testExecutePayment() {
+    $payment_status_plugin_id = $this->randomName();
+    $payment_method_plugin = $this->getMockBuilder('\Drupal\payment\Plugin\payment\method\Basic')
+      ->setConstructorArgs(array(array(), '', array(), $this->moduleHandler, $this->token, $this->paymentStatusManager))
+      ->setMethods(array('executePaymentAccess', 'getStatus'))
+      ->getMock();
+    $payment_method_plugin->expects($this->once())
+      ->method('executePaymentAccess')
+      ->will($this->returnValue(TRUE));
+    $payment_method_plugin->expects($this->once())
+      ->method('getStatus')
+      ->will($this->returnValue($payment_status_plugin_id));
+
+    $payment_status = $this->getMock('\Drupal\payment\Plugin\payment\status\PaymentStatusInterface');
+
+    $this->paymentStatusManager->expects($this->once())
+      ->method('createInstance')
+      ->with($payment_status_plugin_id)
+      ->will($this->returnValue($payment_status));
+
+    $payment_type = $this->getMock('\Drupal\payment\Plugin\payment\type\PaymentTypeInterface');
+    $payment_type->expects($this->once())
+      ->method('resumeContext');
+
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $payment->expects($this->once())
+      ->method('save');
+    $payment->expects($this->once())
+      ->method('getPaymentType')
+      ->will($this->returnValue($payment_type));
+    $payment->expects($this->once())
+      ->method('getPaymentMethodBrand')
+      ->will($this->returnValue('default'));
+    $payment->expects($this->once())
+      ->method('setStatus')
+      ->with($payment_status);
+
+    $payment_method_plugin->executePayment($payment);
+  }
+
+  /**
+   * Tests brands().
+   */
+  public function testBrands() {
+    $brands = $this->paymentMethodPlugin->brands();
+    $this->assertInternalType('array', $brands);
+  }
+
+  /**
+   * Tests getBrandLabel().
+   */
+  public function testGetBrandLabel() {
+    $label = $this->randomName();
+    $this->assertSame(spl_object_hash($this->paymentMethodPlugin), spl_object_hash($this->paymentMethodPlugin->setBrandLabel($label)));
+    $this->assertSame($label, $this->paymentMethodPlugin->getBrandLabel());
   }
 }

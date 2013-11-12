@@ -6,17 +6,28 @@
 
 namespace Drupal\payment\Plugin\payment\method;
 
-use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\Access\AccessInterface;
+use Drupal\Core\Plugin\PluginBase;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\payment\Plugin\payment\method\PaymentMethodInterface;
+use Drupal\Core\Utility\Token;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Entity\PaymentMethodInterface as EntityPaymentMethodInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A base payment method plugin.
  */
-abstract class Base extends PluginBase implements PaymentMethodInterface {
+abstract class Base extends PluginBase implements AccessInterface, ContainerFactoryPluginInterface, PaymentMethodInterface {
+
+  /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
 
   /**
    * The payment method entity this plugin belongs to.
@@ -26,11 +37,38 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
   protected $paymentMethod;
 
   /**
-   * {@inheritdoc}
+   * The token API.
+   *
+   * @var \Drupal\Core\Utility\Token
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
+  protected $token;
+
+  /**
+   * Constructor.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param array $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
+   * @param \Drupal\Core\Utility\Token $token
+   *   The token API.
+   */
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler, Token $token) {
     $configuration += $this->defaultConfiguration();
     parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->moduleHandler = $module_handler;
+    $this->token = $token;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, array $plugin_definition) {
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('module_handler'), $container->get('token'));
   }
 
   /**
@@ -122,8 +160,8 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
    * {@inheritdoc}
    */
   public function paymentFormElements(array $form, array &$form_state, PaymentInterface $payment) {
-    $message = check_markup($this->getMessageText(), $this->getMessageTextFormat());
-    $message = \Drupal::service('token')->replace($message, array(
+    $message = $this->checkMarkup($this->getMessageText(), $this->getMessageTextFormat());
+    $message = $this->token->replace($message, array(
       'payment' => $payment,
     ), array(
       'clear' => TRUE,
@@ -138,6 +176,13 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
   }
 
   /**
+   * Wraps check_markup().
+   */
+  protected function checkMarkup($text, $format_id = NULL, $langcode = '', $cache = FALSE, $filter_types_to_skip = array()) {
+    return check_markup($text, $format_id, $langcode, $cache, $filter_types_to_skip);
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function paymentMethodFormElements(array $form, array &$form_state) {
@@ -146,7 +191,7 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
     $elements['#tree'] = TRUE;
     $elements['message'] = array(
       '#type' => 'text_format',
-      '#title' => t('Payment form message'),
+      '#title' => $this->t('Payment form message'),
       '#default_value' => $this->getMessageText(),
       '#format' => $this->getMessageTextFormat(),
     );
@@ -190,23 +235,26 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
    */
   protected function paymentExecuteAccessCurrency(PaymentInterface $payment, $payment_method_brand, AccountInterface $account = NULL) {
     $brands = $this->brands();
-    // Check that the requested brand has any currency information at all.
-    if (isset($brands[$payment_method_brand]) && isset($brands[$payment_method_brand]['currencies'])) {
-      $currencies = $brands[$payment_method_brand]['currencies'];
+    $payment_currency_code = $payment->getCurrencyCode();
+    $payment_amount = $payment->getAmount();
+    // Check that the requested brand exists.
+    if (isset($brands[$payment_method_brand])) {
       // If no currencies are specified, all currencies are allowed.
-      if (empty($currencies)) {
+      if (!isset($brands[$payment_method_brand]['currencies'])) {
         return TRUE;
       }
+
+      $currencies = $brands[$payment_method_brand]['currencies'];
       // If the payment's currency is not specified, access is denied.
-      elseif (!isset($currencies[$payment->getCurrencyCode()])) {
+      if (!isset($currencies[$payment_currency_code])) {
         return FALSE;
       }
       // Confirm the payment amount is higher than the supported minimum.
-      elseif (isset($currencies[$payment->getCurrencyCode()]['minimum']) && $payment->getAmount() < $currencies[$payment->getCurrencyCode()]['minimum']) {
+      elseif (isset($currencies[$payment_currency_code]['minimum']) && $payment_amount < $currencies[$payment_currency_code]['minimum']) {
         return FALSE;
       }
       // Confirm the payment amount does not exceed the maximum.
-      elseif (isset($currencies[$payment->getCurrencyCode()]['maximum']) && $payment->getAmount() > $currencies[$payment->getCurrencyCode()]['maximum']) {
+      elseif (isset($currencies[$payment_currency_code]['maximum']) && $payment_amount > $currencies[$payment_currency_code]['maximum']) {
         return FALSE;
       }
       return TRUE;
@@ -217,6 +265,8 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
   /**
    * Invokes events for self::executePaymentAccess().
    *
+   * @todo Invoke Rules event.
+   *
    * @param \Drupal\payment\Entity\PaymentInterface $payment
    * @param string $payment_method_brand
    * @param \Drupal\Core\Session\AccountInterface $account
@@ -224,15 +274,10 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
    * @return bool
    */
   protected function paymentExecuteAccessEvent(PaymentInterface $payment, $payment_method_brand, AccountInterface $account = NULL) {
-    $handler = \Drupal::moduleHandler();
-    foreach ($handler->getImplementations('payment_execute_access') as $module) {
-      $module_access = $handler->invoke($module, 'payment_execute_access', $payment, $this->getPaymentMethod(), $payment_method_brand, $account);
-      if ($module_access === FALSE) {
-        return FALSE;
-      }
-    }
-    // @todo invoke Rules event.
-    return TRUE;
+    $access = $this->moduleHandler->invokeAll('payment_execute_access', $payment, $this->getPaymentMethod(), $payment_method_brand, $account);
+
+    // If there are no results, grant access.
+    return empty($access) || in_array(self::ALLOW, $access, TRUE) && !in_array(self::KILL, $access, TRUE);
   }
 
   /**
@@ -243,8 +288,7 @@ abstract class Base extends PluginBase implements PaymentMethodInterface {
    * @return bool
    */
   protected function paymentExecuteEvent(PaymentInterface $payment) {
-    $handler = \Drupal::moduleHandler();
-    $handler->invokeAll('payment_pre_execute', array($payment));
+    $this->moduleHandler->invokeAll('payment_pre_execute', array($payment));
     // @todo invoke Rules event.
   }
 }
