@@ -6,8 +6,6 @@
 
 namespace Drupal\payment\Plugin\payment\status;
 
-use Drupal\payment\Plugin\payment\status\Base;
-
 /**
  * A status based on a configuration entity.
  *

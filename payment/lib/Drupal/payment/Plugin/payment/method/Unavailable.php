@@ -10,7 +10,6 @@ use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Entity\PaymentMethodInterface as EntityPaymentMethodInterface;
-use Drupal\payment\Plugin\payment\method\PaymentMethodInterface;
 
 /**
  * A payment method controller that essentially disables payment methods.

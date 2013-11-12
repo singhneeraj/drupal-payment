@@ -9,9 +9,7 @@ namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
-use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Payment as PaymentServiceWrapper;
-use Drupal\payment\Plugin\payment\type\PaymentTypeInterface;
 use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
 

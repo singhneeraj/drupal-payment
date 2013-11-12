@@ -7,7 +7,6 @@
 namespace Drupal\payment\Plugin\payment\line_item;
 
 use Drupal\Component\Utility\NestedArray;
-use Drupal\payment\Plugin\payment\line_item\Base;
 
 /**
  * A basic line item.

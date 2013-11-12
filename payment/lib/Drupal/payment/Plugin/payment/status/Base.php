@@ -8,7 +8,6 @@ namespace Drupal\payment\Plugin\payment\status;
 
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\payment\Payment;
-use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
 
 /**
  * A base payment status.

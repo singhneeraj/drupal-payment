@@ -11,8 +11,6 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Plugin\payment\method\PaymentMethodInterface as PluginPaymentMethodInterface;
-use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Entity\PaymentMethodInterface;
 
 /**
  * Defines a payment method entity.

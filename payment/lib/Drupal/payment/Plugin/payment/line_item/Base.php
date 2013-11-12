@@ -7,7 +7,6 @@
 namespace Drupal\payment\Plugin\payment\line_item;
 
 use Drupal\Component\Plugin\PluginBase;
-use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 
 /**
  * A base line item.

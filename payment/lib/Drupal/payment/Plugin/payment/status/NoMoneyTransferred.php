@@ -6,8 +6,6 @@
 
 namespace Drupal\payment\Plugin\payment\status;
 
-use Drupal\payment\Plugin\payment\status\Base;
-
 /**
  * No money has been transferred.
  *
