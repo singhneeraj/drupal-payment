@@ -316,12 +316,8 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public static function preCreate(EntityStorageControllerInterface $storage_controller, array &$values) {
-    // @todo Remove access to global $user once https://drupal.org/node/2032553
-    //has been fixed.
-    global $user;
-
     $values += array(
-      'ownerId' => (int) $user->id(),
+      'ownerId' => (int) \Drupal::currentUser()->id(),
     );
   }
 

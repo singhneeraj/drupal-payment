@@ -8,6 +8,7 @@
 namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\EntityFormController;
+use Drupal\user\UserInterface;
 
 /**
  * Provides the payment method form.
@@ -18,8 +19,6 @@ class PaymentMethodFormController extends EntityFormController {
    * {@inheritdoc}
    */
   public function form(array $form, array &$form_state) {
-    global $user;
-
     $payment_method = $this->entity;
     $definition = $payment_method->getPlugin()->getPluginDefinition();
     $form['type'] = array(
@@ -50,10 +49,17 @@ class PaymentMethodFormController extends EntityFormController {
       ),
       '#disabled' => (bool) $payment_method->id(),
     );
+    $owner_label = '';
+    if ($payment_method->getOwnerId()) {
+      $owner_label = entity_load('user', $payment_method->getOwnerId())->label();
+    }
+    elseif ($this->currentUser() instanceof UserInterface) {
+      $owner_label = $this->currentUser()->label();
+    }
     $form['owner'] = array(
       '#type' => 'textfield',
       '#title' => t('Owner'),
-      '#default_value' => $payment_method->getOwnerId() ? entity_load('user', $payment_method->getOwnerId())->label() : $user->label(),
+      '#default_value' => $owner_label,
       '#maxlength' => 255,
       '#autocomplete_route_name' => 'user.autocomplete',
       '#required' => TRUE,
