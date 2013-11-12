@@ -10,6 +10,7 @@ namespace Drupal\payment\Entity;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Executable\ExecutableInterface;
+use Drupal\currency\Entity\CurrencyInterface;
 use Drupal\payment\Entity\PaymentMethodInterface;
 use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
@@ -27,13 +28,20 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
   public function getPaymentType();
 
   /**
+   * Gets the currency of the payment amount.
+   *
+   * @return \Drupal\currency\Entity\CurrencyInterface
+   */
+  public function getCurrency();
+
+  /**
    * Sets the ISO 4217 currency code of the payment amount.
    *
-   * @param string $currencyCode
+   * @param string $currency_code
    *
    * @return \Drupal\payment\Entity\PaymentInterface
    */
-  public function setCurrencyCode($currencyCode);
+  public function setCurrencyCode($currency_code);
 
   /**
    * Gets the ISO 4217 currency code of the payment amount.

@@ -38,16 +38,17 @@ class PaymentStorageController extends FieldableDatabaseStorageController implem
     foreach ($queried_entities as $id => $queried_entity) {
       $queried_entities[$id] = (object) array(
         'bundle' => $queried_entity->bundle,
-        'currencyCode' => $queried_entity->currency_code,
+        'currency' => $queried_entity->currency_code,
         'id' => (int) $queried_entity->id,
         'lineItems' => $line_items[$id],
         'ownerId' => (int) $queried_entity->owner_id,
         'paymentMethodBrand' => $queried_entity->payment_method_brand,
-        'paymentMethodId' => $queried_entity->payment_method_id,
+        'payment_method' => $queried_entity->payment_method_id,
         'statuses' => $statuses[$id],
         'uuid' => $queried_entity->uuid,
       );
     }
+
     parent::attachLoad($queried_entities, $load_revision);
   }
 

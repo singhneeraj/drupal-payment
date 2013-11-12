@@ -9,6 +9,7 @@ namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
+use Drupal\currency\Entity\CurrencyInterface;
 use Drupal\payment\Payment as PaymentServiceWrapper;
 use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
 use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
@@ -106,8 +107,15 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
+  public function getCurrency() {
+    return $this->get('currency')->entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function setCurrencyCode($currency_code) {
-    $this->currencyCode[0]->setValue($currency_code);
+    $this->set('currency', $currency_code);
 
     return $this;
   }
@@ -116,7 +124,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function getCurrencyCode() {
-    return $this->currencyCode[0]->value;
+    return $this->get('currency')->target_id;
   }
 
   /**
@@ -224,7 +232,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function setPaymentMethodId($id) {
-    $this->paymentMethodId[0]->setValue($id);
+    $this->set('payment_method', $id);
 
     return $this;
   }
@@ -233,16 +241,14 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function getPaymentMethodId() {
-    return $this->paymentMethodId[0]->value;
+    return $this->get('payment_method')->target_id;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getPaymentMethod() {
-    if ($this->getPaymentMethodId()) {
-      return entity_load('payment_method', $this->getPaymentMethodId());
-    }
+    return $this->get('payment_method')->entity;
   }
 
   /**
@@ -345,18 +351,26 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions($entity_type) {
-    $fields['currencyCode'] = array(
-      'label' => t('Currency code'),
-      'type' => 'string_field',
+    $fields['currency'] = array(
+      'label' => t('Currency'),
+      'type' => 'entity_reference_field',
+      'settings' => array(
+        'target_type' => 'currency',
+        'default_value' => 0,
+      ),
     );
     $fields['id'] = array(
       'label' => t('Payment ID'),
       'type' => 'integer_field',
       'read-only' => TRUE,
     );
-    $fields['paymentMethodId'] = array(
-      'label' => t('Payment method ID'),
-      'type' => 'string_field',
+    $fields['payment_method'] = array(
+      'label' => t('Payment method'),
+      'type' => 'entity_reference_field',
+      'settings' => array(
+        'target_type' => 'payment_method',
+        'default_value' => 0,
+      ),
     );
     $fields['paymentMethodBrand'] = array(
       'label' => t('Payment method brand name'),
