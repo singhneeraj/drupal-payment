@@ -2,24 +2,24 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\PaymentStatusesDisplayWebTest.
+ * Contains class \Drupal\payment\Tests\PaymentStatusesDisplayUnitTest.
  */
 
 namespace Drupal\payment\Tests\Element;
 
 use Drupal\payment\Generate;
 use Drupal\payment\Payment;
-use Drupal\simpletest\WebTestBase;
+use Drupal\simpletest\DrupalUnitTestBase;
 
 /**
  * Tests the payment_statuses_display element.
  */
-class PaymentStatusesDisplayWebTest extends WebTestBase {
+class PaymentStatusesDisplayUnitTest extends DrupalUnitTestBase {
 
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('payment');
+  public static $modules = array('field', 'payment', 'system');
 
   /**
    * {@inheritdoc}
@@ -27,9 +27,17 @@ class PaymentStatusesDisplayWebTest extends WebTestBase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => 'payment_statuses_display element',
+      'name' => 'payment_statuses_display element unit test',
       'group' => 'Payment',
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp() {
+    parent::setUp();
+    $this->installConfig(array('system'));
   }
 
   /**
@@ -42,11 +50,10 @@ class PaymentStatusesDisplayWebTest extends WebTestBase {
       '#statuses' => $payment->getStatuses(),
       '#type' => 'payment_statuses_display',
     );
-    $this->drupalSetContent(drupal_render($element));
-    $this->verbose($this->drupalGetContent());
+    $output = drupal_render($element);
     $strings = array('<table', t('Status'), t('Date'), t('Created'), t('Failed'), 'payment-status-plugin-payment_created');
     foreach ($strings as $string) {
-      $this->assertRaw($string);
+      $this->assertNotIdentical(strpos($output, $string), FALSE);
     }
   }
 }
