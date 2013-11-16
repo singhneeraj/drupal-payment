@@ -7,27 +7,33 @@
 
 namespace Drupal\payment\Tests\Plugin\payment\type;
 
-use Drupal\payment\Payment;
-use Drupal\payment\Plugin\payment\type\PaymentTypeInterface ;
-use Drupal\simpletest\DrupalUnitTestBase;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Drupal\Tests\UnitTestCase;
 
 /**
  * Tests \Drupal\payment\Plugin\payment\status\Unavailable.
  */
-class UnavailableUnitTest extends DrupalUnitTestBase {
+class UnavailableUnitTest extends UnitTestCase {
 
   /**
-   * The payment type to test.
+   * The module handler used for testing.
    *
-   * @var \Drupal\payment\Plugin\payment\type\Unavailable
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $type;
+  protected $moduleHandler;
 
   /**
-   * {@inheritdoc}
+   * The payment type under test.
+   *
+   * @var \Drupal\payment\Plugin\payment\type\Unavailable|\PHPUnit_Framework_MockObject_MockObject
    */
-  public static $modules = array('payment');
+  protected $paymentType;
+
+  /**
+   * The translation manager used for testing.
+   *
+   * @var \Drupal\Core\StringTranslation\TranslationManager|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $translationManager;
 
   /**
    * {@inheritdoc}
@@ -43,28 +49,38 @@ class UnavailableUnitTest extends DrupalUnitTestBase {
   /**
    * {@inheritdoc
    */
-  protected function setUp() {
-    parent::setUp();
-    $this->type = Payment::typeManager()->createInstance('payment_unavailable', array());
+  public function setUp() {
+    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
+
+    $this->translationManager = $this->getMockBuilder('\Drupal\Core\StringTranslation\TranslationManager')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $configuration = array();
+    $plugin_id = $this->randomName();
+    $plugin_definition = array();
+    $this->paymentType = $this->getMockBuilder('\Drupal\payment\Plugin\payment\type\Unavailable')
+      ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->moduleHandler, $this->translationManager))
+      ->setMethods(NULL)
+      ->getMock();
   }
 
   /**
-   * Tests resume().
+   * Tests resumeContext().
+   *
+   * @expectedException \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    */
-  protected function testResume() {
-    try {
-      $this->type->resumeContext();
-      $this->assert(FALSE);
-    }
-    catch (NotFoundHttpException $exception) {
-      $this->assert(TRUE);
-    }
+  public function testResumeContext() {
+    $this->paymentType->resumeContext();
   }
 
   /**
    * Tests paymentDescription().
    */
-  protected function testPaymentDescription() {
-    $this->assertTrue(strlen($this->type->paymentDescription()));
+  public function testPaymentDescription() {
+    $this->translationManager->expects($this->once())
+      ->method('translate')
+      ->will($this->returnArgument(0));
+    $this->assertInternalType('string', $this->paymentType->paymentDescription());
   }
 }

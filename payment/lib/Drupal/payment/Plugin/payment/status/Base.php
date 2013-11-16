@@ -7,22 +7,43 @@
 namespace Drupal\payment\Plugin\payment\status;
 
 use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\payment\Payment;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A base payment status.
  */
-abstract class Base extends PluginBase implements PaymentStatusInterface {
+abstract class Base extends PluginBase implements ContainerFactoryPluginInterface, PaymentStatusInterface {
+
+  /**
+   * The payment status plugin manager.
+   *
+   * @var \Drupal\payment\Plugin\payment\status\Manager
+   */
+  protected $paymentStatusManager;
+
+  /**
+   * Constructor.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param array $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\payment\Plugin\payment\status\Manager $payment_status_manager
+   */
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, Manager $payment_status_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->paymentStatusManager = $payment_status_manager;
+  }
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
-    $configuration += $this->defaultConfiguration();
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-    if (!$this->getCreated()) {
-      $this->setCreated(time());
-    }
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, array $plugin_definition) {
+    return new static($configuration, $plugin_id, $plugin_definition, Manager);
   }
 
   /**
@@ -102,35 +123,35 @@ abstract class Base extends PluginBase implements PaymentStatusInterface {
    * {@inheritdoc}
    */
   function getAncestors(){
-    return Payment::statusManager()->getAncestors($this->getPluginId());
+    return $this->paymentStatusManager->getAncestors($this->getPluginId());
   }
 
   /**
    * {@inheritdoc}
    */
   public function getChildren() {
-    return Payment::statusManager()->getChildren($this->getPluginId());
+    return $this->paymentStatusManager->getChildren($this->getPluginId());
   }
 
   /**
    * {@inheritdoc}
    */
   function getDescendants() {
-    return Payment::statusManager()->getDescendants($this->getPluginId());
+    return $this->paymentStatusManager->getDescendants($this->getPluginId());
   }
 
   /**
    * {@inheritdoc}
    */
   function hasAncestor($plugin_id) {
-    return Payment::statusManager()->hasAncestor($this->getPluginId(), $plugin_id);
+    return $this->paymentStatusManager->hasAncestor($this->getPluginId(), $plugin_id);
   }
 
   /**
    * {@inheritdoc}
    */
   function isOrHasAncestor($plugin_id) {
-    return Payment::statusManager()->isOrHasAncestor($this->getPluginId(), $plugin_id);
+    return $this->paymentStatusManager->isOrHasAncestor($this->getPluginId(), $plugin_id);
   }
 
   /**

@@ -7,18 +7,29 @@
 
 namespace Drupal\payment\Tests\Plugin\payment\type;
 
+use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\payment\Payment;
-use Drupal\simpletest\DrupalUnitTestBase;
+
+use Drupal\Tests\UnitTestCase;
 
 /**
  * Tests \Drupal\payment\Plugin\payment\type\Manager.
  */
-class ManagerUnitTest extends DrupalUnitTestBase {
+class ManagerUnitTest extends UnitTestCase {
 
   /**
-   * {@inheritdoc}
+   * The plugin factory used for testing.
+   *
+   * @var \Drupal\Component\Plugin\Factory\FactoryInterface
    */
-  public static $modules = array('payment');
+  protected $factory;
+
+  /**
+   * The plugin manager under test.
+   *
+   * @var \Drupal\payment\Plugin\payment\type\Manager|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $manager;
 
   /**
    * {@inheritdoc}
@@ -32,25 +43,37 @@ class ManagerUnitTest extends DrupalUnitTestBase {
   }
 
   /**
-   * Tests getDefinitions().
+   * {@inheritdoc
    */
-  protected function testGetDefinitions() {
-    // Test the default line item plugins.
-    $definitions = Payment::typeManager()->getDefinitions();
-    $this->assertEqual(count($definitions), 1);
-    foreach ($definitions as $definition) {
-      $this->assertIdentical(strpos($definition['id'], 'payment_'), 0);
-      $this->assertTrue(is_subclass_of($definition['class'], '\Drupal\payment\Plugin\payment\type\PaymentTypeInterface'));
-    }
+  public function setUp() {
+    $this->factory = $this->getMock('\Drupal\Component\Plugin\Factory\FactoryInterface');
+
+    $this->manager = $this->getMockBuilder('\Drupal\payment\Plugin\payment\type\Manager')
+      ->disableOriginalConstructor()
+      ->setMethods(NULL)
+      ->getMock();
+    $property = new \ReflectionProperty($this->manager, 'factory');
+    $property->setAccessible(TRUE);
+    $property->setValue($this->manager, $this->factory);
   }
 
   /**
    * Tests createInstance().
    */
-  protected function testCreateInstance() {
-    $id = 'payment_unavailable';
-    $manager = Payment::typeManager();
-    $this->assertEqual($manager->createInstance($id)->getPluginId(), $id);
-    $this->assertEqual($manager->createInstance('ThisIdDoesNotExist')->getPluginId(), $id);
+  public function testCreateInstance() {
+    $existing_plugin_id = 'payment_unavailable';
+    $non_existing_plugin_id = $this->randomName();
+    $this->factory->expects($this->at(0))
+      ->method('createInstance')
+      ->with($non_existing_plugin_id)
+      ->will($this->throwException(new PluginException()));
+    $this->factory->expects($this->at(1))
+      ->method('createInstance')
+      ->with($existing_plugin_id);
+    $this->factory->expects($this->at(2))
+      ->method('createInstance')
+      ->with($existing_plugin_id);
+    $this->manager->createInstance($non_existing_plugin_id);
+    $this->manager->createInstance($existing_plugin_id);
   }
 }

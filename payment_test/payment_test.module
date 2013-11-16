@@ -39,10 +39,3 @@ function payment_test_payment_status_set(PaymentInterface $payment, PaymentStatu
 function payment_test_payment_pre_execute(Payment $payment) {
   $payment->payment_test_payment_pre_execute = TRUE;
 }
-
-/**
- * Implements hook_payment_type_pre_resume_context().
- */
-function payment_test_payment_type_pre_resume_context(PaymentInterface $payment) {
-  \Drupal::state()->set('payment_test_payment_type_pre_resume_context', TRUE);
-}

@@ -7,26 +7,26 @@
 
 namespace Drupal\payment\Tests\Plugin\payment\type;
 
-use Drupal\payment\Payment;
-use Drupal\payment\Plugin\payment\type\PaymentTypeInterface ;
-use Drupal\simpletest\DrupalUnitTestBase;
+use Drupal\Tests\UnitTestCase;
 
 /**
  * Tests \Drupal\payment\Plugin\payment\status\Base.
  */
-class BaseUnitTest extends DrupalUnitTestBase {
+class BaseUnitTest extends UnitTestCase {
 
   /**
-   * The payment type to test.
+   * The module handler.
    *
-   * @var \Drupal\payment\Plugin\payment\type\Base
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $type;
+  protected $moduleHandler;
 
   /**
-   * {@inheritdoc}
+   * The payment type under test.
+   *
+   * @var \Drupal\payment\Plugin\payment\type\Base|\PHPUnit_Framework_MockObject_MockObject
    */
-  public static $modules = array('field', 'payment', 'payment_test');
+  protected $paymentType;
 
   /**
    * {@inheritdoc}
@@ -42,40 +42,36 @@ class BaseUnitTest extends DrupalUnitTestBase {
   /**
    * {@inheritdoc
    */
-  protected function setUp() {
-    parent::setUp();
-    $this->type = Payment::typeManager()->createInstance('payment_test', array());
-    $storage_controller = \Drupal::entityManager()->getStorageController('payment');
-    $this->type->setPayment($storage_controller->create(array(
-      'type' => $this->type,
-    )));
+  public function setUp() {
+    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
+
+    $configuration = array();
+    $plugin_id = $this->randomName();
+    $plugin_definition = array();
+    $this->paymentType = $this->getMockBuilder('\Drupal\payment\Plugin\payment\type\Base')
+      ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->moduleHandler))
+      ->setMethods(array('paymentDescription'))
+      ->getMock();
   }
 
   /**
-   * Tests resume().
+   * Tests resumeContext().
    */
-  protected function testResume() {
-    $this->type->resumeContext();
-    $state = \Drupal::state();
-    $this->assertEqual($state->get('payment_test_payment_type_pre_resume_context'), TRUE);
-  }
-
-  /**
-   * Tests paymentDescription().
-   */
-  protected function testPaymentDescription() {
-    $this->assertEqual($this->type->paymentDescription(), 'The commander promoted Dirkjan to Major Failure.');
-
+  public function testResumeContext() {
+    $this->moduleHandler->expects($this->once())
+      ->method('invokeAll')
+      ->with('payment_type_pre_resume_context');
+    $this->paymentType->resumeContext();
   }
 
   /**
    * Tests setPayment() and getPayment().
    */
-  protected function testGetPayment() {
-    $payment = entity_create('payment', array(
-      'type' => $this->type,
-    ));
-    $this->assertTrue($this->type->setPayment($payment) instanceof PaymentTypeInterface );
-    $this->assertTrue($this->type->getPayment() === $payment);
+  public function testGetPayment() {
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $this->assertSame(spl_object_hash($this->paymentType), spl_object_hash($this->paymentType->setPayment($payment)));
+    $this->assertSame(spl_object_hash($payment), spl_object_hash($this->paymentType->getPayment()));
   }
 }

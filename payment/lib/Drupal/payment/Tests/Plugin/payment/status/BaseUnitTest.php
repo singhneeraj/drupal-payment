@@ -7,26 +7,33 @@
 
 namespace Drupal\payment\Tests\Plugin\payment\status;
 
-use Drupal\payment\Payment;
-use Drupal\simpletest\DrupalUnitTestBase;
-use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
+use Drupal\Tests\UnitTestCase;
 
 /**
  * Tests \Drupal\payment\Plugin\payment\status\Base.
  */
-class BaseUnitTest extends DrupalUnitTestBase {
+class BaseUnitTest extends UnitTestCase {
 
   /**
-   * The payment status plugin manager.
+   * The payment status plugin manager used for testing.
    *
-   * @var \Drupal\payment\Plugin\payment\status\Manager
+   * @var \Drupal\payment\Plugin\payment\status\Manager|\PHPUnit_Framework_MockObject_MockObject
    */
-  public $manager;
+  public $paymentStatusManager;
 
   /**
-   * {@inheritdoc}
+   * The ID of the payment status under test.
+   *
+   * @var string
    */
-  public static $modules = array('payment');
+  public $pluginId;
+
+  /**
+   * The payment status under test.
+   *
+   * @var \Drupal\payment\Plugin\payment\status\Base|\PHPUnit_Framework_MockObject_MockObject
+   */
+  public $status;
 
   /**
    * {@inheritdoc}
@@ -42,80 +49,111 @@ class BaseUnitTest extends DrupalUnitTestBase {
   /**
    * {@inheritdoc
    */
-  protected function setup() {
-    parent::setUp();
-    $this->manager = Payment::statusManager();
-    $this->status = $this->manager->createInstance('payment_created');
+  public function setup() {
+    $this->paymentStatusManager = $this->getMockBuilder('\Drupal\payment\Plugin\payment\status\Manager')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $configuration = array();
+    $this->pluginId = $this->randomName();
+    $plugin_definition = array();
+    $this->status = $this->getMockBuilder('\Drupal\payment\Plugin\payment\status\Base')
+      ->setConstructorArgs(array($configuration, $this->pluginId, $plugin_definition, $this->paymentStatusManager))
+      ->setMethods(NULL)
+      ->getMock();
   }
 
   /**
    * Tests setCreated() and getCreated().
    */
-  protected function testGetCreated() {
-    $created = 123;
-    $this->assertTrue($this->status->setCreated($created) instanceof PaymentStatusInterface);
-    $this->assertIdentical($this->status->getCreated(), $created);
+  public function testGetCreated() {
+    $created = mt_rand();
+    $this->assertSame(spl_object_hash($this->status), spl_object_hash($this->status->setCreated($created)));
+    $this->assertSame($created, $this->status->getCreated());
   }
 
   /**
    * Tests setPaymentId() and getPaymentId().
    */
-  protected function testGetPaymentId() {
-    $id = 7;
-    $this->assertTrue($this->status->setPaymentId($id) instanceof PaymentStatusInterface);
-    $this->assertIdentical($this->status->getPaymentId(), $id);
+  public function testGetPaymentId() {
+    $created = mt_rand();
+    $this->assertSame(spl_object_hash($this->status), spl_object_hash($this->status->setPaymentId($created)));
+    $this->assertSame($created, $this->status->getPaymentId());
   }
 
   /**
    * Tests setId() and getId().
    */
-  protected function testGetId() {
-    $id= 7;
-    $this->assertTrue($this->status->setId($id) instanceof PaymentStatusInterface);
-    $this->assertIdentical($this->status->getId(), $id);
+  public function testGetId() {
+    $created = mt_rand();
+    $this->assertSame(spl_object_hash($this->status), spl_object_hash($this->status->setId($created)));
+    $this->assertSame($created, $this->status->getId());
   }
 
   /**
    * Tests getChildren().
    */
-  protected function testGetChildren() {
-    $status = $this->manager->createInstance('payment_no_money_transferred');
-    $expected = array('payment_created', 'payment_failed', 'payment_pending');
-    $this->assertEqual($status->getChildren(), $expected);
+  public function testGetChildren() {
+    $children = array($this->randomName());
+    $this->paymentStatusManager->expects($this->once())
+      ->method('getChildren')
+      ->with($this->pluginId)
+      ->will($this->returnValue($children));
+    $this->assertSame($children, $this->status->getChildren());
   }
 
   /**
    * Tests getDescendants().
    */
-  protected function testGetDescendants() {
-    $status = $this->manager->createInstance('payment_no_money_transferred');
-    $expected = array('payment_created', 'payment_failed', 'payment_pending', 'payment_authorization_failed', 'payment_cancelled', 'payment_expired');
-    $this->assertEqual($status->getDescendants(), $expected);
+  public function testGetDescendants() {
+    $descendants = array($this->randomName());
+    $this->paymentStatusManager->expects($this->once())
+      ->method('getDescendants')
+      ->with($this->pluginId)
+      ->will($this->returnValue($descendants));
+    $this->assertSame($descendants, $this->status->getDescendants());
   }
 
   /**
    * Tests getAncestors().
    */
-  protected function testGetAncestors() {
-    $status = $this->manager->createInstance('payment_authorization_failed');
-    $expected = array('payment_failed', 'payment_no_money_transferred');
-    $this->assertEqual($status->getAncestors(), $expected);
+  public function testGetAncestors() {
+    $ancestors = array($this->randomName());
+    $this->paymentStatusManager->expects($this->once())
+      ->method('getAncestors')
+      ->with($this->pluginId)
+      ->will($this->returnValue($ancestors));
+    $this->assertSame($ancestors, $this->status->getAncestors());
   }
 
   /**
    * Tests hasAncestor().
    */
-  protected function testHasAncestor() {
-    $status = $this->manager->createInstance('payment_failed');
-    $this->assertTrue($status->isOrHasAncestor('payment_no_money_transferred'));
+  public function testHasAncestor() {
+    $expected = TRUE;
+    $this->paymentStatusManager->expects($this->once())
+      ->method('hasAncestor')
+      ->with($this->pluginId)
+      ->will($this->returnValue($expected));
+    $this->assertSame($expected, $this->status->hasAncestor($this->pluginId));
   }
 
   /**
    * Tests isOrHasAncestor().
    */
-  protected function testIsOrHasAncestor() {
-    $status = $this->manager->createInstance('payment_failed');
-    $this->assertTrue($status->isOrHasAncestor('payment_failed'));
-    $this->assertTrue($status->isOrHasAncestor('payment_no_money_transferred'));
+  public function testIsOrHasAncestor() {
+    $expected = TRUE;
+    $this->paymentStatusManager->expects($this->once())
+      ->method('isOrHasAncestor')
+      ->with($this->pluginId)
+      ->will($this->returnValue($expected));
+    $this->assertSame($expected, $this->status->isOrHasAncestor($this->pluginId));
+  }
+
+  /**
+   * Tests getOperations().
+   */
+  public function testGetOperations() {
+    $this->assertInternalType('array', $this->status->getOperations($this->pluginId));
   }
 }
