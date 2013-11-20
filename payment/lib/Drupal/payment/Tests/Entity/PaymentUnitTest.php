@@ -158,20 +158,22 @@ class PaymentUnitTest extends DrupalUnitTestBase {
    * Tests setStatus() and getStatus().
    */
   protected function testGetStatus() {
-    $status = $this->statusManager->createInstance('payment_created');
+    $status = $this->statusManager->createInstance('payment_pending');
     $this->assertTrue($this->payment->setStatus($status, FALSE) instanceof PaymentInterface);
     $state = \Drupal::state();
     $this->assertEqual($state->get('payment_test_payment_status_set'), TRUE);
-    $this->assertEqual($this->payment->getStatus(), $status);
+    $this->assertEqual(spl_object_hash($this->payment->getStatus()), spl_object_hash($status));
   }
 
   /**
    * Tests setStatuses() and getStatuses().
    */
   protected function testGetStatuses() {
-    $statuses = array($this->statusManager->createInstance('payment_created'), $this->statusManager->createInstance('payment_pending'));
+    $statuses = array($this->statusManager->createInstance('payment_pending'), $this->statusManager->createInstance('payment_success'));
     $this->assertTrue($this->payment->setStatuses($statuses) instanceof PaymentInterface);
-    $this->assertEqual($this->payment->getStatuses(), $statuses);
+    foreach ($this->payment->getStatuses() as $i => $status) {
+      $this->assertEqual(spl_object_hash($status), spl_object_hash($statuses[$i]));
+    }
   }
 
   /**

@@ -38,9 +38,9 @@ use Drupal\payment\Plugin\payment\method\PaymentMethodInterface as PluginPayment
  *   id = "payment_method",
  *   label = @Translation("Payment method"),
  *   links = {
- *     "canonical" = "/admin/config/services/payment/method/{payment_method}",
- *     "create-form" = "/admin/config/services/payment/method-add",
- *     "edit-form" = "/admin/config/services/payment/method/{payment_method}"
+ *     "canonical" = "payment.payment_method.edit",
+ *     "create-form" = "payment.payment_method.select",
+ *     "edit-form" = "payment.payment_method.edit"
  *   },
  *   module = "payment"
  * )

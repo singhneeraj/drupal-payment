@@ -8,7 +8,6 @@ namespace Drupal\payment\Plugin\payment\status;
 
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\payment\Payment;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -35,6 +34,7 @@ abstract class Base extends PluginBase implements ContainerFactoryPluginInterfac
    * @param \Drupal\payment\Plugin\payment\status\Manager $payment_status_manager
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition, Manager $payment_status_manager) {
+    $configuration += $this->defaultConfiguration();
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->paymentStatusManager = $payment_status_manager;
   }
@@ -43,7 +43,7 @@ abstract class Base extends PluginBase implements ContainerFactoryPluginInterfac
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, array $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, Manager);
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('plugin.manager.payment.status'));
   }
 
   /**
@@ -51,7 +51,7 @@ abstract class Base extends PluginBase implements ContainerFactoryPluginInterfac
    */
   public function defaultConfiguration() {
     return array(
-      'created' => NULL,
+      'created' => time(),
       'id' => 0,
       'paymentId' => 0,
     );

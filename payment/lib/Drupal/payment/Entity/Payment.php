@@ -39,8 +39,8 @@ use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
  *   id = "payment",
  *   label = @Translation("Payment"),
  *   links = {
- *     "canonical" = "/payment/{payment}",
- *     "edit-form" = "/payment/{payment}/edit"
+ *     "canonical" = "payment.payment.view",
+ *     "edit-form" = "payment.payment.edit"
  *   },
  *   module = "payment",
  *   route_base_path = "admin/config/services/payment/type/{bundle}"
@@ -180,9 +180,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function setStatuses(array $statuses) {
-    foreach ($statuses as $status) {
-      $this->setStatus($status, FALSE);
-    }
+    $this->statuses = array_values($statuses);
 
     return $this;
   }
