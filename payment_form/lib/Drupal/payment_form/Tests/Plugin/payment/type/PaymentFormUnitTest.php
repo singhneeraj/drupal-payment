@@ -10,6 +10,7 @@ namespace Drupal\payment_form\Test\Plugin\payment\type;
 
 use Drupal\payment_form\Plugin\payment\type\PaymentForm;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Tests \Drupal\payment_form\Plugin\payment\type\PaymentForm.
@@ -17,23 +18,30 @@ use Drupal\Tests\UnitTestCase;
 class PaymentFormUnitTest extends UnitTestCase {
 
   /**
+   * The event dispatcher used for testing.
+   *
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $eventDispatcher;
+
+  /**
    * The field instance used for testing.
    *
-   * @var \Drupal\field\Entity\FieldInstance
+   * @var \Drupal\field\Entity\FieldInstance|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $fieldInstance;
 
   /**
    * The module handler used for testing.
    *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $moduleHandler;
 
   /**
    * The payment used for testing.
    *
-   * @var \Drupal\payment\Entity\PaymentInterface
+   * @var \Drupal\payment\Entity\PaymentInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $payment;
 
@@ -43,6 +51,13 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @var \Drupal\payment_form\Plugin\payment\type\PaymentForm
    */
   protected $paymentType;
+
+  /**
+   * The URL generator used for testing.
+   *
+   * @var \Drupal\Core\Routing\UrlGenerator|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $urlGenerator;
 
   /**
    * {@inheritdoc}
@@ -59,12 +74,14 @@ class PaymentFormUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   protected function setUp() {
-    $url_generator = $this->getMockBuilder('\Drupal\Core\Routing\UrlGenerator')
+    $this->urlGenerator = $this->getMockBuilder('\Drupal\Core\Routing\UrlGenerator')
       ->disableOriginalConstructor()
       ->getMock();
-    $url_generator->expects($this->any())
+    $this->urlGenerator->expects($this->any())
       ->method('generateFromRoute')
       ->will($this->returnValue('http://example.com'));
+
+    $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
     $this->fieldInstance = $this->getMockBuilder('\Drupal\field\Entity\FieldInstance')
       ->disableOriginalConstructor()
@@ -90,7 +107,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->paymentType = new PaymentForm(array(), 'payment_form', array(), $http_kernel, $request, $this->moduleHandler, $url_generator, $field_instance_storage);
+    $this->paymentType = new PaymentForm(array(), 'payment_form', array(), $http_kernel, $this->eventDispatcher, $request, $this->moduleHandler, $this->urlGenerator, $field_instance_storage);
 
     $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
@@ -123,6 +140,22 @@ class PaymentFormUnitTest extends UnitTestCase {
    */
   public function testPaymentDescription() {
     $this->assertSame($this->paymentType->paymentDescription(), $this->fieldInstance->label());
+  }
+
+  /**
+   * Tests resumeContext().
+   */
+  public function testResumeContext() {
+    $this->urlGenerator->expects($this->once())
+      ->method('generateFromRoute')
+      ->will($this->returnValue('http://example.com'));
+
+    $this->eventDispatcher->expects($this->once())
+      ->method('addListener')
+      ->with(KernelEvents::RESPONSE)
+      ->will($this->returnValue('http://example.com'));
+
+    $this->paymentType->resumeContext();
   }
 
 }
