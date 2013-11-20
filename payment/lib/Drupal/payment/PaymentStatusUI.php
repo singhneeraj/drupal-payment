@@ -8,7 +8,7 @@
 namespace Drupal\payment;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Entity\EntityManager;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\payment\Plugin\payment\status\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -20,7 +20,7 @@ class PaymentStatusUI implements ContainerInjectionInterface {
   /**
    * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityManager
+   * @var \Drupal\Core\Entity\EntityManagerInterface
    */
   protected $entityManager;
 
@@ -34,7 +34,7 @@ class PaymentStatusUI implements ContainerInjectionInterface {
   /**
    * Constructor.
    */
-  public function __construct(EntityManager $entity_manager, Manager $payment_status_manager) {
+  public function __construct(EntityManagerInterface $entity_manager, Manager $payment_status_manager) {
     $this->entityManager = $entity_manager;
     $this->paymentStatusManager = $payment_status_manager;
   }

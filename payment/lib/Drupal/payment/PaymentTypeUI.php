@@ -7,9 +7,10 @@
 
 namespace Drupal\payment;
 
-use Drupal\Core\Entity\EntityManager;
-use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Plugin\payment\type\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -17,6 +18,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Returns responses for payment type routes.
  */
 class PaymentTypeUI implements ContainerInjectionInterface {
+
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
 
   /**
    * The entity manager.
@@ -28,7 +36,7 @@ class PaymentTypeUI implements ContainerInjectionInterface {
   /**
    * The module handler.
    *
-   * @var \Drupal\Core\Extension\ModuleHandler
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
   protected $moduleHandler;
 
@@ -41,18 +49,28 @@ class PaymentTypeUI implements ContainerInjectionInterface {
 
   /**
    * Constructor.
+   *
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   *   The entity manager.
+   * @param \Drupal\payment\Plugin\payment\type\Manager $payment_type_manager
+   *   The payment type plugin manager.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
    */
-  public function __construct(ModuleHandler $module_handler, EntityManager $entity_manager, Manager $payment_type_manager) {
+  public function __construct(ModuleHandlerInterface $module_handler, EntityManagerInterface $entity_manager, Manager $payment_type_manager, AccountInterface $current_user) {
     $this->moduleHandler = $module_handler;
     $this->entityManager = $entity_manager;
     $this->paymentTypeManager = $payment_type_manager;
+    $this->currentUser = $current_user;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('module_handler'), $container->get('plugin.manager.entity'), $container->get('plugin.manager.payment.type'));
+    return new static($container->get('module_handler'), $container->get('plugin.manager.entity'), $container->get('plugin.manager.payment.type'), $container->get('current_user'));
   }
 
   /**
@@ -62,7 +80,6 @@ class PaymentTypeUI implements ContainerInjectionInterface {
    *   A render array.
    */
   public function listing() {
-    $account = \Drupal::request()->attributes->get('_account');
     $table = array(
       '#empty' => t('There are no available payment types.'),
       '#header' => array(t('Type'), t('Description'), t('Operations')),
@@ -75,19 +92,19 @@ class PaymentTypeUI implements ContainerInjectionInterface {
       $operations = $class::getOperations($plugin_id);
       if ($this->moduleHandler->moduleExists('field_ui')) {
         $admin_path = $this->entityManager->getAdminPath('payment', $plugin_id);
-        if ($account->hasPermission('administer payment fields')) {
+        if ($this->currentUser->hasPermission('administer payment fields')) {
           $operations['manage-fields'] = array(
             'title' => t('Manage fields'),
             'href' => $admin_path . '/fields',
           );
         }
-        if ($account->hasPermission('administer payment form display')) {
+        if ($this->currentUser->hasPermission('administer payment form display')) {
           $operations['manage-form-display'] = array(
             'title' => t('Manage form display'),
             'href' => $admin_path . '/form-display',
           );
         }
-        if ($account->hasPermission('administer payment display')) {
+        if ($this->currentUser->hasPermission('administer payment display')) {
           $operations['manage-display'] = array(
             'title' => t('Manage display'),
             'href' => $admin_path . '/display',

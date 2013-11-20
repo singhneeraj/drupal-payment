@@ -8,7 +8,7 @@
 namespace Drupal\payment_test;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Entity\EntityManager;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormInterface;
 use Drupal\payment\Element\PaymentPaymentMethodInput;
 use Drupal\payment\Generate;
@@ -20,14 +20,14 @@ class PaymentMethodElement implements ContainerInjectionInterface, FormInterface
   /**
    * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityManager
+   * @var \Drupal\Core\Entity\EntityManagerInterface
    */
   protected $entityManager;
 
   /**
    * Constructor.
    */
-  function __construct(EntityManager $entity_manager, Manager $type_manager) {
+  function __construct(EntityManagerInterface $entity_manager, Manager $type_manager) {
     $this->entityManager = $entity_manager;
     $this->typeManager = $type_manager;
   }

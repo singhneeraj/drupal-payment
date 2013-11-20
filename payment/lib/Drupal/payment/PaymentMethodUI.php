@@ -7,9 +7,8 @@
 
 namespace Drupal\payment;
 
-use Drupal\Component\Uuid\Uuid;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Entity\EntityManager;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\payment\Entity\PaymentMethodInterface;
 use Drupal\payment\Plugin\payment\method\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -23,7 +22,7 @@ class PaymentMethodUI implements ContainerInjectionInterface {
   /**
    * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityManager
+   * @var \Drupal\Core\Entity\EntityManagerInterface
    */
   protected $entityManager;
 
@@ -37,7 +36,7 @@ class PaymentMethodUI implements ContainerInjectionInterface {
   /**
    * Constructor.
    */
-  public function __construct(EntityManager $entity_manager, Manager $payment_method_manager) {
+  public function __construct(EntityManagerInterface $entity_manager, Manager $payment_method_manager) {
     $this->entityManager = $entity_manager;
     $this->paymentMethodManager = $payment_method_manager;
   }
