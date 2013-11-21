@@ -31,9 +31,9 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *   id = "payment_status",
  *   label = @Translation("Payment status"),
  *   links = {
- *     "canonical" = "/admin/config/services/payment/status/edit/{payment_status}",
- *     "create-form" = "/admin/config/services/payment/status/add",
- *     "edit-form" = "/admin/config/services/payment/status/edit/{payment_status}"
+ *     "canonical" = "payment.payment_status.edit",
+ *     "create-form" = "payment.payment_status.add",
+ *     "edit-form" = "payment.payment_status.edit"
  *   },
  *   module = "payment"
  * )
