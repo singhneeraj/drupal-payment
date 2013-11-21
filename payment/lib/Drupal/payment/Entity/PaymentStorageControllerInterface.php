@@ -22,7 +22,7 @@ interface PaymentStorageControllerInterface extends EntityStorageControllerInter
    *
    * @return array
    *   Keys are payment IDs, values are arrays of which keys are line item names
-   *   and values are \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
+   *   and values are \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface
    *   objects.
    */
   public function loadLineItems(array $ids);
@@ -32,7 +32,7 @@ interface PaymentStorageControllerInterface extends EntityStorageControllerInter
    *
    * @param array $lineItems
    *   Keys are payment IDs, values are arrays of which keys are line item names
-   *   and values are \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
+   *   and values are \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface
    *   objects.
    */
   public function saveLineItems(array $lineItems);
@@ -53,7 +53,7 @@ interface PaymentStorageControllerInterface extends EntityStorageControllerInter
    *
    * @return array
    *   Keys are payment IDs, values are arrays of
-   *   \Drupal\payment\Plugin\payment\status\PaymentStatusInterface objects.
+   *   \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface objects.
    */
   public function loadPaymentStatuses(array $ids);
 
@@ -62,7 +62,7 @@ interface PaymentStorageControllerInterface extends EntityStorageControllerInter
    *
    * @param array $lineItems
    *   Keys are payment IDs, values are arrays of
-   *   \Drupal\payment\Plugin\payment\status\PaymentStatusInterface objects.
+   *   \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface objects.
    */
   public function savePaymentStatuses(array $statuses);
 

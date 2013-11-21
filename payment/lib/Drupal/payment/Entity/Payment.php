@@ -11,8 +11,8 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
 use Drupal\currency\Entity\CurrencyInterface;
 use Drupal\payment\Payment as PaymentServiceWrapper;
-use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
-use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
+use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
 
 /**
  * Defines a payment entity.
@@ -51,17 +51,15 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * The payment type.
    *
-   * @var \Drupal\payment\Plugin\payment\type\PaymentTypeInterface
+   * @var \Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface
    */
   protected $type;
 
   /**
    * Line items.
    *
-   * @var array
-   *   Keys are line item machine names. Values are
-   *   \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
-   *   objects.
+   * @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[]
+   *   Keys are line item machine names.
    */
   protected $lineItems = array();
 
@@ -69,7 +67,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * Payment statuses.
    *
    * @var array
-   *   Values are \Drupal\payment\Plugin\payment\status\PaymentStatusInterface
+   *   Values are \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface
    *   objects.
    */
   protected $statuses = array();

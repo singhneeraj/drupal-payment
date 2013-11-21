@@ -12,7 +12,7 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormInterface;
 use Drupal\payment\Element\PaymentPaymentMethodInput;
 use Drupal\payment\Generate;
-use Drupal\payment\Plugin\payment\type\Manager;
+use Drupal\payment\Plugin\Payment\Type\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class PaymentMethodElement implements ContainerInjectionInterface, FormInterface {

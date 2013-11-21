@@ -10,7 +10,7 @@ namespace Drupal\payment_form\Tests\Plugin\Field\FieldFormatter;
 use Drupal\field\FieldInterface;
 use Drupal\payment\Generate;
 use Drupal\payment\Payment;
-use Drupal\payment_form\Plugin\payment\type\PaymentForm;
+use Drupal\payment_form\Plugin\Payment\Type\PaymentForm;
 use Drupal\simpletest\WebTestBase;
 
 /**

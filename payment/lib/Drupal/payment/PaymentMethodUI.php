@@ -10,7 +10,7 @@ namespace Drupal\payment;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\payment\Entity\PaymentMethodInterface;
-use Drupal\payment\Plugin\payment\method\Manager;
+use Drupal\payment\Plugin\Payment\Method\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -29,7 +29,7 @@ class PaymentMethodUI implements ContainerInjectionInterface {
   /**
    * The payment method plugin manager.
    *
-   * @var \Drupal\payment\Plugin\payment\method\Manager
+   * @var \Drupal\payment\Plugin\Payment\Method\Manager
    */
   protected $paymentMethodManager;
 

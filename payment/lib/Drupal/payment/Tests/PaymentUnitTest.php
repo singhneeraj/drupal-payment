@@ -34,7 +34,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    */
   public function testLineItemManager() {
     $container = new Container();
-    $line_item_manager = $this->getMockBuilder('\Drupal\payment\Plugin\payment\line_item\Manager')
+    $line_item_manager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\Manager')
       ->disableOriginalConstructor()
       ->getMock();
     $container->set('plugin.manager.payment.line_item', $line_item_manager);
@@ -47,7 +47,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    */
   public function testMethodManager() {
     $container = new Container();
-    $method_manager = $this->getMockBuilder('\Drupal\payment\Plugin\payment\method\Manager')
+    $method_manager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\Manager')
       ->disableOriginalConstructor()
       ->getMock();
     $container->set('plugin.manager.payment.method', $method_manager);
@@ -60,7 +60,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    */
   public function testStatusManager() {
     $container = new Container();
-    $status_manager = $this->getMockBuilder('\Drupal\payment\Plugin\payment\status\Manager')
+    $status_manager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Status\Manager')
       ->disableOriginalConstructor()
       ->getMock();
     $container->set('plugin.manager.payment.status', $status_manager);
@@ -73,7 +73,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    */
   public function testTypeManager() {
     $container = new Container();
-    $type_manager = $this->getMockBuilder('\Drupal\payment\Plugin\payment\type\Manager')
+    $type_manager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Type\Manager')
       ->disableOriginalConstructor()
       ->getMock();
     $container->set('plugin.manager.payment.type', $type_manager);

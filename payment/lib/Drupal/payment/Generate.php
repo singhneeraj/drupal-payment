@@ -8,7 +8,7 @@
 namespace Drupal\payment;
 
 use Drupal\payment\Entity\PaymentMethodInterface as PaymentMethodEntityInterface;
-use Drupal\payment\Plugin\payment\method\PaymentMethodInterface as PaymentMethodPluginInterface;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface as PaymentMethodPluginInterface;
 use Drupal\Component\Utility\Random;
 
 /**
@@ -65,7 +65,7 @@ class Generate {
    *
    * @return array
    *   Values are
-   *   \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
+   *   \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface
    *   objects.
    */
   static function createPaymentLineItems() {
@@ -102,7 +102,7 @@ class Generate {
    *
    * @param integer $uid
    *   The user ID of the payment method's owner.
-   * @param \Drupal\payment\Plugin\payment\method\PaymentMethodInterface $plugin
+   * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface $plugin
    *   An optional plugin to set. Defaults to payment_unavailable.
    *
    * @return \Drupal\payment\Entity\PaymentMethod

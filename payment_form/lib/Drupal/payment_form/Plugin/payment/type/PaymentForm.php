@@ -1,17 +1,17 @@
 <?php
 
 /**
- * Contains \Drupal\payment_form\Plugin\payment\type\PaymentForm.
+ * Contains \Drupal\payment_form\Plugin\Payment\Type\PaymentForm.
  */
 
-namespace Drupal\payment_form\Plugin\payment\type;
+namespace Drupal\payment_form\Plugin\Payment\Type;
 
 use Drupal\Core\Entity\EntityStorageControllerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\HttpKernel;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
-use Drupal\payment\Plugin\payment\type\Base;
+use Drupal\payment\Plugin\Payment\Type\Base;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;

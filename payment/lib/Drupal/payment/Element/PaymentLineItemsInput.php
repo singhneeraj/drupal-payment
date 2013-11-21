@@ -11,7 +11,7 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\RemoveCommand;
 use Drupal\payment\Payment;
-use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
+use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
 
 /**
  * Provides form callbacks for the payment_line_items_input form element.
@@ -33,7 +33,7 @@ class PaymentLineItemsInput {
     }
     foreach ($element['#default_value'] as $line_item) {
       if (!($line_item instanceof PaymentLineItemInterface)) {
-        throw new \InvalidArgumentException('A default line item does not implement \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface.');
+        throw new \InvalidArgumentException('A default line item does not implement \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface.');
       }
     }
 
@@ -231,10 +231,7 @@ class PaymentLineItemsInput {
    *
    * @param array $element
    * @param array $form_state
-   * @param array $line_items
-   *   Values are
-   *   \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
-   *   objects.
+   * @param \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[] $line_items
    */
   protected static function setLineItems(array $element, array &$form_state, array $line_items) {
     $form_state['payment_line_item'][$element['#name']] = $line_items;
@@ -246,10 +243,7 @@ class PaymentLineItemsInput {
    * @param array $element
    * @param array $form_state
    *
-   * @return array
-   *   Values are
-   *   \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
-   *   objects.
+   * @return \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[]
    */
   public static function getLineItems(array $element, array &$form_state) {
     return $form_state['payment_line_item'][$element['#name']];

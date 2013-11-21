@@ -11,7 +11,7 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\payment\Plugin\payment\type\Manager;
+use Drupal\payment\Plugin\Payment\Type\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -43,7 +43,7 @@ class PaymentTypeUI implements ContainerInjectionInterface {
   /**
    * The payment type plugin manager.
    *
-   * @var \Drupal\payment\Plugin\payment\type\Manager
+   * @var \Drupal\payment\Plugin\Payment\Type\Manager
    */
   protected $paymentTypeManager;
 
@@ -54,7 +54,7 @@ class PaymentTypeUI implements ContainerInjectionInterface {
    *   The module handler.
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    *   The entity manager.
-   * @param \Drupal\payment\Plugin\payment\type\Manager $payment_type_manager
+   * @param \Drupal\payment\Plugin\Payment\Type\Manager $payment_type_manager
    *   The payment type plugin manager.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.

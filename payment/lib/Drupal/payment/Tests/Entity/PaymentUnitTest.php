@@ -10,7 +10,7 @@ namespace Drupal\payment\Tests\Entity;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Entity\PaymentMethodInterface;
 use Drupal\payment\Payment;
-use Drupal\payment\Plugin\payment\type\PaymentTypeInterface;
+use Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface;
 use Drupal\payment\Generate;
 use Drupal\simpletest\DrupalUnitTestBase;
 
@@ -29,7 +29,7 @@ class PaymentUnitTest extends DrupalUnitTestBase {
   /**
    * The payment line item manager.
    *
-   * @var \Drupal\payment\Plugin\payment\line_item\Manager
+   * @var \Drupal\payment\Plugin\Payment\LineItem\Manager
    */
   protected $lineItemManager;
 
@@ -48,7 +48,7 @@ class PaymentUnitTest extends DrupalUnitTestBase {
   /**
    * The payment status manager.
    *
-   * @var \Drupal\payment\Plugin\payment\status\Manager
+   * @var \Drupal\payment\Plugin\Payment\Status\Manager
    */
   protected $statusManager;
 

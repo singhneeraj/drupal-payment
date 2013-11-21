@@ -8,7 +8,7 @@
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Entity\PaymentMethodInterface;
-use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
 
 /**
  * Alters payment status plugins.
@@ -59,7 +59,7 @@ function hook_payment_type_alter(array &$definitions) {
  * @see Payment::setStatus()
  *
  * @param \Drupal\payment\Entity\PaymentInterface $payment
- * @param \Drupal\payment\Plugin\payment\status\PaymentStatusInterface $previous_status
+ * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface $previous_status
  *   The status the payment had before the new one was set. This may be
  *   identical to the current/new status.
  *
@@ -72,7 +72,7 @@ function hook_payment_status_set(PaymentInterface $payment, PaymentStatusInterfa
 /**
  * Executes before the payment type's original context is resumed.
  *
- * @see \Drupal\payment\Plugin\payment\method\Base::resume()
+ * @see \Drupal\payment\Plugin\Payment\Method\Base::resume()
  *
  * @param \Drupal\payment\Entity\PaymentInterface $payment
  */
@@ -102,8 +102,8 @@ function hook_payment_type_pre_resume_context(PaymentInterface $payment) {
  *   \Drupal\Core\Access\AccessInterface::DENY, or
  *   \Drupal\Core\Access\AccessInterface::KILL.
  *
- * @see \Drupal\payment\Plugin\payment\method\Base::executePaymentAccess()
- * @see \Drupal\payment\Plugin\payment\method\Base::executePaymentAccessEvent()
+ * @see \Drupal\payment\Plugin\Payment\Method\Base::executePaymentAccess()
+ * @see \Drupal\payment\Plugin\Payment\Method\Base::executePaymentAccessEvent()
  */
 function hook_payment_execute_access(PaymentInterface $payment, PaymentMethodInterface $payment_method, $payment_method_brand, AccountInterface $account) {}
 
@@ -112,6 +112,6 @@ function hook_payment_execute_access(PaymentInterface $payment, PaymentMethodInt
  *
  * @param \Drupal\payment\Entity\PaymentInterface $payment
  *
- * @see \Drupal\payment\Plugin\payment\method\Base::executePayment()
+ * @see \Drupal\payment\Plugin\Payment\Method\Base::executePayment()
  */
 function hook_payment_pre_execute(PaymentInterface $payment) {}

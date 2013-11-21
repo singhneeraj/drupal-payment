@@ -10,7 +10,7 @@ namespace Drupal\payment;
 use Drupal\Core\Access\AccessCheckInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\payment\Plugin\payment\method\Manager;
+use Drupal\payment\Plugin\Payment\Method\Manager;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -34,7 +34,7 @@ class PaymentMethodCreateAccessCheck implements AccessCheckInterface {
   /**
    * The payment method manager.
    *
-   * @var \Drupal\payment\Plugin\payment\type\Manager
+   * @var \Drupal\payment\Plugin\Payment\Type\Manager
    */
   protected $paymentMethodManager;
 
@@ -42,7 +42,7 @@ class PaymentMethodCreateAccessCheck implements AccessCheckInterface {
    * Constructor.
    *
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   * @param \Drupal\payment\Plugin\payment\method\Manager $payment_method_manager
+   * @param \Drupal\payment\Plugin\Payment\Method\Manager $payment_method_manager
    */
   public function __construct(EntityManagerInterface $entity_manager, Manager $payment_method_manager) {
     $this->entityManager = $entity_manager;

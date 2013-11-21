@@ -7,7 +7,7 @@
 
 namespace Drupal\payment\Element;
 
-use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
 
 /**
  * Provides form callbacks for the payment_line_item form element.
@@ -28,7 +28,7 @@ class PaymentStatusesDisplay {
     );
     foreach (array_reverse($statuses) as $i => $status) {
       if (!($status instanceof PaymentStatusInterface)) {
-        throw new \InvalidArgumentException('A payment status does not implement \Drupal\payment\Plugin\payment\status\PaymentStatusInterface');
+        throw new \InvalidArgumentException('A payment status does not implement \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
       }
       $definition = $status->getPluginDefinition();
       $element['table']['status_' . $i] = array(

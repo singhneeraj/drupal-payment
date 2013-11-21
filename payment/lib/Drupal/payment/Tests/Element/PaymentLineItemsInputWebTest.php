@@ -8,7 +8,7 @@
 namespace Drupal\payment\Tests\Element;
 
 use Drupal\payment\Generate;
-use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
+use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
 use Drupal\simpletest\WebTestBase ;
 
 /**

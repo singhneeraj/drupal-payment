@@ -14,7 +14,7 @@ use Drupal\Core\Config\Entity\ConfigStorageController;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
-use Drupal\payment\Plugin\payment\status\Manager;
+use Drupal\payment\Plugin\Payment\Status\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -25,7 +25,7 @@ class PaymentStatusStorageController extends ConfigStorageController {
   /**
    * The payment status plugin manager.
    *
-   * @var \Drupal\payment\Plugin\payment\status\Manager
+   * @var \Drupal\payment\Plugin\Payment\Status\Manager
    */
   protected $paymentStatusManager;
 

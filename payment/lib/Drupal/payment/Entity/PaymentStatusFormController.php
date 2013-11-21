@@ -8,8 +8,8 @@
 namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\EntityFormController;
-use Drupal\payment\Plugin\payment\status\Config;
-use Drupal\payment\Plugin\payment\status\Manager;
+use Drupal\payment\Plugin\Payment\Status\Config;
+use Drupal\payment\Plugin\Payment\Status\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -20,7 +20,7 @@ class PaymentStatusFormController extends EntityFormController {
   /**
    * The payment status manager.
    *
-   * @var \Drupal\payment\Plugin\payment\status\Manager
+   * @var \Drupal\payment\Plugin\Payment\Status\Manager
    */
   protected $paymentStatusManager;
 

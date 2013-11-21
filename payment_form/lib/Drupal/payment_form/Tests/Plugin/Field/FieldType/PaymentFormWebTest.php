@@ -10,7 +10,7 @@ namespace Drupal\payment_form\Tests\Plugin\Field\FieldType;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\field\FieldInterface;
 use Drupal\payment\Generate;
-use Drupal\payment\plugin\payment\line_item\PaymentLineItemInterface;
+use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
 use Drupal\simpletest\WebTestBase;
 
 /**

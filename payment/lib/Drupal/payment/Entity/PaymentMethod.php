@@ -10,7 +10,7 @@ namespace Drupal\payment\Entity;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\payment\Plugin\payment\method\PaymentMethodInterface as PluginPaymentMethodInterface;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface as PluginPaymentMethodInterface;
 
 /**
  * Defines a payment method entity.
@@ -71,7 +71,7 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
   /**
    * The payment method plugin this entity uses.
    *
-   * @var \Drupal\payment\Plugin\payment\method\PaymentMethodInterface
+   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
    */
   protected $plugin;
 

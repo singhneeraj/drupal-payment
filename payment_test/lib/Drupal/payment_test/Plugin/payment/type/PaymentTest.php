@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Contains \Drupal\payment_test\Plugin\payment\type\PaymentTest.
+ * Contains \Drupal\payment_test\Plugin\Payment\Type\PaymentTest.
  */
 
-namespace Drupal\payment_test\Plugin\payment\type;
+namespace Drupal\payment_test\Plugin\Payment\Type;
 
 use Drupal\Core\Annotation\Translation;
 use Drupal\payment\Annotations\PaymentType;
-use Drupal\payment\Plugin\payment\type\Base;
+use Drupal\payment\Plugin\Payment\Type\Base;
 
 /**
  * A testing payment type.

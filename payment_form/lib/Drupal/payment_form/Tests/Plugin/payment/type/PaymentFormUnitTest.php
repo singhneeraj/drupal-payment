@@ -3,17 +3,17 @@
 /**
  * @file
  * Contains
- * \Drupal\payment_form\Test\Plugin\payment\type\PaymentFormUnitTest.
+ * \Drupal\payment_form\Test\Plugin\Payment\Type\PaymentFormUnitTest.
  */
 
-namespace Drupal\payment_form\Test\Plugin\payment\type;
+namespace Drupal\payment_form\Test\Plugin\Payment\Type;
 
-use Drupal\payment_form\Plugin\payment\type\PaymentForm;
+use Drupal\payment_form\Plugin\Payment\Type\PaymentForm;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Tests \Drupal\payment_form\Plugin\payment\type\PaymentForm.
+ * Tests \Drupal\payment_form\Plugin\Payment\Type\PaymentForm.
  */
 class PaymentFormUnitTest extends UnitTestCase {
 
@@ -48,7 +48,7 @@ class PaymentFormUnitTest extends UnitTestCase {
   /**
    * The payment type plugin under test.
    *
-   * @var \Drupal\payment_form\Plugin\payment\type\PaymentForm
+   * @var \Drupal\payment_form\Plugin\Payment\Type\PaymentForm
    */
   protected $paymentType;
 
@@ -66,7 +66,7 @@ class PaymentFormUnitTest extends UnitTestCase {
     return array(
       'description' => '',
       'group' => 'Payment Form Field',
-      'name' => '\Drupal\payment_form\Plugin\payment\type\PaymentForm unit test',
+      'name' => '\Drupal\payment_form\Plugin\Payment\Type\PaymentForm unit test',
     );
   }
 

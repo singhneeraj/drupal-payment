@@ -9,7 +9,7 @@ namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\EntityFormController;
 use Drupal\payment\Element\PaymentPaymentMethodInput;
-use Drupal\payment\Plugin\payment\status\Manager;
+use Drupal\payment\Plugin\Payment\Status\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -20,14 +20,14 @@ class PaymentEditFormController extends EntityFormController {
   /**
    * The payment status plugin manager.
    *
-   * @var \Drupal\payment\Plugin\payment\status\Manager
+   * @var \Drupal\payment\Plugin\Payment\Status\Manager
    */
   protected $paymentStatusManager;
 
   /**
    * Constructor.
    *
-   * @param \Drupal\payment\Plugin\payment\status\Manager The payment status
+   * @param \Drupal\payment\Plugin\Payment\Status\Manager The payment status
    *   plugin manager.
    */
   function __construct(Manager $payment_status_manager) {

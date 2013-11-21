@@ -1,15 +1,15 @@
 services:
   plugin.manager.payment.type:
-    class: Drupal\payment\Plugin\payment\type\Manager
+    class: Drupal\payment\Plugin\Payment\Type\Manager
     arguments: ['@container.namespaces', '@cache.cache', '@language_manager', '@module_handler']
   plugin.manager.payment.line_item:
-    class: Drupal\payment\Plugin\payment\line_item\Manager
+    class: Drupal\payment\Plugin\Payment\LineItem\Manager
     arguments: ['@container.namespaces', '@cache.cache', '@language_manager', '@module_handler']
   plugin.manager.payment.method:
-    class: Drupal\payment\Plugin\payment\method\Manager
+    class: Drupal\payment\Plugin\Payment\Method\Manager
     arguments: ['@container.namespaces', '@cache.cache', '@language_manager', '@module_handler']
   plugin.manager.payment.status:
-    class: Drupal\payment\Plugin\payment\status\Manager
+    class: Drupal\payment\Plugin\Payment\Status\Manager
     arguments: ['@container.namespaces', '@cache.cache', '@language_manager', '@module_handler']
   payment.payment_method_create_access_check:
     arguments: ['@plugin.manager.entity', '@plugin.manager.payment.method']

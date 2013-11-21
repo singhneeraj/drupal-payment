@@ -1,15 +1,15 @@
 <?php
 
 /**
- * Contains \Drupal\payment_test\Plugin\payment\method\PaymentTest.
+ * Contains \Drupal\payment_test\Plugin\Payment\Method\PaymentTest.
  */
 
-namespace Drupal\payment_test\Plugin\payment\method;
+namespace Drupal\payment_test\Plugin\Payment\Method;
 
 use Drupal\Core\Annotation\Translation;
 use Drupal\payment\Annotations\PaymentMethod;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Plugin\payment\method\Base;
+use Drupal\payment\Plugin\Payment\Method\Base;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**

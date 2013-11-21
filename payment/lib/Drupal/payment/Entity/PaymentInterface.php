@@ -12,8 +12,8 @@ use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Executable\ExecutableInterface;
 use Drupal\currency\Entity\CurrencyInterface;
 use Drupal\payment\Entity\PaymentMethodInterface;
-use Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface;
-use Drupal\payment\Plugin\payment\status\PaymentStatusInterface;
+use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
 
 /**
  * Defines a payment entity type .
@@ -23,7 +23,7 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
   /**
    * Gets the payment's type plugin.
    *
-   * @return \Drupal\payment\Plugin\payment\type\PaymentTypeInterface
+   * @return \Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface
    */
   public function getPaymentType();
 
@@ -53,9 +53,7 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
   /**
    * Sets line items.
    *
-   * @param array $line_items
-   *   Values are \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
-   *   objects.
+   * @param \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[] $line_items
    *
    * @return \Drupal\payment\Entity\PaymentInterface
    */
@@ -64,7 +62,7 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
   /**
    * Sets a line item.
    *
-   * @param \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface $line_item
+   * @param \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface $line_item
    *
    * @return \Drupal\payment\Entity\PaymentInterface
    */
@@ -83,7 +81,7 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
    * @param string $name
    *   The line item's machine name.
    *
-   * @return \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
+   * @return \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface
    */
   public function getLineItem($name);
 
@@ -93,9 +91,7 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
    * @param string $plugin_id
    *   The line item plugin's ID.
    *
-   * @return array
-   *   Values are \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
-   *   objects.
+   * @return \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[]
    */
   public function getLineItemsByType($plugin_id);
 
@@ -103,7 +99,7 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
    * Sets all statuses.
    *
    * @param array $statuses
-   *   \Drupal\payment\Plugin\payment\status\PaymentStatusInterface objects.
+   *   \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface objects.
    *
    * @return \Drupal\payment\Entity\PaymentInterface
    */
@@ -112,7 +108,7 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
   /**
    * Sets a status.
    *
-   * @param \Drupal\payment\Plugin\payment\status\PaymentStatusInterface $status
+   * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface $status
    * @param bool $notify
    *   Whether or not to trigger a notification event.
    *
@@ -130,7 +126,7 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
   /**
    * Gets the status.
    *
-   * @return \Drupal\payment\Plugin\payment\status\PaymentStatusInterface
+   * @return \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface
    */
   public function getStatus();
 
