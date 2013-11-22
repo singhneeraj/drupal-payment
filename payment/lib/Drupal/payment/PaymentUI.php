@@ -47,32 +47,4 @@ class PaymentUI implements ContainerInjectionInterface {
   public static function create(ContainerInterface $container) {
     return new static($container->get('request'), $container->get('url_generator'));
   }
-
-  /**
-   * Executes a payment operation..
-   *
-   * @param \Drupal\payment\Entity\PaymentInterface $payment
-   * @param string $operation
-   */
-  public function executeOperation(PaymentInterface $payment, $operation) {
-    $result = $payment->getPaymentMethod()->getPlugin()->executePaymentOperation($payment, $operation, $payment->getPaymentMethodBrand());
-    if ($result) {
-      return $result;
-    }
-    else {
-      if ($this->request->query->has('destination')) {
-        $path = $this->request->get('destination');
-        $options = array();
-      }
-      else {
-        $uri = $payment->uri();
-        $path = $uri['path'];
-        $options = $uri['options'];
-      }
-      $url = $this->urlGenerator->generateFromPath($path, array(
-        'absolute' => TRUE,
-      ) + $options);
-      return new RedirectResponse($url);
-    }
-  }
 }
