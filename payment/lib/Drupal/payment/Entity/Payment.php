@@ -251,7 +251,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function setPaymentMethodBrand($brand_name) {
-    $this->paymentMethodBrand[0]->value = $brand_name;
+    $this->payment_method_brand[0]->value = $brand_name;
 
     return $this;
   }
@@ -260,14 +260,14 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function getPaymentMethodBrand() {
-    return $this->paymentMethodBrand[0]->value;
+    return $this->payment_method_brand[0]->value;
   }
 
   /**
    * {@inheritdoc}
    */
   public function setOwnerId($id) {
-    $this->ownerId[0]->setValue($id);
+    $this->owner[0]->setValue($id);
 
     return $this;
   }
@@ -276,14 +276,14 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function getOwnerId() {
-    return $this->ownerId[0]->get('target_id')->getValue();
+    return $this->owner[0]->get('target_id')->getValue();
   }
 
   /**
    * {@inheritdoc}
    */
   public function getOwner() {
-    return $this->ownerId[0]->get('entity')->getValue();
+    return $this->owner[0]->get('entity')->getValue();
   }
 
   /**
@@ -368,11 +368,11 @@ class Payment extends ContentEntityBase implements PaymentInterface {
         'default_value' => 0,
       ),
     );
-    $fields['paymentMethodBrand'] = array(
+    $fields['payment_method_brand'] = array(
       'label' => t('Payment method brand name'),
       'type' => 'string_field',
     );
-    $fields['ownerId'] = array(
+    $fields['owner'] = array(
       'label' => t('Owner'),
       'type' => 'entity_reference_field',
       'settings' => array(
