@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\PaymentMethodUIWebTest.
+ * Contains class \Drupal\payment\Tests\PaymentMethodUiWebTest.
  */
 
 namespace Drupal\payment\Tests;
@@ -14,7 +14,7 @@ use Drupal\simpletest\WebTestBase ;
 /**
  * Tests the payment method UI.
  */
-class PaymentMethodUIWebTest extends WebTestBase {
+class PaymentMethodUiWebTest extends WebTestBase {
 
   /**
    * {@inheritdoc}
