@@ -7,20 +7,30 @@
 
 namespace Drupal\payment;
 
+use Drupal\Core\Access\AccessInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\Method\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Returns responses for payment method routes.
  */
-class PaymentMethodUi extends ControllerBase implements ContainerInjectionInterface {
+class PaymentMethodUi extends ControllerBase implements AccessInterface, ContainerInjectionInterface {
+
+  /**
+   * The current user;
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
 
   /**
    * The entity manager.
@@ -52,19 +62,26 @@ class PaymentMethodUi extends ControllerBase implements ContainerInjectionInterf
 
   /**
    * Constructor.
+   *
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\payment\Plugin\Payment\Method\Manager $payment_method_manager
+   * @param \Drupal\Core\Form\FormBuilderInterface  $form_builder
+   * @param \Drupal\Core\Routing\UrlGeneratorInterface $url_generator
+   * @param \Drupal\Core\Session\AccountInterface $current_user
    */
-  public function __construct(EntityManagerInterface $entity_manager, Manager $payment_method_manager, FormBuilderInterface $form_builder, UrlGeneratorInterface $url_generator) {
+  public function __construct(EntityManagerInterface $entity_manager, Manager $payment_method_manager, FormBuilderInterface $form_builder, UrlGeneratorInterface $url_generator, AccountInterface $current_user) {
     $this->entityManager = $entity_manager;
     $this->formBuilder = $form_builder;
     $this->paymentMethodManager = $payment_method_manager;
     $this->urlGenerator = $url_generator;
+    $this->currentUser = $current_user;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('plugin.manager.entity'), $container->get('plugin.manager.payment.method'), $container->get('form_builder'), $container->get('url_generator'));
+    return new static($container->get('plugin.manager.entity'), $container->get('plugin.manager.payment.method'), $container->get('form_builder'), $container->get('url_generator'), $container->get('current_user'));
   }
 
   /**
@@ -133,6 +150,27 @@ class PaymentMethodUi extends ControllerBase implements ContainerInjectionInterf
   }
 
   /**
+   * Checks access to self::select().
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The request object.
+   *
+   * @return bool|null
+   *   self::ALLOW, self::DENY, or self::KILL.
+   */
+  public function selectAccess(Request $request) {
+    $definitions = $this->paymentMethodManager->getDefinitions();
+    unset($definitions['payment_unavailable']);
+    $access_controller = $this->entityManager->getAccessController('payment_method');
+    foreach (array_keys($definitions) as $plugin_id) {
+      if ($access_controller->createAccess($plugin_id, $this->currentUser)) {
+        return self::ALLOW;
+      }
+    }
+    return self::DENY;
+  }
+
+  /**
    * Wraps theme().
    */
   protected function theme($hook, $variables = array()) {
@@ -151,6 +189,21 @@ class PaymentMethodUi extends ControllerBase implements ContainerInjectionInterf
     $payment_method = $this->entityManager->getStorageController('payment_method')->create(array())->setPlugin($plugin);
 
     return $this->formBuilder->getForm($this->entityManager->getFormController('payment_method', 'default')->setEntity($payment_method));
+  }
+
+  /**
+   * Checks access to self::add().
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The request object.
+   *
+   * @return bool|null
+   *   self::ALLOW, self::DENY, or self::KILL.
+   */
+  public function addAccess(Request $request) {
+    $plugin_id = $request->attributes->get('payment_method_plugin_id');
+
+    return $this->entityManager->getAccessController('payment_method')->createAccess($plugin_id, $this->currentUser);
   }
 
   /**

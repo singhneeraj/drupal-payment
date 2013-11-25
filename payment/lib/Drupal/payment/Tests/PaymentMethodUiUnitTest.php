@@ -8,11 +8,19 @@
 namespace Drupal\payment\Tests;
 
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Tests \Drupal\payment\PaymentMethodUi.
  */
 class PaymentMethodUiUnitTest extends UnitTestCase {
+
+  /**
+   * The current user used for testing.
+   *
+   * @var \Drupal\Core\Session\AccountInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $currentUser;
 
   /**
    * The entity manager used for testing.
@@ -64,6 +72,8 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   protected function setUp() {
+    $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
     $this->entityManager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
 
     $this->formBuilder = $this->getMock('\Drupal\Core\Form\FormBuilderInterface');
@@ -78,7 +88,7 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
       ->will($this->returnValue('http://example.com'));
 
     $this->paymentMethodUi = $this->getMockBuilder('\Drupal\payment\PaymentMethodUi')
-      ->setConstructorArgs(array($this->entityManager, $this->paymentMethodManager, $this->formBuilder, $this->urlGenerator))
+      ->setConstructorArgs(array($this->entityManager, $this->paymentMethodManager, $this->formBuilder, $this->urlGenerator, $this->currentUser))
       ->setMethods(array('t', 'theme'))
       ->getMock();
   }
@@ -127,25 +137,67 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
       ->will($this->returnValue($definitions));
 
     $access_controller = $this->getMock('\Drupal\Core\Entity\EntityAccessControllerInterface');
-    $access_controller->expects($this->at(0))
+    $access_controller->expects($this->any())
       ->method('createAccess')
-      ->with('foo')
       ->will($this->returnValue(TRUE));
-    $access_controller->expects($this->at(1))
-      ->method('createAccess')
-      ->with('bar')
-      ->will($this->returnValue(FALSE));
+
     $this->entityManager->expects($this->once())
       ->method('getAccessController')
+      ->with('payment_method')
       ->will($this->returnValue($access_controller));
 
     $this->paymentMethodUi->select();
   }
 
   /**
+   * Tests selectAccess().
+   */
+  public function testSelectAccess() {
+    $definitions = array(
+      'payment_unavailable' => array(),
+      'foo' => array(
+        'description' => $this->randomName(),
+        'label' => $this->randomName(),
+      ),
+      'bar' => array(
+        'description' => $this->randomName(),
+        'label' => $this->randomName(),
+      ),
+    );
+    $this->paymentMethodManager->expects($this->exactly(2))
+      ->method('getDefinitions')
+      ->will($this->returnValue($definitions));
+
+    $access_controller = $this->getMock('\Drupal\Core\Entity\EntityAccessControllerInterface');
+    $access_controller->expects($this->at(0))
+      ->method('createAccess')
+      ->with('foo', $this->currentUser)
+      ->will($this->returnValue(TRUE));
+    $access_controller->expects($this->at(1))
+      ->method('createAccess')
+      ->with('foo', $this->currentUser)
+      ->will($this->returnValue(FALSE));
+    $access_controller->expects($this->at(2))
+      ->method('createAccess')
+      ->with('bar', $this->currentUser)
+      ->will($this->returnValue(FALSE));
+
+    $this->entityManager->expects($this->exactly(2))
+      ->method('getAccessController')
+      ->with('payment_method')
+      ->will($this->returnValue($access_controller));
+
+    $request = new Request();
+
+    $this->assertTrue($this->paymentMethodUi->selectAccess($request));
+    $this->assertNull($this->paymentMethodUi->selectAccess($request));
+  }
+
+  /**
    * Tests add().
    */
   public function testAdd() {
+    return;
     $plugin_id = $this->randomName();
     $plugin = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
 
@@ -184,6 +236,33 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
       ->with($form_controller);
 
     $this->paymentMethodUi->add($plugin_id);
+  }
+
+  /**
+   * Tests addAccess().
+   */
+  public function testAddAccess() {
+    $plugin_id = $this->randomName();
+    $request = new Request();
+    $request->attributes->set('payment_method_plugin_id', $plugin_id);
+
+    $access_controller = $this->getMock('\Drupal\Core\Entity\EntityAccessControllerInterface');
+    $access_controller->expects($this->at(0))
+      ->method('createAccess')
+      ->with($plugin_id, $this->currentUser)
+      ->will($this->returnValue(TRUE));
+    $access_controller->expects($this->at(1))
+      ->method('createAccess')
+      ->with($plugin_id, $this->currentUser)
+      ->will($this->returnValue(FALSE));
+
+    $this->entityManager->expects($this->exactly(2))
+      ->method('getAccessController')
+      ->with('payment_method')
+      ->will($this->returnValue($access_controller));
+
+    $this->assertTrue($this->paymentMethodUi->addAccess($request));
+    $this->assertFalse($this->paymentMethodUi->addAccess($request));
   }
 
   /**

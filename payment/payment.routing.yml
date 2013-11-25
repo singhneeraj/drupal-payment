@@ -48,14 +48,14 @@ payment.payment_method.select:
   defaults:
     _controller: '\Drupal\payment\PaymentMethodUi::select'
   requirements:
-    _payment_method_create_access: 'TRUE'
+    _custom_access: '\Drupal\payment\PaymentMethodUi::selectAccess'
 
 payment.payment_method.add:
   path: '/admin/config/services/payment/method-add/{payment_method_plugin_id}'
   defaults:
     _controller: '\Drupal\payment\PaymentMethodUi::add'
   requirements:
-    _payment_method_create_access: 'TRUE'
+    _custom_access: '\Drupal\payment\PaymentMethodUi::addAccess'
 
 payment.payment_method.edit:
   path: '/admin/config/services/payment/method/{payment_method}'
