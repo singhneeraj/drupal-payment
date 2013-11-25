@@ -11,8 +11,3 @@ services:
   plugin.manager.payment.status:
     class: Drupal\payment\Plugin\Payment\Status\Manager
     arguments: ['@container.namespaces', '@cache.cache', '@language_manager', '@module_handler']
-  payment.payment_method_create_access_check:
-    arguments: ['@plugin.manager.entity', '@plugin.manager.payment.method']
-    class: Drupal\payment\PaymentMethodCreateAccessCheck
-    tags:
-      - { name: access_check }
