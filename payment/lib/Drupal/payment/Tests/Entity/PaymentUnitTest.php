@@ -128,6 +128,18 @@ class PaymentUnitTest extends DrupalUnitTestBase {
   }
 
   /**
+   * Tests unsetLineItem().
+   */
+  protected function testUnsetLineItem() {
+    $line_item = $this->lineItemManager->createInstance('payment_basic');
+    $name = $this->randomName();
+    $line_item->setName($name);
+    $this->payment->setLineItem($line_item);
+    $this->assertEqual(spl_object_hash($this->payment), spl_object_hash($this->payment->unsetLineItem($name)));
+    $this->assertNull($this->payment->getLineItem($name));
+  }
+
+  /**
    * Tests setLineItems() and getLineItems().
    */
   protected function testGetLineItems() {

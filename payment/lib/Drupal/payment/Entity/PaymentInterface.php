@@ -69,6 +69,16 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
   public function setLineItem(PaymentLineItemInterface $line_item);
 
   /**
+   * Unsets a line item.
+   *
+   * @param string $name
+   *   The line item's name.
+   *
+   * @return self
+   */
+  public function unsetLineItem($name);
+
+  /**
    * Gets all line items.
    *
    * @return array

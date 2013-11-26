@@ -149,6 +149,15 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
+  public function unsetLineItem($name) {
+    unset($this->lineItems[$name]);
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getLineItems() {
     return $this->lineItems;
   }
