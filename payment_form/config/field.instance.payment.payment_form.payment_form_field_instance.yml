@@ -1,0 +1,17 @@
+id: payment.payment_form.payment_form_field_instance
+uuid: db943107-c6a4-4b34-8700-ff6d019e2771
+status: true
+langcode: en
+field_uuid: f9aa0b68-63bb-4ebb-8800-b581f75e13b5
+entity_type: payment
+bundle: payment_form
+label: 'Payment form field instance'
+description: ''
+required: 1
+default_value: {  }
+default_value_function: ''
+settings:
+  handler: default
+  handler_settings:
+    target_bundles: {  }
+field_type: entity_reference

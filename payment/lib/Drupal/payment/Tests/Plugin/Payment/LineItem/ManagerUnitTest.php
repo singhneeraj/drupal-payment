@@ -1,31 +1,61 @@
 <?php
 
 /**
- * @file
- * Contains class \Drupal\payment\Tests\Plugin\Payment\LineItem\ManagerUnitTest.
+ * @file Contains \Drupal\payment\Tests\Plugin\Payment\LineItem\ManagerUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Payment\LineItem;
 
-use Drupal\payment\Payment;
-use Drupal\simpletest\DrupalUnitTestBase;
+use Drupal\payment\Plugin\Payment\LineItem\Manager;
+use Drupal\Tests\UnitTestCase;
+use Zend\Stdlib\ArrayObject;
 
 /**
  * Tests \Drupal\payment\Plugin\Payment\LineItem\Manager.
  */
-class ManagerUnitTest extends DrupalUnitTestBase {
+class ManagerUnitTest extends UnitTestCase {
 
   /**
-   * The payment line item plugin manager.
+   * The cache backend used for testing.
    *
-   * @var \Drupal\payment\Plugin\Payment\Type\Manager
+   * @var \Drupal\Core\Cache\CacheBackendInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $manager;
+  protected $cache;
 
   /**
-   * {@inheritdoc}
+   * The plugin discovery used for testing.
+   *
+   * @var \Drupal\Component\Plugin\Discovery\DiscoveryInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  public static $modules = array('payment');
+  protected $discovery;
+
+  /**
+   * The plugin factory used for testing.
+   *
+   * @var \Drupal\Component\Plugin\Factory\DefaultFactory|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $factory;
+
+  /**
+   * The plugin factory used for testing.
+   *
+   * @var \Drupal\Core\Language\LanguageManager|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $languageManager;
+
+  /**
+   * The module handler used for testing.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $moduleHandler;
+
+  /**
+   * The payment line_item plugin manager under test.
+   *
+   * @var \Drupal\payment\Plugin\Payment\LineItem\Manager
+   */
+  public $paymentLineItemManager;
 
   /**
    * {@inheritdoc}
@@ -39,32 +69,70 @@ class ManagerUnitTest extends DrupalUnitTestBase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
-  protected function setUp() {
-    parent::setUp();
-    $this->manager = Payment::lineItemManager();
+  public function setUp() {
+    $this->discovery = $this->getMock('\Drupal\Component\Plugin\Discovery\DiscoveryInterface');
+
+    $this->factory = $this->getMockBuilder('\Drupal\Component\Plugin\Factory\DefaultFactory')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $this->languageManager = $this->getMockBuilder('\Drupal\Core\Language\LanguageManager')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
+
+    $this->cache = $this->getMock('\Drupal\Core\Cache\CacheBackendInterface');
+
+    $namespaces = new ArrayObject();
+
+    $this->paymentLineItemManager = new Manager($namespaces, $this->cache, $this->languageManager, $this->moduleHandler);
+    $discovery_property = new \ReflectionProperty($this->paymentLineItemManager, 'discovery');
+    $discovery_property->setAccessible(TRUE);
+    $discovery_property->setValue($this->paymentLineItemManager, $this->discovery);
+    $factory_property = new \ReflectionProperty($this->paymentLineItemManager, 'factory');
+    $factory_property->setAccessible(TRUE);
+    $factory_property->setValue($this->paymentLineItemManager, $this->factory);
   }
 
   /**
    * Tests getDefinitions().
    */
-  protected function testGetDefinitions() {
-    // Test the default line item plugins.
-    $definitions = $this->manager->getDefinitions();
-    $this->assertEqual(count($definitions), 1);
-    foreach ($definitions as $definition) {
-      $this->assertIdentical(strpos($definition['id'], 'payment_'), 0);
-      $this->assertTrue(is_subclass_of($definition['class'], '\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface'));
-    }
+  public function testGetDefinitions() {
+    $definitions = array(
+      'foo' => array(
+        'label' => $this->randomName(),
+      ),
+    );
+    $this->discovery->expects($this->once())
+      ->method('getDefinitions')
+      ->will($this->returnValue($definitions));
+    $this->moduleHandler->expects($this->once())
+      ->method('alter')
+      ->with('payment_line_item');
+    $this->assertSame($definitions, $this->paymentLineItemManager->getDefinitions());
   }
 
   /**
-   * Tests createInstance().
+   * Tests options().
+   *
+   * @depends testGetDefinitions
    */
-  protected function testCreateInstance() {
-    $id = 'payment_basic';
-    $this->assertEqual($this->manager->createInstance($id)->getPluginId(), $id);
-    $this->assertEqual($this->manager->createInstance('ThisIdDoesNotExist')->getPluginId(), $id);
+  public function testOptions() {
+    $label = $this->randomName();
+    $definitions = array(
+      'foo' => array(
+        'label' => $label,
+      ),
+    );
+    $this->discovery->expects($this->once())
+      ->method('getDefinitions')
+      ->will($this->returnValue($definitions));
+    $expected_options = array(
+      'foo' => $label,
+    );
+    $this->assertSame($expected_options, $this->paymentLineItemManager->options());
   }
 }

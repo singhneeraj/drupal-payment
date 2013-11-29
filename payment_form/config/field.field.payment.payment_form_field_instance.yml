@@ -1,0 +1,15 @@
+id: payment.payment_form_field_instance
+uuid: f9aa0b68-63bb-4ebb-8800-b581f75e13b5
+status: true
+langcode: en
+name: payment_form_field_instance
+entity_type: payment
+type: entity_reference
+settings:
+  target_type: field_instance
+module: entity_reference
+active: true
+locked: true
+cardinality: '1'
+translatable: false
+indexes: {  }

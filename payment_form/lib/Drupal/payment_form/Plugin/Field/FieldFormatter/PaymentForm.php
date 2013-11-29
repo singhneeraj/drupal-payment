@@ -7,8 +7,13 @@
 
 namespace Drupal\payment_form\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
+use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\payment\Plugin\Payment\LineItem\Manager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A payment form formatter.
@@ -21,21 +26,66 @@ use Drupal\Core\Field\FormatterBase;
  *   }
  * )
  */
-class PaymentForm extends FormatterBase {
+class PaymentForm extends FormatterBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * The entity manager.
+   *
+   * @var \Drupal\Core\Entity\EntityManagerInterface
+   */
+  protected $entityManager;
+
+  /**
+   * The form builder.
+   *
+   * @var \Drupal\Core\Form\FormBuilderInterface
+   */
+  protected $formBuilder;
+
+  /**
+   * The payment line item manager.
+   *
+   * @var \Drupal\payment\Plugin\Payment\LineItem\Manager
+   */
+  protected $paymentLineItemManager;
+
+  /**
+   * Constructor.
+   *
+   * @param array $configuration
+   * @param array $plugin_id
+   * @param array $plugin_definition
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
+   * @param \Drupal\payment\Plugin\Payment\LineItem\Manager $payment_line_item_manager
+   */
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, EntityManagerInterface $entity_manager, FormBuilderInterface $form_builder, Manager $payment_line_item_manager) {
+    parent::__construct($plugin_id, $plugin_definition, $configuration['field_definition'], $configuration['settings'], $configuration['label'], $configuration['view_mode']);
+    $this->entityManager = $entity_manager;
+    $this->formBuilder = $form_builder;
+    $this->paymentLineItemManager = $payment_line_item_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, array $plugin_definition) {
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('entity.manager'), $container->get('form_builder'), $container->get('plugin.manager.payment.line_item'));
+  }
 
   /**
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items) {
-    $payment = entity_create('payment', array(
+    $payment = $this->entityManager->getStorageController('payment')->create(array(
       'bundle' => 'payment_form',
     ))->setCurrencyCode($this->fieldDefinition->getFieldSetting('currency_code'));
     foreach ($items as $item) {
-      $payment->setLineItem($item->line_item);
+      $payment->setLineItem($this->paymentLineItemManager->createInstance($item->plugin_id, $item->plugin_configuration));
     }
-    $payment->payment_form_field_instance = $this->fieldDefinition->id();
+    $payment->getPaymentType()->setFieldInstanceId($this->fieldDefinition->getFieldName());
 
-    return drupal_get_form(\Drupal::service('plugin.manager.entity')->getFormController('payment', 'payment_form')->setEntity($payment));
+    return $this->formBuilder->getForm($this->entityManager->getFormController('payment', 'payment_form')->setEntity($payment));
   }
 
 }

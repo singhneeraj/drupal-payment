@@ -19,7 +19,7 @@ interface PaymentLineItemInterface extends PluginInspectionInterface, Configurab
    *
    * @param int $payment_id
    *
-   * @return \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface
+   * @return self
    */
   public function setPaymentId($payment_id);
 
@@ -35,7 +35,7 @@ interface PaymentLineItemInterface extends PluginInspectionInterface, Configurab
    *
    * @param float $amount
    *
-   * @return \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface
+   * @return self
    */
   public function setAmount($amount);
 
@@ -58,7 +58,7 @@ interface PaymentLineItemInterface extends PluginInspectionInterface, Configurab
    *
    * @param string $name
    *
-   * @return \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface
+   * @return self
    */
   public function setName($name);
 
@@ -81,7 +81,7 @@ interface PaymentLineItemInterface extends PluginInspectionInterface, Configurab
    *
    * @param string $currency_code
    *
-   * @return \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface
+   * @return self
    */
   public function setCurrencyCode($currency_code);
 
@@ -97,7 +97,7 @@ interface PaymentLineItemInterface extends PluginInspectionInterface, Configurab
    *
    * @param int $quantity
    *
-   * @return \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface
+   * @return self
    */
   public function setQuantity($quantity);
 
@@ -118,4 +118,18 @@ interface PaymentLineItemInterface extends PluginInspectionInterface, Configurab
    *   A render array.
    */
   public function formElements(array $form, array &$form_state);
+
+  /**
+   * Gets the plugin configuration from submitted form values.
+   *
+   * @param array $form
+   *   The form elements as provided by self::formElements().
+   * @param array $form_state
+   *   The form's global state.
+   *
+   * @return array
+   *   The exact same array as self::getConfiguration(), but with values from
+   *   $form_state.
+   */
+  public static function getConfigurationFromFormValues(array $form, array &$form_state);
 }

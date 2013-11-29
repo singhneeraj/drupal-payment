@@ -8,9 +8,13 @@
 namespace Drupal\payment_form\Plugin\Field\FieldWidget;
 
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\payment\Element\PaymentLineItemsInput;
+use Drupal\payment\Plugin\Payment\LineItem\Manager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A payment configuration widget.
@@ -30,12 +34,7 @@ class PaymentForm extends WidgetBase {
    * {@inheritdoc}
    */
   public function settingsSummary() {
-    $count = count($this->getSetting('line_items'));
-    $summary = array(format_plural($count, t('!count line item.'), t('!count line items'), array(
-      '!count' => $count,
-    )));
-
-    return $summary;
+    return array($this->formatPlural(count($this->getSetting('line_items')), '1 line item.', '@count line items'));
   }
 
   /**
@@ -56,14 +55,18 @@ class PaymentForm extends WidgetBase {
       '#value' => $element['#array_parents'],
       '#type' => 'value',
     );
-    $line_items = array();
+    $line_items_data = array();
     foreach ($element['#items'] as $item) {
-      $line_items[] = $item->line_item;
+      if ($item->plugin_id) {
+        $line_items_data[] = array(
+          'plugin_id' => $item->plugin_id,
+          'plugin_configuration' => $item->plugin_configuration,
+        );
+      }
     }
-    $line_items = array_filter($line_items);
     $element['line_items'] = array(
       '#cardinality' => $this->fieldDefinition->getFieldCardinality(),
-      '#default_value' => $line_items,
+      '#default_value' => $line_items_data,
       '#type' => 'payment_line_items_input',
     );
 
@@ -76,7 +79,16 @@ class PaymentForm extends WidgetBase {
   public function massageFormValues(array $values, array $form, array &$form_state) {
     $element = NestedArray::getValue($form, array_merge(array_slice($values['array_parents'], count($form['#array_parents'])), array('line_items')));
 
-    return PaymentLineItemsInput::getLineItems($element, $form_state);
+    return PaymentLineItemsInput::getLineItemsData($element, $form_state);
   }
 
+  /**
+   * Wraps format_plural().
+   *
+   * @todo This probably makes strings untranslatable, as POTX does not see any
+   *   strings being passed through format_plural().
+   */
+  protected function formatPlural($count, $singular, $plural, array $args = array(), array $options = array()) {
+    return format_plural($count, $singular, $plural, $args, $options);
+  }
 }

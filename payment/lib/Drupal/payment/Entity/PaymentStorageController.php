@@ -24,7 +24,9 @@ class PaymentStorageController extends FieldableDatabaseStorageController implem
       $values['bundle'] = $values['type']->getPluginId();
     }
     $payment = parent::create($values);
-    $payment->setStatus(PaymentServiceWrapper::statusManager()->createInstance('payment_created'));
+    $status = PaymentServiceWrapper::statusManager()->createInstance('payment_created')
+      ->setCreated(time());
+    $payment->setStatus($status);
 
     return $payment;
   }
@@ -76,19 +78,13 @@ class PaymentStorageController extends FieldableDatabaseStorageController implem
   public function loadLineItems(array $ids) {
     $manager = PaymentServiceWrapper::lineItemManager();
     $result = db_select('payment_line_item', 'pli')
-      ->fields('pli')
+      ->fields('pli', array('plugin_configuration', 'plugin_id'))
       ->condition('payment_id', $ids)
       ->execute();
     $line_items = array_fill_keys($ids, array());
     while ($line_item_data = $result->fetchAssoc()) {
-      $plugin_id = $line_item_data['plugin_id'];
-      $line_item = $manager->createInstance($plugin_id)
-        ->setAmount((float) $line_item_data['amount'])
-        ->setCurrencyCode($line_item_data['currency_code'])
-        ->setName($line_item_data['name'])
-        ->setPaymentId($line_item_data['payment_id'])
-        ->setQuantity((int) $line_item_data['quantity']);
-      $line_items[$line_item_data['payment_id']][$line_item->getName()] = $line_item;
+      $line_item = $manager->createInstance($line_item_data['plugin_id'], unserialize($line_item_data['plugin_configuration']));
+      $line_items[$line_item->getPaymentId()][$line_item->getName()] = $line_item;
     }
 
     return $line_items;
@@ -100,7 +96,7 @@ class PaymentStorageController extends FieldableDatabaseStorageController implem
   public function saveLineItems(array $line_items) {
     $this->deleteLineItems(array_keys($line_items));
     $query = db_insert('payment_line_item')
-      ->fields(array('amount', 'amount_total', 'currency_code', 'name', 'payment_id', 'plugin_id', 'quantity'));
+      ->fields(array('amount', 'amount_total', 'currency_code', 'name', 'payment_id', 'plugin_configuration', 'plugin_id', 'quantity'));
     foreach ($line_items as $payment_id => $entity_line_items) {
       foreach ($entity_line_items as $line_item) {
         $line_item->setPaymentId($payment_id);
@@ -110,6 +106,7 @@ class PaymentStorageController extends FieldableDatabaseStorageController implem
           'currency_code' => $line_item->getCurrencyCode(),
           'name' => $line_item->getName(),
           'payment_id' => $line_item->getPaymentId(),
+          'plugin_configuration' => serialize($line_item->getConfiguration()),
           'plugin_id' => $line_item->getPluginId(),
           'quantity' => $line_item->getQuantity(),
         ));

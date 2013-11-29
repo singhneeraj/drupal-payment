@@ -106,7 +106,7 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
   public function getLineItemsByType($plugin_id);
 
   /**
-   * Sets all statuses.
+   * Sets/replaces all statuses without notifications.
    *
    * @param array $statuses
    *   \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface objects.

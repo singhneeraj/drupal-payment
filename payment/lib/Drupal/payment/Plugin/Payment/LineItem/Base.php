@@ -6,8 +6,8 @@
 
 namespace Drupal\payment\Plugin\Payment\LineItem;
 
-use Drupal\Component\Plugin\PluginBase;
-use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
+use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Plugin\PluginBase;
 
 /**
  * A base line item.
@@ -28,9 +28,9 @@ abstract class Base extends PluginBase implements PaymentLineItemInterface {
   public function defaultConfiguration() {
     return array(
       'amount' => 0,
-      'currencyCode' => '',
+      'currency_code' => '',
       'name' => NULL,
-      'paymentId' => NULL,
+      'payment_id' => NULL,
       'quantity' => 1,
     );
   }
@@ -46,14 +46,14 @@ abstract class Base extends PluginBase implements PaymentLineItemInterface {
    * {@inheritdoc}
    */
   public function setConfiguration(array $configuration) {
-    return $this->configuration = $configuration;
+    $this->configuration = $configuration;
   }
 
   /**
    * {@inheritdoc}
    */
   public function setPaymentId($payment_id) {
-    $this->configuration['paymentId'] = $payment_id;
+    $this->configuration['payment_id'] = $payment_id;
 
     return $this;
   }
@@ -62,7 +62,7 @@ abstract class Base extends PluginBase implements PaymentLineItemInterface {
    * {@inheritdoc}
    */
   public function getPaymentId() {
-    return $this->configuration['paymentId'];
+    return $this->configuration['payment_id'];
   }
 
   /**
@@ -101,14 +101,14 @@ abstract class Base extends PluginBase implements PaymentLineItemInterface {
    * {@inheritdoc}
    */
   public function getCurrencyCode() {
-    return $this->configuration['currencyCode'];
+    return $this->configuration['currency_code'];
   }
 
   /**
    * {@inheritdoc}
    */
   public function setCurrencyCode($currency_code) {
-    $this->configuration['currencyCode'] = $currency_code;
+    $this->configuration['currency_code'] = $currency_code;
 
     return $this;
   }

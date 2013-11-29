@@ -79,6 +79,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
     parent::__construct($values, $entity_type, $bundle, $translations);
     PaymentServiceWrapper::typeManager()->clearCachedDefinitions();
     $this->type = PaymentServiceWrapper::typeManager()->createInstance($this->bundle());
+    $this->type->setPayment($this);
   }
 
   /**

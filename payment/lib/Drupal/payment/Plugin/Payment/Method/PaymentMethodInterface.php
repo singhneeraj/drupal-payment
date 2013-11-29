@@ -23,7 +23,7 @@ interface PaymentMethodInterface extends PaymentProcessingInterface, PluginInspe
    *
    * @param \Drupal\payment\Entity\PaymentMethodInterface $payment_method
    *
-   * @return \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
+   * @return self
    */
   public function setPaymentMethod(EntityPaymentMethodInterface $payment_method);
 

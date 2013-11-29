@@ -38,6 +38,11 @@ function payment_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
+      'plugin_configuration' => array(
+        'type' => 'blob',
+        'not null' => TRUE,
+        'serialize' => TRUE,
+      ),
       'plugin_id' => array(
         'type' => 'varchar',
         'length' => 255,
@@ -46,36 +51,6 @@ function payment_schema() {
         'type' => 'int',
         'default' => 1,
         'not null' => TRUE,
-      ),
-    ),
-    'primary key' => array('name', 'payment_id'),
-    'foreign keys' => array(
-      'payment_id' => array(
-        'table' => 'payment',
-        'columns' => array(
-          'payment_id' => 'id',
-        ),
-      ),
-    ),
-    'indexes' => array(
-      'payment_id' => array('payment_id'),
-    ),
-  );
-  $schema['payment_line_item_payment_basic'] = array(
-    'fields' => array(
-      'description' => array(
-        'type' => 'varchar',
-        'length' => 255,
-      ),
-      'name' => array(
-        'type' => 'varchar',
-        'length' => 255,
-      ),
-      'payment_id' => array(
-        'description' => 'The {payment}.id this line item belongs to.',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 0,
       ),
     ),
     'primary key' => array('name', 'payment_id'),

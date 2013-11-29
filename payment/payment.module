@@ -234,8 +234,8 @@ function payment_element_info() {
   );
 
   // Line item configuration. Use
-  // \Drupal\payment\Element\PaymentLineItemsInput::getLineItems() to get the
-  // 'return' value.
+  // \Drupal\payment\Element\PaymentLineItemsInput::getLineItemsData() to get
+  // the 'return' value.
   $elements['payment_line_items_input'] = array(
     '#attached' => array(
       'css' => array(drupal_get_path('module', 'payment') . '/css/payment.css'),
@@ -244,9 +244,10 @@ function payment_element_info() {
     // as the number of line items in the default value. For unlimited values,
     // use \Drupal\payment\Element\PaymentLineItemsInput::CARDINALITY_UNLIMITED.
     '#cardinality' => PaymentLineItemsInput::CARDINALITY_UNLIMITED,
-    // An array of
-    // \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface
-    // objects.
+    // Values are arrays with two keys:
+    // - plugin_id: the ID of the line item plugin instance.
+    // - plugin_configuration: the configuration of the line item plugin
+    //   instance.
     '#default_value' => array(),
     '#element_validate' => array(array('\Drupal\payment\Element\PaymentLineItemsInput', 'validate')),
     '#input' => TRUE,
@@ -293,56 +294,6 @@ function payment_entity_bundle_info() {
   }
 
   return $bundles;
-}
-
-/**
- * Implements hook_ENTITY_TYPE_load().
- */
-function payment_payment_load(array $payments) {
-  foreach ($payments as $payment) {
-    // Load payment_basic-specific line item data.
-    foreach ($payment->getLineItems() as $line_item) {
-      if ($line_item instanceof Basic) {
-        $line_item->loadData();
-      }
-    }
-  }
-}
-
-/**
- * Implements hook_ENTITY_TYPE_insert().
- */
-function payment_payment_insert(PaymentInterface $payment) {
-  // Save payment_basic-specific line item data.
-  foreach ($payment->getLineItems() as $line_item) {
-    if ($line_item instanceof Basic) {
-      $line_item->saveData();
-    }
-  }
-}
-
-/**
- * Implements hook_ENTITY_TYPE_update().
- */
-function payment_payment_update(PaymentInterface $payment) {
-  // Save payment_basic-specific line item data.
-  foreach ($payment->getLineItems() as $line_item) {
-    if ($line_item instanceof Basic) {
-      $line_item->saveData();
-    }
-  }
-}
-
-/**
- * Implements hook_ENTITY_TYPE_delete().
- */
-function payment_payment_delete(PaymentInterface $payment) {
-  // Delete payment_basic-specific line item data.
-  foreach ($payment->getLineItems() as $line_item) {
-    if ($line_item instanceof Basic) {
-      $line_item->deleteData();
-    }
-  }
 }
 
 /**

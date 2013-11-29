@@ -1,32 +1,45 @@
 <?php
 
 /**
- * @file
- * Contains class \Drupal\payment\Tests\Plugin\Payment\LineItem\BasicUnitTest.
+ * @file Contains \Drupal\payment\Tests\Plugin\Payment\LineItem\BasicUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Payment\LineItem;
 
-use Drupal\payment\Payment;
-use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
-use Drupal\simpletest\DrupalUnitTestBase;
+use Drupal\Tests\UnitTestCase;
 
 /**
  * Tests \Drupal\payment\Plugin\Payment\LineItem\Basic.
  */
-class BasicUnitTest extends DrupalUnitTestBase {
+class BasicUnitTest extends UnitTestCase {
 
   /**
-   * The line item to test.
+   * The database connection used for testing.
    *
-   * @var \Drupal\payment\Plugin\Payment\LineItem\Basic
+   * @var \Drupal\Core\Database\Connection|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $database;
+
+  /**
+   * The form builder used for testing.
+   *
+   * @var \Drupal\Core\Form\FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $formBuilder;
+
+  /**
+   * The line item under test.
+   *
+   * @var \Drupal\payment\Plugin\Payment\LineItem\Basic|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $lineItem;
 
   /**
-   * {@inheritdoc}
+   * The translation manager.
+   *
+   * @var \Drupal\Core\StringTranslation\TranslationManager|\PHPUnit_Framework_MockObject_MockObject
    */
-  public static $modules = array('payment', 'payment_test');
+  protected $translationManager;
 
   /**
    * {@inheritdoc}
@@ -42,64 +55,49 @@ class BasicUnitTest extends DrupalUnitTestBase {
   /**
    * {@inheritdoc
    */
-  protected function setUp() {
-    parent::setUp();
-    $this->lineItem = Payment::lineItemManager()->createInstance('payment_basic');
-  }
+  public function setUp() {
+    $this->database = $this->getMockBuilder('\Drupal\Core\Database\Connection')
+      ->disableOriginalConstructor()
+      ->getMock();
 
-  /**
-   * Tests setAmount() and getAmount().
-   */
-  protected function testGetAmount() {
-    $amount = 5.3;
-    $this->assertTrue($this->lineItem->setAmount($amount) instanceof PaymentLineItemInterface);
-    $this->assertIdentical($this->lineItem->getAmount(), $amount);
-  }
+    $this->formBuilder = $this->getMock('\Drupal\Core\Form\FormBuilderInterface');
 
-  /**
-   * Tests setQuantity() and getQuantity().
-   */
-  protected function testGetQuantity() {
-    $quantity = 7;
-    $this->assertTrue($this->lineItem->setQuantity($quantity) instanceof \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface);
-    $this->assertIdentical($this->lineItem->getQuantity(), $quantity);
-  }
+    $this->translationManager = $this->getMockBuilder('\Drupal\Core\StringTranslation\TranslationManager')
+      ->disableOriginalConstructor()
+      ->setMethods(array('translate'))
+      ->getMock();
 
-  /**
-   * Tests getTotalAmount().
-   */
-  protected function testGetTotalAmount() {
-    $amount= 7;
-    $quantity = 7;
-    $this->lineItem->setAmount($amount);
-    $this->lineItem->setQuantity($quantity);
-    $this->assertIdentical($this->lineItem->getTotalAmount(), 49);
-  }
-
-  /**
-   * Tests setName() and getName().
-   */
-  protected function testGetName() {
-    $name = $this->randomName();
-    $this->assertTrue($this->lineItem->setName($name) instanceof PaymentLineItemInterface);
-    $this->assertIdentical($this->lineItem->getName(), $name);
+    $configuration = array();
+    $plugin_id = $this->randomName();
+    $plugin_definition = array();
+    $this->lineItem = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\Basic')
+      ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->translationManager, $this->database, $this->formBuilder))
+      ->setMethods(array('drupalGetPath', 't'))
+      ->getMock();
   }
 
   /**
    * Tests setDescription() and getDescription().
    */
-  protected function testGetDescription() {
+  public function testGetDescription() {
     $description = $this->randomName();
-    $this->assertTrue($this->lineItem->setDescription($description) instanceof PaymentLineItemInterface);
-    $this->assertIdentical($this->lineItem->getDescription(), $description);
+    $this->assertSame(spl_object_hash($this->lineItem), spl_object_hash($this->lineItem->setDescription($description)));
+    $this->assertSame($description, $this->lineItem->getDescription());
   }
 
   /**
-   * Tests setPaymentId() and getPaymentId().
+   * Tests formElements().
    */
-  protected function testGetPaymentId() {
-    $payment_id = mt_rand();
-    $this->assertTrue($this->lineItem->setPaymentId($payment_id) instanceof PaymentLineItemInterface);
-    $this->assertEqual($this->lineItem->getPaymentId(), $payment_id);
+  public function testFormElements() {
+    $this->lineItem->expects($this->once())
+      ->method('drupalGetPath')
+      ->will($this->returnValue($this->randomName()));
+    $this->translationManager->expects($this->any())
+      ->method('translate')
+      ->will($this->returnArgument(0));
+    $form = array();
+    $form_state = array();
+    $form_elements = $this->lineItem->formElements($form, $form_state);
+    $this->assertInternalType('array', $form_elements);
   }
 }

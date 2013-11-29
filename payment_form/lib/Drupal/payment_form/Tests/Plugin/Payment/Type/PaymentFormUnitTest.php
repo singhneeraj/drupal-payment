@@ -81,7 +81,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->method('generateFromRoute')
       ->will($this->returnValue('http://example.com'));
 
-    $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+    $this->eventDispatcher = $this->getMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
     $this->fieldInstance = $this->getMockBuilder('\Drupal\field\Entity\FieldInstance')
       ->disableOriginalConstructor()
@@ -120,7 +120,8 @@ class PaymentFormUnitTest extends UnitTestCase {
    */
   public function testGetFieldInstanceId() {
     $this->payment->expects($this->once())
-      ->method('get');
+      ->method('get')
+      ->with('payment_form_field_instance');
     $this->paymentType->getFieldInstanceId();
   }
 
@@ -128,11 +129,11 @@ class PaymentFormUnitTest extends UnitTestCase {
    * Tests setFieldInstanceId().
    */
   public function testSetFieldInstanceId() {
-    $map = array(array('payment_form_field_instance', $this->paymentType));
     $this->payment->expects($this->once())
       ->method('set')
-      ->will($this->returnValueMap($map));
-    $this->paymentType->setFieldInstanceId($this->randomName());
+      ->with('payment_form_field_instance')
+      ->will($this->returnValue($this->paymentType));
+    $this->assertSame(spl_object_hash($this->paymentType), spl_object_hash($this->paymentType->setFieldInstanceId($this->randomName())));
   }
 
   /**

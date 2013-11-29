@@ -63,10 +63,7 @@ class Generate {
   /**
    * Creates payment line items.
    *
-   * @return array
-   *   Values are
-   *   \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface
-   *   objects.
+   * @return \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[]
    */
   static function createPaymentLineItems() {
     $line_item_manager = Payment::lineItemManager();

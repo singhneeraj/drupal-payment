@@ -10,7 +10,7 @@ namespace Drupal\payment_form\Tests\Plugin\Field\FieldType;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\field\FieldInterface;
 use Drupal\payment\Generate;
-use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
+use Drupal\payment\Payment;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -61,7 +61,8 @@ class PaymentFormWebTest extends WebTestBase {
       'name' => $this->randomString(),
     ));
     foreach (Generate::createPaymentLineItems() as $i => $line_item) {
-      $user->{$field_name}[$i]->line_item = $line_item;
+      $user->{$field_name}[$i]->plugin_id = $line_item->getPluginId();
+      $user->{$field_name}[$i]->plugin_configuration = $line_item->getConfiguration();
     }
     $this->assertFieldValue($user, $field_name);
 
@@ -77,9 +78,8 @@ class PaymentFormWebTest extends WebTestBase {
   protected function assertFieldValue(EntityInterface $entity, $field_name) {
     $field = $entity->{$field_name};
     foreach (Generate::createPaymentLineItems() as $i => $line_item) {
-      if ($this->assertTrue($field[$i]->line_item instanceof PaymentLineItemInterface)) {
-        $this->assertEqual($field[$i]->line_item->getName(), $line_item->getName());
-      }
+      $this->assertTrue(is_string($field[$i]->plugin_id));
+      $this->assertTrue(is_array($field[$i]->plugin_configuration));
     }
   }
 }

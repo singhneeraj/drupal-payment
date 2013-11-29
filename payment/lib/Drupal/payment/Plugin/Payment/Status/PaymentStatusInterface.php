@@ -20,7 +20,7 @@ interface PaymentStatusInterface extends PluginInspectionInterface, Configurable
    * @param string $created
    *   A Unix timestamp.
    * *
-   * * @return \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface
+   * @return self
    */
   public function setCreated($created);
 
@@ -36,8 +36,8 @@ interface PaymentStatusInterface extends PluginInspectionInterface, Configurable
    * Sets the ID of the payment this status is for.
    *
    * @param int $id
-   * *
-   * * @return \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface
+   *
+   * @return self
    */
   public function setPaymentId($id);
 
@@ -53,7 +53,7 @@ interface PaymentStatusInterface extends PluginInspectionInterface, Configurable
    *
    * @param int $id
    * *
-   * * @return \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface
+   * @return self
    */
   public function setId($id);
 

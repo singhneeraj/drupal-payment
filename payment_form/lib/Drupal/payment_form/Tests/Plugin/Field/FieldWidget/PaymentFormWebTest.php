@@ -8,6 +8,7 @@
 namespace Drupal\payment_form\Tests\Plugin\Field\FieldWidget;
 
 use Drupal\field\Field;
+use Drupal\payment\Payment;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -35,6 +36,9 @@ class PaymentFormWebTest extends WebTestBase {
    * Tests the widget.
    */
   protected function testWidget() {
+    $user_storage = \Drupal::entityManager()->getStorageController('user');
+    $line_item_manager = Payment::lineItemManager();
+
     $user = $this->drupalCreateUser(array('administer user fields'));
     $this->drupalLogin($user);
 
@@ -57,19 +61,22 @@ class PaymentFormWebTest extends WebTestBase {
     $this->assertTrue(in_array('user.field_' . $field_name, $field_names));
 
     // Test the widget when creating an entity.
-    $this->drupalGet('user/' . $user->id() . '/edit');
-    $this->drupalPostForm(NULL, array(
+    $this->drupalPostForm('user/' . $user->id() . '/edit', array(
       'field_' . $field_name . '[line_items][add_more][type]' => 'payment_basic',
     ), t('Add a line item'));
     $description = $this->randomString();
     $this->drupalPostForm(NULL, array(
+      'field_' . $field_name . '[line_items][line_items][payment_basic][plugin_form][amount][amount]' => '9,87',
+      'field_' . $field_name . '[line_items][line_items][payment_basic][plugin_form][amount][currency_code]' => 'EUR',
       'field_' . $field_name . '[line_items][line_items][payment_basic][plugin_form][description]' => $description,
+      'field_' . $field_name . '[line_items][line_items][payment_basic][plugin_form][quantity]' => 37,
     ), t('Save'));
-    drupal_flush_all_caches();
-    Field::fieldInfo()->flush();
-    $user_storage = \Drupal::entityManager()->getStorageController('user');
-    $user = $user_storage->loadUnchanged($user->id());
-    $line_item = $user->{'field_' . $field_name}[0]->line_item;
-    $this->assertEqual($line_item->getDescription(), $description);
+
+    // Test whether the widget displays field values.
+    $this->drupalGet('user/' . $user->id() . '/edit');
+    $this->assertFieldByName('field_' . $field_name . '[line_items][line_items][payment_basic][plugin_form][amount][amount]', '9.87');
+    $this->assertFieldByName('field_' . $field_name . '[line_items][line_items][payment_basic][plugin_form][amount][currency_code]', 'EUR');
+    $this->assertFieldByName('field_' . $field_name . '[line_items][line_items][payment_basic][plugin_form][description]', $description);
+    $this->assertFieldByName('field_' . $field_name . '[line_items][line_items][payment_basic][plugin_form][quantity]', 37);
   }
 }

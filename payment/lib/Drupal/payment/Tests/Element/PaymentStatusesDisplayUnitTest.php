@@ -44,8 +44,10 @@ class PaymentStatusesDisplayUnitTest extends DrupalUnitTestBase {
    * Tests the element.
    */
   protected function testElement() {
+    $status = Payment::statusManager()->createInstance('payment_failed');
+    $status->setCreated(time());
     $payment = Generate::createPayment(2)
-      ->setStatus(Payment::statusManager()->createInstance('payment_failed'));
+      ->setStatus($status);
     $element = array(
       '#statuses' => $payment->getStatuses(),
       '#type' => 'payment_statuses_display',

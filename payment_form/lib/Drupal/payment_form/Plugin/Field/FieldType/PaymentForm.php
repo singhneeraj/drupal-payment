@@ -40,8 +40,8 @@ class PaymentForm extends ConfigFieldItemBase {
   public function instanceSettingsForm(array $form, array &$form_state) {
     $form['currency_code'] = array(
       '#type' => 'select',
-      '#title' => t('Payment currency'),
-      '#options' => Currency::options(),
+      '#title' => $this->t('Payment currency'),
+      '#options' => $this->currencyOptions(),
       '#default_value' => $this->getFieldSetting('currency_code'),
       '#required' => TRUE,
     );
@@ -55,12 +55,14 @@ class PaymentForm extends ConfigFieldItemBase {
   public static function schema(FieldInterface $field) {
     $schema = array(
       'columns' => array(
-        // Line items are plugin instances, and there may be more data than the
-        // four required pieces that we know of and can store separately.
-        'line_item' => array(
+        'plugin_configuration' => array(
           'type' => 'blob',
           'not null' => TRUE,
           'serialize' => TRUE,
+        ),
+        'plugin_id' => array(
+          'type' => 'varchar',
+          'length' => 255,
         ),
       ),
     );
@@ -74,13 +76,40 @@ class PaymentForm extends ConfigFieldItemBase {
   public function getPropertyDefinitions() {
     if (!isset(static::$propertyDefinitions)) {
       static::$propertyDefinitions = parent::getPropertyDefinitions();
-      static::$propertyDefinitions['line_item'] = array(
-        'label' => t('Line item'),
+      static::$propertyDefinitions['plugin_configuration'] = array(
+        'settings' => array(
+          'default_value' => array(),
+        ),
+        'label' => $this->t('Plugin configuration'),
         'required' => TRUE,
         'type' => 'any',
+      );
+      static::$propertyDefinitions['plugin_id'] = array(
+        'label' => $this->t('Plugin ID'),
+        'required' => TRUE,
+        'type' => 'string',
       );
     }
 
     return static::$propertyDefinitions;
+  }
+
+  /**
+   * Wraps t().
+   *
+   * @todo Revisit this when we can use traits and use those to wrap the
+   *   translation manager.
+   */
+  protected function t($string, array $args = array(), array $options = array()) {
+    return t($string, $args, $options);
+  }
+
+  /**
+   * Wraps \Drupal\currency\Entity\Currency::options().
+   *
+   * @todo Revisit this when https://drupal.org/node/2118295 is fixed.
+   */
+  protected function currencyOptions() {
+    return Currency::options();
   }
 }

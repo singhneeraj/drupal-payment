@@ -7,6 +7,7 @@
 
 namespace Drupal\payment_form\Tests\Plugin\Field\FieldFormatter;
 
+use Drupal\field\Field;
 use Drupal\field\FieldInterface;
 use Drupal\payment\Generate;
 use Drupal\payment\Payment;
@@ -42,7 +43,7 @@ class PaymentFormWebTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('field_ui', 'payment', 'payment_form');
+  public static $modules = array('entity_reference', 'field', 'payment', 'payment_form');
 
   /**
    * {@inheritdoc}
@@ -89,7 +90,8 @@ class PaymentFormWebTest extends WebTestBase {
       'name' => $this->randomString(),
     ));
     foreach (Generate::createPaymentLineItems() as $i => $line_item) {
-      $this->user->{$field_name}[$i]->line_item = $line_item;
+      $this->user->{$field_name}[$i]->plugin_id = $line_item->getPluginId();
+      $this->user->{$field_name}[$i]->plugin_configuration = $line_item->getConfiguration();
     }
     $this->user->save();
 

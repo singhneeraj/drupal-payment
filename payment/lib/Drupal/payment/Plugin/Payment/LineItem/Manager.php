@@ -39,19 +39,6 @@ class Manager extends DefaultPluginManager {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function createInstance($plugin_id, array $configuration = array()) {
-    // If a plugin is missing, use the default.
-    try {
-      return parent::createInstance($plugin_id, $configuration);
-    }
-    catch (PluginException $e) {
-      return parent::createInstance('payment_basic', $configuration);
-    }
-  }
-
-  /**
    * Returns payment line item options.
    *
    * @return array
@@ -65,5 +52,18 @@ class Manager extends DefaultPluginManager {
     natcasesort($options);
 
     return $options;
+  }
+
+  /**
+   * Returns the class name for a plugin ID.
+   *
+   * @param string $plugin_id
+   *
+   * @return string
+   */
+  public function getPluginClass($plugin_id) {
+    $factory = $this->factory;
+
+    return $factory::getPluginClass($plugin_id, $this->getDefinition($plugin_id));
   }
 }

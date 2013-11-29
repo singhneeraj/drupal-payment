@@ -20,14 +20,14 @@ use Drupal\simpletest\DrupalUnitTestBase;
 class PaymentUnitTest extends DrupalUnitTestBase {
 
   /**
-   * The payment bundle to test with.
+   * The payment bundle to test with used for testing.
    *
    * @var string
    */
   protected $bundle = 'payment_unavailable';
 
   /**
-   * The payment line item manager.
+   * The payment line item manager used for testing.
    *
    * @var \Drupal\payment\Plugin\Payment\LineItem\Manager
    */
@@ -39,14 +39,14 @@ class PaymentUnitTest extends DrupalUnitTestBase {
   public static $modules = array('field', 'payment', 'payment_test', 'system');
 
   /**
-   * The payment to test with.
+   * The payment under test.
    *
-   * @var \Drupal\payment\Entity\PaymentInterface
+   * @var \Drupal\payment\Entity\Payment
    */
   protected $payment;
 
   /**
-   * The payment status manager.
+   * The payment status manager used for testing.
    *
    * @var \Drupal\payment\Plugin\Payment\Status\Manager
    */
@@ -124,7 +124,7 @@ class PaymentUnitTest extends DrupalUnitTestBase {
     $line_item = $this->lineItemManager->createInstance('payment_basic');
     $line_item->setName($this->randomName());
     $this->assertTrue($this->payment->setLineItem($line_item) instanceof PaymentInterface);
-    $this->assertIdentical($this->payment->getLineItem($line_item->getName()), $line_item);
+    $this->assertIdentical(spl_object_hash($this->payment->getLineItem($line_item->getName())), spl_object_hash($line_item));
   }
 
   /**
@@ -147,11 +147,12 @@ class PaymentUnitTest extends DrupalUnitTestBase {
     $line_item_1->setName($this->randomName());
     $line_item_2 = $this->lineItemManager->createInstance('payment_basic');
     $line_item_2->setName($this->randomName());
-    $this->assertTrue($this->payment->setLineItems(array($line_item_1, $line_item_2)) instanceof PaymentInterface);
-    $this->assertIdentical($this->payment->getLineItems(), array(
-      $line_item_1->getName() => $line_item_1,
-      $line_item_2->getName() => $line_item_2,
-    ));
+    $this->assertTrue(spl_object_hash($this->payment->setLineItems(array($line_item_1, $line_item_2))), spl_object_hash($this->payment));
+    $line_items = $this->payment->getLineItems();
+    if ($this->assertTrue(is_array($line_items))) {
+      $this->assertEqual(spl_object_hash($line_items[$line_item_1->getName()]), spl_object_hash($line_item_1));
+      $this->assertEqual(spl_object_hash($line_items[$line_item_2->getName()]), spl_object_hash($line_item_2));
+    }
   }
 
   /**
@@ -159,11 +160,10 @@ class PaymentUnitTest extends DrupalUnitTestBase {
    */
   protected function testGetLineItemsByType() {
     $type = 'payment_basic';
-    $line_item = $this->lineItemManager->createInstance('basic');
-    $this->assertTrue($this->payment->setLineItem($line_item) instanceof PaymentInterface);
-    $this->assertEqual($this->payment->getLineItemsByType($type), array(
-      $line_item->getName() => $line_item,
-    ));
+    $line_item = $this->lineItemManager->createInstance($type);
+    $this->assertEqual(spl_object_hash($this->payment->setLineItem($line_item)), spl_object_hash($this->payment));
+    $line_items = $this->payment->getLineItemsByType($type);
+    $this->assertEqual(spl_object_hash(reset($line_items)), spl_object_hash($line_item));
   }
 
   /**
@@ -171,9 +171,7 @@ class PaymentUnitTest extends DrupalUnitTestBase {
    */
   protected function testGetStatus() {
     $status = $this->statusManager->createInstance('payment_pending');
-    $this->assertTrue($this->payment->setStatus($status, FALSE) instanceof PaymentInterface);
-    $state = \Drupal::state();
-    $this->assertEqual($state->get('payment_test_payment_status_set'), TRUE);
+    $this->assertEqual(spl_object_hash($this->payment->setStatus($status, FALSE)), spl_object_hash($this->payment));
     $this->assertEqual(spl_object_hash($this->payment->getStatus()), spl_object_hash($status));
   }
 
@@ -181,11 +179,11 @@ class PaymentUnitTest extends DrupalUnitTestBase {
    * Tests setStatuses() and getStatuses().
    */
   protected function testGetStatuses() {
-    $statuses = array($this->statusManager->createInstance('payment_pending'), $this->statusManager->createInstance('payment_success'));
-    $this->assertTrue($this->payment->setStatuses($statuses) instanceof PaymentInterface);
-    foreach ($this->payment->getStatuses() as $i => $status) {
-      $this->assertEqual(spl_object_hash($status), spl_object_hash($statuses[$i]));
-    }
+    $statuses = array($this->statusManager->createInstance('payment_pending'), $this->statusManager->createInstance('payment_failed'));
+    $this->assertEqual(spl_object_hash($this->payment->setStatuses($statuses)), spl_object_hash($this->payment));
+    $retrieved_statuses = $this->payment->getStatuses();
+    $this->assertEqual(spl_object_hash(reset($retrieved_statuses)), spl_object_hash(reset($statuses)));
+    $this->assertEqual(spl_object_hash(end($retrieved_statuses)), spl_object_hash(end($statuses)));
   }
 
   /**

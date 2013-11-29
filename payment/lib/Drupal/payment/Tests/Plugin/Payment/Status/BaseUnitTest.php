@@ -154,6 +154,6 @@ class BaseUnitTest extends UnitTestCase {
    * Tests getOperations().
    */
   public function testGetOperations() {
-    $this->assertInternalType('array', $this->status->getOperations($this->pluginId));
+    $this->assertSame(array(), $this->status->getOperations($this->pluginId));
   }
 }

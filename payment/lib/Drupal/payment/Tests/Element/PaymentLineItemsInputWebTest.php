@@ -8,6 +8,7 @@
 namespace Drupal\payment\Tests\Element;
 
 use Drupal\payment\Generate;
+use Drupal\payment\Payment;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
 use Drupal\simpletest\WebTestBase ;
 
@@ -117,11 +118,15 @@ class PaymentLineItemsInputWebTest extends WebTestBase {
     if ($this->assertTrue(is_array($value))) {
       /// We end up with one more line item than we originally had.
       $this->assertEqual(count($value), count($names));
-      foreach ($value as $line_item) {
-        $this->assertTrue($line_item instanceof PaymentLineItemInterface);
+      $line_items = array();
+      foreach ($value as $line_item_data) {
+        $this->assertTrue(isset($line_item_data['plugin_configuration']));
+        $this->assertTrue(is_array($line_item_data['plugin_configuration']));
+        $this->assertTrue(isset($line_item_data['plugin_id']));
+        $line_items[] = Payment::lineItemManager()->createInstance($line_item_data['plugin_id'], $line_item_data['plugin_configuration']);
       }
       // Check that the first line item is now the last.
-      $this->assertEqual(end($value)->getName(), reset($names));
+      $this->assertEqual(end($line_items)->getName(), reset($names));
     }
 
     // Add a line item through an AJAX submission.
@@ -140,8 +145,10 @@ class PaymentLineItemsInputWebTest extends WebTestBase {
     $value = $state->get('payment_test_line_item_form_element');
     if ($this->assertTrue(is_array($value))) {
       $this->assertEqual(count($value), count($names) + 1);
-      foreach ($value as $line_item) {
-        $this->assertTrue($line_item instanceof PaymentLineItemInterface);
+      foreach ($value as $line_item_data) {
+        $this->assertTrue(isset($line_item_data['plugin_configuration']));
+        $this->assertTrue(is_array($line_item_data['plugin_configuration']));
+        $this->assertTrue(isset($line_item_data['plugin_id']));
       }
     }
   }

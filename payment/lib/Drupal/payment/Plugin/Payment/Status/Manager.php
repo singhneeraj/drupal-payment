@@ -49,6 +49,7 @@ class Manager extends DefaultPluginManager {
     catch (PluginException $e) {
       return parent::createInstance('payment_unknown', $configuration);
     }
+
   }
 
   /**
@@ -72,7 +73,8 @@ class Manager extends DefaultPluginManager {
     static $hierarchy = NULL;
 
     if (is_null($hierarchy)) {
-      $parents = $children = array();
+      $parents = array();
+      $children = array();
       $definitions = $this->getDefinitions();
       uasort($definitions, array($this, 'sort'));
       foreach ($definitions as $plugin_id => $definition) {
