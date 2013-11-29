@@ -160,4 +160,11 @@ abstract class Base extends PluginBase implements ContainerFactoryPluginInterfac
   public static function getOperations($plugin_id) {
     return array();
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getLabel() {
+    return $this->pluginDefinition['label'];
+  }
 }

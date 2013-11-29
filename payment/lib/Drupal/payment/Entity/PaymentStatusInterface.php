@@ -10,7 +10,7 @@ namespace Drupal\payment\Entity;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 
 /**
- * Defines payment methods.
+ * Defines payment statuses.
  */
 interface PaymentStatusInterface extends ConfigEntityInterface {
 

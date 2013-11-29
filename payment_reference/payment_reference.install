@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * @file
+ * Installation and uninstallation functions.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function payment_reference_schema() {
+  $schema['payment_reference'] = array(
+    'fields' => array(
+      'field_instance_id' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'payment_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('payment_id'),
+    'foreign keys' => array(
+      'payment_id' => array(
+        'table' => 'payment',
+        'columns' => array(
+          'payment_id' => 'id',
+        ),
+      ),
+    ),
+    'indexes' => array(
+      'field_instance_id' => array('field_instance_id'),
+    ),
+  );
+
+  return $schema;
+}

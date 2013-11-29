@@ -121,4 +121,11 @@ interface PaymentStatusInterface extends PluginInspectionInterface, Configurable
    *   - weight: The weight of this operation.
    */
   public static function getOperations($plugin_id);
+
+  /**
+   * Gets this payment status's human-readable label.
+   *
+   * @return string
+   */
+  function getLabel();
 }

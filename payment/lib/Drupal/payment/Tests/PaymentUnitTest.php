@@ -2,11 +2,10 @@
 
 /**
  * @file
- * Contains
- * \Drupal\payment\Test\PaymentUnitTest.
+ * Contains \Drupal\payment\Test\PaymentUnitTest.
  */
 
-namespace Drupal\payment_reference\Test;
+namespace Drupal\payment\Test;
 
 use Drupal\payment\Payment;
 use Drupal\payment_reference\PaymentReference;
@@ -14,9 +13,9 @@ use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\Container;
 
 /**
- * Tests \Drupal\payment_reference\PaymentReference.
+ * Tests \Drupal\payment\Payment.
  */
-class PaymentReferenceUnitTest extends UnitTestCase {
+class PaymentUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}

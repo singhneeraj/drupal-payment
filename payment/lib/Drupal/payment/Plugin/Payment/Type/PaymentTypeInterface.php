@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Contains \Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface .
+ * Contains \Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface.
  */
 
 namespace Drupal\payment\Plugin\Payment\Type;

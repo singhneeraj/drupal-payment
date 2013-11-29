@@ -1,0 +1,115 @@
+<?php
+
+/**
+ * @file
+ *   Hook implementations and general functions.
+ */
+
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\field\FieldInstanceInterface;
+use Drupal\field\FieldInterface;
+use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment_reference\PaymentReference;
+use Drupal\payment_reference\Plugin\Payment\Type\PaymentReference as PaymentReferencePlugin;
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+
+/**
+ * Implements hook_element_info().
+ */
+function payment_reference_element_info() {
+  $elements['payment_reference'] = array(
+    // The ID of a payment as the default value.
+    '#default_value' => NULL,
+    // The ID of the field instance the element is used for.
+    '#field_instance_id' => NULL,
+    '#input' => TRUE,
+    // The ID of the account that must own the payment.
+    '#owner_id' => NULL,
+    // Values are arrays with two keys:
+    // - plugin_id: the ID of the line item plugin instance.
+    // - plugin_configuration: the configuration of the line item plugin
+    //   instance.
+    '#payment_line_items_data' => array(),
+    '#payment_currency_code' => '',
+    '#process' => array(array('Drupal\payment_reference\Element\PaymentReference', 'process')),
+    '#theme_wrappers' => array('form_element'),
+    '#value_callback' => 'payment_reference_element_payment_reference_value',
+  );
+
+  return $elements;
+}
+
+/**
+ * Implements hook_page_alter().
+ */
+function payment_reference_page_alter(&$page) {
+  if (\Drupal::request()->attributes->get(RouteObjectInterface::ROUTE_NAME) == 'payment_reference.pay') {
+    $skip_regions = array_diff(element_children($page), array('content'));
+    foreach ($skip_regions as $skip_region) {
+      $page[$skip_region]['#access'] = FALSE;
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function payment_reference_entity_info_alter(&$entity_info) {
+  $entity_info['payment']['controllers']['form']['payment_reference'] = 'Drupal\payment_reference\Entity\PaymentFormController';
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function payment_reference_field_entity_delete(FieldInterface $field) {
+  if ($field->getFieldType() == 'payment_reference') {
+    PaymentReference::queue()->deleteByFieldId($field->id());
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function payment_reference_field_instance_delete(FieldInstanceInterface $field_instance) {
+  PaymentReference::queue()->deleteByFieldInstanceId($field_instance->id());
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function payment_reference_payment_insert(PaymentInterface $payment) {
+  if ($payment->getPaymentType() instanceof PaymentReferencePlugin) {
+    PaymentReference::queue()->save($payment->getPaymentType()->getFieldInstanceId(), $payment->id());
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function payment_reference_payment_delete(PaymentInterface $payment) {
+  PaymentReference::queue()->deleteByPaymentId($payment->id());
+}
+
+/**
+ * Implements hook_entity_field_access().
+ */
+function payment_reference_entity_field_access($operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL) {
+  if ($field_definition->getFieldType() == 'payment_reference') {
+    return (bool) $account->id();
+  }
+}
+
+/**
+ * Implements form #value_callback callback.
+ *
+ * @todo Move this to \Drupal\payment_reference\Element\PaymentReference once
+ * https://drupal.org/node/2040559 has been fixed.
+ */
+function payment_reference_element_payment_reference_value(array $element, $input, array &$form_state) {
+  $payment_ids = PaymentReference::queue()->loadPaymentIds($element['#field_instance_id'], $element['#owner_id']);
+  if ($payment_ids) {
+    return reset($payment_ids);
+  }
+}
