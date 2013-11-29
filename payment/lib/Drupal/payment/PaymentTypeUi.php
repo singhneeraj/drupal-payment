@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\PaymentTypeUI.
+ * Contains \Drupal\payment\PaymentTypeUi.
  */
 
 namespace Drupal\payment;
@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Returns responses for payment type routes.
  */
-class PaymentTypeUI implements ContainerInjectionInterface {
+class PaymentTypeUi implements ContainerInjectionInterface {
 
   /**
    * The current user.

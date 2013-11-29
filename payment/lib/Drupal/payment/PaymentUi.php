@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\PaymentUI.
+ * Contains \Drupal\payment\PaymentUi.
  */
 
 namespace Drupal\payment;
@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Returns responses for payment routes.
  */
-class PaymentUI implements ContainerInjectionInterface {
+class PaymentUi implements ContainerInjectionInterface {
 
   /**
    * The request.
