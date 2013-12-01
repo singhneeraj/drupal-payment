@@ -155,7 +155,7 @@ class PaymentMethodUi extends ControllerBase implements AccessInterface, Contain
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
    *
-   * @return bool|null
+   * @return string
    *   self::ALLOW, self::DENY, or self::KILL.
    */
   public function selectAccess(Request $request) {
@@ -197,7 +197,7 @@ class PaymentMethodUi extends ControllerBase implements AccessInterface, Contain
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
    *
-   * @return bool|null
+   * @return string
    *   self::ALLOW, self::DENY, or self::KILL.
    */
   public function addAccess(Request $request) {

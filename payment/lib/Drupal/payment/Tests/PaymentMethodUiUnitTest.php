@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Tests;
 
+use Drupal\Core\Access\AccessInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -189,15 +190,14 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
 
     $request = new Request();
 
-    $this->assertTrue($this->paymentMethodUi->selectAccess($request));
-    $this->assertNull($this->paymentMethodUi->selectAccess($request));
+    $this->assertSame(AccessInterface::ALLOW, $this->paymentMethodUi->selectAccess($request));
+    $this->assertSame(AccessInterface::DENY, $this->paymentMethodUi->selectAccess($request));
   }
 
   /**
    * Tests add().
    */
   public function testAdd() {
-    return;
     $plugin_id = $this->randomName();
     $plugin = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
 

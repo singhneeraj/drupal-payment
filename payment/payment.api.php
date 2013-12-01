@@ -7,7 +7,7 @@
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Entity\PaymentMethodInterface;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
 
 /**
@@ -72,7 +72,7 @@ function hook_payment_status_set(PaymentInterface $payment, PaymentStatusInterfa
 /**
  * Executes before the payment type's original context is resumed.
  *
- * @see \Drupal\payment\Plugin\Payment\Method\Base::resume()
+ * @see \Drupal\payment\Plugin\Payment\Type\Base::resumeContext()
  *
  * @param \Drupal\payment\Entity\PaymentInterface $payment
  */
@@ -92,12 +92,10 @@ function hook_payment_type_pre_resume_context(PaymentInterface $payment) {
  *   $payment->getPaymentMethod() contains the method currently configured, but
  *   NOT the method that $payment should be tested against, which is
  *   $payment_method.
- * @param \Drupal\payment\Entity\PaymentMethodInterface $payment_method
- * @param string $payment_method_brand
- *   See \Drupal\payment\PaymentProcessingInterface for the available brands.
+ * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface $payment_method
  * @param \Drupal\Core\Session\AccountInterface $account
  *
- * @return bool|null
+ * @return string
  *   \Drupal\Core\Access\AccessInterface::ALLOW,
  *   \Drupal\Core\Access\AccessInterface::DENY, or
  *   \Drupal\Core\Access\AccessInterface::KILL.
@@ -105,7 +103,7 @@ function hook_payment_type_pre_resume_context(PaymentInterface $payment) {
  * @see \Drupal\payment\Plugin\Payment\Method\Base::executePaymentAccess()
  * @see \Drupal\payment\Plugin\Payment\Method\Base::executePaymentAccessEvent()
  */
-function hook_payment_execute_access(PaymentInterface $payment, PaymentMethodInterface $payment_method, $payment_method_brand, AccountInterface $account) {}
+function hook_payment_execute_access(PaymentInterface $payment, PaymentMethodInterface $payment_method, AccountInterface $account) {}
 
 /**
  * Executes before a payment is executed.

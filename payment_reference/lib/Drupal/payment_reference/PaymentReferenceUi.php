@@ -98,7 +98,7 @@ class PaymentReferenceUi extends ControllerBase implements ContainerInjectionInt
    * @param \Symfony\Component\HttpFoundation\Request $request
    * @param \Drupal\field\FieldInstanceInterface $field_instance
    *
-   * @return bool
+   * @return string
    */
   public function payAccess(Request $request, FieldInstanceInterface $field_instance) {
     $access_controller = $this->entityManager()->getAccessController('payment');
