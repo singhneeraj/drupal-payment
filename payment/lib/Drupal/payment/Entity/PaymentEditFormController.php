@@ -8,7 +8,7 @@
 namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\EntityFormController;
-use Drupal\payment\Element\PaymentPaymentMethodInput;
+use Drupal\payment\Element\PaymentMethodInput;
 use Drupal\payment\Plugin\Payment\Status\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

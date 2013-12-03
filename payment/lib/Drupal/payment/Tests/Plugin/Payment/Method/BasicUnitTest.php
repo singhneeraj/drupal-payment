@@ -16,37 +16,39 @@ use Drupal\Tests\UnitTestCase;
 class BasicUnitTest extends UnitTestCase {
 
   /**
-   * The module handler.
+   * The module handler used for testing.
    *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $moduleHandler;
 
   /**
-   * The token API.
+   * The token API used for testing.
    *
-   * @var \Drupal\Core\Utility\Token
+   * @var \Drupal\Core\Utility\Token|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $token;
 
   /**
-   * The payment method plugin.
+   * The payment method plugin under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\Basic
+   * @var \Drupal\payment\Plugin\Payment\Method\Basic|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $paymentMethodPlugin;
+  protected $plugin;
 
   /**
-   * The payment method entity.
+   * The definition of the payment method plugin under test.
    *
-   * @var \Drupal\payment\Entity\PaymentMethodInterface
+   * @var array
    */
-  protected $paymentMethodEntity;
+  protected $pluginDefinition = array(
+    'status' => 'payment_expired',
+  );
 
   /**
-   * The payment status manager.
+   * The payment status manager used for testing.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\manager
+   * @var \Drupal\payment\Plugin\Payment\Status\manager|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentStatusManager;
 
@@ -73,92 +75,31 @@ class BasicUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->paymentMethodEntity = $this->getMock('\Drupal\payment\Entity\PaymentMethodInterface');
-
     $this->paymentStatusManager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Status\Manager')
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->paymentMethodPlugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\Basic')
-      ->setConstructorArgs(array(array(), '', array(), $this->moduleHandler, $this->token, $this->paymentStatusManager))
+    $this->plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\Basic')
+      ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->token, $this->paymentStatusManager))
       ->setMethods(array('t'))
       ->getMock();
-    $this->paymentMethodPlugin->expects($this->any())
+    $this->plugin->expects($this->any())
       ->method('t')
       ->will($this->returnArgument(0));
-    $this->paymentMethodPlugin->setPaymentMethod($this->paymentMethodEntity);
   }
 
   /**
    * Tests defaultConfiguration().
    */
   public function testDefaultConfiguration() {
-    $this->assertInternalType('array', $this->paymentMethodPlugin->defaultConfiguration());
+    $this->assertInternalType('array', $this->plugin->defaultConfiguration());
   }
 
   /**
    * Tests getStatus() setStatus().
    */
   public function testGetStatus() {
-    $status = $this->randomName();
-    $this->assertSame(spl_object_hash($this->paymentMethodPlugin), spl_object_hash($this->paymentMethodPlugin->setStatus($status)));
-    $this->assertSame($status, $this->paymentMethodPlugin->getStatus());
-  }
-
-  /**
-   * Tests paymentMethodFormElements().
-   */
-  public function testPaymentMethodFormElements() {
-    $form = array();
-    $form_state = array();
-    $elements = $this->paymentMethodPlugin->paymentMethodFormElements($form, $form_state);
-    $this->assertInternalType('array', $elements);
-    foreach (array('brand', 'message', 'status') as $key) {
-      $this->assertArrayHasKey($key, $elements);
-      $this->assertInternalType('array', $elements[$key]);
-    }
-  }
-
-  /**
-   * Tests executePaymentAccess().
-   */
-  public function testExecutePaymentAccess() {
-    $currency_code = 'EUR';
-    $valid_amount = 12.34;
-
-    $payment_method_plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\Basic')
-      ->setConstructorArgs(array(array(), '', array(), $this->moduleHandler, $this->token, $this->paymentStatusManager))
-      ->setMethods(array('brands'))
-      ->getMock();
-    $payment_method_plugin->expects($this->once())
-      ->method('brands')
-      ->will($this->returnValue(array(
-        'default' => array()
-      )));
-    $payment_method_plugin->setPaymentMethod($this->paymentMethodEntity);
-
-    $this->paymentMethodEntity->expects($this->once())
-      ->method('status')
-      ->will($this->returnValue(TRUE));
-
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
-    $payment->expects($this->once())
-      ->method('getCurrencyCode')
-      ->will($this->returnValue($currency_code));
-    $payment->expects($this->once())
-      ->method('getAmount')
-      ->will($this->returnValue($valid_amount));
-
-    $this->moduleHandler->expects($this->once())
-      ->method('invokeAll')
-      ->will($this->returnValue(array(AccessInterface::ALLOW, AccessInterface::DENY)));
-
-    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
-
-    $this->assertTrue($payment_method_plugin->executePaymentAccess($payment, 'default', $account));
-    $this->assertFalse($payment_method_plugin->executePaymentAccess($payment, $this->randomName(), $account));
+    $this->assertSame($this->pluginDefinition['status'], $this->plugin->getStatus());
   }
 
   /**
@@ -201,19 +142,9 @@ class BasicUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests brands().
+   * Tests currencies().
    */
-  public function testBrands() {
-    $brands = $this->paymentMethodPlugin->brands();
-    $this->assertInternalType('array', $brands);
-  }
-
-  /**
-   * Tests getBrandLabel().
-   */
-  public function testGetBrandLabel() {
-    $label = $this->randomName();
-    $this->assertSame(spl_object_hash($this->paymentMethodPlugin), spl_object_hash($this->paymentMethodPlugin->setBrandLabel($label)));
-    $this->assertSame($label, $this->paymentMethodPlugin->getBrandLabel());
+  public function testCurrencies() {
+    $this->assertSame(TRUE, $this->plugin->currencies());
   }
 }

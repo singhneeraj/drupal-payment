@@ -17,11 +17,15 @@ use Drupal\Component\Annotation\Plugin;
 class PaymentMethod extends Plugin {
 
   /**
-   * The translated human-readable plugin name (optional).
+   * Whether the plugin is active.
    *
-   * @var string
+   * Inactive plugins should not be used to initiate new payments with, but
+   * appear in the administration user interface and can be used to continue
+   * processing existing payments.
+   *
+   * @var bool
    */
-  public $description = '';
+  public $active = TRUE;
 
   /**
    * The plugin ID.

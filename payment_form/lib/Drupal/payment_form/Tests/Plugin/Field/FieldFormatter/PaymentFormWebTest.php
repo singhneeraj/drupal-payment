@@ -20,6 +20,13 @@ use Drupal\simpletest\WebTestBase;
 class PaymentFormWebTest extends WebTestBase {
 
   /**
+   * The payment method used for testing.
+   *
+   * @var \Drupal\payment\Entity\PaymentMethod
+   */
+  protected $paymentMethod;
+
+  /**
    * The payment entity storage controller.
    *
    * @var \Drupal\payment\Entity\PaymentStorageController
@@ -96,24 +103,25 @@ class PaymentFormWebTest extends WebTestBase {
     $this->user->save();
 
     // Create a payment method.
-    $plugin = Payment::methodManager()->createInstance('payment_basic');
-    $plugin->setStatus($this->statusPluginId);
-    Generate::createPaymentMethod(2, $plugin)
-      ->save();
+    $this->paymentMethod = Generate::createPaymentMethod(2, 'payment_basic');
+    $this->paymentMethod->setPluginConfiguration(array(
+      'status' => $this->statusPluginId,
+    ));
+    $this->paymentMethod->save();
   }
 
   /**
    * Tests the formatter().
    */
   protected function testFormatter() {
+    // Make sure there are no payments yet.
+    $this->assertEqual(count($this->paymentStorage->loadMultiple()), 0);
     $user = $this->drupalCreateUser(array('access user profiles'));
     $this->drupalLogin($user);
     $path = 'user/' . $user->id();
-    $this->drupalGet($path);
-    $this->drupalPostForm(NULL, array(), t('Pay'));
+    $this->drupalPostForm($path, array(), t('Pay'));
     $this->assertUrl($path);
     $this->assertResponse('200');
-    $this->drupalGet($path);
     // This is supposed to be the first and only payment.
     $payment = $this->paymentStorage->load(1);
     if ($this->assertTrue((bool) $payment)) {

@@ -9,9 +9,9 @@ namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
-use Drupal\currency\Entity\CurrencyInterface;
 use Drupal\payment\Payment as PaymentServiceWrapper;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface as PluginPaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
 
 /**
@@ -47,6 +47,13 @@ use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
  * )
  */
 class Payment extends ContentEntityBase implements PaymentInterface {
+
+  /**
+   * The payment method.
+   *
+   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
+   */
+  protected $method;
 
   /**
    * The payment type.
@@ -237,40 +244,17 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public function setPaymentMethodId($id) {
-    $this->set('payment_method', $id);
+  public function setPaymentMethod(PluginPaymentMethodInterface $payment_method) {
+    $this->method = $payment_method;
 
     return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getPaymentMethodId() {
-    return $this->get('payment_method')->target_id;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getPaymentMethod() {
-    return $this->get('payment_method')->entity;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setPaymentMethodBrand($brand_name) {
-    $this->payment_method_brand[0]->value = $brand_name;
-
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getPaymentMethodBrand() {
-    return $this->payment_method_brand[0]->value;
+    return $this->method;
   }
 
   /**
@@ -314,7 +298,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   public function execute() {
     $manager = PaymentServiceWrapper::statusManager();
     // Execute the payment.
-    if ($this->getPaymentMethod()->executePaymentAccess($this, $this->getPaymentMethodBrand(), \Drupal::currentUser())) {
+    if ($this->getPaymentMethod()->executePaymentAccess($this, \Drupal::currentUser())) {
       $this->setStatus($manager->createInstance('payment_pending'));
       $this->getPaymentMethod()->executePayment($this);
     }
@@ -370,18 +354,6 @@ class Payment extends ContentEntityBase implements PaymentInterface {
       'type' => 'integer_field',
       'read-only' => TRUE,
     );
-    $fields['payment_method'] = array(
-      'label' => t('Payment method'),
-      'type' => 'entity_reference_field',
-      'settings' => array(
-        'target_type' => 'payment_method',
-        'default_value' => 0,
-      ),
-    );
-    $fields['payment_method_brand'] = array(
-      'label' => t('Payment method brand name'),
-      'type' => 'string_field',
-    );
     $fields['owner'] = array(
       'label' => t('Owner'),
       'type' => 'entity_reference_field',
@@ -403,6 +375,9 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * Clones the instance.
    */
   function __clone() {
+    if ($this->getPaymentMethod()) {
+      $this->setPaymentMethod(clone $this->getPaymentMethod());
+    }
     $this->type = clone $this->getPaymentType();
   }
 }

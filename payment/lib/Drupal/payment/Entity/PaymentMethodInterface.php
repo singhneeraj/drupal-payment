@@ -8,29 +8,12 @@
 namespace Drupal\payment\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
-use Drupal\payment\PaymentProcessingInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface as PluginPaymentMethodInterface;
 
 /**
  * Defines payment methods.
  */
-interface PaymentMethodInterface extends ConfigEntityInterface, PaymentProcessingInterface {
-
-  /**
-   * Sets the payment method controller plugin.
-   *
-   * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
-   *
-   * @return \Drupal\payment\Entity\PaymentMethodInterface
-   */
-  public function setPlugin(PluginPaymentMethodInterface $plugin);
-
-  /**
-   * Gets the payment method controller plugin.
-   *
-   * @return \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
-   */
-  public function getPlugin();
+interface PaymentMethodInterface extends ConfigEntityInterface {
 
   /**
    * Sets the payment method ID.
@@ -80,4 +63,27 @@ interface PaymentMethodInterface extends ConfigEntityInterface, PaymentProcessin
    * @return int
    */
   public function getOwnerId();
+
+  /**
+   * Sets the payment method's plugin configuration.
+   *
+   * @param array $configuration
+   *
+   * @return self
+   */
+  public function setPluginConfiguration(array $configuration);
+
+  /**
+   * Gets the payment method's plugin configuration.
+   *
+   * @return array
+   */
+  public function getPluginConfiguration();
+
+  /**
+   * Gets the payment method's plugin ID.
+   *
+   * @return string
+   */
+  public function getPluginId();
 }

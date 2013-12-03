@@ -22,6 +22,15 @@ class Payment {
   }
 
   /**
+   * Returns the payment method configuration manager.
+   *
+   * @return \Drupal\payment\Plugin\Payment\MethodConfiguration\Manager
+   */
+  public static function methodConfigurationManager() {
+    return \Drupal::service('plugin.manager.payment.method_configuration');
+  }
+
+  /**
    * Returns the payment line item manager.
    *
    * @return \Drupal\payment\Plugin\Payment\LineItem\Manager

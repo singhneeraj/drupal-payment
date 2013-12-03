@@ -8,7 +8,7 @@
 namespace Drupal\payment_form\Entity;
 
 use Drupal\Core\Entity\EntityFormController;
-use Drupal\payment\Element\PaymentPaymentMethodInput;
+use Drupal\payment\Element\PaymentMethodInput;
 
 /**
  * Provides the payment form.
@@ -25,8 +25,8 @@ class PaymentFormController extends EntityFormController {
       '#type' => 'payment_line_items_display',
     );
     $form['payment_method'] = array(
-      '#default_value' => clone $payment,
-      '#type' => 'payment_payment_method_input',
+      '#payment' => $payment,
+      '#type' => 'payment_method_input',
     );
 
     return parent::form($form, $form_state);
@@ -36,7 +36,8 @@ class PaymentFormController extends EntityFormController {
    * {@inheritdoc}
    */
   public function submit(array $form, array &$form_state) {
-    $payment = PaymentPaymentMethodInput::getPayment($form['payment_method'], $form_state);
+    $payment = $this->getEntity();
+    $payment->setPaymentMethod(PaymentMethodInput::getPaymentMethod($form['payment_method'], $form_state));
     $payment->save();
     $payment->execute();
   }

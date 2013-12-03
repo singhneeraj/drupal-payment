@@ -8,6 +8,9 @@ services:
   plugin.manager.payment.method:
     class: Drupal\payment\Plugin\Payment\Method\Manager
     arguments: ['@container.namespaces', '@cache.cache', '@language_manager', '@module_handler']
+  plugin.manager.payment.method_configuration:
+    class: Drupal\payment\Plugin\Payment\MethodConfiguration\Manager
+    arguments: ['@container.namespaces', '@cache.cache', '@language_manager', '@module_handler']
   plugin.manager.payment.status:
     class: Drupal\payment\Plugin\Payment\Status\Manager
     arguments: ['@container.namespaces', '@cache.cache', '@language_manager', '@module_handler']

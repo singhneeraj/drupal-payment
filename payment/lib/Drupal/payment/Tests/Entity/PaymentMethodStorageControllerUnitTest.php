@@ -47,19 +47,17 @@ class PaymentMethodStorageControllerUnitTest extends DrupalUnitTestBase {
    * Tests save();
    */
   protected function testSave() {
-    $manager = Payment::methodManager();
-    $payment_method = Generate::createPaymentmethod(1, $manager->createInstance('payment_basic'));
+    $payment_method = Generate::createPaymentmethod(1, 'payment_basic');
     $payment_method->save();
     $payment_method_loaded = entity_load_unchanged('payment_method', $payment_method->id());
     $this->assertTrue($payment_method_loaded instanceof PaymentMethodInterface);
-    $this->assertTrue($payment_method_loaded->getPlugin() instanceof PluginPaymentMethodInterface);
   }
 
   /**
    * Tests delete();
    */
   protected function testDelete() {
-    $payment_method = Generate::createPaymentMethod(1);
+    $payment_method = Generate::createPaymentMethod(1, 'payment_basic');
     $payment_method->save();
     $this->assertTrue($payment_method->id());
     $payment_method->delete();

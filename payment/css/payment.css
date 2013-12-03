@@ -4,6 +4,10 @@
   color: #999;
 }
 
+.payment-method-list .payment-method-disabled td {
+  color: #999;
+}
+
 /* @end */
 
 /* @group payment_line_items form element */

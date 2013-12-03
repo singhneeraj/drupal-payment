@@ -38,8 +38,7 @@ class PaymentUiWebTest extends WebTestBase {
    * Tests the payment UI.
    */
   protected function testPaymentUI() {
-    $payment_method = Generate::createPaymentMethod(2, Payment::methodManager()->createInstance('payment_test'));
-    $payment_method->save();
+    $payment_method = Payment::methodManager()->createInstance('payment_test');
     $payment = Generate::createPayment(2, $payment_method);
     $payment->save();
     $payment = entity_load_unchanged('payment', $payment->id());
@@ -59,7 +58,7 @@ class PaymentUiWebTest extends WebTestBase {
       $this->assertText(t('Last updated'));
       $this->assertText(t('Payment method'));
       $this->assertText(t('€24.20'));
-      $this->assertText($payment_method->label());
+      $this->assertText($payment_method->getPluginLabel());
     }
     $this->drupalLogout();
 

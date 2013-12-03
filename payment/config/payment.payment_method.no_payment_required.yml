@@ -3,4 +3,4 @@ label: 'No payment required'
 ownerId: 1
 pluginConfiguration: {}
 pluginId: payment_basic
-status: 0
+status: false

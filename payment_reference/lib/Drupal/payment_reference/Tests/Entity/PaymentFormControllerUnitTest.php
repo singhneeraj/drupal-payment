@@ -65,8 +65,8 @@ class PaymentFormControllerUnitTest extends UnitTestCase {
     $form_state = array();
     $build = $this->form->form($form, $form_state);
     $this->assertSame(spl_object_hash($this->payment), spl_object_hash($build['line_items']['#payment']));
-    $this->assertNotSame(spl_object_hash($this->payment), spl_object_hash($build['payment_method']['#default_value']));
-    $this->assertInstanceOf('\Drupal\payment\Entity\PaymentInterface', $build['payment_method']['#default_value']);
+    $this->assertSame(spl_object_hash($this->payment), spl_object_hash($build['payment_method']['#payment']));
+    $this->assertInstanceOf('\Drupal\payment\Entity\PaymentInterface', $build['payment_method']['#payment']);
   }
 
   /**

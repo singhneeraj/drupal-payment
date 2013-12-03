@@ -52,7 +52,32 @@ class PaymentMethodUnitTest extends DrupalUnitTestBase {
   protected function setUp() {
     parent::setUp();
     $this->manager = Payment::methodManager();
-    $this->paymentMethod = entity_create('payment_method', array());
+    $this->paymentMethod = entity_create('payment_method', array(
+      'pluginId' => 'payment_unavailable'
+    ));
+  }
+
+  /**
+   * Tests bundle().
+   */
+  protected function testBundle() {
+    $this->assertIdentical($this->paymentMethod->bundle(), 'payment_unavailable');
+  }
+
+  /**
+   * Tests getPluginId().
+   */
+  protected function testPluginId() {
+    $this->assertIdentical($this->paymentMethod->getPluginId(), 'payment_unavailable');
+  }
+
+  /**
+   * Tests setConfiguration() and getConfiguration().
+   */
+  protected function testGetConfiguration() {
+    $configuration = array($this->randomName());
+    $this->assertEqual(spl_object_hash($this->paymentMethod->setPluginConfiguration($configuration)), spl_object_hash($this->paymentMethod));
+    $this->assertEqual($this->paymentMethod->getPluginConfiguration(), $configuration);
   }
 
   /**
@@ -62,15 +87,6 @@ class PaymentMethodUnitTest extends DrupalUnitTestBase {
     $label = $this->randomName();
     $this->assertTrue($this->paymentMethod->setLabel($label) instanceof PaymentMethodInterface);
     $this->assertIdentical($this->paymentMethod->label(), $label);
-  }
-
-  /**
-   * Tests setPlugin() and getPlugin().
-   */
-  protected function testGetPlugin() {
-    $plugin = $this->manager->createInstance('payment_unavailable');
-    $this->assertTrue($this->paymentMethod->setPlugin($plugin) instanceof PaymentMethodInterface);
-    $this->assertIdentical($this->paymentMethod->getPlugin(), $plugin);
   }
 
   /**
@@ -98,21 +114,5 @@ class PaymentMethodUnitTest extends DrupalUnitTestBase {
     $uuid = 'foo';
     $this->assertTrue($this->paymentMethod->setUuid($uuid) instanceof PaymentMethodInterface);
     $this->assertIdentical($this->paymentMethod->uuid(), $uuid);
-  }
-
-  /**
-   * Tests currencies().
-   */
-  protected function testCurrencies() {
-    $this->paymentMethod->setPlugin($this->manager->createInstance('payment_unavailable'));
-    $this->assertTrue(is_array($this->paymentMethod->currencies()));
-  }
-
-  /**
-   * Tests paymentFormElements().
-   */
-  protected function testPaymentFormElements() {
-    $this->paymentMethod->setPlugin($this->manager->createInstance('payment_unavailable'));
-    $this->assertTrue(is_array($this->paymentMethod->currencies()));
   }
 }

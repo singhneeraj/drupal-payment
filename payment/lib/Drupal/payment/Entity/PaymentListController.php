@@ -44,7 +44,7 @@ class PaymentListController extends EntityListController {
     }
     $row['data']['amount'] = $currency->format($currency->roundAmount($payment->getAmount()));
 
-    $row['data']['payment_method'] = $payment->getPaymentMethod() ? $payment->getPaymentMethod()->label() : t('Unavailable');
+    $row['data']['payment_method'] = $payment->getPaymentMethod() ? $payment->getPaymentMethod()->getPluginLabel() : t('Unavailable');
 
     if ($payment->getOwner()) {
       $owner = $payment->getOwner();

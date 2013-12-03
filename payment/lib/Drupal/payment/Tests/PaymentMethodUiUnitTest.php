@@ -38,6 +38,13 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
   protected $formBuilder;
 
   /**
+   * The payment method configuration plugin manager used for testing.
+   *
+   * @var \Drupal\payment\Plugin\Payment\MethodConfiguration\Manager|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $paymentMethodConfigurationManager;
+
+  /**
    * The payment method plugin manager used for testing.
    *
    * @var \Drupal\payment\Plugin\Payment\Method\Manager|\PHPUnit_Framework_MockObject_MockObject
@@ -79,7 +86,11 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
 
     $this->formBuilder = $this->getMock('\Drupal\Core\Form\FormBuilderInterface');
 
-    $this->paymentMethodManager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\Manager')
+    $this->paymentMethodConfigurationManager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodConfiguration\Manager')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $this->paymentMethodManager= $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\Manager')
       ->disableOriginalConstructor()
       ->getMock();
 
@@ -89,8 +100,8 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
       ->will($this->returnValue('http://example.com'));
 
     $this->paymentMethodUi = $this->getMockBuilder('\Drupal\payment\PaymentMethodUi')
-      ->setConstructorArgs(array($this->entityManager, $this->paymentMethodManager, $this->formBuilder, $this->urlGenerator, $this->currentUser))
-      ->setMethods(array('t', 'theme'))
+      ->setConstructorArgs(array($this->entityManager, $this->paymentMethodManager, $this->paymentMethodConfigurationManager, $this->formBuilder, $this->urlGenerator, $this->currentUser))
+      ->setMethods(array('drupalGetPath', 't', 'theme'))
       ->getMock();
   }
 
@@ -133,7 +144,7 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
         'label' => $this->randomName(),
       ),
     );
-    $this->paymentMethodManager->expects($this->once())
+    $this->paymentMethodConfigurationManager->expects($this->once())
       ->method('getDefinitions')
       ->will($this->returnValue($definitions));
 
@@ -165,7 +176,7 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
         'label' => $this->randomName(),
       ),
     );
-    $this->paymentMethodManager->expects($this->exactly(2))
+    $this->paymentMethodConfigurationManager->expects($this->exactly(2))
       ->method('getDefinitions')
       ->will($this->returnValue($definitions));
 
@@ -199,17 +210,8 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
    */
   public function testAdd() {
     $plugin_id = $this->randomName();
-    $plugin = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
-
-    $this->paymentMethodManager->expects($this->once())
-      ->method('createInstance')
-      ->with($plugin_id)
-      ->will($this->returnValue($plugin));
 
     $payment_method = $this->getMock('\Drupal\payment\Entity\PaymentMethodInterface');
-    $payment_method->expects($this->once())
-      ->method('setPlugin')
-      ->will($this->returnSelf());
 
     $storage_controller = $this->getMock('\Drupal\Core\Entity\EntityStorageControllerInterface');
     $storage_controller->expects($this->once())
@@ -244,7 +246,7 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
   public function testAddAccess() {
     $plugin_id = $this->randomName();
     $request = new Request();
-    $request->attributes->set('payment_method_plugin_id', $plugin_id);
+    $request->attributes->set('plugin_id', $plugin_id);
 
     $access_controller = $this->getMock('\Drupal\Core\Entity\EntityAccessControllerInterface');
     $access_controller->expects($this->at(0))
@@ -261,8 +263,8 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
       ->with('payment_method')
       ->will($this->returnValue($access_controller));
 
-    $this->assertTrue($this->paymentMethodUi->addAccess($request));
-    $this->assertFalse($this->paymentMethodUi->addAccess($request));
+    $this->assertSame(AccessInterface::ALLOW, $this->paymentMethodUi->addAccess($request));
+    $this->assertSame(AccessInterface::DENY, $this->paymentMethodUi->addAccess($request));
   }
 
   /**
@@ -294,4 +296,37 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
     $this->paymentMethodUi->duplicate($payment_method);
   }
 
+  /**
+   * Tests listPlugins().
+   */
+  public function testListPlugins() {
+    $plugin_id = $this->randomName();
+    $definitions = array(
+      $plugin_id => array(
+        'active' => TRUE,
+        'class' => '\Drupal\payment\Tests\PaymentMethodUiUnitTestDummyPaymentMethodPlugin',
+        'label' => $this->randomName(),
+      ),
+    );
+
+    $this->paymentMethodManager->expects($this->once())
+      ->method('getDefinitions')
+      ->will($this->returnValue($definitions));
+
+    $build = $this->paymentMethodUi->listPlugins();
+    $this->assertInternalType('array', $build);
+  }
+}
+
+/**
+ * Fakes a payment method plugin.
+ */
+class PaymentMethodUiUnitTestDummyPaymentMethodPlugin {
+
+  /**
+   * Fakes \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface::getOperations().
+   */
+  public static function getOperations($plugin_id) {
+    return array();
+  }
 }

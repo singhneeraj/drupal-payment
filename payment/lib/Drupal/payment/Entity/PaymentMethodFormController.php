@@ -8,6 +8,7 @@
 namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\EntityFormController;
+use Drupal\payment\Payment;
 use Drupal\user\UserInterface;
 
 /**
@@ -20,7 +21,7 @@ class PaymentMethodFormController extends EntityFormController {
    */
   public function form(array $form, array &$form_state) {
     $payment_method = $this->entity;
-    $definition = $payment_method->getPlugin()->getPluginDefinition();
+    $definition = Payment::methodConfigurationManager()->getDefinition($payment_method->bundle());
     $form['type'] = array(
       '#type' => 'item',
       '#title' => t('Type'),
@@ -64,7 +65,7 @@ class PaymentMethodFormController extends EntityFormController {
       '#autocomplete_route_name' => 'user.autocomplete',
       '#required' => TRUE,
     );
-    $form['plugin_form'] = $payment_method->getPlugin()->paymentMethodFormElements($form, $form_state);
+    $form['plugin_form'] = Payment::methodConfigurationManager()->createInstance($payment_method->bundle(), $payment_method->getPluginConfiguration())->formElements($form, $form_state);
 
     return parent::form($form, $form_state);
   }
@@ -104,7 +105,7 @@ class PaymentMethodFormController extends EntityFormController {
     drupal_set_message(t('@label has been saved.', array(
       '@label' => $payment_method->label()
     )));
-    $form_state['redirect'] = 'admin/config/services/payment/method';
+    $form_state['redirect'] = 'admin/config/services/payment/method/configuration';
   }
 
   /**
@@ -112,7 +113,7 @@ class PaymentMethodFormController extends EntityFormController {
    */
   public function delete(array $form, array &$form_state) {
     $payment_method = $this->entity;
-    $form_state['redirect'] = array('admin/config/services/payment/method/' . $payment_method->id() . '/delete');
+    $form_state['redirect'] = array('admin/config/services/payment/method/configuration/' . $payment_method->id() . '/delete');
   }
 
   /**

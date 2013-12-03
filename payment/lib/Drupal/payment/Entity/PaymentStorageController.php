@@ -38,14 +38,14 @@ class PaymentStorageController extends FieldableDatabaseStorageController implem
     $line_items = $this->loadLineItems(array_keys($queried_entities));
     $statuses = $this->loadPaymentStatuses(array_keys($queried_entities));
     foreach ($queried_entities as $id => $queried_entity) {
+      $payment_method = PaymentServiceWrapper::methodManager()->createInstance($queried_entity->payment_method_id, unserialize($queried_entity->payment_method_configuration));
       $queried_entities[$id] = (object) array(
         'bundle' => $queried_entity->bundle,
         'currency' => $queried_entity->currency_code,
         'id' => (int) $queried_entity->id,
         'lineItems' => $line_items[$id],
         'owner' => (int) $queried_entity->owner_id,
-        'payment_method_brand' => $queried_entity->payment_method_brand,
-        'payment_method' => $queried_entity->payment_method_id,
+        'method' => $payment_method,
         'statuses' => $statuses[$id],
         'uuid' => $queried_entity->uuid,
       );
@@ -62,8 +62,8 @@ class PaymentStorageController extends FieldableDatabaseStorageController implem
     $record->bundle = $entity->bundle();
     $record->currency_code = $entity->getCurrencyCode();
     $record->id = $entity->id();
-    $record->payment_method_brand = $entity->getPaymentMethodBrand();
-    $record->payment_method_id = $entity->getPaymentMethodId();
+    $record->payment_method_id = $entity->getPaymentMethod() ? $entity->getPaymentMethod()->getPluginId() : NULL;
+    $record->payment_method_configuration = $entity->getPaymentMethod() ? $entity->getPaymentMethod()->getConfiguration() : array();
     $record->first_payment_status_id = current($entity->getStatuses())->getId();
     $record->last_payment_status_id = $entity->getStatus()->getId();
     $record->owner_id = $entity->getOwnerId();

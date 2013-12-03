@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Contains \Drupal\payment\Plugin\Payment\Method\Manager.
+ * Contains \Drupal\payment\Plugin\Payment\MethodConfiguration\Manager.
  */
 
-namespace Drupal\payment\Plugin\Payment\Method;
+namespace Drupal\payment\Plugin\Payment\MethodConfiguration;
 
 use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Component\Utility\String;
@@ -14,9 +14,9 @@ use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**
- * Manages discovery and instantiation of payment method plugins.
+ * Manages discovery and instantiation of payment method configuration plugins.
  *
- * @see \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
+ * @see \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface
  */
 class Manager extends DefaultPluginManager {
 
@@ -34,9 +34,9 @@ class Manager extends DefaultPluginManager {
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, LanguageManager $language_manager, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/Payment/Method', $namespaces, '\Drupal\payment\Annotations\PaymentMethod');
-    $this->alterInfo($module_handler, 'payment_method');
-    $this->setCacheBackend($cache_backend, $language_manager, 'payment_method');
+    parent::__construct('Plugin/Payment/MethodConfiguration', $namespaces, '\Drupal\payment\Annotations\PaymentMethodConfiguration');
+    $this->alterInfo($module_handler, 'payment_method_configuration');
+    $this->setCacheBackend($cache_backend, $language_manager, 'payment_method_configuration');
   }
 
   /**
@@ -50,23 +50,5 @@ class Manager extends DefaultPluginManager {
     catch (PluginException $e) {
       return parent::createInstance('payment_unavailable', $configuration);
     }
-  }
-
-  /**
-   * Returns payment method options.
-   *
-   * @return array
-   *   Keys are plugin IDs. Values are plugin labels.
-   */
-  function options() {
-    $options = array();
-    $definitions = $this->getDefinitions();
-    unset($definitions['payment_unavailable']);
-    foreach ($definitions as $plugin_id => $definition) {
-      $options[$plugin_id] = $definition['label'];
-    }
-    natcasesort($options);
-
-    return $options;
   }
 }

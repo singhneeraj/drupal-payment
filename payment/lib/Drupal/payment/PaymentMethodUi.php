@@ -15,7 +15,8 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentMethodInterface;
-use Drupal\payment\Plugin\Payment\Method\Manager;
+use Drupal\payment\Plugin\Payment\Method\Manager as PaymentMethodManager;
+use Drupal\payment\Plugin\Payment\MethodConfiguration\Manager as PaymentMethodConfigurationManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,6 +48,13 @@ class PaymentMethodUi extends ControllerBase implements AccessInterface, Contain
   protected $formBuilder;
 
   /**
+   * The payment method configuration plugin manager.
+   *
+   * @var \Drupal\payment\Plugin\Payment\MethodConfiguration\Manager
+   */
+  protected $paymentMethodConfigurationManager;
+
+  /**
    * The payment method plugin manager.
    *
    * @var \Drupal\payment\Plugin\Payment\Method\Manager
@@ -65,14 +73,16 @@ class PaymentMethodUi extends ControllerBase implements AccessInterface, Contain
    *
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    * @param \Drupal\payment\Plugin\Payment\Method\Manager $payment_method_manager
+   * @param \Drupal\payment\Plugin\Payment\MethodConfiguration\Manager $payment_method_configuration_manager
    * @param \Drupal\Core\Form\FormBuilderInterface  $form_builder
    * @param \Drupal\Core\Routing\UrlGeneratorInterface $url_generator
    * @param \Drupal\Core\Session\AccountInterface $current_user
    */
-  public function __construct(EntityManagerInterface $entity_manager, Manager $payment_method_manager, FormBuilderInterface $form_builder, UrlGeneratorInterface $url_generator, AccountInterface $current_user) {
+  public function __construct(EntityManagerInterface $entity_manager, PaymentMethodManager $payment_method_manager, PaymentMethodConfigurationManager $payment_method_configuration_manager, FormBuilderInterface $form_builder, UrlGeneratorInterface $url_generator, AccountInterface $current_user) {
     $this->entityManager = $entity_manager;
     $this->formBuilder = $form_builder;
     $this->paymentMethodManager = $payment_method_manager;
+    $this->paymentMethodConfigurationManager = $payment_method_configuration_manager;
     $this->urlGenerator = $url_generator;
     $this->currentUser = $current_user;
   }
@@ -81,7 +91,7 @@ class PaymentMethodUi extends ControllerBase implements AccessInterface, Contain
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('entity.manager'), $container->get('plugin.manager.payment.method'), $container->get('form_builder'), $container->get('url_generator'), $container->get('current_user'));
+    return new static($container->get('entity.manager'), $container->get('plugin.manager.payment.method'), $container->get('plugin.manager.payment.method_configuration'), $container->get('form_builder'), $container->get('url_generator'), $container->get('current_user'));
   }
 
   /**
@@ -117,20 +127,62 @@ class PaymentMethodUi extends ControllerBase implements AccessInterface, Contain
   }
 
   /**
+   * Lists all available payment method plugins.
+   *
+   * @return array
+   *   A renderable array.
+   */
+  public function listPlugins() {
+    $rows = array();
+    foreach ($this->paymentMethodManager->getDefinitions() as $plugin_id => $definition) {
+      $class = $definition['class'];
+      $row = array(
+        'label' => array(
+          '#markup' => $definition['label'],
+        ),
+        'status' => array(
+          '#markup' => $definition['active'] ? $this->t('Enabled') : $this->t('Disabled'),
+        ),
+        'operations' => array(
+          '#type' => 'operations',
+          '#links' => $class::getOperations($plugin_id),
+        ),
+      );
+      if (!$definition['active']) {
+        $row['#attributes']['class'] = array('payment-method-disabled');
+      }
+      $rows[$plugin_id] = $row;
+    }
+
+    return array(
+      '#attached' => array(
+        'css' => array(
+          $this->drupalGetPath('module', 'payment') . '/css/payment.css',
+        ),
+      ),
+      '#attributes' => array(
+        'class' => array('payment-method-list'),
+      ),
+      '#header' => array($this->t('Name'), $this->t('Status'), $this->t('Operations')),
+      '#type' => 'table',
+    ) + $rows;
+  }
+
+  /**
    * Displays a list of available payment method plugins.
    *
    * @return string
    */
   public function select() {
-    $definitions = $this->paymentMethodManager->getDefinitions();
+    $definitions = $this->paymentMethodConfigurationManager->getDefinitions();
     unset($definitions['payment_unavailable']);
     $access_controller = $this->entityManager->getAccessController('payment_method');
     $items = array();
     foreach ($definitions as $plugin_id => $definition) {
       $access = $access_controller->createAccess($plugin_id);
       if ($access) {
-        $href = $this->urlGenerator->generateFromRoute('payment.payment_method.add', array(
-          'payment_method_plugin_id' => $plugin_id,
+        $href = $this->urlGenerator->getPathFromRoute('payment.payment_method.add', array(
+          'plugin_id' => $plugin_id,
         ));
         $items[] = array(
           'title' => $definition['label'],
@@ -159,7 +211,7 @@ class PaymentMethodUi extends ControllerBase implements AccessInterface, Contain
    *   self::ALLOW, self::DENY, or self::KILL.
    */
   public function selectAccess(Request $request) {
-    $definitions = $this->paymentMethodManager->getDefinitions();
+    $definitions = $this->paymentMethodConfigurationManager->getDefinitions();
     unset($definitions['payment_unavailable']);
     $access_controller = $this->entityManager->getAccessController('payment_method');
     foreach (array_keys($definitions) as $plugin_id) {
@@ -180,13 +232,14 @@ class PaymentMethodUi extends ControllerBase implements AccessInterface, Contain
   /**
    * Displays a payment method add form.
    *
-   * @param string $payment_method_plugin_id
+   * @param string $plugin_id
    *
    * @return array
    */
-  public function add($payment_method_plugin_id) {
-    $plugin = $this->paymentMethodManager->createInstance($payment_method_plugin_id);
-    $payment_method = $this->entityManager->getStorageController('payment_method')->create(array())->setPlugin($plugin);
+  public function add($plugin_id) {
+    $payment_method = $this->entityManager->getStorageController('payment_method')->create(array(
+      'pluginId' => $plugin_id,
+    ));
 
     return $this->formBuilder->getForm($this->entityManager->getFormController('payment_method', 'default')->setEntity($payment_method));
   }
@@ -201,7 +254,7 @@ class PaymentMethodUi extends ControllerBase implements AccessInterface, Contain
    *   self::ALLOW, self::DENY, or self::KILL.
    */
   public function addAccess(Request $request) {
-    $plugin_id = $request->attributes->get('payment_method_plugin_id');
+    $plugin_id = $request->attributes->get('plugin_id');
 
     return $this->entityManager->getAccessController('payment_method')->createAccess($plugin_id, $this->currentUser) ? self::ALLOW : self::DENY;
   }
@@ -221,5 +274,12 @@ class PaymentMethodUi extends ControllerBase implements AccessInterface, Contain
       )));
 
     return $this->formBuilder->getForm($this->entityManager->getFormController('payment_method', 'default')->setEntity($clone));
+  }
+
+  /**
+   * Wraps drupal_get_path().
+   */
+  protected function drupalGetPath($type, $name) {
+    return drupal_get_path($type, $name);
   }
 }

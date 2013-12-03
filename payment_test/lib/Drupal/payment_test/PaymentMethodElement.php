@@ -10,7 +10,7 @@ namespace Drupal\payment_test;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormInterface;
-use Drupal\payment\Element\PaymentPaymentMethodInput;
+use Drupal\payment\Element\PaymentMethodInput;
 use Drupal\payment\Generate;
 use Drupal\payment\Plugin\Payment\Type\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -54,9 +54,9 @@ class PaymentMethodElement implements ContainerInjectionInterface, FormInterface
       'bundle' => 'payment_unavailable',
     ))->setLineItems(Generate::createPaymentLineItems());
     $form['payment_method'] = array(
-      '#default_value' => $payment,
+      '#payment' => $payment,
       '#required' => TRUE,
-      '#type' => 'payment_payment_method_input',
+      '#type' => 'payment_method_input',
     );
     $form['submit'] = array(
       '#type' => 'submit',
@@ -76,6 +76,6 @@ class PaymentMethodElement implements ContainerInjectionInterface, FormInterface
    * {@inheritdoc}
    */
   public function submitForm(array &$form, array &$form_state) {
-    $value = \Drupal::state()->set('payment_test_method_form_element', PaymentPaymentMethodInput::getPayment($form['payment_method'], $form_state)->getPaymentMethodId());
+    \Drupal::state()->set('payment_test_method_form_element', PaymentMethodInput::getPaymentMethodData($form['payment_method'], $form_state));
   }
 }

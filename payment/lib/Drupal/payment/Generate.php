@@ -7,8 +7,7 @@
 
 namespace Drupal\payment;
 
-use Drupal\payment\Entity\PaymentMethodInterface as PaymentMethodEntityInterface;
-use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface as PaymentMethodPluginInterface;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
 use Drupal\Component\Utility\Random;
 
 /**
@@ -41,19 +40,18 @@ class Generate {
    *
    * @param integer $uid
    *   The user ID of the payment's owner.
+   * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface|null $payment_method
    *
    * @return \Drupal\payment\Entity\PaymentInterface
    */
-  static function createPayment($uid, PaymentMethodEntityInterface $payment_method = NULL) {
+  static function createPayment($uid, PaymentMethodInterface $payment_method = NULL) {
     if (!$payment_method) {
-      $payment_method = self::createPaymentMethod($uid);
-      $payment_method->save();
+      $payment_method = Payment::methodManager()->createInstance('payment_unavailable');
     }
     $payment = entity_create('payment', array(
       'bundle' => 'payment_unavailable',
     ))->setCurrencyCode('EUR')
-      ->setPaymentMethodId($payment_method->id())
-      ->setPaymentMethodBrand('default')
+      ->setPaymentMethod($payment_method)
       ->setOwnerId($uid)
       ->setLineItems(static::createPaymentLineItems());
 
@@ -99,21 +97,21 @@ class Generate {
    *
    * @param integer $uid
    *   The user ID of the payment method's owner.
-   * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface $plugin
-   *   An optional plugin to set. Defaults to payment_unavailable.
+   * @param string $plugin_id
+   *   The ID of the payment method configuration plugin to use as the entity's
+   *   bundle.
    *
    * @return \Drupal\payment\Entity\PaymentMethod
    */
-  static function createPaymentMethod($uid, PaymentMethodPluginInterface $plugin = NULL) {
+  static function createPaymentMethod($uid, $plugin_id) {
     $name = static::getRandom()->name();
-    $plugin = $plugin ? $plugin : Payment::methodManager()->createInstance('payment_unavailable', array(
-      'foo' => 'bar',
-    ));
-    $payment_method = entity_create('payment_method', array())
+
+    $payment_method = entity_create('payment_method', array(
+      'pluginId' => $plugin_id,
+    ))
       ->setId($name)
       ->setLabel($name)
-      ->setOwnerId($uid)
-      ->setPlugin($plugin);
+      ->setOwnerId($uid);
 
     return $payment_method;
   }

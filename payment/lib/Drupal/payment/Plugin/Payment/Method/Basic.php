@@ -6,23 +6,25 @@
 
 namespace Drupal\payment\Plugin\Payment\Method;
 
-use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\Payment;
 use Drupal\payment\Plugin\Payment\Status\Manager as PaymentStatusManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A basic payment method that does not transfer money.
  *
+ * Plugins that extend this class must have the following keys in their plugin
+ * definitions:
+ * - entity_id: The ID of the payment method entity the plugin is for.
+ * - status: The ID of the payment status plugin to set at payment execution.
+ *
  * @PaymentMethod(
- *   description = @Translation("A payment method type that always successfully executes payments, but never actually transfers money."),
- *   id = "payment_basic",
- *   label = @Translation("Basic"),
- *   module = "payment"
+ *   derivative = "Drupal\payment\Plugin\Payment\Method\BasicDerivative",
+ *   id = "payment_basic"
  * )
  */
 class Basic extends Base implements ContainerFactoryPluginInterface {
@@ -47,6 +49,8 @@ class Basic extends Base implements ContainerFactoryPluginInterface {
    *   The module handler.
    * @param \Drupal\Core\Utility\Token $token
    *   The token API.
+   * @param \Drupal\payment\Plugin\Payment\Status\Manager
+   *   The payment status manager.
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler, Token $token, PaymentStatusManager $payment_status_manager) {
     $configuration += $this->defaultConfiguration();
@@ -66,23 +70,25 @@ class Basic extends Base implements ContainerFactoryPluginInterface {
    */
   public function defaultConfiguration() {
     return parent::defaultConfiguration() + array(
-      'brand_option' => '',
+      'brand_label' => '',
       'status' => '',
     );
   }
 
   /**
-   * Sets the final payment status.
-   *
-   * @param string $status
-   *   The plugin ID of the payment status to set.
-   *
-   * @return \Drupal\payment\Plugin\Payment\Method\Basic
+   * {@inheritdoc}
    */
-  public function setStatus($status) {
-    $this->configuration['status'] = $status;
+  public function currencies() {
+    return TRUE;
+  }
 
-    return $this;
+  /**
+   * Gets the ID of the payment method this plugin is for.
+   *
+   * @return string
+   */
+  public function getEntityId() {
+    return $this->pluginDefinition['entity_id'];
   }
 
   /**
@@ -92,47 +98,7 @@ class Basic extends Base implements ContainerFactoryPluginInterface {
    *   The plugin ID of the payment status to set.
    */
   public function getStatus() {
-    return $this->configuration['status'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function paymentMethodFormElements(array $form, array &$form_state) {
-    $elements = parent::paymentMethodFormElements($form, $form_state);
-    $elements['#element_validate'][] = array($this, 'paymentMethodFormElementsValidateBasic');
-
-    $elements['brand'] = array(
-      '#default_value' => $this->configuration['brand_option'],
-      '#description' => $this->t('The label that payers will see when choosing a payment method. Defaults to the payment method label.'),
-      '#title' => $this->t('Brand label'),
-      '#type' => 'textfield',
-    );
-    $elements['status'] = array(
-      '#type' => 'select',
-      '#title' => $this->t('Final payment status'),
-      '#description' => $this->t('The status to give a payment after being processed by this payment method.'),
-      '#default_value' => $this->getStatus() ? $this->getStatus() : 'payment_success',
-      '#options' => $this->paymentStatusManager->options(),
-    );
-
-    return $elements;
-  }
-
-  /**
-   * Implements form validate callback for self::paymentMethodFormElements().
-   */
-  public function paymentMethodFormElementsValidateBasic(array $element, array &$form_state, array $form) {
-    $values = NestedArray::getValue($form_state['values'], $element['#parents']);
-    $this->setStatus($values['status'])
-      ->setBrandLabel($values['brand']);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function executePaymentAccess(PaymentInterface $payment, $payment_method_brand, AccountInterface $account) {
-    return $payment_method_brand == 'default' && parent::executePaymentAccess($payment, $payment_method_brand, $account);
+    return $this->pluginDefinition['status'];
   }
 
   /**
@@ -147,33 +113,60 @@ class Basic extends Base implements ContainerFactoryPluginInterface {
   /**
    * {@inheritdoc}
    */
-  public function brands() {
-    return array(
-      'default' => array(
-        'label' => $this->configuration['brand_option'] ? $this->configuration['brand_option'] : $this->getPaymentMethod()->label(),
-      ),
-    );
-  }
+  public static function getOperations($plugin_id) {
+    // @todo Use the payment method operations provider when
+    //   https://drupal.org/node/1839516 is committed.
 
-  /**
-   * Gets the brand option label.
-   *
-   * @return string
-   */
-  public function getBrandLabel() {
-    return$this->configuration['brand_option'];
-  }
+    // Strip the base plugin ID and the colon.
+    $entity_id = substr($plugin_id, 14);
+    $payment_method = \Drupal::entityManager()->getStorageController('payment_method')->load($entity_id);
+    $operations = array();
+    if ($payment_method->access('update')) {
+      $operations['update'] = array(
+        'title' => t('Edit configuration'),
+        'route_name' => 'payment.payment_method.edit',
+        'route_parameters' => array(
+          'payment_method' => $entity_id,
+        ),
+      );
+    }
+    if ($payment_method->access('delete')) {
+      $operations['delete'] = array(
+        'title' => t('Delete configuration'),
+        'route_name' => 'payment.payment_method.delete',
+        'route_parameters' => array(
+          'payment_method' => $entity_id,
+        ),
+      );
+    }
+    if ($payment_method->access('enable')) {
+      $operations['enable'] = array(
+        'title' => t('Enable configuration'),
+        'route_name' => 'payment.payment_method.enable',
+        'route_parameters' => array(
+          'payment_method' => $entity_id,
+        ),
+      );
+    }
+    if ($payment_method->access('disable')) {
+      $operations['disable'] = array(
+        'title' => t('Disable configuration'),
+        'route_name' => 'payment.payment_method.disable',
+        'route_parameters' => array(
+          'payment_method' => $entity_id,
+        ),
+      );
+    }
 
-  /**
-   * Sets the brand option label.
-   *
-   * @param string $label
-   *
-   * @return \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
-   */
-  public function setBrandLabel($label) {
-    $this->configuration['brand_option'] = $label;
+    // Set the destinations, as we re-use existing operations routes elsewhere,
+    // but we want users to end up at the same page as where these links are
+    // displayed.
+    foreach (array('enable', 'disable') as $operation) {
+      if (isset($operations[$operation])) {
+        $operations[$operation]['query']['destination'] = \Drupal::request()->attributes->get('_system_path');
+      }
+    }
 
-    return $this;
+    return $operations;
   }
 }

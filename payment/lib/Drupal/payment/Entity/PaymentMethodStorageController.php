@@ -7,14 +7,63 @@
 
 namespace Drupal\payment\Entity;
 
-use Drupal\Core\Config\Config;
 use Drupal\Core\Config\Entity\ConfigStorageController;
-use Drupal\payment\Payment as PaymentServiceWrapper;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\Entity\Query\QueryFactory;
+use Drupal\Component\Uuid\UuidInterface;
+use Drupal\payment\Plugin\Payment\Method\Manager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Handles storage for payment_method entities.
  */
 class PaymentMethodStorageController extends ConfigStorageController {
+
+  /**
+   * The payment method manager.
+   *
+   * @var \Drupal\payment\Plugin\Payment\Method\Manager
+   */
+  protected $paymentMethodManager;
+
+  /**
+   * Constructor.
+   *
+   * @param string $entity_type
+   *   The entity type for which the instance is created.
+   * @param array $entity_info
+   *   An array of entity info for the entity type.
+   * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   *   The config factory service.
+   * @param \Drupal\Core\Config\StorageInterface $config_storage
+   *   The config storage service.
+   * @param \Drupal\Core\Entity\Query\QueryFactory $entity_query_factory
+   *   The entity query factory.
+   * @param \Drupal\Component\Uuid\UuidInterface $uuid_service
+   *   The UUID service.
+   * @param \Drupal\payment\Plugin\Payment\Method\Manager $payment_method_manager
+   */
+  public function __construct($entity_type, array $entity_info, ConfigFactory $config_factory, StorageInterface $config_storage, QueryFactory $entity_query_factory, UuidInterface $uuid_service, Manager $payment_method_manager) {
+    parent::__construct($entity_type, $entity_info, $config_factory, $config_storage, $entity_query_factory, $uuid_service);
+    $this->paymentMethodManager = $payment_method_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function createInstance(ContainerInterface $container, $entity_type, array $entity_info) {
+    return new static(
+      $entity_type,
+      $entity_info,
+      $container->get('config.factory'),
+      $container->get('config.storage'),
+      $container->get('entity.query'),
+      $container->get('uuid'),
+      $container->get('plugin.manager.payment.method')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -23,14 +72,7 @@ class PaymentMethodStorageController extends ConfigStorageController {
    */
   protected function buildQuery($ids, $revision_id = FALSE) {
     $payment_methods = parent::buildQuery($ids, $revision_id);
-    $manager = PaymentServiceWrapper::methodManager();
     foreach ($payment_methods as $payment_method) {
-      $configuration = $payment_method->pluginConfiguration;
-      $plugin = $manager->createInstance($payment_method->pluginId, $configuration);
-      $plugin->setPaymentMethod($payment_method);
-      $payment_method->setPlugin($plugin);
-      unset($payment_method->pluginId);
-      unset($payment_method->pluginConfiguration);
       $payment_method->setOwnerId((int) $payment_method->getOwnerId());
     }
 
@@ -40,18 +82,18 @@ class PaymentMethodStorageController extends ConfigStorageController {
   /**
    * {@inheritdoc}
    */
-  public function importCreate($name, Config $new_config, Config $old_config) {
-    $payment_method_data = $new_config->get();
-    unset($payment_method_data['pluginConfiguration']);
-    unset($payment_method_data['pluginId']);
-    $payment_method = $this->create($payment_method_data);
-    $manager = PaymentServiceWrapper::methodManager();
-    $configuration = $new_config->get('pluginConfiguration');
-    $plugin = $manager->createInstance($new_config->get('pluginId'), $configuration);
-    $plugin->setPaymentMethod($payment_method);
-    $payment_method->setPlugin($plugin);
-    $payment_method->save();
+  public function save(EntityInterface $entity) {
+    $return = parent::save($entity);
+    $this->paymentMethodManager->clearCachedDefinitions();
 
-    return TRUE;
+    return $return;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function delete(array $entities) {
+    parent::delete($entities);
+    $this->paymentMethodManager->clearCachedDefinitions();
   }
 }

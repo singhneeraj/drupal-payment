@@ -10,9 +10,8 @@ namespace Drupal\payment\Entity;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Executable\ExecutableInterface;
-use Drupal\currency\Entity\CurrencyInterface;
-use Drupal\payment\Entity\PaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface as PluginPaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
 
 /**
@@ -141,43 +140,20 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
   public function getStatus();
 
   /**
-   * Sets the ID of the payment method entity.
+   * Gets the payment method plugin.
    *
-   * @param string $id
-   *
-   * @return \Drupal\payment\Entity\PaymentInterface
-   */
-  public function setPaymentMethodId($id);
-
-  /**
-   * Gets the ID of the payment method entity.
-   *
-   * @return string|null
-   */
-  public function getPaymentMethodId();
-
-  /**
-   * Sets the brand of the payment method entity.
-   *
-   * @param string $brand_name
-   *
-   * @return \Drupal\payment\Entity\PaymentInterface
-   */
-  public function setPaymentMethodBrand($brand_name);
-
-  /**
-   * Gets the brand of the payment method entity.
-   *
-   * @return string|null
-   */
-  public function getPaymentMethodBrand();
-
-  /**
-   * Gets the payment method entity.
-   *
-   * @return \Drupal\payment\Entity\PaymentMethodInterface
+   * @return \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
    */
   public function getPaymentMethod();
+
+  /**
+   * Gets the payment method plugin.
+   *
+   * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
+   *
+   * @return self
+   */
+  public function setPaymentMethod(PluginPaymentMethodInterface $payment_method);
 
   /**
    * Sets the ID of the user who owns this payment.

@@ -19,6 +19,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A base payment method plugin.
+ *
+ * Plugins that extend this class must have the following two keys in their
+ * plugin definitions:
+ * - message_text: The translated human-readable text to display in the payment
+ *   form.
+ * - message_text_format: The ID of the text format to format message_text with.
  */
 abstract class Base extends PluginBase implements AccessInterface, ContainerFactoryPluginInterface, PaymentMethodInterface {
 
@@ -75,10 +81,7 @@ abstract class Base extends PluginBase implements AccessInterface, ContainerFact
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return array(
-      'message_text' => '',
-      'message_text_format' => 'plain_text',
-    );
+    return array();
   }
 
   /**
@@ -96,55 +99,12 @@ abstract class Base extends PluginBase implements AccessInterface, ContainerFact
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function setPaymentMethod(EntityPaymentMethodInterface $payment_method) {
-    $this->paymentMethod = $payment_method;
-
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getPaymentMethod() {
-    return $this->paymentMethod;
-  }
-
-  /**
-   * Sets payer message text.
-   *
-   * @param string $text
-   *
-   * @return \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
-   */
-  public function setMessageText($text) {
-    $this->configuration['message_text'] = $text;
-
-    return $this;
-  }
-
-  /**
    * Gets the payer message text.
    *
    * @return string
    */
   public function getMessageText() {
-    return $this->configuration['message_text'];
-  }
-
-  /**
-   * Sets payer message text format.
-   *
-   * @param string $format
-   *   The machine name of the text format the payer message is in.
-   *
-   * @return \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
-   */
-  public function setMessageTextFormat($format) {
-    $this->configuration['message_text_format'] = $format;
-
-    return $this;
+    return $this->pluginDefinition['message_text'];
   }
 
   /**
@@ -153,13 +113,13 @@ abstract class Base extends PluginBase implements AccessInterface, ContainerFact
    * @return string
    */
   public function getMessageTextFormat() {
-    return $this->configuration['message_text_format'];
+    return $this->pluginDefinition['message_text_format'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function paymentFormElements(array $form, array &$form_state, PaymentInterface $payment) {
+  public function formElements(array $form, array &$form_state, PaymentInterface $payment) {
     $message = $this->checkMarkup($this->getMessageText(), $this->getMessageTextFormat());
     $message = $this->token->replace($message, array(
       'payment' => $payment,
@@ -185,36 +145,8 @@ abstract class Base extends PluginBase implements AccessInterface, ContainerFact
   /**
    * {@inheritdoc}
    */
-  public function paymentMethodFormElements(array $form, array &$form_state) {
-    // @todo Add a token overview, possibly when Token.module has been ported.
-    $elements['#element_validate'] = array(array($this, 'paymentMethodFormElementsValidate'));
-    $elements['#tree'] = TRUE;
-    $elements['message'] = array(
-      '#type' => 'text_format',
-      '#title' => $this->t('Payment form message'),
-      '#default_value' => $this->getMessageText(),
-      '#format' => $this->getMessageTextFormat(),
-    );
-
-    return $elements;
-  }
-
-  /**
-   * Implements form validate callback for self::paymentMethodFormElements().
-   */
-  public function paymentMethodFormElementsValidate(array $element, array &$form_state, array $form) {
-    $values = NestedArray::getValue($form_state['values'], $element['#parents']);
-    $this->setMessageText($values['message']['value']);
-    $this->setMessageTextFormat($values['message']['format']);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function executePaymentAccess(PaymentInterface $payment, $payment_method_brand, AccountInterface $account = NULL) {
-    return $this->getPaymentMethod()->status()
-      && $this->paymentExecuteAccessCurrency($payment, $payment_method_brand, $account)
-      && $this->paymentExecuteAccessEvent($payment, $payment_method_brand, $account);
+  public function executePaymentAccess(PaymentInterface $payment, AccountInterface $account) {
+    return $this->pluginDefinition['active'] && $this->paymentExecuteAccessCurrency($payment, $account) && $this->paymentExecuteAccessEvent($payment, $account);
   }
 
   /**
@@ -228,39 +160,45 @@ abstract class Base extends PluginBase implements AccessInterface, ContainerFact
    * Checks a payment's currency against this plugin.
    *
    * @param \Drupal\payment\Entity\PaymentInterface $payment
-   * @param string $payment_method_brand
    * @param \Drupal\Core\Session\AccountInterface $account
    *
    * @return bool
    */
-  protected function paymentExecuteAccessCurrency(PaymentInterface $payment, $payment_method_brand, AccountInterface $account = NULL) {
-    $brands = $this->brands();
+  protected function paymentExecuteAccessCurrency(PaymentInterface $payment, AccountInterface $account) {
+    $currencies = $this->currencies();
     $payment_currency_code = $payment->getCurrencyCode();
     $payment_amount = $payment->getAmount();
-    // Check that the requested brand exists.
-    if (isset($brands[$payment_method_brand])) {
-      // If no currencies are specified, all currencies are allowed.
-      if (!isset($brands[$payment_method_brand]['currencies'])) {
-        return TRUE;
-      }
-
-      $currencies = $brands[$payment_method_brand]['currencies'];
-      // If the payment's currency is not specified, access is denied.
-      if (!isset($currencies[$payment_currency_code])) {
-        return FALSE;
-      }
-      // Confirm the payment amount is higher than the supported minimum.
-      elseif (isset($currencies[$payment_currency_code]['minimum']) && $payment_amount < $currencies[$payment_currency_code]['minimum']) {
-        return FALSE;
-      }
-      // Confirm the payment amount does not exceed the maximum.
-      elseif (isset($currencies[$payment_currency_code]['maximum']) && $payment_amount > $currencies[$payment_currency_code]['maximum']) {
-        return FALSE;
-      }
+    // If all currencies are allowed, grant access.
+    if ($currencies === TRUE) {
       return TRUE;
     }
-    return FALSE;
+    // If the payment's currency is not specified, access is denied.
+    if (!isset($currencies[$payment_currency_code])) {
+      return FALSE;
+    }
+    // Confirm the payment amount is higher than the supported minimum.
+    elseif (isset($currencies[$payment_currency_code]['minimum']) && $payment_amount < $currencies[$payment_currency_code]['minimum']) {
+      return FALSE;
+    }
+    // Confirm the payment amount does not exceed the maximum.
+    elseif (isset($currencies[$payment_currency_code]['maximum']) && $payment_amount > $currencies[$payment_currency_code]['maximum']) {
+      return FALSE;
+    }
+    return TRUE;
   }
+
+  /**
+   * Returns the supported currencies.
+   *
+   * @return array|true
+   *   Keys are ISO 4217 currency codes. Values are arrays with two keys:
+   *   - minimum (optional): The minimum amount in this currency that is
+   *     supported.
+   *   - maximum (optional): The maximum amount in this currency that is
+   *     supported.
+   *   Return TRUE to allow all currencies and amounts.
+   */
+  abstract protected function currencies();
 
   /**
    * Invokes events for self::executePaymentAccess().
@@ -268,13 +206,12 @@ abstract class Base extends PluginBase implements AccessInterface, ContainerFact
    * @todo Invoke Rules event.
    *
    * @param \Drupal\payment\Entity\PaymentInterface $payment
-   * @param string $payment_method_brand
    * @param \Drupal\Core\Session\AccountInterface $account
    *
    * @return bool
    */
-  protected function paymentExecuteAccessEvent(PaymentInterface $payment, $payment_method_brand, AccountInterface $account = NULL) {
-    $access = $this->moduleHandler->invokeAll('payment_execute_access', $payment, $this->getPaymentMethod(), $payment_method_brand, $account);
+  protected function paymentExecuteAccessEvent(PaymentInterface $payment, AccountInterface $account) {
+    $access = $this->moduleHandler->invokeAll('payment_execute_access', $payment, $this, $account);
 
     // If there are no results, grant access.
     return empty($access) || in_array(self::ALLOW, $access, TRUE) && !in_array(self::KILL, $access, TRUE);
@@ -290,5 +227,19 @@ abstract class Base extends PluginBase implements AccessInterface, ContainerFact
   protected function paymentExecuteEvent(PaymentInterface $payment) {
     $this->moduleHandler->invokeAll('payment_pre_execute', array($payment));
     // @todo invoke Rules event.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPluginLabel() {
+    return $this->pluginDefinition['label'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getOperations($plugin_id) {
+    return array();
   }
 }

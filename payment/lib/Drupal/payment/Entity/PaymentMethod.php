@@ -9,8 +9,6 @@ namespace Drupal\payment\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface as PluginPaymentMethodInterface;
 
 /**
  * Defines a payment method entity.
@@ -69,11 +67,18 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
   protected $ownerId;
 
   /**
-   * The payment method plugin this entity uses.
+   * The configuration, which comes from the entity's payment method plugin.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
+   * @var array
    */
-  protected $plugin;
+  protected $pluginConfiguration = array();
+
+  /**
+   * The bundle, which is the ID of the entity's payment method plugin.
+   *
+   * @var integer
+   */
+  protected $pluginId;
 
   /**
    * The entity's UUID.
@@ -83,21 +88,10 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
   public $uuid;
 
   /**
-   * Implements __get().
-   */
-  public function __get($name) {
-    if ($name == 'pluginId' && $this->getPlugin()) {
-      return $this->getPlugin()->getPluginId();
-    }
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function bundle() {
-    if ($this->getPlugin()) {
-      return $this->getPlugin()->getPluginId();
-    }
+    return $this->getPluginId();
   }
 
   /**
@@ -110,27 +104,10 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
     $properties['id'] = $this->id();
     $properties['label'] = $this->label();
     $properties['ownerId'] = $this->getOwnerId();
-    $properties['pluginConfiguration'] = $this->getPlugin() ? $this->getPlugin()->getConfiguration() : array();
-    $properties['pluginId'] = $this->getPlugin() ? $this->getPlugin()->getPluginId() : NULL;
+    $properties['pluginId'] = $this->bundle();
+    $properties['pluginConfiguration'] = $this->getPluginConfiguration();
 
     return $properties;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setPlugin(PluginPaymentMethodInterface $plugin) {
-    $this->plugin = $plugin;
-    $this->pluginId = $plugin->getPluginId();
-
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getPlugin() {
-    return $this->plugin;
   }
 
   /**
@@ -179,22 +156,24 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
-  public function currencies() {
-    return $this->getPlugin()->currencies();
+  public function setPluginConfiguration(array $configuration) {
+    $this->pluginConfiguration = $configuration;
+
+    return $this;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function paymentFormElements(array $form, array &$form_state, PaymentInterface $payment) {
-    return $this->getPlugin()->paymentFormElements($form, $form_state, $payment);
+  public function getPluginConfiguration() {
+    return $this->pluginConfiguration;
   }
 
   /**
    * {@inheritdoc}
    */
-  function brands() {
-    return $this->getPlugin()->brands();
+  public function getPluginId() {
+    return $this->pluginId;
   }
 
   /**
@@ -204,26 +183,5 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
     $values += array(
       'ownerId' => (int) \Drupal::currentUser()->id(),
     );
-  }
-
-  /**
-   * Clones the instance.
-   */
-  function __clone() {
-    $this->setPlugin(clone $this->getPlugin());
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function executePaymentAccess(PaymentInterface $payment, $payment_method_brand, AccountInterface $account) {
-    return $this->getPlugin()->executePaymentAccess($payment, $payment_method_brand, $account);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function executePayment(PaymentInterface $payment) {
-    $this->getPlugin()->executePayment($payment);
   }
 }

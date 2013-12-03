@@ -37,10 +37,10 @@ class PaymentFormControllerWebTest extends WebTestBase {
    */
   protected function testForm() {
     // Create a payment method.
-    $payment_method_plugin = \Drupal::service('plugin.manager.payment.method')
-      ->createInstance('payment_basic')
-      ->setStatus('payment_success');
-    $payment_method = Generate::createPaymentMethod(2, $payment_method_plugin);
+    $payment_method = Generate::createPaymentMethod(2, 'payment_basic');
+    $payment_method->setPluginConfiguration(array(
+      'status' => 'payment_success',
+    ));
     $payment_method->save();
 
     // Create the field and field instance.

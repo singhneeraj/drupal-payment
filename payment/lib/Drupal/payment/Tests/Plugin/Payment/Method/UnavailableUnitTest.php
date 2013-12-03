@@ -34,14 +34,7 @@ class UnavailableUnitTest extends UnitTestCase {
    *
    * @var \Drupal\payment\Plugin\Payment\Method\Basic
    */
-  protected $paymentMethodPlugin;
-
-  /**
-   * The payment method entity.
-   *
-   * @var \Drupal\payment\Entity\PaymentMethodInterface
-   */
-  protected $paymentMethodEntity;
+  protected $plugin;
 
   /**
    * The payment status manager.
@@ -77,39 +70,26 @@ class UnavailableUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->paymentMethodPlugin = new Unavailable(array(), '', array(), $this->moduleHandler, $this->token, $this->paymentStatusManager);
+    $this->plugin = new Unavailable(array(), '', array(), $this->moduleHandler, $this->token, $this->paymentStatusManager);
   }
 
   /**
    * Tests defaultConfiguration().
    */
   public function testDefaultConfiguration() {
-    $configuration = $this->paymentMethodPlugin->defaultConfiguration();
-    $this->assertInternalType('array', $configuration);
-    $this->assertEmpty($configuration);
+    $this->assertSame(array(), $this->plugin->defaultConfiguration());
   }
 
   /**
-   * Tests paymentFormElements().
+   * Tests formElements().
    */
-  public function testPaymentFormElements() {
+  public function testFormElements() {
     $form = array();
     $form_state = array();
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
-    $elements = $this->paymentMethodPlugin->paymentMethodFormElements($form, $form_state, $payment);
-    $this->assertInternalType('array', $elements);
-    $this->assertEmpty($elements);
-  }
-
-  /**
-   * Tests paymentMethodFormElements().
-   */
-  public function testPaymentMethodFormElements() {
-    $form = array();
-    $form_state = array();
-    $elements = $this->paymentMethodPlugin->paymentMethodFormElements($form, $form_state);
+    $elements = $this->plugin->formElements($form, $form_state, $payment);
     $this->assertInternalType('array', $elements);
     $this->assertEmpty($elements);
   }
@@ -124,7 +104,7 @@ class UnavailableUnitTest extends UnitTestCase {
 
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
-    $this->assertFalse($this->paymentMethodPlugin->executePaymentAccess($payment, $this->randomName(), $account));
+    $this->assertFalse($this->plugin->executePaymentAccess($payment, $account));
   }
 
   /**
@@ -136,23 +116,6 @@ class UnavailableUnitTest extends UnitTestCase {
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
-    $this->paymentMethodPlugin->executePayment($payment);
-  }
-
-  /**
-   * Tests brands().
-   */
-  public function testBrands() {
-    $brands = $this->paymentMethodPlugin->brands();
-    $this->assertInternalType('array', $brands);
-  }
-
-  /**
-   * Tests setPaymentMethod() and getPaymentMethod().
-   */
-  public function testGetPaymentMethod() {
-    $payment_method = $this->getMock('\Drupal\payment\Entity\PaymentMethodInterface');
-    $this->assertSame(spl_object_hash($this->paymentMethodPlugin), spl_object_hash($this->paymentMethodPlugin->setPaymentMethod($payment_method)));
-    $this->assertSame(spl_object_hash($payment_method), spl_object_hash($this->paymentMethodPlugin->getPaymentMethod()));
+    $this->plugin->executePayment($payment);
   }
 }

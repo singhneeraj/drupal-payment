@@ -1,0 +1,8 @@
+payment.payment_method_plugin.list:
+  route_name: payment.payment_method_plugin.list
+  tab_root_id: payment.payment_method_plugin.list
+  title: 'List'
+payment.payment_method.list:
+  route_name: payment.payment_method.list
+  tab_root_id: payment.payment_method_plugin.list
+  title: 'Configuration'

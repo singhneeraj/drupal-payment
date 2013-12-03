@@ -16,32 +16,32 @@ use Drupal\Tests\UnitTestCase;
 class BaseUnitTest extends UnitTestCase {
 
   /**
-   * The module handler.
+   * The module handler used for testing.
    *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $moduleHandler;
 
   /**
-   * The token API.
+   * The token API used for testing.
    *
-   * @var \Drupal\Core\Utility\Token
+   * @var \Drupal\Core\Utility\Token|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $token;
 
   /**
-   * The payment method plugin.
+   * The payment method plugin under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\Base
+   * @var \Drupal\payment\Plugin\Payment\Method\Base|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $paymentMethodPlugin;
+  protected $plugin;
 
   /**
-   * The payment method entity.
+   * The definition of the payment method plugin under test.
    *
-   * @var \Drupal\payment\Entity\PaymentMethodInterface
+   * @var array
    */
-  protected $paymentMethodEntity;
+  protected $pluginDefinition = array();
 
   /**
    * {@inheritdoc}
@@ -66,86 +66,62 @@ class BaseUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->paymentMethodEntity = $this->getMock('\Drupal\payment\Entity\PaymentMethodInterface');
+    $this->pluginDefinition = array(
+      'active' => TRUE,
+      'message_text' => $this->randomName(),
+      'message_text_format' => $this->randomName(),
+    );
 
-    $this->paymentMethodPlugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\Base')
-      ->setConstructorArgs(array(array(), '', array(), $this->moduleHandler, $this->token))
-      ->setMethods(array('brands', 'checkMarkup', 't'))
+    $this->plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\Base')
+      ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->token))
+      ->setMethods(array('currencies', 'checkMarkup', 't'))
       ->getMock();
-    $this->paymentMethodPlugin->expects($this->any())
+    $this->plugin->expects($this->any())
       ->method('checkMarkup')
       ->will($this->returnArgument(0));
-    $this->paymentMethodPlugin->expects($this->any())
+    $this->plugin->expects($this->any())
       ->method('t')
       ->will($this->returnArgument(0));
-    $this->paymentMethodPlugin->setPaymentMethod($this->paymentMethodEntity);
   }
 
   /**
    * Tests defaultConfiguration().
    */
   public function testDefaultConfiguration() {
-    $this->assertInternalType('array', $this->paymentMethodPlugin->defaultConfiguration());
+    $this->assertInternalType('array', $this->plugin->defaultConfiguration());
   }
 
   /**
    * Tests getConfiguration().
    */
   public function testGetConfiguration() {
-    $configuration = $this->paymentMethodPlugin->getConfiguration();
-    $this->assertInternalType('array', $configuration);
-    $this->assertArrayHasKey('message_text', $configuration);
-    $this->assertInternalType('string', $configuration['message_text']);
-    $this->assertArrayHasKey('message_text_format', $configuration);
-    $this->assertInternalType('string', $configuration['message_text_format']);
+    $this->assertSame(array(), $this->plugin->getConfiguration());
   }
 
   /**
-   * Tests setPaymentMethod() and getPaymentMethod().
-   */
-  public function testGetPaymentMethod() {
-    $payment_method = $this->getMock('\Drupal\payment\Entity\PaymentMethodInterface');
-    $this->assertSame(spl_object_hash($this->paymentMethodPlugin), spl_object_hash($this->paymentMethodPlugin->setPaymentMethod($payment_method)));
-    $this->assertSame(spl_object_hash($payment_method), spl_object_hash($this->paymentMethodPlugin->getPaymentMethod()));
-  }
-
-  /**
-   * Tests setMessageText() and getMessageText().
+   * Tests getMessageText().
    */
   public function testGetMessageText() {
-    $text = $this->randomName();
-    $this->assertSame(spl_object_hash($this->paymentMethodPlugin), spl_object_hash($this->paymentMethodPlugin->setMessageText($text)));
-    $this->assertSame($text, $this->paymentMethodPlugin->getMessageText());
+    $this->assertSame($this->pluginDefinition['message_text'], $this->plugin->getMessageText());
   }
 
   /**
-   * Tests setMessageTextFormat() and getMessageTextFormat().
+   * Tests getMessageTextFormat().
    */
   public function testGetMessageTextFormat() {
-    $format = $this->randomName();
-    $this->assertSame(spl_object_hash($this->paymentMethodPlugin), spl_object_hash($this->paymentMethodPlugin->setMessageTextFormat($format)));
-    $this->assertSame($format, $this->paymentMethodPlugin->getMessageTextFormat());
+    $this->assertSame($this->pluginDefinition['message_text_format'], $this->plugin->getMessageTextFormat());
   }
 
   /**
-   * Tests paymentFormElements().
+   * Tests formElements().
    */
-  public function testPaymentFormElements() {
+  public function testFormElements() {
     $form = array();
     $form_state = array();
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
-    $this->paymentMethodPlugin->paymentFormElements($form, $form_state, $payment);
-  }
-
-  /**
-   * Tests paymentMethodFormElements().
-   */
-  public function testPaymentMethodFormElements() {
-    $form = array();
-    $form_state = array();
-    $elements = $this->paymentMethodPlugin->paymentMethodFormElements($form, $form_state);
+    $elements = $this->plugin->formElements($form, $form_state, $payment);
     $this->assertInternalType('array', $elements);
     $this->assertArrayHasKey('message', $elements);
     $this->assertInternalType('array', $elements['message']);
@@ -161,14 +137,13 @@ class BaseUnitTest extends UnitTestCase {
     $this->moduleHandler->expects($this->once())
       ->method('invokeAll')
       ->with('payment_pre_execute');
-    $this->paymentMethodPlugin->executePayment($payment);
+    $this->plugin->executePayment($payment);
   }
 
   /**
    * Tests executePaymentAccess().
    */
   public function testExecutePaymentAccess() {
-    $payment_method_brand = $this->randomName();
     $currency_code = 'EUR';
     $valid_amount = 12.34;
     $minimum_amount = 10;
@@ -177,24 +152,17 @@ class BaseUnitTest extends UnitTestCase {
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
-    $this->paymentMethodPlugin->expects($this->any())
-      ->method('brands')
+    $this->plugin->expects($this->any())
+      ->method('currencies')
       ->will($this->returnValue(array(
-        $payment_method_brand => array(
-          'currencies' => array(
-            $currency_code => array(
-              'minimum' => $minimum_amount,
-              'maximum' => $maximum_amount,
-            ),
-          ),
-        )
+        $currency_code => array(
+          'minimum' => $minimum_amount,
+          'maximum' => $maximum_amount,
+        ),
       )));
 
     // Test granted access.
     // @todo Check how to test denial of access reliably.
-    $this->paymentMethodEntity->expects($this->exactly(2))
-      ->method('status')
-      ->will($this->returnValue(TRUE));
     $payment->expects($this->exactly(2))
       ->method('getCurrencyCode')
       ->will($this->returnValue($currency_code));
@@ -208,7 +176,7 @@ class BaseUnitTest extends UnitTestCase {
       ->method('invokeAll')
       ->will($this->returnValue(array()));
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
-    $this->assertTrue($this->paymentMethodPlugin->executePaymentAccess($payment, $payment_method_brand, $account));
-    $this->assertTrue($this->paymentMethodPlugin->executePaymentAccess($payment, $payment_method_brand, $account));
+    $this->assertTrue($this->plugin->executePaymentAccess($payment, $account));
+    $this->assertTrue($this->plugin->executePaymentAccess($payment, $account));
   }
 }

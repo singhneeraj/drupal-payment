@@ -19,19 +19,13 @@ use Drupal\payment\Entity\PaymentMethodInterface as EntityPaymentMethodInterface
  * payment method, so other modules don't have to check for that.
  *
  * @PaymentMethod(
+ *   active = FALSE,
  *   id = "payment_unavailable",
  *   label = @Translation("Unavailable"),
  *   module = "payment"
  * )
  */
 class Unavailable extends PluginBase implements PaymentMethodInterface {
-
-  /**
-   * The payment method entity this plugin belongs to.
-   *
-   * @var \Drupal\payment\Entity\PaymentMethodInterface
-   */
-  protected $paymentMethod;
 
   /**
    * {@inheritdoc}
@@ -51,35 +45,20 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
    * {@inheritdoc}
    */
   public function setConfiguration(array $configuration) {
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setPaymentMethod(EntityPaymentMethodInterface $payment_method) {
-    $this->paymentMethod = $payment_method;
-
     return $this;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getPaymentMethod() {
-    return $this->paymentMethod;
-  }
-
-  /**
-   * {@inheritdoc}.
-   */
-  public function currencies() {
+  protected function currencies() {
     return array();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function executePaymentAccess(PaymentInterface $payment, $payment_method_brand, AccountInterface $account = NULL) {
+  public function executePaymentAccess(PaymentInterface $payment, AccountInterface $account = NULL) {
     return FALSE;
   }
 
@@ -93,27 +72,21 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
-  public function paymentFormElements(array $form, array &$form_state, PaymentInterface $payment) {
+  public function formElements(array $form, array &$form_state, PaymentInterface $payment) {
     return array();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function paymentMethodFormElements(array $form, array &$form_state) {
-    return array();
+  public function getPluginLabel() {
+    return $this->pluginDefinition['label'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function brands() {
-    $definition = $this->getPluginDefinition();
-
-    return array(
-      'default' => array(
-        'label' => $definition['label'],
-      ),
-    );
+  public static function getOperations($plugin_id) {
+    return array();
   }
 }

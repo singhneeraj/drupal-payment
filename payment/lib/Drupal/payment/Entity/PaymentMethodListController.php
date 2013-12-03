@@ -9,6 +9,7 @@ namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Config\Entity\ConfigEntityListController;
+use Drupal\payment\Payment;
 
 /**
  * Lists payment method entities.
@@ -29,9 +30,10 @@ class PaymentMethodListController extends ConfigEntityListController {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $row['label'] = t('Label');
+    $row['label'] = t('Name');
     $row['plugin'] = t('Type');
     $row['owner'] = t('Owner');
+    $row['status'] = t('Status');
     $row['operations'] = t('Operations');
 
     return $row;
@@ -43,12 +45,14 @@ class PaymentMethodListController extends ConfigEntityListController {
   public function buildRow(EntityInterface $entity) {
     $row['data']['label'] = $entity->label();
 
-    $plugin_definition = $entity->getPlugin()->getPluginDefinition();
+    $plugin_definition = Payment::methodConfigurationManager()->getDefinition($entity->getPluginId());
     $row['data']['plugin'] = $plugin_definition['label'];
 
     $owner = entity_load('user', $entity->getOwnerId());
     $uri = $owner->uri();
     $row['data']['owner'] = l($owner->label(), $uri['path'], $uri['options']);
+
+    $row['data']['status'] = $entity->status() ? t('Enabled') : t('Disabled');
 
     $operations = $this->buildOperations($entity);
     $row['data']['operations']['data'] = $operations;

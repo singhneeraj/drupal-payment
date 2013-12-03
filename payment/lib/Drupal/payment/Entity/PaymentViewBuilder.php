@@ -21,17 +21,8 @@ class PaymentViewBuilder extends EntityViewBuilder {
     parent::buildContent($entities, $displays, $view_mode, $langcode);
 
     foreach ($entities as $payment) {
-      if ($payment->getPaymentMethod()) {
-        foreach ($payment->getPaymentMethod()->brands() as $payment_method_brand => $info) {
-          $brand_options[$payment_method_brand] = $info['label'];
-        }
-        $brand_label = $brand_options[$payment->getPaymentMethodBrand()];
-      }
-      else {
-        $brand_label = t('Unavailable');
-      }
       $payment->content['method'] = array(
-        '#markup' => $brand_label,
+        '#markup' => $payment->getPaymentMethod() ? $payment->getPaymentMethod()->getPluginLabel() : t('Unavailable'),
         '#title' => t('Payment method'),
         '#type' => 'item',
       );

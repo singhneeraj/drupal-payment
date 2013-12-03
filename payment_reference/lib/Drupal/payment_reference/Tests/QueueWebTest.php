@@ -77,8 +77,7 @@ class QueueWebTest extends WebTestBase {
   function testQueue() {
     $field_id = 'foo.bar';
     $field_instance_id = $field_id . '.baz';
-    $payment_method = Generate::createPaymentMethod(2, $this->paymentMethodManager->createInstance('payment_unavailable'));
-    $payment = Generate::createPayment(2, $payment_method);
+    $payment = Generate::createPayment(2);
     $payment->setStatus($this->paymentStatusManager->createInstance('payment_success'));
     $payment->save();
 

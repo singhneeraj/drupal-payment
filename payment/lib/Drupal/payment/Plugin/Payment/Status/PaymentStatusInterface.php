@@ -112,6 +112,9 @@ interface PaymentStatusInterface extends PluginInspectionInterface, Configurable
   /**
    * Provides an array of information to build a list of operation links.
    *
+   * @param string $plugin_id
+   *   The ID of the plugin for which to get the operations.
+   *
    * @return array
    *   An associative array of operation link data for this list, keyed by
    *   operation name, containing the following key-value pairs:

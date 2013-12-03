@@ -187,31 +187,12 @@ class PaymentUnitTest extends DrupalUnitTestBase {
   }
 
   /**
-   * Tests setPaymentMethodId() and getPaymentMethodId().
-   */
-  protected function testGetPaymentMethodId() {
-    $id = 5;
-    $this->assertTrue($this->payment->setPaymentMethodId($id) instanceof PaymentInterface);
-    $this->assertIdentical($this->payment->getPaymentMethodId(), $id);
-  }
-
-  /**
    * Tests getPaymentMethod().
    */
   protected function testGetPaymentMethod() {
-    $payment_method = Generate::createPaymentMethod(1);
-    $payment_method->save();
-    $this->payment->setPaymentMethodId($payment_method->id());
-    $this->assertTrue($this->payment->getPaymentMethod() instanceof PaymentMethodInterface);
-  }
-
-  /**
-   * Tests setPaymentMethodBrand() and getPaymentMethodBrand().
-   */
-  protected function testGetPaymentMethodBrand() {
-    $brand_name = $this->randomName();
-    $this->assertTrue($this->payment->setPaymentMethodBrand($brand_name) instanceof PaymentInterface);
-    $this->assertIdentical($this->payment->getPaymentMethodBrand(), $brand_name);
+    $payment_method = Payment::methodManager()->createInstance('payment_basic');
+    $this->payment->setPaymentMethod($payment_method);
+    $this->assertTrue(spl_object_hash($this->payment->getPaymentMethod()), spl_object_hash($this->payment));
   }
 
   /**

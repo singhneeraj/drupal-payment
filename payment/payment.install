@@ -81,14 +81,6 @@ function payment_schema() {
       'id' => array(
         'type' => 'serial',
       ),
-      'payment_method_id' => array(
-        'type' => 'varchar',
-        'length' => 255,
-      ),
-      'payment_method_brand' => array(
-        'type' => 'varchar',
-        'length' => 255,
-      ),
       'first_payment_status_id' => array(
         'description' => "The {payment_status_item}.id of this payment's first status item.",
         'type' => 'int',
@@ -108,6 +100,15 @@ function payment_schema() {
         'type' => 'int',
         'not null' => TRUE,
         'default' => 0,
+      ),
+      'payment_method_configuration' => array(
+        'type' => 'blob',
+        'not null' => TRUE,
+        'serialize' => TRUE,
+      ),
+      'payment_method_id' => array(
+        'type' => 'varchar',
+        'length' => 255,
       ),
       'uuid' => array(
         'description' => 'Unique Key: Universally unique identifier for this entity.',

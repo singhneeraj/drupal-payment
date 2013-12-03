@@ -60,10 +60,15 @@ function payment_menu() {
 
   // Payment methods.
   $items['admin/config/services/payment/method'] = array(
-    'route_name' => 'payment.payment_method.list',
+    'route_name' => 'payment.payment_method_plugin.list',
     'title' => 'Payment methods',
   );
-  $items['admin/config/services/payment/method/%'] = array(
+  $items['admin/config/services/payment/method/configuration'] = array(
+    'route_name' => 'payment.payment_method.list',
+    'title' => 'Configuration',
+    'type' => MENU_LOCAL_TASK,
+  );
+  $items['admin/config/services/payment/method/configuration/%'] = array(
     'route_name' => 'payment.payment_method.edit',
   );
 
@@ -125,7 +130,7 @@ function payment_permission() {
       'title' => t('Administer payment statuses'),
     ),
   );
-  $definitions = Payment::methodManager()->getDefinitions();
+  $definitions = Payment::methodConfigurationManager()->getDefinitions();
   unset($definitions['payment_unavailable']);
   foreach ($definitions as $plugin_id => $definition) {
     $permissions['payment.payment_method.create.' . $plugin_id] = array(
@@ -220,16 +225,15 @@ function payment_field_extra_fields() {
  */
 function payment_element_info() {
   // A payment method selection and configuration element for a payment.
-  $elements['payment_payment_method_input'] = array(
-    // A \Drupal\payment\Plugin'Core\Entity\PaymentInterface object.
-    '#default_value' => NULL,
+  $elements['payment_method_input'] = array(
     '#input' => TRUE,
-    // An array with IDs of the allowed payment methods. Leave empty to allow
-    // all. If just a single value is given, or if only ony payment method is
-    // valid, the element will not expand to a select list, but will appear to
-    // the user as if there only is one payment method available at all.
-    '#payment_method_ids' => array(),
-    '#process' => array(array('\Drupal\payment\Element\PaymentPaymentMethodInput', 'process')),
+    // The \Drupal\payment\Entity\PaymentInterface for which to configure the
+    // payment method.
+    '#payment' => NULL,
+    // An array with IDs of the payment method plugins to which to limit the
+    // selection. Set to NULL to allow all.
+    '#limit_payment_method_plugin_ids' => NULL,
+    '#process' => array(array('\Drupal\payment\Element\PaymentMethodInput', 'process')),
     '#tree' => TRUE,
   );
 
@@ -282,10 +286,10 @@ function payment_entity_bundle_info() {
 
   $map = array(
     'payment' => 'plugin.manager.payment.type',
-    'payment_method' => 'plugin.manager.payment.method',
+    'payment_method' => 'plugin.manager.payment.method_configuration',
   );
   foreach ($map as $entity_type => $manager_service) {
-    $manager = Payment::typeManager();
+    $manager = \Drupal::service($manager_service);
     foreach ($manager->getDefinitions() as $plugin_id => $definition) {
       $bundles[$entity_type][$plugin_id] = array(
         'label' => $definition['label'],
