@@ -81,7 +81,7 @@ class PaymentMethodUi extends ControllerBase implements AccessInterface, Contain
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('plugin.manager.entity'), $container->get('plugin.manager.payment.method'), $container->get('form_builder'), $container->get('url_generator'), $container->get('current_user'));
+    return new static($container->get('entity.manager'), $container->get('plugin.manager.payment.method'), $container->get('form_builder'), $container->get('url_generator'), $container->get('current_user'));
   }
 
   /**
@@ -203,7 +203,7 @@ class PaymentMethodUi extends ControllerBase implements AccessInterface, Contain
   public function addAccess(Request $request) {
     $plugin_id = $request->attributes->get('payment_method_plugin_id');
 
-    return $this->entityManager->getAccessController('payment_method')->createAccess($plugin_id, $this->currentUser);
+    return $this->entityManager->getAccessController('payment_method')->createAccess($plugin_id, $this->currentUser) ? self::ALLOW : self::DENY;
   }
 
   /**

@@ -36,7 +36,7 @@ class PaymentMethodElement implements ContainerInjectionInterface, FormInterface
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('plugin.manager.entity'), $container->get('plugin.manager.payment.type'));
+    return new static($container->get('entity.manager'), $container->get('plugin.manager.payment.type'));
   }
 
   /**

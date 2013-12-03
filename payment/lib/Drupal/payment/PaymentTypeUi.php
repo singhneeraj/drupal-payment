@@ -70,7 +70,7 @@ class PaymentTypeUi implements ContainerInjectionInterface {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('module_handler'), $container->get('plugin.manager.entity'), $container->get('plugin.manager.payment.type'), $container->get('current_user'));
+    return new static($container->get('module_handler'), $container->get('entity.manager'), $container->get('plugin.manager.payment.type'), $container->get('current_user'));
   }
 
   /**
