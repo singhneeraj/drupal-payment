@@ -135,7 +135,9 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
       ->with($this->equalTo('payment'))
       ->will($this->returnValue($storage_controller));
 
-    $form = $this->getMock('\Drupal\payment_reference\Entity\PaymentFormController');
+    $form = $this->getMockBuilder('\Drupal\payment_reference\Entity\PaymentFormController')
+    ->disableOriginalConstructor()
+      ->getMock();
 
     $this->entityManager->expects($this->once())
       ->method('getFormController')

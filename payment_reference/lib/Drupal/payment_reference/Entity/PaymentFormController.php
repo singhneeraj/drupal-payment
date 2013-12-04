@@ -8,12 +8,38 @@
 namespace Drupal\payment_reference\Entity;
 
 use Drupal\Core\Entity\EntityFormController;
-use Drupal\payment\Element\PaymentMethodInput;
+use Drupal\payment\Plugin\Payment\MethodSelector\Manager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides the payment form.
  */
 class PaymentFormController extends EntityFormController {
+
+  /**
+   * The payment method selector manager.
+   *
+   * @var \Drupal\payment\Plugin\Payment\MethodSelector\Manager
+   */
+  protected $paymentMethodSelectorManager;
+
+  /**
+   * Constructor.
+   *
+   * @param \Drupal\payment\Plugin\Payment\MethodSelector\Manager $payment_method_selector_manager
+   */
+  public function __construct(Manager $payment_method_selector_manager) {
+    $this->paymentMethodSelectorManager = $payment_method_selector_manager;
+  }
+
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static($container->get('plugin.manager.payment.method_selector'));
+  }
+
 
   /**
    * {@inheritdoc}
@@ -24,10 +50,7 @@ class PaymentFormController extends EntityFormController {
       '#payment' => $payment,
       '#type' => 'payment_line_items_display',
     );
-    $form['payment_method'] = array(
-      '#payment' => $payment,
-      '#type' => 'payment_method_input',
-    );
+    $form['payment_method'] = $this->paymentMethodSelectorManager->createInstance('payment_select')->formElements(array(), $form_state, $payment);
 
     return parent::form($form, $form_state);
   }
@@ -37,7 +60,8 @@ class PaymentFormController extends EntityFormController {
    */
   public function submit(array $form, array &$form_state) {
     $payment = $this->getEntity();
-    $payment->setPaymentMethod(PaymentMethodInput::getPaymentMethod($form['payment_method'], $form_state));
+    $payment_method = $this->paymentMethodSelectorManager->createInstance('payment_select')->getPaymentMethodFromFormElements($form['payment_method'], $form_state);
+    $payment->setPaymentMethod($payment_method);
     $payment->save();
     $payment->execute();
   }

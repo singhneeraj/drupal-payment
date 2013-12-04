@@ -2,19 +2,19 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\PaymentMethodInputWebTest.
+ * Contains class \Drupal\payment\Tests\PaymentSelectWebTest.
  */
 
-namespace Drupal\payment\Tests\Element;
+namespace Drupal\payment\Tests\Plugin\Payment\MethodSelector;
 
 use Drupal\payment\Generate;
 use Drupal\payment\Payment;
 use Drupal\simpletest\WebTestBase ;
 
 /**
- * Tests the payment_method_input element.
+ * Tests \Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect.
  */
-class PaymentMethodInputWebTest extends WebTestBase {
+class PaymentSelectWebTest extends WebTestBase {
 
   /**
    * {@inheritdoc}
@@ -27,7 +27,7 @@ class PaymentMethodInputWebTest extends WebTestBase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => 'payment_method_input element',
+      'name' => '\Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect web test',
       'group' => 'Payment',
     );
   }
@@ -55,7 +55,7 @@ class PaymentMethodInputWebTest extends WebTestBase {
     $state = \Drupal::state();
 
     // Test the presence of default elements without available payment methods.
-    $this->drupalGet('payment_test-element-payment-method');
+    $this->drupalGet('payment_test-payment_method_selector-payment_select');
     $this->assertNoFieldByName('payment_method[select][payment_method_plugin_id]');
     $this->assertNoFieldByName('payment_method[select][change]', t('Choose payment method'));
     $this->assertText(t('There are no available payment methods.'));
@@ -63,7 +63,7 @@ class PaymentMethodInputWebTest extends WebTestBase {
     // Test the presence of default elements with one available payment method.
     $payment_method_1 = $this->createPaymentMethod();
     Payment::methodManager()->clearCachedDefinitions();
-    $this->drupalGet('payment_test-element-payment-method');
+    $this->drupalGet('payment_test-payment_method_selector-payment_select');
     $this->assertNoFieldByName('payment_method[select][payment_method_plugin_id]');
     $this->assertNoFieldByName('payment_method[select][change]', t('Choose payment method'));
     $this->assertNoText(t('There are no available payment methods.'));
@@ -72,7 +72,7 @@ class PaymentMethodInputWebTest extends WebTestBase {
     // methods.
     $payment_method_2 = $this->createPaymentMethod();
     Payment::methodManager()->clearCachedDefinitions();
-    $this->drupalGet('payment_test-element-payment-method');
+    $this->drupalGet('payment_test-payment_method_selector-payment_select');
     $this->assertFieldByName('payment_method[select][payment_method_plugin_id]');
     $this->assertFieldByName('payment_method[select][change]', t('Choose payment method'));
     $this->assertNoText(t('There are no available payment methods.'));
@@ -99,7 +99,7 @@ class PaymentMethodInputWebTest extends WebTestBase {
 
     // Submit the form through a regular submission.
     $this->drupalPostForm(NULL, array(), t('Submit'));
-    $payment_method_data = $state->get('payment_test_method_form_element');
-    $this->assertEqual($payment_method_data['plugin_id'], 'payment_basic:' . $payment_method_2->id());
+    $payment_method = $state->get('payment_test_method_form_element');
+    $this->assertEqual($payment_method->getPluginId(), 'payment_basic:' . $payment_method_2->id());
   }
 }

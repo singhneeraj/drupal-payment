@@ -31,6 +31,20 @@ class PaymentFormControllerUnitTest extends UnitTestCase {
   protected $payment;
 
   /**
+   * The payment method selector used for testing.
+   *
+   * @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $paymentMethodSelector;
+
+  /**
+   * The payment method selector manager used for testing.
+   *
+   * @var \Drupal\payment\Plugin\Payment\MethodSelector\Manager|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $paymentMethodSelectorManager;
+
+  /**
    * {@inheritdoc}
    */
   public static function getInfo() {
@@ -49,7 +63,13 @@ class PaymentFormControllerUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->form = new PaymentFormController();
+    $this->paymentMethodSelector = $this->getMock('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface');
+
+    $this->paymentMethodSelectorManager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodSelector\Manager')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $this->form = new PaymentFormController($this->paymentMethodSelectorManager);
     $this->form->setEntity($this->payment);
   }
 
@@ -57,6 +77,15 @@ class PaymentFormControllerUnitTest extends UnitTestCase {
    * Tests form().
    */
   public function testForm() {
+    $this->paymentMethodSelector->expects($this->once())
+      ->method('formElements')
+      ->will($this->returnValue(array()));
+
+    $this->paymentMethodSelectorManager->expects($this->once())
+      ->method('createInstance')
+      ->with('payment_select')
+      ->will($this->returnValue($this->paymentMethodSelector));
+
     $payment_type = $this->getMock('\Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface');
     $this->payment->expects($this->any())
       ->method('getPaymentType')
@@ -67,9 +96,10 @@ class PaymentFormControllerUnitTest extends UnitTestCase {
     );
     $form_state = array();
     $build = $this->form->form($form, $form_state);
+    $this->assertInternalType('array', $build);
+    $this->assertArrayHasKey('line_items', $build);
     $this->assertSame(spl_object_hash($this->payment), spl_object_hash($build['line_items']['#payment']));
-    $this->assertSame(spl_object_hash($this->payment), spl_object_hash($build['payment_method']['#payment']));
-    $this->assertInstanceOf('\Drupal\payment\Entity\PaymentInterface', $build['payment_method']['#payment']);
+    $this->assertArrayHasKey('payment_method', $build);
   }
 
   /**

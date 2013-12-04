@@ -58,7 +58,7 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
-  public function executePaymentAccess(PaymentInterface $payment, AccountInterface $account = NULL) {
+  public function executePaymentAccess(PaymentInterface $payment, AccountInterface $account) {
     return FALSE;
   }
 

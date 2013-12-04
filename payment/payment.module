@@ -224,19 +224,6 @@ function payment_field_extra_fields() {
  * Implements hook_element_info().
  */
 function payment_element_info() {
-  // A payment method selection and configuration element for a payment.
-  $elements['payment_method_input'] = array(
-    '#input' => TRUE,
-    // The \Drupal\payment\Entity\PaymentInterface for which to configure the
-    // payment method.
-    '#payment' => NULL,
-    // An array with IDs of the payment method plugins to which to limit the
-    // selection. Set to NULL to allow all.
-    '#limit_payment_method_plugin_ids' => NULL,
-    '#process' => array(array('\Drupal\payment\Element\PaymentMethodInput', 'process')),
-    '#tree' => TRUE,
-  );
-
   // Line item configuration. Use
   // \Drupal\payment\Element\PaymentLineItemsInput::getLineItemsData() to get
   // the 'return' value.
