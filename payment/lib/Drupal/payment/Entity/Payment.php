@@ -39,11 +39,11 @@ use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
  *   id = "payment",
  *   label = @Translation("Payment"),
  *   links = {
+ *     "admin-form" = "payment.payment_type.configure",
  *     "canonical" = "payment.payment.view",
  *     "edit-form" = "payment.payment.edit"
  *   },
- *   module = "payment",
- *   route_base_path = "admin/config/services/payment/type/{bundle}"
+ *   module = "payment"
  * )
  */
 class Payment extends ContentEntityBase implements PaymentInterface {
