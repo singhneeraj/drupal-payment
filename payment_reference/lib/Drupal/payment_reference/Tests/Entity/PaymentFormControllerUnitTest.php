@@ -48,6 +48,7 @@ class PaymentFormControllerUnitTest extends UnitTestCase {
     $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
+
     $this->form = new PaymentFormController();
     $this->form->setEntity($this->payment);
   }
@@ -61,7 +62,9 @@ class PaymentFormControllerUnitTest extends UnitTestCase {
       ->method('getPaymentType')
       ->will($this->returnValue($payment_type));
 
-    $form = array();
+    $form = array(
+      'langcode' => array(),
+    );
     $form_state = array();
     $build = $this->form->form($form, $form_state);
     $this->assertSame(spl_object_hash($this->payment), spl_object_hash($build['line_items']['#payment']));

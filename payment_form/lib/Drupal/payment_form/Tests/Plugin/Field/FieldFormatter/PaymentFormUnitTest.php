@@ -80,6 +80,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       'field_definition' => $this->fieldDefinition,
       'label' => $this->randomName(),
       'settings' => array(),
+      'view_mode' => $this->randomName(),
     );
     $this->fieldFormatter = new PaymentForm($configuration, 'payment_form', array(), $this->entityManager, $this->formBuilder, $this->paymentLineItemManager);
   }

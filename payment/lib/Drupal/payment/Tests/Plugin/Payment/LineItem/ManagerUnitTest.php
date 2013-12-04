@@ -78,9 +78,15 @@ class ManagerUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
+    $language = (object) array(
+      'id' => $this->randomName(),
+    );
     $this->languageManager = $this->getMockBuilder('\Drupal\Core\Language\LanguageManager')
       ->disableOriginalConstructor()
       ->getMock();
+    $this->languageManager->expects($this->once())
+      ->method('getLanguage')
+      ->will($this->returnValue($language));
 
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
 
