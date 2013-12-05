@@ -8,6 +8,7 @@
 namespace Drupal\payment_reference;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\payment\Plugin\Payment\Status\Manager;
 
 /**
@@ -23,6 +24,13 @@ class Queue implements QueueInterface {
   protected $database;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * The database connection.
    *
    * @var \Drupal\payment\Plugin\Payment\Status\Manager
@@ -34,11 +42,14 @@ class Queue implements QueueInterface {
    *
    * @param \Drupal\Core\Database\Connection $database
    *   A database connection.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface
+   *   The module handler.
    * @param \Drupal\payment\Plugin\Payment\Status\Manager
    *   The payment status plugin manager.
    */
-  public function __construct(Connection $database, Manager $payment_status_manager) {
+  public function __construct(Connection $database, ModuleHandlerInterface $module_handler, Manager $payment_status_manager) {
     $this->database = $database;
+    $this->moduleHandler = $module_handler;
     $this->paymentStatusManager = $payment_status_manager;
   }
 
@@ -80,7 +91,11 @@ class Queue implements QueueInterface {
       ->condition('ps.plugin_id', array_merge($this->paymentStatusManager->getDescendants('payment_success'), array('payment_success')))
       ->condition('p.owner_id', $owner_id);
 
-    return $query->execute()->fetchCol();
+    $payment_ids = $query->execute()->fetchCol();
+    $this->moduleHandler->alter('payment_reference_queue_payment_ids', $field_instance_id, $owner_id, $payment_ids);
+    // @todo Add a Rules event.
+
+    return $payment_ids;
   }
 
   /**

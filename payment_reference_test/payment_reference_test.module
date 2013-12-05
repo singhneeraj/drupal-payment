@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Hook implementations and shared functions.
+ */
+
+/**
+ * Implements hook_payment_reference_queue_payment_ids_alter().
+ */
+function payment_reference_test_payment_reference_queue_payment_ids_alter($field_instance_id, $owner_id, array &$payment_ids) {
+  \Drupal::state()->set('payment_reference_test_payment_reference_queue_payment_ids_alter', TRUE);
+}

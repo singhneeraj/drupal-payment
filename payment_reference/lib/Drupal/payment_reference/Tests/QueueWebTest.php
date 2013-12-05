@@ -47,7 +47,7 @@ class QueueWebTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('payment', 'payment_reference');
+  public static $modules = array('payment', 'payment_reference', 'payment_reference_test');
 
   /**
    * {@inheritdoc}
@@ -93,6 +93,7 @@ class QueueWebTest extends WebTestBase {
     // Tests loadPaymentIds().
     $loaded_payment_ids = $this->queue->loadPaymentIds($field_instance_id, $payment->getOwnerId());
     $this->assertEqual($loaded_payment_ids, array($payment->id()));
+    $this->assertTrue(\Drupal::state()->get('payment_reference_test_payment_reference_queue_payment_ids_alter'));
 
     // Tests deleteByPaymentId().
     $this->queue->deleteByPaymentId($payment->id());
