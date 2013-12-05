@@ -1,8 +1,24 @@
+payment.payment.view:
+  route_name: payment.payment.view
+  tab_root_id: payment.payment.view
+  title: 'View'
+
+payment.payment.edit:
+  route_name: payment.payment.edit
+  tab_root_id: payment.payment.view
+  title: 'Edit'
+
 payment.payment_method_plugin.list:
   route_name: payment.payment_method_plugin.list
   tab_root_id: payment.payment_method_plugin.list
   title: 'List'
+
 payment.payment_method.list:
   route_name: payment.payment_method.list
   tab_root_id: payment.payment_method_plugin.list
   title: 'Configuration'
+
+payment.payment_type:
+  route_name: payment.payment_type
+  tab_root_id: payment.payment_type
+  title: 'Configure'

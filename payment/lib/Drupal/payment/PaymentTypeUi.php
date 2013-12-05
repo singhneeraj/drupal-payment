@@ -107,7 +107,7 @@ class PaymentTypeUi extends ControllerBase implements ContainerInjectionInterfac
       // Add the payment type's global configuration operation.
       if (isset($definition['configuration_form'])) {
         $operations['configure'] = array(
-          'route_name' => 'payment.payment_type.configure',
+          'route_name' => 'payment.payment_type',
           'route_parameters' => array(
             'bundle' => $plugin_id,
           ),
@@ -159,17 +159,21 @@ class PaymentTypeUi extends ControllerBase implements ContainerInjectionInterfac
    * @param string $bundle
    *   The payment bundle, also known as the payment type's plugin ID.
    *
-   * @return array
-   *   A renderable array.
+   * @return array|string
+   *   A renderable array or a string.
    *
    * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    */
   public function configure($bundle) {
     $definition = $this->paymentTypeManager->getDefinition($bundle);
-    if (!$definition || !$definition['configuration_form']) {
+    if (is_null($definition)) {
       throw new NotFoundHttpException();
     }
-
-    return $this->formBuilder->getForm($definition['configuration_form']);
+    elseif (isset($definition['configuration_form'])) {
+      return $this->formBuilder->getForm($definition['configuration_form']);
+    }
+    else {
+      return $this->t('This payment type has no configuration.');
+    }
   }
 }

@@ -56,7 +56,7 @@ class PaymentTypeUiWebTest extends WebTestBase {
 
     // Test the dummy payment type route.
     $this->drupalGet('admin/config/services/payment/type/payment_test');
-    $this->assertResponse('404');
+    $this->assertResponse('200');
 
     // Test field operations.
     $this->drupalLogout();

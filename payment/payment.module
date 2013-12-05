@@ -21,29 +21,17 @@ define('PAYMENT_LINE_ITEM_TOKEN_PREFIX', 'line_item-');
  * @see payment_views_default_views()
  */
 function payment_menu() {
-  // Payment pages.
-  $items['payment/%entity_object/view'] = array(
-    'load arguments' => array('payment'),
-    'title' => 'View',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-    'weight' => -10,
-  );
-  $items['payment/%entity_object/edit'] = array(
-    'route_name' => 'payment.payment.edit',
-    'title' => 'Edit',
-    'type' => MENU_LOCAL_TASK,
-    'weight' => -9,
-  );
-
   // Administration section.
   $items['admin/config/services/payment'] = array(
     'route_name' => 'payment.admin',
     'title' => 'Payment',
   );
+  // @todo Convert this local task to YAML once 'admin/content/node' is no
+  // longer defined in node_menu().
   $items['admin/content/payments'] = array(
     'route_name' => 'payment.payment.admin_list',
     'title' => 'Payments',
-    'type' => MENU_LOCAL_TASK,
+    'type' => MENU_LOCAL_TASK | MENU_NORMAL_ITEM,
   );
 
   // Payment types.
@@ -63,11 +51,6 @@ function payment_menu() {
     'route_name' => 'payment.payment_method_plugin.list',
     'title' => 'Payment methods',
   );
-  $items['admin/config/services/payment/method/configuration'] = array(
-    'route_name' => 'payment.payment_method.list',
-    'title' => 'Configuration',
-    'type' => MENU_LOCAL_TASK,
-  );
   $items['admin/config/services/payment/method/configuration/%'] = array(
     'route_name' => 'payment.payment_method.edit',
   );
@@ -79,6 +62,17 @@ function payment_menu() {
   );
 
   return $items;
+}
+
+/**
+ * Implements hook_admin_paths().
+ */
+function payment_admin_paths() {
+  $paths = array(
+    'payment/*/edit' => TRUE,
+  );
+
+  return $paths;
 }
 
 /**

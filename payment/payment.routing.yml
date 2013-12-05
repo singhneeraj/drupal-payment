@@ -62,6 +62,7 @@ payment.payment_method.add:
   path: '/admin/config/services/payment/method/configuration-add/{plugin_id}'
   defaults:
     _controller: '\Drupal\payment\PaymentMethodUi::add'
+    _title: 'Add a payment method'
   requirements:
     _custom_access: '\Drupal\payment\PaymentMethodUi::addAccess'
 
@@ -69,6 +70,7 @@ payment.payment_method.edit:
   path: '/admin/config/services/payment/method/configuration/{payment_method}'
   defaults:
     _entity_form: 'payment_method.default'
+    _title: 'Edit payment method'
   requirements:
     _entity_access: 'payment_method.update'
 
@@ -97,6 +99,7 @@ payment.payment_method.duplicate:
   path: '/admin/config/services/payment/method/configuration/{payment_method}/duplicate'
   defaults:
     _controller: '\Drupal\payment\PaymentMethodUi::duplicate'
+    _title: 'Add a payment method'
   requirements:
     _entity_access: 'payment_method.duplicate'
 
@@ -111,6 +114,7 @@ payment.payment_status.add:
   path: '/admin/config/services/payment/status/add'
   defaults:
     _controller: '\Drupal\payment\PaymentStatusUI::add'
+    _title: 'Add a payment status'
   requirements:
     _permission: 'payment.payment_status.administer'
 
@@ -118,6 +122,7 @@ payment.payment_status.edit:
   path: '/admin/config/services/payment/status/edit/{payment_status}'
   defaults:
     _entity_form: 'payment_status.default'
+    _title: 'Edit payment status'
   requirements:
     _entity_access: 'payment_status.update'
 
@@ -135,14 +140,8 @@ payment.payment_type.list:
   requirements:
     _permission: 'payment.payment_type.administer'
 
-# Add a dummy item for Field UI to attach local tasks to.
 payment.payment_type:
   path: '/admin/config/services/payment/type/{bundle}'
-  requirements:
-    _permission: 'payment.payment_type.administer'
-
-payment.payment_type.configure:
-  path: '/admin/config/services/payment/type/{bundle}/configure'
   defaults:
     _controller: '\Drupal\payment\PaymentTypeUi::configure'
   requirements:

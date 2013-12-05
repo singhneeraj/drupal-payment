@@ -7,7 +7,6 @@
 
 namespace Drupal\payment\Tests;
 
-use Drupal\payment\PaymentTypeUi;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -53,7 +52,7 @@ class PaymentTypeUiUnitTest extends UnitTestCase {
   /**
    * The controller class under test.
    *
-   * @var \Drupal\payment\PaymentTypeUi
+   * @var \Drupal\payment\PaymentTypeUi|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentTypeUi;
 
@@ -84,7 +83,13 @@ class PaymentTypeUiUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->paymentTypeUi = new PaymentTypeUi($this->moduleHandler, $this->entityManager, $this->formBuilder, $this->paymentTypeManager, $this->currentUser);
+    $this->paymentTypeUi = $this->getMockBuilder('\Drupal\payment\PaymentTypeUi')
+      ->setConstructorArgs(array($this->moduleHandler, $this->entityManager, $this->formBuilder, $this->paymentTypeManager, $this->currentUser))
+      ->setMethods(array('t'))
+      ->getMock();
+    $this->paymentTypeUi->expects($this->any())
+      ->method('t')
+      ->will($this->returnArgument(0));
   }
 
   /**
@@ -98,11 +103,12 @@ class PaymentTypeUiUnitTest extends UnitTestCase {
     $bundle_exists_no_form = $this->randomName();
     $bundle_exists_no_form_definition = array();
     $bundle_no_exists = $this->randomName();
-    $bundle_no_exists_definition = array();
+    $bundle_no_exists_definition = NULL;
 
     $this->formBuilder->expects($this->once())
       ->method('getForm')
-      ->with($bundle_exists_definition['configuration_form']);
+      ->with($bundle_exists_definition['configuration_form'])
+      ->will($this->returnValue(array()));
 
     $map = array(
       array($bundle_exists, $bundle_exists_definition),
@@ -114,14 +120,15 @@ class PaymentTypeUiUnitTest extends UnitTestCase {
       ->will($this->returnValueMap($map));
 
     // Test with a bundle of a plugin with a form.
-    $this->paymentTypeUi->configure($bundle_exists);
+    $build = $this->paymentTypeUi->configure($bundle_exists);
+    $this->assertInternalType('array', $build);
+
+    // Test with a bundle of a plugin without a form.
+    $build = $this->paymentTypeUi->configure($bundle_exists_no_form);
+    $this->assertInternalType('string', $build);
 
     // Test with a non-existing bundle.
     $this->setExpectedException('\Symfony\Component\HttpKernel\Exception\NotFoundHttpException');
     $this->paymentTypeUi->configure($bundle_no_exists);
-
-    // Test with a bundle of a plugin without a form.
-    $this->setExpectedException('\Symfony\Component\HttpKernel\Exception\NotFoundHttpException');
-    $this->paymentTypeUi->configure($bundle_exists_no_form);
   }
 }

@@ -61,4 +61,22 @@ class PaymentListController extends EntityListController {
 
     return $row;
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOperations(EntityInterface $entity) {
+    $operations = parent::getOperations($entity);
+
+    if ($entity->access('view')) {
+      $uri = $entity->uri();
+      $operations['view'] = array(
+        'title' => $this->t('View'),
+        'href' => $uri['path'],
+        'options' => $uri['options'],
+      );
+    }
+
+    return $operations;
+  }
 }
