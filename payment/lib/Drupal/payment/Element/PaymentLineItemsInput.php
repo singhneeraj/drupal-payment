@@ -11,7 +11,6 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\RemoveCommand;
 use Drupal\payment\Payment;
-use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
 
 /**
  * Provides form callbacks for the payment_line_items_input form element.

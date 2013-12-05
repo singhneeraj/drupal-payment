@@ -7,7 +7,6 @@
 
 namespace Drupal\payment;
 
-use Drupal\Core\Access\AccessibleInterface;
 use Drupal\simpletest\DrupalUnitTestBase;
 use Drupal\Core\Session\AccountInterface;
 

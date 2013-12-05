@@ -163,9 +163,9 @@ function payment_hook_info() {
  * Implements hook_field_extra_fields().
  */
 function payment_field_extra_fields() {
-  $manager = Payment::typeManager();
-  foreach (array_keys($manager->getDefinitions()) as $plugin_id) {
-    $field['payment'][$plugin_id] = array(
+  $fields = array();
+  foreach (array_keys(Payment::typeManager()->getDefinitions()) as $plugin_id) {
+    $fields['payment'][$plugin_id] = array(
       'form' => array(
         'payment_line_items' => array(
           'label' => t('Line items'),
@@ -201,7 +201,7 @@ function payment_field_extra_fields() {
     );
   }
 
-  return $field;
+  return $fields;
 }
 
 /**
@@ -256,11 +256,10 @@ function payment_entity_bundle_info() {
   $bundles = array();
 
   $map = array(
-    'payment' => 'plugin.manager.payment.type',
-    'payment_method' => 'plugin.manager.payment.method_configuration',
+    'payment' => Payment::typeManager(),
+    'payment_method' => payment::methodConfigurationManager(),
   );
-  foreach ($map as $entity_type => $manager_service) {
-    $manager = \Drupal::service($manager_service);
+  foreach ($map as $entity_type => $manager) {
     foreach ($manager->getDefinitions() as $plugin_id => $definition) {
       $bundles[$entity_type][$plugin_id] = array(
         'label' => $definition['label'],
