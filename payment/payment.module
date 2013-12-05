@@ -6,14 +6,7 @@
  */
 
 use Drupal\payment\Element\PaymentLineItemsInput;
-use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Payment;
-use Drupal\payment\Plugin\Payment\LineItem\Basic;
-
-/**
- * The prefix for payment line item tokens.
- */
-define('PAYMENT_LINE_ITEM_TOKEN_PREFIX', 'line_item-');
 
 /**
  * Implements hook_menu().
@@ -38,12 +31,6 @@ function payment_menu() {
   $items['admin/config/services/payment/type'] = array(
     'title' => 'Payment types',
     'route_name' => 'payment.payment_type.list',
-  );
-  // Add a dummy item for Field UI to attach local tasks to.
-  $items['admin/config/services/payment/type/%'] = array(
-    'route_name' => 'payment.payment_type',
-    'title arguments' => array(5),
-    'title callback' => 'payment_plugin_label',
   );
 
   // Payment methods.
@@ -282,19 +269,4 @@ function payment_entity_bundle_info() {
   }
 
   return $bundles;
-}
-
-/**
- * Implements title callback for hook_menu().
- *
- * @param string $plugin_id
- *
- * @return string
- */
-function payment_plugin_label($plugin_id) {
-  $manager = Payment::typeManager();
-  $definition = $manager->getDefinition($plugin_id);
-  if ($definition) {
-    return $definition['label'];
-  }
 }
