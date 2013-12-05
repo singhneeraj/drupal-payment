@@ -95,7 +95,7 @@ abstract class Base extends PluginBase implements AccessInterface, ContainerFact
    * {@inheritdoc}
    */
   public function setConfiguration(array $configuration) {
-    return $this->configuration = $configuration;
+    $this->configuration = $configuration;
   }
 
   /**

@@ -64,6 +64,17 @@ class BaseUnitTest extends UnitTestCase {
   }
 
   /**
+   * Tests setConfiguration() and getConfiguration().
+   */
+  public function testGetConfiguration() {
+    $configuration = array(
+      $this->randomName() => mt_rand(),
+    );
+    $this->assertNull($this->status->setConfiguration($configuration));
+    $this->assertSame($configuration, $this->status->getConfiguration());
+  }
+
+  /**
    * Tests setCreated() and getCreated().
    */
   public function testGetCreated() {
