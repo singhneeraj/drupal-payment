@@ -7,17 +7,20 @@
 
 namespace Drupal\payment;
 
+use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Plugin\Payment\Type\Manager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Returns responses for payment type routes.
  */
-class PaymentTypeUi implements ContainerInjectionInterface {
+class PaymentTypeUi extends ControllerBase implements ContainerInjectionInterface {
 
   /**
    * The current user.
@@ -32,6 +35,13 @@ class PaymentTypeUi implements ContainerInjectionInterface {
    * @var \Drupal\Core\Entity\EntityManager
    */
   protected $entityManager;
+
+  /**
+   * The form builder.
+   *
+   * @var \Drupal\Core\Form\FormBuilderInterface
+   */
+  protected $formBuilder;
 
   /**
    * The module handler.
@@ -54,14 +64,17 @@ class PaymentTypeUi implements ContainerInjectionInterface {
    *   The module handler.
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    *   The entity manager.
+   * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
+   *   The form builder.
    * @param \Drupal\payment\Plugin\Payment\Type\Manager $payment_type_manager
    *   The payment type plugin manager.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
    */
-  public function __construct(ModuleHandlerInterface $module_handler, EntityManagerInterface $entity_manager, Manager $payment_type_manager, AccountInterface $current_user) {
+  public function __construct(ModuleHandlerInterface $module_handler, EntityManagerInterface $entity_manager, FormBuilderInterface $form_builder, Manager $payment_type_manager, AccountInterface $current_user) {
     $this->moduleHandler = $module_handler;
     $this->entityManager = $entity_manager;
+    $this->formBuilder = $form_builder;
     $this->paymentTypeManager = $payment_type_manager;
     $this->currentUser = $current_user;
   }
@@ -70,7 +83,7 @@ class PaymentTypeUi implements ContainerInjectionInterface {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('module_handler'), $container->get('entity.manager'), $container->get('plugin.manager.payment.type'), $container->get('current_user'));
+    return new static($container->get('module_handler'), $container->get('entity.manager'), $container->get('form_builder'), $container->get('plugin.manager.payment.type'), $container->get('current_user'));
   }
 
   /**
@@ -90,6 +103,19 @@ class PaymentTypeUi implements ContainerInjectionInterface {
     foreach ($definitions as $plugin_id => $definition) {
       $class = $definition['class'];
       $operations = $class::getOperations($plugin_id);
+
+      // Add the payment type's global configuration operation.
+      if (isset($definition['configuration_form'])) {
+        $operations['configure'] = array(
+          'route_name' => 'payment.payment_type.configure',
+          'route_parameters' => array(
+            'bundle' => $plugin_id,
+          ),
+          'title' => $this->t('Configure'),
+        );
+      }
+
+      // Add Field UI operations.
       if ($this->moduleHandler->moduleExists('field_ui')) {
         $admin_path = $this->entityManager->getAdminPath('payment', $plugin_id);
         if ($this->currentUser->hasPermission('administer payment fields')) {
@@ -111,6 +137,7 @@ class PaymentTypeUi implements ContainerInjectionInterface {
           );
         }
       }
+
       $table[$plugin_id]['label'] = array(
         '#markup' => $definition['label'],
       );
@@ -124,5 +151,25 @@ class PaymentTypeUi implements ContainerInjectionInterface {
     }
 
     return $table;
+  }
+
+  /**
+   * Builds the payment type's configuration form.
+   *
+   * @param string $bundle
+   *   The payment bundle, also known as the payment type's plugin ID.
+   *
+   * @return array
+   *   A renderable array.
+   *
+   * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+   */
+  public function configure($bundle) {
+    $definition = $this->paymentTypeManager->getDefinition($bundle);
+    if (!$definition || !$definition['configuration_form']) {
+      throw new NotFoundHttpException();
+    }
+
+    return $this->formBuilder->getForm($definition['configuration_form']);
   }
 }

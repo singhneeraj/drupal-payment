@@ -53,7 +53,7 @@ function payment_menu() {
   );
   // Add a dummy item for Field UI to attach local tasks to.
   $items['admin/config/services/payment/type/%'] = array(
-    'route_name' => 'payment.payment_type.configure',
+    'route_name' => 'payment.payment_type',
     'title arguments' => array(5),
     'title callback' => 'payment_plugin_label',
   );
@@ -128,6 +128,9 @@ function payment_permission() {
     ),
     'payment.payment_status.administer' => array(
       'title' => t('Administer payment statuses'),
+    ),
+    'payment.payment_type.administer' => array(
+      'title' => t('Administer payment types'),
     ),
   );
   $definitions = Payment::methodConfigurationManager()->getDefinitions();

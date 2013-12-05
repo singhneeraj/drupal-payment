@@ -23,6 +23,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * The payment form field payment type.
  *
  * @PaymentType(
+ *   configuration_form = "\Drupal\payment_form\Plugin\Payment\Type\PaymentFormConfigurationForm",
  *   id = "payment_form",
  *   label = @Translation("Payment form field")
  * )

@@ -133,10 +133,17 @@ payment.payment_type.list:
   defaults:
     _controller: '\Drupal\payment\PaymentTypeUI::listing'
   requirements:
-    _permission: 'access administration pages'
+    _permission: 'payment.payment_type.administer'
 
 # Add a dummy item for Field UI to attach local tasks to.
-payment.payment_type.configure:
+payment.payment_type:
   path: '/admin/config/services/payment/type/{bundle}'
   requirements:
-    _access: 'TRUE'
+    _permission: 'payment.payment_type.administer'
+
+payment.payment_type.configure:
+  path: '/admin/config/services/payment/type/{bundle}/configure'
+  defaults:
+    _controller: '\Drupal\payment\PaymentTypeUi::configure'
+  requirements:
+    _permission: 'payment.payment_type.administer'

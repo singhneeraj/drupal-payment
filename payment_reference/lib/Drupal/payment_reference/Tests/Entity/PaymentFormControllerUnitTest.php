@@ -17,6 +17,13 @@ use Drupal\Tests\UnitTestCase;
 class PaymentFormControllerUnitTest extends UnitTestCase {
 
   /**
+   * The config factory used for testing.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected $configFactory;
+
+  /**
    * The form under test
    *
    * @var \Drupal\payment_reference\Entity\PaymentFormController
@@ -69,7 +76,15 @@ class PaymentFormControllerUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
+    $this->configFactory = $this->getConfigFactoryStub(array(
+        'payment_reference.payment_type' => array(
+          'allowed_payment_method_ids' => NULL,
+          'payment_selector_id' => 'payment_select',
+        ),
+    ));
+
     $this->form = new PaymentFormController($this->paymentMethodSelectorManager);
+    $this->form->setConfigFactory($this->configFactory);
     $this->form->setEntity($this->payment);
   }
 

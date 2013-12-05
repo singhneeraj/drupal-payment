@@ -17,6 +17,13 @@ use Drupal\Component\Annotation\Plugin;
 class PaymentType extends Plugin {
 
   /**
+   * The name of the class that contains the plugin's global configuration form.
+   *
+   * @var string
+   */
+  public $configuration_form;
+
+  /**
    * The translated human-readable plugin description (optional).
    *
    * @var string

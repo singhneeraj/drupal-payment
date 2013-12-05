@@ -49,7 +49,14 @@ class PaymentFormController extends EntityFormController {
       '#payment' => $payment,
       '#type' => 'payment_line_items_display',
     );
-    $form['payment_method'] = $this->paymentMethodSelectorManager->createInstance('payment_select')->formElements(array(), $form_state, $payment);
+    $config = $this->config('payment_form.payment_type');
+    $payment_method_selector_id = $config->get('payment_selector_id');
+    $allowed_payment_method_ids = $config->get('allowed_payment_method_ids');
+    $payment_method_selector = $this->paymentMethodSelectorManager->createInstance($payment_method_selector_id);
+    if (!is_null($allowed_payment_method_ids)) {
+      $payment_method_selector->setAllowedPaymentMethods($allowed_payment_method_ids);
+    }
+    $form['payment_method'] = $payment_method_selector->formElements(array(), $form_state, $payment);
 
     return parent::form($form, $form_state);
   }

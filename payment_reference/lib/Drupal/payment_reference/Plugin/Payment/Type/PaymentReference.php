@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
  * The payment reference field payment type.
  *
  * @PaymentType(
+ *   configuration_form = "\Drupal\payment_reference\Plugin\Payment\Type\PaymentReferenceConfigurationForm",
  *   id = "payment_reference",
  *   label = @Translation("Payment reference field")
  * )

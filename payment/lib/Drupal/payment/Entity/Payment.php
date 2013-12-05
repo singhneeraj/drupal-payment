@@ -39,7 +39,7 @@ use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
  *   id = "payment",
  *   label = @Translation("Payment"),
  *   links = {
- *     "admin-form" = "payment.payment_type.configure",
+ *     "admin-form" = "payment.payment_type",
  *     "canonical" = "payment.payment.view",
  *     "edit-form" = "payment.payment.edit"
  *   },
