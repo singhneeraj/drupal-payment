@@ -8,14 +8,17 @@
 namespace Drupal\payment\Plugin\Payment\Method;
 
 use Drupal\Component\Plugin\Derivative\DerivativeBase;
-use Drupal\payment\Payment;
+use Drupal\Core\Entity\EntityStorageControllerInterface;
+use Drupal\Core\Plugin\Discovery\ContainerDerivativeInterface;
+use Drupal\payment\Plugin\Payment\MethodConfiguration\Manager as PaymentMethodConfiguratonManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Retrieves payment method plugin definitions based on configuration entities.
  *
  * @see \Drupal\payment\Plugin\Payment\Method\Basic
  */
-class BasicDerivative extends DerivativeBase {
+class BasicDerivative extends DerivativeBase implements ContainerDerivativeInterface {
 
   /**
    * The payment method configuration manager.
@@ -32,35 +35,28 @@ class BasicDerivative extends DerivativeBase {
   protected $paymentMethodStorage;
 
   /**
-   * Returns the payment method configuration manager.
+   * Constructor.
    */
-  protected function getPaymentMethodConfigurationManager() {
-    if (!$this->paymentMethodConfigurationManager) {
-      $this->paymentMethodConfigurationManager = Payment::methodConfigurationManager();
-    }
-
-    return $this->paymentMethodConfigurationManager;
+  public function __construct(EntityStorageControllerInterface $payment_method_storage, PaymentMethodConfiguratonManager $payment_method_configuration_manager) {
+    $this->paymentMethodStorage = $payment_method_storage;
+    $this->paymentMethodConfigurationManager = $payment_method_configuration_manager;
   }
 
   /**
-   * Returns the payment method storage controller.
+   * {@inheritdoc}
    */
-  protected function getPaymentMethodStorage() {
-    if (!$this->paymentMethodStorage) {
-      $this->paymentMethodStorage = \Drupal::entityManager()->getStorageController('payment_method');
-    }
-
-    return $this->paymentMethodStorage;
+  public static function create(ContainerInterface $container, $base_plugin_id) {
+    return new static($container->get('entity.manager')->getStorageController('payment_status'), $container->get('plugin.manager.payment.method_configuration'));
   }
 
   /**
    * {@inheritdoc}
    */
   public function getDerivativeDefinitions(array $base_plugin_definition) {
-    $payment_methods = $this->getPaymentMethodStorage()->loadMultiple();
+    $payment_methods = $this->paymentMethodStorage->loadMultiple();
     foreach ($payment_methods as $payment_method) {
       if ($payment_method->getPluginId() == 'payment_basic') {
-        $configuration_plugin = $this->getPaymentMethodConfigurationManager()->createInstance($payment_method->getPluginId(), $payment_method->getPluginConfiguration());
+        $configuration_plugin = $this->paymentMethodConfigurationManager->createInstance($payment_method->getPluginId(), $payment_method->getPluginConfiguration());
         $this->derivatives[$payment_method->id()] = array(
           'active' => $payment_method->status(),
           'label' => $configuration_plugin->getBrandLabel() ? $configuration_plugin->getBrandLabel() : $payment_method->label(),

@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Tests\Plugin\Payment\Status;
 
+use Drupal\payment\Plugin\Payment\Status\ConfigDerivative;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -17,7 +18,7 @@ class ConfigDerivativeUnitTest extends UnitTestCase {
   /**
    * The plugin deriver under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\ConfigDerivative|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\Status\ConfigDerivative
    */
   protected $deriver;
 
@@ -26,7 +27,7 @@ class ConfigDerivativeUnitTest extends UnitTestCase {
    *
    * @var \Drupal\Core\Entity\EntityStorageControllerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $storage;
+  protected $paymentStatusStorage;
 
   /**
    * {@inheritdoc}
@@ -43,14 +44,9 @@ class ConfigDerivativeUnitTest extends UnitTestCase {
    * {@inheritdoc
    */
   public function setUp() {
-    $this->storage = $this->getMock('\Drupal\Core\Entity\EntityStorageControllerInterface');
+    $this->paymentStatusStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageControllerInterface');
 
-    $this->deriver = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Status\ConfigDerivative')
-      ->setMethods(array('getPaymentStatusStorage'))
-      ->getMock();
-    $this->deriver->expects($this->once())
-      ->method('getPaymentStatusStorage')
-      ->will($this->returnValue($this->storage));
+    $this->deriver = new ConfigDerivative($this->paymentStatusStorage);
   }
 
   /**
@@ -85,7 +81,7 @@ class ConfigDerivativeUnitTest extends UnitTestCase {
       ->method('getParentId')
       ->will($this->returnValue($this->randomName()));
 
-    $this->storage->expects($this->once())
+    $this->paymentStatusStorage->expects($this->once())
       ->method('loadMultiple')
       ->will($this->returnValue(array($status_a, $status_b)));
 

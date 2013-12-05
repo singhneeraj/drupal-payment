@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Tests\Plugin\Payment\Method;
 
+use Drupal\payment\Plugin\Payment\Method\BasicDerivative;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -17,7 +18,7 @@ class BasicDerivativeUnitTest extends UnitTestCase {
   /**
    * The plugin deriver under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\BasicDerivative|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\Method\BasicDerivative
    */
   protected $deriver;
 
@@ -56,15 +57,7 @@ class BasicDerivativeUnitTest extends UnitTestCase {
 
     $this->paymentMethodStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageControllerInterface');
 
-    $this->deriver = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\BasicDerivative')
-      ->setMethods(array('getPaymentMethodConfigurationManager', 'getPaymentMethodStorage'))
-      ->getMock();
-    $this->deriver->expects($this->any())
-      ->method('getPaymentMethodConfigurationManager')
-      ->will($this->returnValue($this->paymentMethodConfigurationManager));
-    $this->deriver->expects($this->any())
-      ->method('getPaymentMethodStorage')
-      ->will($this->returnValue($this->paymentMethodStorage));
+    $this->deriver = new BasicDerivative($this->paymentMethodStorage, $this->paymentMethodConfigurationManager);
   }
 
   /**

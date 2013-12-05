@@ -8,35 +8,41 @@
 namespace Drupal\payment\Plugin\Payment\Status;
 
 use Drupal\Component\Plugin\Derivative\DerivativeBase;
+use Drupal\Core\Entity\EntityStorageControllerInterface;
+use Drupal\Core\Plugin\Discovery\ContainerDerivativeInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Retrieves payment status plugin definitions based on configuration entities.
  */
-class ConfigDerivative extends DerivativeBase {
+class ConfigDerivative extends DerivativeBase implements ContainerDerivativeInterface {
 
   /**
    * The payment status storage controller.
    *
    * @var \Drupal\Core\Entity\EntityStorageControllerInterface
    */
-  protected $storage;
+  protected $paymentStatusStorage;
 
   /**
-   * Returns the payment status storage controller.
+   * Constructor.
    */
-  protected function getPaymentStatusStorage() {
-    if (!$this->storage) {
-      $this->storage = \Drupal::entityManager()->getStorageController('payment_status');
-    }
+  public function __construct(EntityStorageControllerInterface $payment_status_storage) {
+    $this->paymentStatusStorage = $payment_status_storage;
+  }
 
-    return $this->storage;
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, $base_plugin_id) {
+    return new static($container->get('entity.manager')->getStorageController('payment_status'));
   }
 
   /**
    * {@inheritdoc}
    */
   public function getDerivativeDefinitions(array $base_plugin_definition) {
-    $statuses = $this->getPaymentStatusStorage()->loadMultiple();
+    $statuses = $this->paymentStatusStorage->loadMultiple();
     foreach ($statuses as $status) {
       $this->derivatives[$status->id()] = array(
         'description' => $status->getDescription(),
