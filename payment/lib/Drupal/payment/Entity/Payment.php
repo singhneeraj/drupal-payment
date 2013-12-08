@@ -9,10 +9,11 @@ namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
+use Drupal\Core\Field\FieldDefinition;
 use Drupal\payment\Payment as PaymentServiceWrapper;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface as PluginPaymentMethodInterface;
-use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface as PluginPaymentStatusInterface;
 
 /**
  * Defines a payment entity.
@@ -203,7 +204,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public function setStatus(PaymentStatusInterface $status, $notify = TRUE) {
+  public function setStatus(PluginPaymentStatusInterface $status, $notify = TRUE) {
     $previousStatus = $this->getStatus();
     $status->setPaymentId($this->id());
     // Prevent duplicate statuses.
@@ -341,32 +342,24 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions($entity_type) {
-    $fields['currency'] = array(
-      'label' => t('Currency'),
-      'type' => 'entity_reference_field',
-      'settings' => array(
+    $fields['currency'] = FieldDefinition::create('entity_reference')
+      ->setLabel(t('Currency'))
+      ->setFieldSettings(array(
         'target_type' => 'currency',
         'default_value' => 0,
-      ),
-    );
-    $fields['id'] = array(
-      'label' => t('Payment ID'),
-      'type' => 'integer_field',
-      'read-only' => TRUE,
-    );
-    $fields['owner'] = array(
-      'label' => t('Owner'),
-      'type' => 'entity_reference_field',
-      'settings' => array(
+      ));
+    $fields['id'] = FieldDefinition::create('integer')
+      ->setLabel(t('Payment ID'))
+      ->setReadOnly(TRUE);
+    $fields['owner'] = FieldDefinition::create('entity_reference')
+      ->setLabel(t('Owner'))
+      ->setFieldSettings(array(
         'target_type' => 'user',
         'default_value' => 0,
-      ),
-    );
-    $fields['uuid'] = array(
-      'label' => t('UUID'),
-      'read-only' => TRUE,
-      'type' => 'uuid_field',
-    );
+      ));
+    $fields['uuid'] = FieldDefinition::create('uuid')
+      ->setLabel(t('Universally Unique ID'))
+      ->setReadOnly(TRUE);
 
     return $fields;
   }

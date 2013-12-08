@@ -7,6 +7,7 @@
 namespace Drupal\payment_form\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\ConfigFieldItemBase;
+use Drupal\Core\TypedData\DataDefinition;
 use Drupal\currency\Entity\Currency;
 use Drupal\field\FieldInterface;
 
@@ -76,19 +77,13 @@ class PaymentForm extends ConfigFieldItemBase {
   public function getPropertyDefinitions() {
     if (!isset(static::$propertyDefinitions)) {
       static::$propertyDefinitions = parent::getPropertyDefinitions();
-      static::$propertyDefinitions['plugin_configuration'] = array(
-        'settings' => array(
-          'default_value' => array(),
-        ),
-        'label' => $this->t('Plugin configuration'),
-        'required' => TRUE,
-        'type' => 'any',
-      );
-      static::$propertyDefinitions['plugin_id'] = array(
-        'label' => $this->t('Plugin ID'),
-        'required' => TRUE,
-        'type' => 'string',
-      );
+      static::$propertyDefinitions['plugin_configuration'] = DataDefinition::create('any')
+        ->setLabel($this->t('Plugin configuration'))
+        ->setSetting('default_value', array())
+        ->setRequired(TRUE);
+      static::$propertyDefinitions['plugin_id'] = DataDefinition::create('string')
+        ->setLabel($this->t('Plugin ID'))
+        ->setRequired(TRUE);
     }
 
     return static::$propertyDefinitions;

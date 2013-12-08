@@ -1,3 +1,8 @@
+payment.payment.admin_list:
+  title: Payments
+  route_name: payment.payment.admin_list
+  tab_root_id: node.content_overview
+
 payment.payment.view:
   route_name: payment.payment.view
   tab_root_id: payment.payment.view

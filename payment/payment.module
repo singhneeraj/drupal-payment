@@ -19,12 +19,11 @@ function payment_menu() {
     'route_name' => 'payment.admin',
     'title' => 'Payment',
   );
-  // @todo Convert this local task to YAML once 'admin/content/node' is no
-  // longer defined in node_menu().
+
+  // Payments.
   $items['admin/content/payments'] = array(
     'route_name' => 'payment.payment.admin_list',
     'title' => 'Payments',
-    'type' => MENU_LOCAL_TASK | MENU_NORMAL_ITEM,
   );
 
   // Payment types.

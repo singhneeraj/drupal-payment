@@ -12,7 +12,7 @@ use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Executable\ExecutableInterface;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface as PluginPaymentMethodInterface;
-use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface as PluginPaymentStatusInterface;
 
 /**
  * Defines a payment entity type .
@@ -123,7 +123,7 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
    *
    * @return \Drupal\payment\Entity\PaymentInterface
    */
-  public function setStatus(PaymentStatusInterface $status, $notify = TRUE);
+  public function setStatus(PluginPaymentStatusInterface $status, $notify = TRUE);
 
   /**
    * Gets all statuses.
