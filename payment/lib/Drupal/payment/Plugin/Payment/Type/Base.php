@@ -59,6 +59,27 @@ abstract class Base extends PluginBase implements ContainerFactoryPluginInterfac
   /**
    * {@inheritdoc}
    */
+  public function defaultConfiguration() {
+    return array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getConfiguration() {
+    return $this->configuration;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setConfiguration(array $configuration) {
+    $this->configuration = $configuration;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getPayment() {
     return $this->payment;
   }

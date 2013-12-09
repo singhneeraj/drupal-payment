@@ -66,10 +66,6 @@ function payment_schema() {
   );
   $schema['payment'] = array(
     'fields' => array(
-      'bundle' => array(
-        'type' => 'varchar',
-        'length' => 255,
-      ),
       'currency_code' => array(
         'type' => 'varchar',
         'length' => 3,
@@ -105,6 +101,15 @@ function payment_schema() {
         'serialize' => TRUE,
       ),
       'payment_method_id' => array(
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'payment_type_configuration' => array(
+        'type' => 'blob',
+        'not null' => TRUE,
+        'serialize' => TRUE,
+      ),
+      'payment_type_id' => array(
         'type' => 'varchar',
         'length' => 255,
       ),

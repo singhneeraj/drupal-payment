@@ -86,8 +86,12 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   public function __construct(array $values, $entity_type, $bundle = FALSE, $translations = array()) {
     parent::__construct($values, $entity_type, $bundle, $translations);
     PaymentServiceWrapper::typeManager()->clearCachedDefinitions();
-    $this->type = PaymentServiceWrapper::typeManager()->createInstance($this->bundle());
-    $this->type->setPayment($this);
+    // When a payment is newly created, its bundle is set, but there is no
+    // plugin yet.
+    if (!isset($values['type'])) {
+      $this->type = PaymentServiceWrapper::typeManager()->createInstance($this->bundle());
+      $this->type->setPayment($this);
+    }
   }
 
   /**
@@ -342,6 +346,9 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions($entity_type) {
+    $fields['bundle'] = FieldDefinition::create('string')
+      ->setLabel(t('Payment type'))
+      ->setReadOnly(TRUE);
     $fields['currency'] = FieldDefinition::create('entity_reference')
       ->setLabel(t('Currency'))
       ->setFieldSettings(array(

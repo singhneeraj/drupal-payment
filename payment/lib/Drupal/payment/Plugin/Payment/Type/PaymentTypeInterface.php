@@ -6,13 +6,14 @@
 
 namespace Drupal\payment\Plugin\Payment\Type;
 
+use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\payment\Entity\PaymentInterface;
 
 /**
  * A payment type plugin.
  */
-interface PaymentTypeInterface extends PluginInspectionInterface {
+interface PaymentTypeInterface extends PluginInspectionInterface, ConfigurablePluginInterface {
 
   /**
    * Sets the ID of the payment this pluhin is of.

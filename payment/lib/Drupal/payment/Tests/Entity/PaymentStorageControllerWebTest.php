@@ -40,9 +40,14 @@ class PaymentStorageControllerWebTest extends WebTestBase {
   protected function testCRUD() {
     $database = \Drupal::database();
     $user = $this->drupalCreateUser();
+    $payment_type_configuration = array(
+      $this->randomName() => $this->randomName(),
+    );
+    $payment_method = Payment::methodManager()->createInstance('payment_basic:no_payment_required');
 
     // Test creating a payment.
-    $payment = Generate::createPayment($user->id());
+    $payment = Generate::createPayment($user->id(), $payment_method);
+    $payment->getPaymentType()->setConfiguration($payment_type_configuration);
     $this->assertTrue($payment instanceof PaymentInterface);
     // @todo The ID should be an integer, but for some reason the entity field
     //   API returns a string.
@@ -73,6 +78,8 @@ class PaymentStorageControllerWebTest extends WebTestBase {
     $payment_loaded = entity_load_unchanged('payment', $payment->id());
     $this->assertEqual(count($payment_loaded->getLineItems()), count($payment->getLineItems()));
     $this->assertEqual(count($payment_loaded->getStatuses()), count($payment->getStatuses()));
+    $this->assertEqual($payment_loaded->getPaymentMethod()->getConfiguration(), $payment_method->getConfiguration());
+    $this->assertEqual($payment_loaded->getPaymentType()->getConfiguration(), $payment_type_configuration);
 
     // Test deleting a payment.
     $payment->delete();

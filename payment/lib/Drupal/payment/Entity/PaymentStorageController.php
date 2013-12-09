@@ -20,9 +20,6 @@ class PaymentStorageController extends FieldableDatabaseStorageController implem
    * {@inheritdoc}
    */
   function create(array $values) {
-    if (isset($values['type']) && !isset($values['bundle'])) {
-      $values['bundle'] = $values['type']->getPluginId();
-    }
     $payment = parent::create($values);
     $status = PaymentServiceWrapper::statusManager()->createInstance('payment_created')
       ->setCreated(time());
@@ -38,14 +35,16 @@ class PaymentStorageController extends FieldableDatabaseStorageController implem
     $line_items = $this->loadLineItems(array_keys($queried_entities));
     $statuses = $this->loadPaymentStatuses(array_keys($queried_entities));
     foreach ($queried_entities as $id => $queried_entity) {
-      $payment_method = PaymentServiceWrapper::methodManager()->createInstance($queried_entity->payment_method_id, unserialize($queried_entity->payment_method_configuration));
+      $payment_method = $queried_entity->payment_method_id ? PaymentServiceWrapper::methodManager()->createInstance($queried_entity->payment_method_id, unserialize($queried_entity->payment_method_configuration)) : NULL;
+      $payment_type = PaymentServiceWrapper::typeManager()->createInstance($queried_entity->payment_type_id, unserialize($queried_entity->payment_type_configuration));
       $queried_entities[$id] = (object) array(
-        'bundle' => $queried_entity->bundle,
         'currency' => $queried_entity->currency_code,
         'id' => (int) $queried_entity->id,
         'lineItems' => $line_items[$id],
         'owner' => (int) $queried_entity->owner_id,
         'method' => $payment_method,
+        'type' => $payment_type,
+        'bundle' => $payment_type->getPluginId(),
         'statuses' => $statuses[$id],
         'uuid' => $queried_entity->uuid,
       );
@@ -59,14 +58,15 @@ class PaymentStorageController extends FieldableDatabaseStorageController implem
    */
   protected function mapToStorageRecord(EntityInterface $entity, $table_key = 'data_table') {
     $record = new \stdClass();
-    $record->bundle = $entity->bundle();
     $record->currency_code = $entity->getCurrencyCode();
     $record->id = $entity->id();
-    $record->payment_method_id = $entity->getPaymentMethod() ? $entity->getPaymentMethod()->getPluginId() : NULL;
-    $record->payment_method_configuration = $entity->getPaymentMethod() ? $entity->getPaymentMethod()->getConfiguration() : array();
     $record->first_payment_status_id = current($entity->getStatuses())->getId();
     $record->last_payment_status_id = $entity->getStatus()->getId();
     $record->owner_id = $entity->getOwnerId();
+    $record->payment_method_configuration = $entity->getPaymentMethod() ? $entity->getPaymentMethod()->getConfiguration() : array();
+    $record->payment_method_id = $entity->getPaymentMethod() ? $entity->getPaymentMethod()->getPluginId() : NULL;
+    $record->payment_type_configuration = $entity->getPaymentType()->getConfiguration();
+    $record->payment_type_id = $entity->getPaymentType()->getPluginId();
     $record->uuid= $entity->uuid();
 
     return $record;
