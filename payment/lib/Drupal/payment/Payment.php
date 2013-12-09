@@ -31,6 +31,15 @@ class Payment {
   }
 
   /**
+   * Returns the payment method selector manager.
+   *
+   * @return \Drupal\payment\Plugin\Payment\MethodSelector\Manager
+   */
+  public static function methodSelectorManager() {
+    return \Drupal::service('plugin.manager.payment.method_selector');
+  }
+
+  /**
    * Returns the payment line item manager.
    *
    * @return \Drupal\payment\Plugin\Payment\LineItem\Manager
