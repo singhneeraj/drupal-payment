@@ -2,8 +2,7 @@
 
 /**
  * @file
- * Contains
- * \Drupal\payment_reference\Test\PaymentReferenceUnitTest.
+ * Contains \Drupal\payment_reference\Test\PaymentReferenceUnitTest.
  */
 
 namespace Drupal\payment_reference\Test;
@@ -23,19 +22,17 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'group' => 'Payment Reference Field',
+      'group' => 'Payment',
       'name' => '\Drupal\payment_reference\PaymentReference unit test',
     );
   }
 
   /**
-   * Tests queue().
+   * Tests lineItemManager().
    */
-  public function testQueue() {
+  public function testLineItemManager() {
     $container = new Container();
-    $queue = $this->getMockBuilder('\Drupal\payment_reference\Queue')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $queue = $this->getMock('\Drupal\payment\QueueInterface');
     $container->set('payment_reference.queue', $queue);
     \Drupal::setContainer($container);
     $this->assertSame($queue, PaymentReference::queue());

@@ -8,15 +8,11 @@
 namespace Drupal\payment_reference\Plugin\Field\FieldType;
 
 use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\Core\TypedData\TypedDataInterface;
 use Drupal\currency\Entity\Currency;
 use Drupal\entity_reference\ConfigurableEntityReferenceItem;
 use Drupal\payment\Element\PaymentLineItemsInput;
-use Drupal\payment_reference\PaymentReference as PaymentReferenceServiceWrapper;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Validator\ConstraintViolation;
 
 /**
  * Provides a configurable payment reference field.
@@ -44,7 +40,7 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
   /**
    * The payment queue.
    *
-   * @var \Drupal\payment_reference\QueueInterface
+   * @var \Drupal\payment\QueueInterface
    */
   protected $queue;
 
@@ -133,9 +129,9 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
   public function preSave() {
     $payment_id = $this->get('target_id')->getValue();
     $queue = $this->getPaymentQueue();
-    $acquisition_code = $queue->claim($payment_id);
+    $acquisition_code = $queue->claimPayment($payment_id);
     if ($acquisition_code !== FALSE) {
-      $queue->acquire($payment_id, $acquisition_code);
+      $queue->acquirePayment($payment_id, $acquisition_code);
     }
     else {
       $this->get('target_id')->setValue(0);
@@ -148,6 +144,6 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
    * @todo Inject this once https://drupal.org/node/2053415 is fixed.
    */
   protected function getPaymentQueue() {
-    return PaymentReferenceServiceWrapper::queue();
+    return \Drupal::service('payment_reference.queue');
   }
 }

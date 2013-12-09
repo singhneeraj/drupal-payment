@@ -53,7 +53,7 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
   /**
    * The payment reference queue.
    *
-   * @var \Drupal\payment_reference\QueueInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\QueueInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $queue;
 
@@ -88,7 +88,7 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->queue = $this->getMockBuilder('\Drupal\payment_reference\QueueInterface')
+    $this->queue = $this->getMockBuilder('\Drupal\payment\QueueInterface')
       ->disableOriginalConstructor()
       ->getMock();
 

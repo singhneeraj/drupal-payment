@@ -39,3 +39,10 @@ function payment_test_payment_status_set(PaymentInterface $payment, PaymentStatu
 function payment_test_payment_pre_execute(Payment $payment) {
   $payment->payment_test_payment_pre_execute = TRUE;
 }
+
+/**
+ * Implements hook_payment_queue_payment_ids_alter().
+ */
+function payment_test_payment_queue_payment_ids_alter($field_instance_id, $owner_id, array &$payment_ids) {
+  \Drupal::state()->set('payment_test_payment_queue_payment_ids_alter', TRUE);
+}

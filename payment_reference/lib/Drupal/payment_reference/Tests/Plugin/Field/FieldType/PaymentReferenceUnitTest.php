@@ -25,7 +25,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   /**
    * The payment queue.
    *
-   * @var \Drupal\payment_reference\QueueInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\QueueInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $queue;
   /**
@@ -50,7 +50,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   protected function setUp() {
-    $this->queue = $this->getMock('\Drupal\payment_reference\QueueInterface');
+    $this->queue = $this->getMock('\Drupal\payment\QueueInterface');
 
     $this->targetId = $this->getMock('\Drupal\Core\TypedData\TypedDataInterface');
 
@@ -99,11 +99,11 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       ->method('getValue')
       ->will($this->returnValue($payment_id));
     $this->queue->expects($this->once())
-      ->method('claim')
+      ->method('claimPayment')
       ->with($payment_id)
       ->will($this->returnValue($acquisition_code));
     $this->queue->expects($this->once())
-      ->method('acquire')
+      ->method('acquirePayment')
       ->with($payment_id, $acquisition_code);
     $this->fieldType->preSave();
   }

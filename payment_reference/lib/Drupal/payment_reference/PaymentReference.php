@@ -8,14 +8,14 @@
 namespace Drupal\payment_reference;
 
 /**
- * Static service container wrapper for Payment Reference Field.
+ * Provides wrappers for services.
  */
 class PaymentReference {
 
   /**
-   * Returns the payment reference queue service.
+   * Returns the payment reference queue.
    *
-   * @return \Drupal\payment_reference\QueueInterface
+   * @return \Drupal\payment\QueueInterface
    */
   public static function queue() {
     return \Drupal::service('payment_reference.queue');

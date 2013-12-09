@@ -146,6 +146,49 @@ function payment_schema() {
     ),
     'primary key' => array('id'),
   );
+  $schema['payment_queue'] = array(
+    'fields' => array(
+      'acquisition_code' => array(
+        'default' => '',
+        'length' => 255,
+        'not null' => TRUE,
+        'type' => 'varchar',
+      ),
+      'category_id' => array(
+        'length' => 255,
+        'not null' => TRUE,
+        'type' => 'varchar',
+      ),
+      'claimed' => array(
+        'default' => 0,
+        'not null' => TRUE,
+        'type' => 'int',
+      ),
+      'payment_id' => array(
+        'default' => 0,
+        'not null' => TRUE,
+        'type' => 'int',
+      ),
+      'queue_id' => array(
+        'length' => 255,
+        'not null' => TRUE,
+        'type' => 'varchar',
+      ),
+    ),
+    'primary key' => array('payment_id'),
+    'foreign keys' => array(
+      'payment_id' => array(
+        'table' => 'payment',
+        'columns' => array(
+          'payment_id' => 'id',
+        ),
+      ),
+    ),
+    'indexes' => array(
+      'category_id' => array('category_id'),
+      'queue_id' => array('queue_id'),
+    ),
+  );
   $schema['payment_status'] = array(
     'fields' => array(
       'created' => array(

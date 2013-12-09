@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\payment_reference\Queue.
+ * Contains \Drupal\payment\Queue.
  */
 
-namespace Drupal\payment_reference;
+namespace Drupal\payment;
 
 use Drupal\Component\Utility\Random;
 use Drupal\Core\Database\Connection;
@@ -14,7 +14,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\payment\Plugin\Payment\Status\Manager;
 
 /**
- * The payment reference queue manager.
+ * The payment queue.
  */
 class Queue implements QueueInterface {
 
@@ -55,8 +55,17 @@ class Queue implements QueueInterface {
   protected $randomGenerator;
 
   /**
+   * The unique ID of the queue (instance).
+   *
+   * @var string
+   */
+  protected $queueId;
+
+  /**
    * Constructor.
    *
+   * @param string $queue_id
+   *   The unique ID of the queue (instance).
    * @param \Drupal\Core\Database\Connection $database
    *   A database connection.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface
@@ -64,21 +73,23 @@ class Queue implements QueueInterface {
    * @param \Drupal\payment\Plugin\Payment\Status\Manager
    *   The payment status plugin manager.
    */
-  public function __construct(Connection $database, ModuleHandlerInterface $module_handler, Manager $payment_status_manager) {
+  public function __construct($queue_id, Connection $database, ModuleHandlerInterface $module_handler, Manager $payment_status_manager) {
     $this->database = $database;
     $this->moduleHandler = $module_handler;
     $this->paymentStatusManager = $payment_status_manager;
     $this->randomGenerator = new Random();
+    $this->queueId = $queue_id;
   }
 
   /**
    * {@inheritdoc}
    */
-  function save($field_instance_id, $payment_id) {
-    $this->database->insert('payment_reference')
+  function save($category_id, $payment_id) {
+    $this->database->insert('payment_queue')
       ->fields(array(
-        'field_instance_id' => $field_instance_id,
+        'category_id' => $category_id,
         'payment_id' => $payment_id,
+        'queue_id' => $this->queueId,
       ))
       ->execute();
   }
@@ -86,13 +97,13 @@ class Queue implements QueueInterface {
   /**
    * {@inheritdoc}
    */
-  public function claim($payment_id) {
-    $acquisition_code = $this->tryClaimOnce($payment_id);
+  public function claimPayment($payment_id) {
+    $acquisition_code = $this->tryClaimPaymentOnce($payment_id);
     // If a payment cannot be claimed at the first try, wait until the prevous
     // claim has expired and try to claim the payment one more time.
     if ($acquisition_code === FALSE) {
       sleep(static::CLAIM_EXPIRATION_PERIOD);
-      $acquisition_code = $this->tryClaimOnce($payment_id);
+      $acquisition_code = $this->tryClaimPaymentOnce($payment_id);
     }
 
     return $acquisition_code;
@@ -107,13 +118,14 @@ class Queue implements QueueInterface {
    *   An acquisition code to acquire the payment with on success, or FALSE if
    *   the payment could not be claimed.
    */
-  protected function tryClaimOnce($payment_id) {
+  protected function tryClaimPaymentOnce($payment_id) {
     $acquisition_code = $this->randomGenerator->string(255);
-    $count = $this->database->update('payment_reference', array(
+    $count = $this->database->update('payment_queue', array(
       'return' => Database::RETURN_AFFECTED,
     ))
       ->condition('claimed', time() - self::CLAIM_EXPIRATION_PERIOD, '<')
       ->condition('payment_id', $payment_id)
+      ->condition('queue_id', $this->queueId)
       ->fields(array(
         'acquisition_code' => $acquisition_code,
         'claimed' => time(),
@@ -126,25 +138,27 @@ class Queue implements QueueInterface {
   /**
    * {@inheritdoc}
    */
-  public function acquire($payment_id, $acquisition_code) {
-    return (bool) $this->database->delete('payment_reference', array(
+  public function acquirePayment($payment_id, $acquisition_code) {
+    return (bool) $this->database->delete('payment_queue', array(
       'return' => Database::RETURN_AFFECTED,
     ))
       ->condition('acquisition_code', $acquisition_code)
       ->condition('claimed', time() - self::CLAIM_EXPIRATION_PERIOD, '>=')
       ->condition('payment_id', $payment_id)
+      ->condition('queue_id', $this->queueId)
       ->execute();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function release($payment_id, $acquisition_code) {
-    return (bool) $this->database->update('payment_reference', array(
+  public function releaseClaim($payment_id, $acquisition_code) {
+    return (bool) $this->database->update('payment_queue', array(
       'return' => Database::RETURN_AFFECTED,
     ))
       ->condition('payment_id', $payment_id)
       ->condition('acquisition_code', $acquisition_code)
+      ->condition('queue_id', $this->queueId)
       ->fields(array(
         'claimed' => 0,
       ))
@@ -154,31 +168,18 @@ class Queue implements QueueInterface {
   /**
    * {@inheritdoc}
    */
-  function loadFieldInstanceId($payment_id, $owner_id) {
-    $query = $this->database->select('payment_reference', 'pr');
-    $query->addJoin('INNER', 'payment', 'p', 'p.id = pr.payment_id');
-
-    return $query->fields('pr', array('field_instance_id'))
-      ->condition('pr.payment_id', $payment_id)
-      ->condition('p.owner_id', $owner_id)
-      ->execute()
-      ->fetchField();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  function loadPaymentIds($field_instance_id, $owner_id) {
-    $query = $this->database->select('payment_reference', 'pr');
+  function loadPaymentIds($category_id, $owner_id) {
+    $query = $this->database->select('payment_queue', 'pr');
     $query->addJoin('INNER', 'payment', 'p', 'p.id = pr.payment_id');
     $query->addJoin('INNER', 'payment_status', 'ps', 'p.last_payment_status_id = ps.id');
     $query->fields('pr', array('payment_id'))
-      ->condition('pr.field_instance_id', $field_instance_id)
+      ->condition('pr.category_id', $category_id)
       ->condition('ps.plugin_id', array_merge($this->paymentStatusManager->getDescendants('payment_success'), array('payment_success')))
-      ->condition('p.owner_id', $owner_id);
+      ->condition('p.owner_id', $owner_id)
+      ->condition('pr.queue_id', $this->queueId);
 
     $payment_ids = $query->execute()->fetchCol();
-    $this->moduleHandler->alter('payment_reference_queue_payment_ids', $field_instance_id, $owner_id, $payment_ids);
+    $this->moduleHandler->alter('payment_queue_payment_ids', $category_id, $owner_id, $payment_ids);
     // @todo Add a Rules event.
 
     return $payment_ids;
@@ -188,26 +189,29 @@ class Queue implements QueueInterface {
    * {@inheritdoc}
    */
   function deleteByPaymentId($id) {
-    $this->database->delete('payment_reference')
+    $this->database->delete('payment_queue')
       ->condition('payment_id', $id)
+      ->condition('queue_id', $this->queueId)
       ->execute();
   }
 
   /**
    * {@inheritdoc}
    */
-  function deleteByFieldId($field_id) {
-    $this->database->delete('payment_reference')
-      ->condition('field_instance_id', $field_id . '.%', 'LIKE')
+  function deleteByCategoryId($category_id) {
+    $this->database->delete('payment_queue')
+      ->condition('category_id', $category_id)
+      ->condition('queue_id', $this->queueId)
       ->execute();
   }
 
   /**
    * {@inheritdoc}
    */
-  function deleteByFieldInstanceId($field_instance_id) {
-    $this->database->delete('payment_reference')
-      ->condition('field_instance_id', $field_instance_id)
+  function deleteByCategoryIdPrefix($category_id_prefix) {
+    $this->database->delete('payment_queue')
+      ->condition('category_id', $category_id_prefix . '%', 'LIKE')
+      ->condition('queue_id', $this->queueId)
       ->execute();
   }
 }
