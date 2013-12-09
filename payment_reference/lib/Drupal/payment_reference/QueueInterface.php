@@ -21,6 +21,41 @@ interface QueueInterface {
   public function save($field_instance_id, $payment_id);
 
   /**
+   * Claims a payment available for referencing through a field instance.
+   *
+   * After a payment has been claimed, it can be definitely acquired with
+   * self::acquire().
+   *
+   * @param integer $payment_id
+   *
+   * @return string|false
+   *   An acquisition code to acquire the payment with on success, or FALSE if
+   *   the payment could not be claimed.
+   */
+  public function claim($payment_id);
+
+  /**
+   * Releases a claimed payment.
+   *
+   * @param integer $payment_id
+   * @param string $acquisition_code
+   *   The code that was received from self::claim().
+   */
+  public function release($payment_id, $acquisition_code);
+
+  /**
+   * Acquires a payment and removes if from the queue.
+   *
+   * @param integer $payment_id
+   * @param string $acquisition_code
+   *   The code that was received from self::reserve().
+   *
+   * @return bool
+   *   Whether the acquisition was successful.
+   */
+  public function acquire($payment_id, $acquisition_code);
+
+  /**
    * Checks if a payment is available for referencing.
    *
    * @param integer $payment_id

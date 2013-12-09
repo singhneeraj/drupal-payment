@@ -8,11 +8,15 @@
 namespace Drupal\payment_reference\Plugin\Field\FieldType;
 
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\Core\TypedData\TypedDataInterface;
 use Drupal\currency\Entity\Currency;
 use Drupal\entity_reference\ConfigurableEntityReferenceItem;
 use Drupal\payment\Element\PaymentLineItemsInput;
+use Drupal\payment_reference\PaymentReference as PaymentReferenceServiceWrapper;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Validator\ConstraintViolation;
 
 /**
  * Provides a configurable payment reference field.
@@ -36,6 +40,13 @@ use Drupal\payment\Element\PaymentLineItemsInput;
  * )
  */
 class PaymentReference extends ConfigurableEntityReferenceItem {
+
+  /**
+   * The payment queue.
+   *
+   * @var \Drupal\payment_reference\QueueInterface
+   */
+  protected $queue;
 
   /**
    * {@inheritdoc}
@@ -114,5 +125,29 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
    */
   protected function t($string, array $args = array(), array $options = array()) {
     return t($string, $args, $options);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preSave() {
+    $payment_id = $this->get('target_id')->getValue();
+    $queue = $this->getPaymentQueue();
+    $acquisition_code = $queue->claim($payment_id);
+    if ($acquisition_code !== FALSE) {
+      $queue->acquire($payment_id, $acquisition_code);
+    }
+    else {
+      $this->get('target_id')->setValue(0);
+    }
+  }
+
+  /**
+   * Gets the payment queue.
+   *
+   * @todo Inject this once https://drupal.org/node/2053415 is fixed.
+   */
+  protected function getPaymentQueue() {
+    return PaymentReferenceServiceWrapper::queue();
   }
 }

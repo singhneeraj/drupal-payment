@@ -9,6 +9,7 @@ namespace Drupal\payment_reference\Tests\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\payment\Generate;
+use Drupal\payment_reference\PaymentReference;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -59,6 +60,7 @@ class PaymentReferenceWebTest extends WebTestBase {
       'bundle' => 'payment_unavailable',
     ));
     $payment->save();
+    PaymentReference::queue()->save('user.' . $field_name, $payment->id());
 
     // Set a field value on an entity and test getting it.
     $user = entity_create('user', array(

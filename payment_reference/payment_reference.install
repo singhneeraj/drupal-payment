@@ -21,6 +21,17 @@ function payment_reference_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
+      'acquisition_code' => array(
+        'default' => '',
+        'length' => 255,
+        'not null' => TRUE,
+        'type' => 'varchar',
+      ),
+      'claimed' => array(
+        'default' => 0,
+        'not null' => TRUE,
+        'type' => 'int',
+      ),
     ),
     'primary key' => array('payment_id'),
     'foreign keys' => array(

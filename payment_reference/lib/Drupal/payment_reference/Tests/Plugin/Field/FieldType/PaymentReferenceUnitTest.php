@@ -23,6 +23,19 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   protected $fieldType;
 
   /**
+   * The payment queue.
+   *
+   * @var \Drupal\payment_reference\QueueInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $queue;
+  /**
+   * The field's target_id typed data property.
+   *
+   * @var \Drupal\Core\TypedData\TypedDataInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $targetId;
+
+  /**
    * {@inheritdoc}
    */
   public static function getInfo() {
@@ -37,10 +50,21 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   protected function setUp() {
+    $this->queue = $this->getMock('\Drupal\payment_reference\QueueInterface');
+
+    $this->targetId = $this->getMock('\Drupal\Core\TypedData\TypedDataInterface');
+
     $this->fieldType = $this->getMockBuilder('\Drupal\payment_reference\Plugin\Field\FieldType\PaymentReference')
       ->disableOriginalConstructor()
-      ->setMethods(array('currencyOptions', 'getFieldSetting', 't'))
+      ->setMethods(array('currencyOptions', 'get', 'getFieldSetting', 'getPaymentQueue', 't'))
       ->getMock();
+    $this->fieldType->expects($this->any())
+      ->method('get')
+      ->with('target_id')
+      ->will($this->returnValue($this->targetId));
+    $this->fieldType->expects($this->any())
+      ->method('getPaymentQueue')
+      ->will($this->returnValue($this->queue));
   }
 
   /**
@@ -63,6 +87,25 @@ class PaymentReferenceUnitTest extends UnitTestCase {
     $form_state = array();
     $has_data = TRUE;
     $this->assertSame(array(), $this->fieldType->settingsForm($form, $form_state, $has_data));
+  }
+
+  /**
+   * Tests preSave().
+   */
+  public function testPreSave() {
+    $payment_id = mt_rand();
+    $acquisition_code = $this->randomName();
+    $this->targetId->expects($this->once())
+      ->method('getValue')
+      ->will($this->returnValue($payment_id));
+    $this->queue->expects($this->once())
+      ->method('claim')
+      ->with($payment_id)
+      ->will($this->returnValue($acquisition_code));
+    $this->queue->expects($this->once())
+      ->method('acquire')
+      ->with($payment_id, $acquisition_code);
+    $this->fieldType->preSave();
   }
 
 }
