@@ -78,7 +78,7 @@ class PaymentReference extends WidgetBase implements ContainerFactoryPluginInter
       '#owner_id' => (int) $this->currentUser->id(),
       '#payment_line_items_data' => $this->getFieldSetting('line_items_data'),
       '#payment_currency_code' => $this->getFieldSetting('currency_code'),
-      '#required' => $this->fieldDefinition->isFieldRequired(),
+      '#required' => $this->fieldDefinition->isRequired(),
       '#type' => 'payment_reference',
     );
 

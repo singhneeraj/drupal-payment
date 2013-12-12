@@ -77,14 +77,17 @@ class PaymentReferenceUi extends ControllerBase implements ContainerInjectionInt
    *   A render array.
    */
   public function pay(FieldInstanceInterface $field_instance) {
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->entityManager()
       ->getStorageController('payment')
       ->create(array(
         'bundle' => 'payment_reference',
-      ))
-      ->setCurrencyCode($field_instance->getFieldSetting('currency_code'));
-    $payment->getPaymentType()->setFieldInstanceId($field_instance->id());
-    foreach ($field_instance->getFieldSetting('line_items_data') as $line_item_data) {
+      ));
+    $payment->setCurrencyCode($field_instance->getSetting('currency_code'));
+    /** @var \Drupal\payment_reference\Plugin\Payment\Type\PaymentReference $payment_type */
+    $payment_type = $payment->getPaymentType();
+    $payment_type->setFieldInstanceId($field_instance->id());
+    foreach ($field_instance->getSetting('line_items_data') as $line_item_data) {
       $line_item = $this->paymentLineItemManager->createInstance($line_item_data['plugin_id'], $line_item_data['plugin_configuration']);
       $payment->setLineItem($line_item);
     }

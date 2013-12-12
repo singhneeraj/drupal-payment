@@ -65,7 +65,7 @@ class PaymentForm extends WidgetBase {
       }
     }
     $element['line_items'] = array(
-      '#cardinality' => $this->fieldDefinition->getFieldCardinality(),
+      '#cardinality' => $this->fieldDefinition->getCardinality(),
       '#default_value' => $line_items_data,
       '#type' => 'payment_line_items_input',
     );

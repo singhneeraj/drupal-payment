@@ -155,7 +155,7 @@ class PaymentFormUnitTest extends UnitTestCase {
 
     $field_id = $this->randomName();
     $this->fieldDefinition->expects($this->once())
-      ->method('getFieldName')
+      ->method('getName')
       ->will($this->returnValue($field_id));
 
     // Create a dummy render array.

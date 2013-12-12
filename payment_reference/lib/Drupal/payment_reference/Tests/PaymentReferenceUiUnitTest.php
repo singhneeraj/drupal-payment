@@ -161,7 +161,7 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
       ))),
     );
     $field_instance->expects($this->exactly(2))
-      ->method('getFieldSetting')
+      ->method('getSetting')
       ->will($this->returnValueMap($map));
 
     $this->paymentReferenceUi->pay($field_instance);

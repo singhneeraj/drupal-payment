@@ -79,11 +79,11 @@ class PaymentForm extends FormatterBase implements ContainerFactoryPluginInterfa
   public function viewElements(FieldItemListInterface $items) {
     $payment = $this->entityManager->getStorageController('payment')->create(array(
       'bundle' => 'payment_form',
-    ))->setCurrencyCode($this->fieldDefinition->getFieldSetting('currency_code'));
+    ))->setCurrencyCode($this->fieldDefinition->getSetting('currency_code'));
     foreach ($items as $item) {
       $payment->setLineItem($this->paymentLineItemManager->createInstance($item->plugin_id, $item->plugin_configuration));
     }
-    $payment->getPaymentType()->setFieldInstanceId($this->fieldDefinition->getFieldName());
+    $payment->getPaymentType()->setFieldInstanceId($this->fieldDefinition->getName());
 
     return $this->formBuilder->getForm($this->entityManager->getFormController('payment', 'payment_form')->setEntity($payment));
   }

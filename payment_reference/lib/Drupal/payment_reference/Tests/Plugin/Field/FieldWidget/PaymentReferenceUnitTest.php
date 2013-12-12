@@ -66,7 +66,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    */
   public function testFormElement() {
     $this->fieldInstance->expects($this->once())
-      ->method('isFieldRequired')
+      ->method('isRequired')
       ->will($this->returnValue(TRUE));
 
     $user_id = 2;
