@@ -75,6 +75,7 @@ class PaymentStorageControllerWebTest extends WebTestBase {
       ->fetchAssoc();
     $this->assertEqual($payment_data['first_payment_status_id'], 1);
     $this->assertEqual($payment_data['last_payment_status_id'], 2);
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment_loaded */
     $payment_loaded = entity_load_unchanged('payment', $payment->id());
     $this->assertEqual(count($payment_loaded->getLineItems()), count($payment->getLineItems()));
     $this->assertEqual(count($payment_loaded->getStatuses()), count($payment->getStatuses()));

@@ -64,8 +64,8 @@ function payment_reference_entity_info_alter(&$entity_info) {
  * Implements hook_ENTITY_TYPE_delete().
  */
 function payment_reference_field_entity_delete(FieldInterface $field) {
-  if ($field->getFieldType() == 'payment_reference') {
-    PaymentReference::queue()->deleteByFieldId($field->id());
+  if ($field->getType() == 'payment_reference') {
+    PaymentReference::queue()->deleteByCategoryIdPrefix($field->id());
   }
 }
 
@@ -73,7 +73,7 @@ function payment_reference_field_entity_delete(FieldInterface $field) {
  * Implements hook_ENTITY_TYPE_delete().
  */
 function payment_reference_field_instance_delete(FieldInstanceInterface $field_instance) {
-  PaymentReference::queue()->deleteByFieldInstanceId($field_instance->id());
+  PaymentReference::queue()->deleteByCategoryId($field_instance->id());
 }
 
 /**
@@ -81,7 +81,9 @@ function payment_reference_field_instance_delete(FieldInstanceInterface $field_i
  */
 function payment_reference_payment_insert(PaymentInterface $payment) {
   if ($payment->getPaymentType() instanceof PaymentReferencePlugin) {
-    PaymentReference::queue()->save($payment->getPaymentType()->getFieldInstanceId(), $payment->id());
+    /** @var \Drupal\payment_reference\Plugin\Payment\Type\PaymentReference $payment_type */
+    $payment_type = $payment->getPaymentType();
+    PaymentReference::queue()->save($payment_type->getFieldInstanceId(), $payment->id());
   }
 }
 
@@ -96,7 +98,7 @@ function payment_reference_payment_delete(PaymentInterface $payment) {
  * Implements hook_entity_field_access().
  */
 function payment_reference_entity_field_access($operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL) {
-  if ($field_definition->getFieldType() == 'payment_reference') {
+  if ($field_definition->getType() == 'payment_reference') {
     return (bool) $account->id();
   }
 }

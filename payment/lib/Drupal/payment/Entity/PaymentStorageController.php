@@ -20,6 +20,7 @@ class PaymentStorageController extends FieldableDatabaseStorageController implem
    * {@inheritdoc}
    */
   function create(array $values) {
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = parent::create($values);
     $status = PaymentServiceWrapper::statusManager()->createInstance('payment_created')
       ->setCreated(time());
@@ -31,43 +32,43 @@ class PaymentStorageController extends FieldableDatabaseStorageController implem
   /**
    * {@inheritdoc}
    */
-  function attachLoad(&$queried_entities, $load_revision = FALSE) {
-    $line_items = $this->loadLineItems(array_keys($queried_entities));
-    $statuses = $this->loadPaymentStatuses(array_keys($queried_entities));
-    foreach ($queried_entities as $id => $queried_entity) {
-      $payment_method = $queried_entity->payment_method_id ? PaymentServiceWrapper::methodManager()->createInstance($queried_entity->payment_method_id, unserialize($queried_entity->payment_method_configuration)) : NULL;
-      $payment_type = PaymentServiceWrapper::typeManager()->createInstance($queried_entity->payment_type_id, unserialize($queried_entity->payment_type_configuration));
-      $queried_entities[$id] = (object) array(
-        'currency' => $queried_entity->currency_code,
-        'id' => (int) $queried_entity->id,
-        'lineItems' => $line_items[$id],
-        'owner' => (int) $queried_entity->owner_id,
+  function mapFromStorageRecords(array $records) {
+    foreach ($records as $id => $record) {
+      $payment_method = $record->payment_method_id ? PaymentServiceWrapper::methodManager()->createInstance($record->payment_method_id, unserialize($record->payment_method_configuration)) : NULL;
+      $payment_type = PaymentServiceWrapper::typeManager()->createInstance($record->payment_type_id, unserialize($record->payment_type_configuration));
+      $records[$id] = (object) array(
+        'currency' => $record->currency_code,
+        'id' => (int) $record->id,
+        'owner' => (int) $record->owner_id,
         'method' => $payment_method,
         'type' => $payment_type,
         'bundle' => $payment_type->getPluginId(),
-        'statuses' => $statuses[$id],
-        'uuid' => $queried_entity->uuid,
+        'uuid' => $record->uuid,
       );
     }
 
-    parent::attachLoad($queried_entities, $load_revision);
+    return parent::mapFromStorageRecords($records);
   }
 
   /**
    * {@inheritdoc}
    */
   protected function mapToStorageRecord(EntityInterface $entity, $table_key = 'data_table') {
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
+    $payment = $entity;
+
     $record = new \stdClass();
-    $record->currency_code = $entity->getCurrencyCode();
-    $record->id = $entity->id();
-    $record->first_payment_status_id = current($entity->getStatuses())->getId();
-    $record->last_payment_status_id = $entity->getStatus()->getId();
-    $record->owner_id = $entity->getOwnerId();
-    $record->payment_method_configuration = $entity->getPaymentMethod() ? $entity->getPaymentMethod()->getConfiguration() : array();
-    $record->payment_method_id = $entity->getPaymentMethod() ? $entity->getPaymentMethod()->getPluginId() : NULL;
-    $record->payment_type_configuration = $entity->getPaymentType()->getConfiguration();
-    $record->payment_type_id = $entity->getPaymentType()->getPluginId();
-    $record->uuid= $entity->uuid();
+    $record->bundle = $payment->bundle();
+    $record->currency_code = $payment->getCurrencyCode();
+    $record->id = $payment->id();
+    $record->first_payment_status_id = current($payment->getStatuses())->getId();
+    $record->last_payment_status_id = $payment->getStatus()->getId();
+    $record->owner_id = $payment->getOwnerId();
+    $record->payment_method_configuration = $payment->getPaymentMethod() ? $payment->getPaymentMethod()->getConfiguration() : array();
+    $record->payment_method_id = $payment->getPaymentMethod() ? $payment->getPaymentMethod()->getPluginId() : NULL;
+    $record->payment_type_configuration = $payment->getPaymentType()->getConfiguration();
+    $record->payment_type_id = $payment->getPaymentType()->getPluginId();
+    $record->uuid = $payment->uuid();
 
     return $record;
   }
@@ -75,19 +76,18 @@ class PaymentStorageController extends FieldableDatabaseStorageController implem
   /**
    * {@inheritdoc}
    */
-  public function loadLineItems(array $ids) {
+  public function loadLineItems(array $entities) {
+    /** @var \Drupal\payment\Entity\PaymentInterface[] $entities */
     $manager = PaymentServiceWrapper::lineItemManager();
     $result = db_select('payment_line_item', 'pli')
       ->fields('pli', array('plugin_configuration', 'plugin_id'))
-      ->condition('payment_id', $ids)
+      ->condition('payment_id', array_keys($entities))
       ->execute();
-    $line_items = array_fill_keys($ids, array());
     while ($line_item_data = $result->fetchAssoc()) {
+      /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface $line_item */
       $line_item = $manager->createInstance($line_item_data['plugin_id'], unserialize($line_item_data['plugin_configuration']));
-      $line_items[$line_item->getPaymentId()][$line_item->getName()] = $line_item;
+      $entities[$line_item->getPaymentId()]->setLineItem($line_item);
     }
-
-    return $line_items;
   }
 
   /**
@@ -97,6 +97,7 @@ class PaymentStorageController extends FieldableDatabaseStorageController implem
     $this->deleteLineItems(array_keys($line_items));
     $query = db_insert('payment_line_item')
       ->fields(array('amount', 'amount_total', 'currency_code', 'name', 'payment_id', 'plugin_configuration', 'plugin_id', 'quantity'));
+    /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[] $entity_line_items */
     foreach ($line_items as $payment_id => $entity_line_items) {
       foreach ($entity_line_items as $line_item) {
         $line_item->setPaymentId($payment_id);
@@ -127,30 +128,34 @@ class PaymentStorageController extends FieldableDatabaseStorageController implem
   /**
    * {@inheritdoc}
    */
-  public function loadPaymentStatuses(array $ids) {
+  public function loadPaymentStatuses(array $entities) {
+    /** @var \Drupal\payment\Entity\PaymentInterface[] $entities */
     $manager = PaymentServiceWrapper::statusManager();
     $result = db_select('payment_status', 'ps')
       ->fields('ps')
-      ->condition('payment_id', $ids)
+      ->condition('payment_id', array_keys($entities))
       ->orderBy('id', 'ASC')
       ->execute();
-    $statuses= array_fill_keys($ids, array());
+    $statuses= array_fill_keys(array_keys($entities), array());
     while ($status_data = $result->fetchAssoc()) {
       $plugin_id = $status_data['plugin_id'];
+      /** @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface $status */
       $status = $manager->createInstance($plugin_id, array(
         'created' => (int) $status_data['created'],
         'paymentId' => (int) $status_data['payment_id'],
       ));
       $statuses[$status->getPaymentId()][] = $status;
     }
-
-    return $statuses;
+    foreach ($entities as $payment) {
+      $payment->setStatuses($statuses[$payment->id()]);
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function savePaymentStatuses(array $statuses) {
+    /** @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface[] $entity_statuses */
     foreach ($statuses as $payment_id => $entity_statuses) {
       foreach ($entity_statuses as $status) {
         // Statuses cannot be edited, so only save the ones without an ID.

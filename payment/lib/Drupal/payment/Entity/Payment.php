@@ -316,7 +316,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public static function preCreate(EntityStorageControllerInterface $storage_controller, array &$values) {
+  public static function preCreate(EntityStorageControllerInterface $storage, array &$values) {
     $values += array(
       'ownerId' => (int) \Drupal::currentUser()->id(),
     );
@@ -325,21 +325,32 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public function postSave(EntityStorageControllerInterface $controller, $update = TRUE) {
-    $controller->saveLineItems(array(
-      $this->id() => $this->getLineItems(),
-    ));
-    $controller->savePaymentStatuses(array(
-      $this->id() => $this->getStatuses(),
-  ));
+  public static function postLoad(EntityStorageControllerInterface $storage, array &$entities) {
+    /** @var \Drupal\payment\Entity\PaymentStorageControllerInterface $storage */
+    $storage->loadLineItems($entities);
+    $storage->loadPaymentStatuses($entities);
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function postDelete(EntityStorageControllerInterface $controller, array $entities) {
-    $controller->deleteLineItems(array_keys($entities));
-    $controller->deletePaymentStatuses(array_keys($entities));
+  public function postSave(EntityStorageControllerInterface $storage, $update = TRUE) {
+    /** @var \Drupal\payment\Entity\PaymentStorageControllerInterface $storage */
+    $storage->saveLineItems(array(
+      $this->id() => $this->getLineItems(),
+    ));
+    $storage->savePaymentStatuses(array(
+      $this->id() => $this->getStatuses(),
+    ));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function postDelete(EntityStorageControllerInterface $storage, array $entities) {
+    /** @var \Drupal\payment\Entity\PaymentStorageControllerInterface $storage */
+    $storage->deleteLineItems(array_keys($entities));
+    $storage->deletePaymentStatuses(array_keys($entities));
   }
 
   /**
@@ -351,7 +362,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
       ->setReadOnly(TRUE);
     $fields['currency'] = FieldDefinition::create('entity_reference')
       ->setLabel(t('Currency'))
-      ->setFieldSettings(array(
+      ->setSettings(array(
         'target_type' => 'currency',
         'default_value' => 0,
       ));
@@ -360,7 +371,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
       ->setReadOnly(TRUE);
     $fields['owner'] = FieldDefinition::create('entity_reference')
       ->setLabel(t('Owner'))
-      ->setFieldSettings(array(
+      ->setSettings(array(
         'target_type' => 'user',
         'default_value' => 0,
       ));

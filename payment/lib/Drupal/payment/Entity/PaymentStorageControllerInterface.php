@@ -30,12 +30,12 @@ interface PaymentStorageControllerInterface extends EntityStorageControllerInter
   /**
    * Saves payment line items.
    *
-   * @param array $lineItems
+   * @param array $line_items
    *   Keys are payment IDs, values are arrays of which keys are line item names
    *   and values are \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface
    *   objects.
    */
-  public function saveLineItems(array $lineItems);
+  public function saveLineItems(array $line_items);
 
   /**
    * Deletes payment line items.
@@ -60,7 +60,7 @@ interface PaymentStorageControllerInterface extends EntityStorageControllerInter
   /**
    * Saves payment statuses.
    *
-   * @param array $lineItems
+   * @param array $statuses
    *   Keys are payment IDs, values are arrays of
    *   \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface objects.
    */
