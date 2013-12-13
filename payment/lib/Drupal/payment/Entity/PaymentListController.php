@@ -33,11 +33,13 @@ class PaymentListController extends EntityListController {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $payment) {
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $row['data']['updated'] = format_date($payment->getChangedTime());
 
     $status_definition = $payment->getStatus()->getPluginDefinition();
     $row['data']['status'] = $status_definition['label'];
 
+    /** @var \Drupal\currency\Entity\CurrencyInterface $currency */
     $currency = entity_load('currency', $payment->getCurrencyCode());
     if (!$currency) {
       $currency = entity_load('currency', 'XXX');

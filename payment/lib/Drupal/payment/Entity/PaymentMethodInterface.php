@@ -8,7 +8,6 @@
 namespace Drupal\payment\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
-use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface as PluginPaymentMethodInterface;
 
 /**
  * Defines payment methods.

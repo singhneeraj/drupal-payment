@@ -20,7 +20,8 @@ class PaymentMethodFormController extends EntityFormController {
    * {@inheritdoc}
    */
   public function form(array $form, array &$form_state) {
-    $payment_method = $this->entity;
+    /** @var \Drupal\payment\Entity\PaymentMethodInterface $payment_method */
+    $payment_method = $this->getEntity();
     $definition = Payment::methodConfigurationManager()->getDefinition($payment_method->bundle());
     $form['type'] = array(
       '#type' => 'item',
@@ -90,8 +91,7 @@ class PaymentMethodFormController extends EntityFormController {
   public function submit(array $form, array &$form_state) {
     parent::submit($form, $form_state);
     $values = $form_state['values'];
-    $this->entity->setId($values['id'])
-      ->setLabel($values['label'])
+    $this->entity->setLabel($values['label'])
       ->setStatus($values['status'])
       ->setOwnerId(user_load_by_name($values['owner'])->id());
   }

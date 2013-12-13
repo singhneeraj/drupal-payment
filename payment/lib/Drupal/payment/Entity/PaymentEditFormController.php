@@ -45,6 +45,7 @@ class PaymentEditFormController extends EntityFormController {
    * {@inheritdoc}
    */
   public function form(array $form, array &$form_state) {
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->getEntity();
     $form['status_plugin_id'] = array(
       '#default_value' => $payment->getStatus()->getPluginId(),
@@ -72,6 +73,7 @@ class PaymentEditFormController extends EntityFormController {
    * {@inheritdoc}
    */
   public function buildEntity(array $form, array &$form_state) {
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->getEntity();
     if ($form_state['values']['status_plugin_id'] != $payment->getStatus()->getPluginId()) {
       $status = $this->paymentStatusManager

@@ -258,6 +258,7 @@ function payment_entity_bundle_info() {
     'payment' => Payment::typeManager(),
     'payment_method' => payment::methodConfigurationManager(),
   );
+  /** @var \Drupal\Component\Plugin\PluginManagerInterface $manager */
   foreach ($map as $entity_type => $manager) {
     foreach ($manager->getDefinitions() as $plugin_id => $definition) {
       $bundles[$entity_type][$plugin_id] = array(

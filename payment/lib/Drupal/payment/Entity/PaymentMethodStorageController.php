@@ -71,6 +71,7 @@ class PaymentMethodStorageController extends ConfigStorageController {
    * @see \Drupal\payment\Entity\PaymentMethod::getExportProperties
    */
   protected function buildQuery($ids, $revision_id = FALSE) {
+    /** @var \Drupal\payment\Entity\PaymentMethodInterface[] $payment_methods */
     $payment_methods = parent::buildQuery($ids, $revision_id);
     foreach ($payment_methods as $payment_method) {
       $payment_method->setOwnerId((int) $payment_method->getOwnerId());

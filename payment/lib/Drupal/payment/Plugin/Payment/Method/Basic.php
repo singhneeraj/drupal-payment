@@ -10,7 +10,6 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Payment;
 use Drupal\payment\Plugin\Payment\Status\Manager as PaymentStatusManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

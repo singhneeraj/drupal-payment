@@ -20,6 +20,7 @@ class PaymentAccessController extends EntityAccessController {
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $payment, $operation, $langcode, AccountInterface $account) {
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     return $account->hasPermission('payment.payment.' . $operation . '.any') || $account->hasPermission('payment.payment.' . $operation . '.own') && $account->id() == $payment->getOwnerId();
   }
 

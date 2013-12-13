@@ -267,9 +267,10 @@ class PaymentMethodUi extends ControllerBase implements AccessInterface, Contain
    * @return array
    */
   public function duplicate(PaymentMethodInterface $payment_method) {
+    /** @var \Drupal\payment\Entity\PaymentMethodInterface $clone */
     $clone = $payment_method
-      ->createDuplicate()
-      ->setLabel($this->t('!label (duplicate)', array(
+      ->createDuplicate();
+    $payment_method->setLabel($this->t('!label (duplicate)', array(
         '!label' => $payment_method->label(),
       )));
 

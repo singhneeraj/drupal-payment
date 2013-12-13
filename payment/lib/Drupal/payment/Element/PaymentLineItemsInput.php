@@ -32,7 +32,8 @@ class PaymentLineItemsInput {
     }
 
     static::initializeLineItemsData($element, $form_state);
-    $line_items = static::getLineItems($element, $form_state);
+    /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[] $line_items */
+    $line_items = array_values(static::getLineItems($element, $form_state));
 
     // Build the line items.
     $element['line_items'] = array(
@@ -43,7 +44,7 @@ class PaymentLineItemsInput {
       '#tree' => TRUE,
     );
 
-    foreach (array_values($line_items) as $delta => $line_item) {
+    foreach ($line_items as $delta => $line_item) {
       $element['line_items'][$line_item->getName()] = array(
         '#attributes' => array(
           'class' => array(
@@ -138,6 +139,7 @@ class PaymentLineItemsInput {
     $parents = array_slice($form_state['triggering_element']['#array_parents'], 0, -2);
     $root_element = NestedArray::getValue($form, $parents);
     $values = NestedArray::getValue($form_state['values'], array_slice($form_state['triggering_element']['#parents'], 0, -2));
+    /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface $line_item */
     $line_item = Payment::lineItemManager()
       ->createInstance($values['add_more']['type'])
       ->setName(static::createLineItemName($root_element, $form_state, $values['add_more']['type']));
@@ -166,6 +168,7 @@ class PaymentLineItemsInput {
   public static function deleteSubmit(array &$form, array &$form_state) {
     $root_element_parents  = array_slice($form_state['triggering_element']['#array_parents'], 0, -3);
     $root_element = NestedArray::getValue($form, $root_element_parents);
+    /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[] $line_items */
     $line_items = array_values(static::getLineItems($root_element, $form_state));
     $parents = $form_state['triggering_element']['#array_parents'];
     $line_item_name = $parents[count($parents) - 2];
@@ -200,12 +203,15 @@ class PaymentLineItemsInput {
    * @param array $form_state
    * @param string $name
    *   The preferred name.
+   *
+   * @return string
    */
   protected static function createLineItemName(array $element, array &$form_state, $name) {
     $counter = NULL;
     while (static::lineItemExists($element, $form_state, $name . $counter)) {
       $counter++;
     }
+
     return $name . $counter;
   }
 

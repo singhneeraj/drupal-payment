@@ -42,6 +42,7 @@ class PaymentStatusFormController extends EntityFormController {
    * {@inheritdoc}
    */
   public function form(array $form, array &$form_state) {
+    /** @var \Drupal\payment\Entity\PaymentStatusInterface $payment_status */
     $payment_status = $this->getEntity();
     $form['label'] = array(
       '#type' => 'textfield',

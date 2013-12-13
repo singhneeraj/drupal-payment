@@ -70,7 +70,7 @@ class Basic extends Base implements ContainerFactoryPluginInterface {
    * @param string $status
    *   The plugin ID of the payment status to set.
    *
-   * @return \Drupal\payment\Plugin\Payment\Method\Basic
+   * @return \Drupal\payment\Plugin\Payment\MethodConfiguration\Basic
    */
   public function setStatus($status) {
     $this->configuration['status'] = $status;

@@ -43,21 +43,23 @@ class PaymentMethodListController extends ConfigEntityListController {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['data']['label'] = $entity->label();
+    /** @var \Drupal\payment\Entity\PaymentMethodInterface $payment_method */
+    $payment_method = $entity;
+    $row['data']['label'] = $payment_method->label();
 
-    $plugin_definition = Payment::methodConfigurationManager()->getDefinition($entity->getPluginId());
+    $plugin_definition = Payment::methodConfigurationManager()->getDefinition($payment_method->getPluginId());
     $row['data']['plugin'] = $plugin_definition['label'];
 
-    $owner = entity_load('user', $entity->getOwnerId());
+    $owner = entity_load('user', $payment_method->getOwnerId());
     $uri = $owner->uri();
     $row['data']['owner'] = l($owner->label(), $uri['path'], $uri['options']);
 
-    $row['data']['status'] = $entity->status() ? t('Enabled') : t('Disabled');
+    $row['data']['status'] = $payment_method->status() ? t('Enabled') : t('Disabled');
 
     $operations = $this->buildOperations($entity);
     $row['data']['operations']['data'] = $operations;
 
-    if (!$entity->status()) {
+    if (!$payment_method->status()) {
       $row['class']= array('payment-method-disabled');
     }
 

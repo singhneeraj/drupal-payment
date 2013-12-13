@@ -8,7 +8,6 @@
 namespace Drupal\payment\Entity;
 
 use Drupal\Component\Uuid\UuidInterface;
-use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\Entity\ConfigStorageController;
 use Drupal\Core\Config\StorageInterface;

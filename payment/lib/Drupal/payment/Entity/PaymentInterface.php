@@ -80,7 +80,7 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
   /**
    * Gets all line items.
    *
-   * @return array
+   * @return \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[]
    */
   public function getLineItems();
 

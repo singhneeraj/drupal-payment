@@ -20,6 +20,7 @@ class PaymentMethodAccessController extends EntityAccessController {
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $payment_method, $operation, $langcode, AccountInterface $account) {
+    /** @var \Drupal\payment\Entity\PaymentMethodInterface $payment_method */
     if ($operation == 'enable') {
       return !$payment_method->status() && $payment_method->access('update', $account);
     }

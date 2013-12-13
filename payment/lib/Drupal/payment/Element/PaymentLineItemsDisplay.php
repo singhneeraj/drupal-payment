@@ -30,6 +30,7 @@ class PaymentLineItemsDisplay {
       '#type' => 'table',
     );
     foreach ($payment->getLineItems() as $line_item) {
+      /** @var \Drupal\currency\Entity\CurrencyInterface $currency */
       $currency = entity_load('currency', $line_item->getCurrencyCode());
       $element['table']['line_item_' . $line_item->getName()] = array(
         '#attributes' => array(

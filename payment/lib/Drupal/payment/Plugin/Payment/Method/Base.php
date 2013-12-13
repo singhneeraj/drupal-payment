@@ -8,13 +8,11 @@ namespace Drupal\payment\Plugin\Payment\Method;
 
 use Drupal\Core\Access\AccessInterface;
 use Drupal\Core\Plugin\PluginBase;
-use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Entity\PaymentMethodInterface as EntityPaymentMethodInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

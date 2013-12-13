@@ -48,9 +48,11 @@ class Generate {
     if (!$payment_method) {
       $payment_method = Payment::methodManager()->createInstance('payment_unavailable');
     }
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = entity_create('payment', array(
       'bundle' => 'payment_unavailable',
-    ))->setCurrencyCode('EUR')
+    ));
+    $payment->setCurrencyCode('EUR')
       ->setPaymentMethod($payment_method)
       ->setOwnerId($uid)
       ->setLineItems(static::createPaymentLineItems());
@@ -106,10 +108,11 @@ class Generate {
   static function createPaymentMethod($uid, $plugin_id) {
     $name = static::getRandom()->name();
 
+    /** @var \Drupal\payment\Entity\PaymentMethodInterface $payment_method */
     $payment_method = entity_create('payment_method', array(
       'pluginId' => $plugin_id,
-    ))
-      ->setId($name)
+    ));
+    $payment_method->setId($name)
       ->setLabel($name)
       ->setOwnerId($uid);
 

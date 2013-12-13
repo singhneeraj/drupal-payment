@@ -9,7 +9,6 @@ namespace Drupal\payment\Plugin\Payment\Method;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Entity\PaymentMethodInterface as EntityPaymentMethodInterface;
 
 /**
  * A payment method controller that essentially disables payment methods.

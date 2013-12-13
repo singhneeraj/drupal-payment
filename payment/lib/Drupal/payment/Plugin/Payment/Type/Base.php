@@ -9,7 +9,6 @@ namespace Drupal\payment\Plugin\Payment\Type;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

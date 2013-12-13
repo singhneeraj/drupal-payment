@@ -18,6 +18,7 @@ class PaymentViewBuilder extends EntityViewBuilder {
    * Overrides Drupal\Core\Entity\EntityRenderController::buildContent().
    */
   public function buildContent(array $entities, array $displays, $view_mode, $langcode = NULL) {
+    /** @var \Drupal\payment\Entity\PaymentInterface[] $entities */
     parent::buildContent($entities, $displays, $view_mode, $langcode);
 
     foreach ($entities as $payment) {

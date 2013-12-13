@@ -62,6 +62,7 @@ class Manager extends DefaultPluginManager {
    * @return string
    */
   public function getPluginClass($plugin_id) {
+    /** @var \Drupal\Core\Plugin\Factory\ContainerFactory $factory */
     $factory = $this->factory;
 
     return $factory::getPluginClass($plugin_id, $this->getDefinition($plugin_id));
