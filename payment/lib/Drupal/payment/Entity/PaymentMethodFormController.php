@@ -91,7 +91,9 @@ class PaymentMethodFormController extends EntityFormController {
   public function submit(array $form, array &$form_state) {
     parent::submit($form, $form_state);
     $values = $form_state['values'];
-    $this->entity->setLabel($values['label'])
+    /** @var \Drupal\payment\Entity\PaymentMethodInterface $payment_method */
+    $payment_method = $this->getEntity();
+    $payment_method->setLabel($values['label'])
       ->setStatus($values['status'])
       ->setOwnerId(user_load_by_name($values['owner'])->id());
   }
@@ -105,7 +107,9 @@ class PaymentMethodFormController extends EntityFormController {
     drupal_set_message(t('@label has been saved.', array(
       '@label' => $payment_method->label()
     )));
-    $form_state['redirect'] = 'admin/config/services/payment/method/configuration';
+    $form_state['redirect_route'] = array(
+      'route_name' => 'payment.payment_method.list',
+    );
   }
 
   /**

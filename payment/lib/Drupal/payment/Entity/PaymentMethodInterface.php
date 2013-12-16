@@ -68,7 +68,7 @@ interface PaymentMethodInterface extends ConfigEntityInterface {
    *
    * @param array $configuration
    *
-   * @return self
+   * @return static
    */
   public function setPluginConfiguration(array $configuration);
 

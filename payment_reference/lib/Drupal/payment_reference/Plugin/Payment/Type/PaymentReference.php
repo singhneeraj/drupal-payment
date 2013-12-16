@@ -125,7 +125,7 @@ class PaymentReference extends Base implements ContainerFactoryPluginInterface {
    *
    * @param string $field_instance_id
    *
-   * @return self
+   * @return static
    */
   public function setFieldInstanceId($field_instance_id) {
     $this->getPayment()->set('payment_reference_field_instance', $field_instance_id);

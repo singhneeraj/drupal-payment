@@ -48,6 +48,6 @@ class PaymentMethodDeleteFormController extends EntityConfirmFormBase {
     drupal_set_message(t('%label has been deleted.', array(
       '%label' => $payment_method->label(),
     )));
-    $form_state['redirect'] = $this->getCancelRoute();
+    $form_state['redirect_route'] = $this->getCancelRoute();
   }
 }

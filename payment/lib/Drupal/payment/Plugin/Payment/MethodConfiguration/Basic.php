@@ -135,7 +135,7 @@ class Basic extends Base implements ContainerFactoryPluginInterface {
    *
    * @param string $label
    *
-   * @return self
+   * @return static
    */
   public function setBrandLabel($label) {
     $this->configuration['brand_label'] = $label;

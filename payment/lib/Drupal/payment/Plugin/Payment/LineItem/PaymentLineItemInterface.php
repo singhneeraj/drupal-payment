@@ -19,7 +19,7 @@ interface PaymentLineItemInterface extends PluginInspectionInterface, Configurab
    *
    * @param int $payment_id
    *
-   * @return self
+   * @return static
    */
   public function setPaymentId($payment_id);
 
@@ -35,7 +35,7 @@ interface PaymentLineItemInterface extends PluginInspectionInterface, Configurab
    *
    * @param float $amount
    *
-   * @return self
+   * @return static
    */
   public function setAmount($amount);
 
@@ -58,7 +58,7 @@ interface PaymentLineItemInterface extends PluginInspectionInterface, Configurab
    *
    * @param string $name
    *
-   * @return self
+   * @return static
    */
   public function setName($name);
 
@@ -81,7 +81,7 @@ interface PaymentLineItemInterface extends PluginInspectionInterface, Configurab
    *
    * @param string $currency_code
    *
-   * @return self
+   * @return static
    */
   public function setCurrencyCode($currency_code);
 
@@ -97,7 +97,7 @@ interface PaymentLineItemInterface extends PluginInspectionInterface, Configurab
    *
    * @param int $quantity
    *
-   * @return self
+   * @return static
    */
   public function setQuantity($quantity);
 

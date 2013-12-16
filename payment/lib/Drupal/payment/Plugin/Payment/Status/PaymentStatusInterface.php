@@ -20,7 +20,7 @@ interface PaymentStatusInterface extends PluginInspectionInterface, Configurable
    * @param string $created
    *   A Unix timestamp.
    * *
-   * @return self
+   * @return static
    */
   public function setCreated($created);
 
@@ -37,7 +37,7 @@ interface PaymentStatusInterface extends PluginInspectionInterface, Configurable
    *
    * @param int $id
    *
-   * @return self
+   * @return static
    */
   public function setPaymentId($id);
 
@@ -53,7 +53,7 @@ interface PaymentStatusInterface extends PluginInspectionInterface, Configurable
    *
    * @param int $id
    * *
-   * @return self
+   * @return static
    */
   public function setId($id);
 

@@ -110,9 +110,9 @@ class PaymentReferenceUi extends ControllerBase implements ContainerInjectionInt
     // Only grant access if the current user does not already have payments
     // available for this instance, and he has the permission to create them.
     if ($access_controller->createAccess('payment_reference') && empty($payment_ids)) {
-      return self::ALLOW;
+      return static::ALLOW;
     }
-    return self::DENY;
+    return static::DENY;
   }
 
   /**

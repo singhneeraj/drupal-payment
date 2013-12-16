@@ -85,7 +85,9 @@ class PaymentStatusFormController extends EntityFormController {
   public function submit(array $form, array &$form_state) {
     parent::submit($form, $form_state);
     $values = $form_state['values'];
-    $this->getEntity()->setId($values['id'])
+    /** @var \Drupal\payment\Entity\PaymentStatusInterface $status */
+    $status = $this->getEntity();
+    $status->setId($values['id'])
       ->setLabel($values['label'])
       ->setParentId($values['parent_id'])
       ->setDescription($values['description']);
@@ -100,7 +102,9 @@ class PaymentStatusFormController extends EntityFormController {
     drupal_set_message(t('@label has been saved.', array(
       '@label' => $payment_status->label()
     )));
-    $form_state['redirect'] = 'admin/config/services/payment/status';
+    $form_state['redirect_route'] = array(
+      'route_name' => 'payment.payment_method.list',
+    );
   }
 
   /**

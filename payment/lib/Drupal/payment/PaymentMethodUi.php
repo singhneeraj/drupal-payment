@@ -216,10 +216,10 @@ class PaymentMethodUi extends ControllerBase implements AccessInterface, Contain
     $access_controller = $this->entityManager->getAccessController('payment_method');
     foreach (array_keys($definitions) as $plugin_id) {
       if ($access_controller->createAccess($plugin_id, $this->currentUser)) {
-        return self::ALLOW;
+        return static::ALLOW;
       }
     }
-    return self::DENY;
+    return static::DENY;
   }
 
   /**

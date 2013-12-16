@@ -50,6 +50,8 @@ class PaymentDeleteFormController extends ContentEntityConfirmFormBase {
     drupal_set_message(t('%label has been deleted.', array(
       '%label' => $this->getEntity()->label(),
     )));
-    $form_state['redirect'] = '<front>';
+    $form_state['redirect_route'] = array(
+      'route_name' => '<front>',
+    );
   }
 }

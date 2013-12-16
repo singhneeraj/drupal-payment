@@ -73,7 +73,7 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
    * @param string $name
    *   The line item's name.
    *
-   * @return self
+   * @return static
    */
   public function unsetLineItem($name);
 
@@ -151,7 +151,7 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
    *
    * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
    *
-   * @return self
+   * @return static
    */
   public function setPaymentMethod(PluginPaymentMethodInterface $payment_method);
 

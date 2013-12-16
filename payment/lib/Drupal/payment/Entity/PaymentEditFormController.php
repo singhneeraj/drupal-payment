@@ -66,7 +66,12 @@ class PaymentEditFormController extends EntityFormController {
     $payment = $this->getEntity();
     $payment->save();
     $uri = $payment->uri();
-    $form_state['redirect'] = $uri['path'];
+    $form_state['redirect_route'] = array(
+      'route_name' => 'payment.payment.view',
+      'route_parameters' => array(
+        'payment' => $payment->id(),
+      ),
+    );
   }
 
   /**

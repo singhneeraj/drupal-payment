@@ -53,6 +53,8 @@ class PaymentLineItemPaymentBasicFormElements implements ContainerInjectionInter
    * {@inheritdoc}
    */
   public function submitForm(array &$form, array &$form_state) {
-    $form_state['redirect'] = 'user';
+    $form_state['redirect_route'] = array(
+      'route_name' => 'user.page',
+    );
   }
 }

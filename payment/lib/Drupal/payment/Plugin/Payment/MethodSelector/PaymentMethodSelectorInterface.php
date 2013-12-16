@@ -45,14 +45,14 @@ interface PaymentMethodSelectorInterface extends PluginInspectionInterface, Conf
    * @param array
    *   An array of payment method plugin IDs.
    *
-   * @return self
+   * @return static
    */
   public function setAllowedPaymentMethods(array $payment_method_plugin_ids);
 
   /**
    * Resets which payment method plugins are allowed to be selected.
    *
-   * @return self
+   * @return static
    */
   public function resetAllowedPaymentMethods();
 

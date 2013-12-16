@@ -20,7 +20,7 @@ interface PaymentTypeInterface extends PluginInspectionInterface, ConfigurablePl
    *
    * @param \Drupal\payment\Entity\PaymentInterface $payment
    *
-   * @return self
+   * @return static
    */
   public function setPayment(PaymentInterface $payment);
 
