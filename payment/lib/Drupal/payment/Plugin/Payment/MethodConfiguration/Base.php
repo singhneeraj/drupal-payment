@@ -127,7 +127,7 @@ abstract class Base extends PluginBase implements PaymentMethodConfigurationInte
   }
 
   /**
-   * Implements form validate callback for self::paymentMethodFormElements().
+   * Implements form validate callback for self::formElements().
    */
   public function formElementsValidate(array $element, array &$form_state, array $form) {
     $values = NestedArray::getValue($form_state['values'], $element['#parents']);
