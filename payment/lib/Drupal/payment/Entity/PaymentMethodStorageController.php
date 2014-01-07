@@ -11,6 +11,7 @@ use Drupal\Core\Config\Entity\ConfigStorageController;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\payment\Plugin\Payment\Method\Manager;
@@ -31,10 +32,8 @@ class PaymentMethodStorageController extends ConfigStorageController {
   /**
    * Constructor.
    *
-   * @param string $entity_type
-   *   The entity type for which the instance is created.
-   * @param array $entity_info
-   *   An array of entity info for the entity type.
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_info
+   *   The entity type.
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
    *   The config factory service.
    * @param \Drupal\Core\Config\StorageInterface $config_storage
@@ -45,17 +44,16 @@ class PaymentMethodStorageController extends ConfigStorageController {
    *   The UUID service.
    * @param \Drupal\payment\Plugin\Payment\Method\Manager $payment_method_manager
    */
-  public function __construct($entity_type, array $entity_info, ConfigFactory $config_factory, StorageInterface $config_storage, QueryFactory $entity_query_factory, UuidInterface $uuid_service, Manager $payment_method_manager) {
-    parent::__construct($entity_type, $entity_info, $config_factory, $config_storage, $entity_query_factory, $uuid_service);
+  public function __construct(EntityTypeInterface $entity_info, ConfigFactory $config_factory, StorageInterface $config_storage, QueryFactory $entity_query_factory, UuidInterface $uuid_service, Manager $payment_method_manager) {
+    parent::__construct($entity_info, $config_factory, $config_storage, $entity_query_factory, $uuid_service);
     $this->paymentMethodManager = $payment_method_manager;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function createInstance(ContainerInterface $container, $entity_type, array $entity_info) {
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_info) {
     return new static(
-      $entity_type,
       $entity_info,
       $container->get('config.factory'),
       $container->get('config.storage'),

@@ -17,16 +17,6 @@ use Drupal\payment\Payment;
 class PaymentMethodListController extends ConfigEntityListController {
 
   /**
-   * Overrides Drupal\Core\Entity\EntityListController::load().
-   */
-  public function load() {
-    $entities = parent::load();
-    uasort($entities, array($this->entityInfo['class'], 'sort'));
-
-    return $entities;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function buildHeader() {
