@@ -7,9 +7,9 @@
 namespace Drupal\payment_form\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\ConfigFieldItemBase;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\currency\Entity\Currency;
-use Drupal\field\FieldInterface;
 
 /**
  * Defines a payment form field.
@@ -53,7 +53,7 @@ class PaymentForm extends ConfigFieldItemBase {
   /**
    * {@inheritdoc}
    */
-  public static function schema(FieldInterface $field) {
+  public static function schema(FieldDefinitionInterface $field_definition) {
     $schema = array(
       'columns' => array(
         'plugin_configuration' => array(

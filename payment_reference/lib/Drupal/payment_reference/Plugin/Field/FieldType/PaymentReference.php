@@ -10,8 +10,8 @@ namespace Drupal\payment_reference\Plugin\Field\FieldType;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Field\ConfigEntityReferenceItemBase;
 use Drupal\Core\Field\ConfigFieldItemInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\currency\Entity\Currency;
-use Drupal\field\FieldInterface;
 use Drupal\payment\Element\PaymentLineItemsInput;
 
 /**
@@ -40,7 +40,7 @@ class PaymentReference extends ConfigEntityReferenceItemBase implements ConfigFi
   /**
    * {@inheritdoc}
    */
-  public static function schema(FieldInterface $field) {
+  public static function schema(FieldDefinitionInterface $field_definition) {
     return array(
       'columns' => array(
         'target_id' => array(
