@@ -34,8 +34,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "canonical" = "payment.payment_status.edit",
  *     "create-form" = "payment.payment_status.add",
  *     "edit-form" = "payment.payment_status.edit"
- *   },
- *   module = "payment"
+ *   }
  * )
  */
 class PaymentStatus extends ConfigEntityBase implements PaymentStatusInterface {

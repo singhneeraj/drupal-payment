@@ -38,7 +38,7 @@ payment.payment.delete:
 payment.payment_method_plugin.list:
   path: '/admin/config/services/payment/method'
   defaults:
-    _controller: '\Drupal\payment\PaymentMethodUi::listPlugins'
+    _content: '\Drupal\payment\PaymentMethodUi::listPlugins'
     _title: 'Payment methods'
   requirements:
     _permission: 'payment.payment_method.view.any'
@@ -54,14 +54,14 @@ payment.payment_method.list:
 payment.payment_method.select:
   path: '/admin/config/services/payment/method/configuration-add'
   defaults:
-    _controller: '\Drupal\payment\PaymentMethodUi::select'
+    _content: '\Drupal\payment\PaymentMethodUi::select'
   requirements:
     _custom_access: '\Drupal\payment\PaymentMethodUi::selectAccess'
 
 payment.payment_method.add:
   path: '/admin/config/services/payment/method/configuration-add/{plugin_id}'
   defaults:
-    _controller: '\Drupal\payment\PaymentMethodUi::add'
+    _content: '\Drupal\payment\PaymentMethodUi::add'
     _title: 'Add a payment method'
   requirements:
     _custom_access: '\Drupal\payment\PaymentMethodUi::addAccess'
@@ -77,14 +77,14 @@ payment.payment_method.edit:
 payment.payment_method.enable:
   path: '/admin/config/services/payment/method/configuration/{payment_method}/enable'
   defaults:
-    _controller: '\Drupal\payment\PaymentMethodUi::enable'
+    _content: '\Drupal\payment\PaymentMethodUi::enable'
   requirements:
     _entity_access: 'payment_method.enable'
 
 payment.payment_method.disable:
   path: '/admin/config/services/payment/method/configuration/{payment_method}/disable'
   defaults:
-    _controller: '\Drupal\payment\PaymentMethodUi::disable'
+    _content: '\Drupal\payment\PaymentMethodUi::disable'
   requirements:
     _entity_access: 'payment_method.disable'
 
@@ -98,7 +98,7 @@ payment.payment_method.delete:
 payment.payment_method.duplicate:
   path: '/admin/config/services/payment/method/configuration/{payment_method}/duplicate'
   defaults:
-    _controller: '\Drupal\payment\PaymentMethodUi::duplicate'
+    _content: '\Drupal\payment\PaymentMethodUi::duplicate'
     _title: 'Add a payment method'
   requirements:
     _entity_access: 'payment_method.duplicate'
@@ -106,14 +106,14 @@ payment.payment_method.duplicate:
 payment.payment_status.list:
   path: '/admin/config/services/payment/status'
   defaults:
-    _controller: '\Drupal\payment\PaymentStatusUI::listing'
+    _content: '\Drupal\payment\PaymentStatusUI::listing'
   requirements:
     _permission: 'payment.payment_status.administer'
 
 payment.payment_status.add:
   path: '/admin/config/services/payment/status/add'
   defaults:
-    _controller: '\Drupal\payment\PaymentStatusUI::add'
+    _content: '\Drupal\payment\PaymentStatusUI::add'
     _title: 'Add a payment status'
   requirements:
     _permission: 'payment.payment_status.administer'
@@ -136,13 +136,13 @@ payment.payment_status.delete:
 payment.payment_type.list:
   path: '/admin/config/services/payment/type'
   defaults:
-    _controller: '\Drupal\payment\PaymentTypeUI::listing'
+    _content: '\Drupal\payment\PaymentTypeUI::listing'
   requirements:
     _permission: 'payment.payment_type.administer'
 
 payment.payment_type:
   path: '/admin/config/services/payment/type/{bundle}'
   defaults:
-    _controller: '\Drupal\payment\PaymentTypeUi::configure'
+    _content: '\Drupal\payment\PaymentTypeUi::configure'
   requirements:
     _permission: 'payment.payment_type.administer'

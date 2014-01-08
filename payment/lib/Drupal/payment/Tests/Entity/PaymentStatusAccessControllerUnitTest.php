@@ -18,7 +18,7 @@ class PaymentStatusAccessControllerUnitTest extends AccessibleInterfaceUnitTestB
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('field', 'payment', 'system', 'user');
+  public static $modules = array('currency', 'field', 'payment', 'system', 'user');
 
   /**
    * {@inheritdoc}

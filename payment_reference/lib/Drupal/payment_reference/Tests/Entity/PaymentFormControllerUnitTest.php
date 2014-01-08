@@ -105,6 +105,10 @@ class PaymentFormControllerUnitTest extends UnitTestCase {
     $this->payment->expects($this->any())
       ->method('getPaymentType')
       ->will($this->returnValue($payment_type));
+    $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
+    $this->payment->expects($this->any())
+      ->method('entityInfo')
+      ->will($this->returnValue($entity_type));
 
     $form = array(
       'langcode' => array(),

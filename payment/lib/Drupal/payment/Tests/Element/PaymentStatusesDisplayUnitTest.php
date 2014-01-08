@@ -19,7 +19,7 @@ class PaymentStatusesDisplayUnitTest extends DrupalUnitTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('field', 'payment', 'system');
+  public static $modules = array('currency', 'field', 'payment', 'system', 'user');
 
   /**
    * {@inheritdoc}

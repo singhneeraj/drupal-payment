@@ -104,7 +104,7 @@ class Basic extends Base implements ContainerFactoryPluginInterface {
     $elements['status'] = array(
       '#type' => 'select',
       '#title' => $this->t('Final payment status'),
-      '#description' => $this->t('The status to give a payment after being processed by this payment method.'),
+      '#description' => $this->t('The status to set payments to after being processed by this payment method.'),
       '#default_value' => $this->getStatus() ? $this->getStatus() : 'payment_success',
       '#options' => $this->paymentStatusManager->options(),
     );

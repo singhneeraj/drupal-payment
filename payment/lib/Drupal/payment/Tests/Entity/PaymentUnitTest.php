@@ -36,7 +36,7 @@ class PaymentUnitTest extends DrupalUnitTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('field', 'payment', 'payment_test', 'system');
+  public static $modules = array('currency', 'field', 'payment', 'payment_test', 'system', 'user');
 
   /**
    * The payment under test.

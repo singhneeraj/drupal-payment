@@ -39,7 +39,11 @@ class PaymentLineItemsInput {
     $element['line_items'] = array(
       '#empty' => t('There are no line items yet.'),
       '#header' => array(t('Line item'), t('Weight'), t('Operations')),
-      '#tabledrag' => array(array('order', 'self', 'payment-line-item-weight')),
+      '#tabledrag' => array(array(
+        'action' => 'order',
+        'relationship' => 'self',
+        'group' => 'payment-line-item-weight',
+      )),
       '#type' => 'table',
       '#tree' => TRUE,
     );

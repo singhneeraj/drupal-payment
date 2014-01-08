@@ -39,8 +39,7 @@ use Drupal\Core\Entity\EntityStorageControllerInterface;
  *     "canonical" = "payment.payment_method.edit",
  *     "create-form" = "payment.payment_method.select",
  *     "edit-form" = "payment.payment_method.edit"
- *   },
- *   module = "payment"
+ *   }
  * )
  */
 class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {

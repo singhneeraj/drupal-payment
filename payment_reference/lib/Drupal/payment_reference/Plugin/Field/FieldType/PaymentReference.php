@@ -8,10 +8,10 @@
 namespace Drupal\payment_reference\Plugin\Field\FieldType;
 
 use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\TypedData\DataDefinitionInterface;
-use Drupal\Core\TypedData\TypedDataInterface;
+use Drupal\Core\Field\ConfigEntityReferenceItemBase;
+use Drupal\Core\Field\ConfigFieldItemInterface;
 use Drupal\currency\Entity\Currency;
-use Drupal\entity_reference\ConfigurableEntityReferenceItem;
+use Drupal\field\FieldInterface;
 use Drupal\payment\Element\PaymentLineItemsInput;
 
 /**
@@ -35,25 +35,41 @@ use Drupal\payment\Element\PaymentLineItemsInput;
  *   list_class = "\Drupal\payment_reference\Plugin\Field\FieldType\PaymentReferenceItemList"
  * )
  */
-class PaymentReference extends ConfigurableEntityReferenceItem {
-
-  /**
-   * The payment queue.
-   *
-   * @var \Drupal\payment\QueueInterface
-   */
-  protected $queue;
+class PaymentReference extends ConfigEntityReferenceItemBase implements ConfigFieldItemInterface {
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(DataDefinitionInterface $definition, $name = NULL, TypedDataInterface $parent = NULL) {
-    // Merge in fixed settings.
-    $definition['settings'] = array(
-      'target_bundle' => 'payment_reference',
-      'target_type' => 'payment',
+  public static function schema(FieldInterface $field) {
+    return array(
+      'columns' => array(
+        'target_id' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => FALSE,
+        ),
+      ),
+      'indexes' => array(
+        'target_id' => array('target_id'),
+      ),
+      'foreign keys' => array(
+        'target_id' => array(
+          'table' => 'payment',
+          'columns' => array(
+            'target_id' => 'id',
+          ),
+        ),
+      ),
     );
-    parent::__construct($definition, $name, $parent);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPropertyDefinitions() {
+    $this->definition['settings']['target_type'] = 'payment';
+
+    return parent::getPropertyDefinitions();
   }
 
   /**

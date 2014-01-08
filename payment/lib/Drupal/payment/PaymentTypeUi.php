@@ -101,6 +101,7 @@ class PaymentTypeUi extends ControllerBase implements ContainerInjectionInterfac
     $definitions = $this->paymentTypeManager->getDefinitions();
     unset($definitions['payment_unavailable']);
     foreach ($definitions as $plugin_id => $definition) {
+      /** @var \Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface $class */
       $class = $definition['class'];
       $operations = $class::getOperations($plugin_id);
 

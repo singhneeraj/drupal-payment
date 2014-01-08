@@ -5,13 +5,11 @@
  *   Hook implementations and general functions.
  */
 
-use Drupal\field\Field;
-use Drupal\field\FieldInterface;
-use Drupal\payment\Payment;
-
 /**
  * Implements hook_entity_info_alter().
  */
 function payment_form_entity_info_alter(&$entity_info) {
-  $entity_info['payment']['controllers']['form']['payment_form'] = 'Drupal\payment_form\Entity\PaymentFormController';
+  /** @var \Drupal\Core\Entity\EntityTypeInterface $info */
+  $info = $entity_info['payment'];
+  $info->setForm('payment_form', 'Drupal\payment_form\Entity\PaymentFormController');
 }

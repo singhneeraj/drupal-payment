@@ -43,8 +43,7 @@ use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface as PluginPayment
  *     "admin-form" = "payment.payment_type",
  *     "canonical" = "payment.payment.view",
  *     "edit-form" = "payment.payment.edit"
- *   },
- *   module = "payment"
+ *   }
  * )
  */
 class Payment extends ContentEntityBase implements PaymentInterface {
