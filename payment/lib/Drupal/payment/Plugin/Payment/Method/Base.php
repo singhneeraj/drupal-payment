@@ -209,7 +209,7 @@ abstract class Base extends PluginBase implements AccessInterface, ContainerFact
    * @return bool
    */
   protected function paymentExecuteAccessEvent(PaymentInterface $payment, AccountInterface $account) {
-    $access = $this->moduleHandler->invokeAll('payment_execute_access', $payment, $this, $account);
+    $access = $this->moduleHandler->invokeAll('payment_execute_access', array($payment, $this, $account));
 
     // If there are no results, grant access.
     return empty($access) || in_array(self::ALLOW, $access, TRUE) && !in_array(self::KILL, $access, TRUE);

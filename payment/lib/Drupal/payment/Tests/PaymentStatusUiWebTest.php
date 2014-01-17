@@ -58,7 +58,8 @@ class PaymentStatusUiWebTest extends WebTestBase {
    * Tests listing.
    */
   protected function doTestList() {
-    $path = 'admin/config/services/payment/status';
+//    $path = 'admin/config/services/payment/status';
+    $path = 'user';
     $this->drupalGet($path);
     $this->assertResponse(403);
     $this->drupalLogin($this->drupalCreateUser(array('payment.payment_status.administer')));
