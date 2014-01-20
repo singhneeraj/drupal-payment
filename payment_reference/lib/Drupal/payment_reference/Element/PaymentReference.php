@@ -8,7 +8,6 @@
 namespace Drupal\payment_reference\Element;
 
 use Drupal\payment\Payment;
-use Drupal\payment\plugin\Payment\LineItem\PaymentLineItemInterface;
 use Drupal\payment_reference\PaymentReference as PaymentReferenceServiceWrapper;
 
 
@@ -72,9 +71,10 @@ class PaymentReference {
         $line_item = Payment::lineItemManager()->createInstance($line_item_data['plugin_id'], $line_item_data['plugin_configuration']);
         $amount += $line_item->getTotalAmount();
       }
+      /** @var \Drupal\currency\Entity\CurrencyInterface $currency */
       $currency = entity_load('currency', $element['#payment_currency_code']);
       $element['payment'][0]['amount'] = array(
-        '#markup' => $currency->format($amount),
+        '#markup' => $currency->formatAmount($amount),
       );
       $element['payment'][0]['add'] = array(
         '#attributes' => array(
@@ -88,12 +88,14 @@ class PaymentReference {
       );
     }
     else {
+      /** @var \Drupal\payment\Entity\PaymentInterface $payment */
       $payment = entity_load('payment', $pid);
+      /** @var \Drupal\currency\Entity\CurrencyInterface $currency */
       $currency = entity_load('currency', $payment->getCurrencyCode());
       $status = $payment->getStatus();
       $status_definition = $status->getPluginDefinition();
       $element['payment'][0]['amount'] = array(
-        '#markup' => $currency->format($payment->getAmount()),
+        '#markup' => $currency->formatAmount($payment->getAmount()),
       );
       $element['payment'][0]['status'] = array(
         '#markup' => $status_definition['label'],

@@ -118,23 +118,31 @@ class PaymentTypeUi extends ControllerBase implements ContainerInjectionInterfac
 
       // Add Field UI operations.
       if ($this->moduleHandler->moduleExists('field_ui')) {
-        $admin_path = $this->entityManager->getAdminPath('payment', $plugin_id);
         if ($this->currentUser->hasPermission('administer payment fields')) {
           $operations['manage-fields'] = array(
             'title' => t('Manage fields'),
-            'href' => $admin_path . '/fields',
+            'route_name' => 'field_ui.overview_payment',
+            'route_parameters' => array(
+              'bundle' => $plugin_id,
+            ),
           );
         }
         if ($this->currentUser->hasPermission('administer payment form display')) {
           $operations['manage-form-display'] = array(
             'title' => t('Manage form display'),
-            'href' => $admin_path . '/form-display',
+            'route_name' => 'field_ui.form_display_overview_payment',
+            'route_parameters' => array(
+              'bundle' => $plugin_id,
+            ),
           );
         }
         if ($this->currentUser->hasPermission('administer payment display')) {
           $operations['manage-display'] = array(
             'title' => t('Manage display'),
-            'href' => $admin_path . '/display',
+            'route_name' => 'field_ui.display_overview_payment',
+            'route_parameters' => array(
+              'bundle' => $plugin_id,
+            ),
           );
         }
       }
