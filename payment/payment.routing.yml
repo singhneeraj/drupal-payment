@@ -2,6 +2,7 @@ payment.admin:
   path: '/admin/config/services/payment'
   defaults:
     _content: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: Payment
   requirements:
     _permission: 'access administration pages'
 

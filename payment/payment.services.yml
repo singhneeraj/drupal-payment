@@ -17,3 +17,18 @@ services:
   plugin.manager.payment.status:
     class: Drupal\payment\Plugin\Payment\Status\Manager
     arguments: ['@container.namespaces', '@cache.cache', '@language_manager', '@module_handler']
+  payment.hook.element_info:
+    class: Drupal\payment\Hook\ElementInfo
+  payment.hook.menu:
+    class: Drupal\payment\Hook\Menu
+  payment.hook.permission:
+    class: Drupal\payment\Hook\Permission
+    arguments: ['@string_translation', '@plugin.manager.payment.method_configuration']
+  payment.hook.field_extra_fields:
+    class: Drupal\payment\Hook\FieldExtraFields
+    arguments: ['@string_translation', '@plugin.manager.payment.type']
+  payment.hook.hook_info:
+    class: Drupal\payment\Hook\HookInfo
+  payment.hook.entity_bundle_info:
+    class: Drupal\payment\Hook\EntityBundleInfo
+    arguments: ['@plugin.manager.payment.type', '@plugin.manager.payment.method_configuration']

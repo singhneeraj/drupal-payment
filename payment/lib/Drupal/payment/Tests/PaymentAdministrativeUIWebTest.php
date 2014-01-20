@@ -39,6 +39,7 @@ class PaymentAdministrativeUIWebTest extends WebTestBase {
     $this->drupalGet('admin/config/services/payment');
     $this->assertResponse('403');
     $this->drupalLogin($this->drupalCreateUser(array('access administration pages')));
+    $this->drupalGet('admin/config');
     $this->drupalGet('admin/config/services');
     $this->assertLink('Payment');
     $this->drupalGet('admin/config/services/payment');

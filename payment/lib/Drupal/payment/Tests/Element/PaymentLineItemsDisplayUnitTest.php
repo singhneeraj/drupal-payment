@@ -48,7 +48,7 @@ class PaymentLineItemsDisplayUnitTest extends DrupalUnitTestBase {
       '#type' => 'payment_line_items_display',
     );
     $output = drupal_render($element);
-    $strings = array('<table', t('Total amount'), t('Quantity'), 'payment-line-item-name-foo', 'payment-line-item-plugin-payment_basic', 'ƒ9.90');
+    $strings = array('<table', t('Total amount'), t('Quantity'), 'payment-line-item-name-foo', 'payment-line-item-plugin-payment_basic', 'NLG 9.90');
     foreach ($strings as $string) {
       $this->assertNotIdentical(strpos($output, $string), FALSE);
     }

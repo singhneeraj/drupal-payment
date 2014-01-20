@@ -2,52 +2,14 @@
 
 /**
  * @file
- * Hook implementations and shared functions.
+ * Contains hook implementations.
  */
-
-use Drupal\payment\Element\PaymentLineItemsInput;
-use Drupal\payment\Payment;
 
 /**
  * Implements hook_menu().
- *
- * @see payment_views_default_views()
  */
 function payment_menu() {
-  // Administration section.
-  $items['admin/config/services/payment'] = array(
-    'route_name' => 'payment.admin',
-    'title' => 'Payment',
-  );
-
-  // Payments.
-  $items['admin/content/payments'] = array(
-    'route_name' => 'payment.payment.admin_list',
-    'title' => 'Payments',
-  );
-
-  // Payment types.
-  $items['admin/config/services/payment/type'] = array(
-    'title' => 'Payment types',
-    'route_name' => 'payment.payment_type.list',
-  );
-
-  // Payment methods.
-  $items['admin/config/services/payment/method'] = array(
-    'route_name' => 'payment.payment_method_plugin.list',
-    'title' => 'Payment methods',
-  );
-  $items['admin/config/services/payment/method/configuration/%'] = array(
-    'route_name' => 'payment.payment_method.edit',
-  );
-
-  // Payment status overview.
-  $items['admin/config/services/payment/status'] = array(
-    'route_name' => 'payment.payment_status.list',
-    'title' => 'Payment statuses',
-  );
-
-  return $items;
+  return \Drupal::service('payment.hook.menu')->invoke();
 }
 
 /**
@@ -67,205 +29,33 @@ function payment_admin_paths() {
  * @see \Drupal\payment\PaymentMethodAccessController
  */
 function payment_permission() {
-  $permissions = array(
-    'payment.payment.view.any' => array(
-      'title' => t('View any payment'),
-    ),
-    'payment.payment.view.own' => array(
-      'title' => t('View own payments'),
-    ),
-    'payment.payment.update.any' => array(
-      'title' => t('Update any payment'),
-    ),
-    'payment.payment.update.own' => array(
-      'title' => t('Update own payments'),
-    ),
-    'payment.payment.delete.any' => array(
-      'title' => t('Delete any payment'),
-    ),
-    'payment.payment.delete.own' => array(
-      'title' => t('Delete own payments'),
-    ),
-    'payment.payment_method.update.any' => array(
-      'title' => t('Update any payment method'),
-      'restrict access' => TRUE,
-    ),
-    'payment.payment_method.update.own' => array(
-      'title' => t('Update own payment methods'),
-    ),
-    'payment.payment_method.delete.any' => array(
-      'title' => t('Delete any payment method'),
-    ),
-    'payment.payment_method.delete.own' => array(
-      'title' => t('Delete own payment methods'),
-    ),
-    'payment.payment_method.view.any' => array(
-      'title' => t('View any payment method'),
-      'restrict access' => TRUE,
-    ),
-    'payment.payment_method.view.own' => array(
-      'title' => t('View own payment methods'),
-    ),
-    'payment.payment_status.administer' => array(
-      'title' => t('Administer payment statuses'),
-    ),
-    'payment.payment_type.administer' => array(
-      'title' => t('Administer payment types'),
-    ),
-  );
-  $definitions = Payment::methodConfigurationManager()->getDefinitions();
-  unset($definitions['payment_unavailable']);
-  foreach ($definitions as $plugin_id => $definition) {
-    $permissions['payment.payment_method.create.' . $plugin_id] = array(
-      'title' => t('Create %plugin_label payment methods', array(
-        '%plugin_label' => $definition['label'],
-      )),
-    );
-  }
-
-  return $permissions;
+  return \Drupal::service('payment.hook.permission')->invoke();
 }
 
 /**
  * Implements hook_hook_info().
  */
 function payment_hook_info() {
-  $hooks['payment_type_alter'] = array(
-    'group' => 'payment',
-  );
-  $hooks['payment_line_item_alter'] = array(
-    'group' => 'payment',
-  );
-  $hooks['payment_method_alter'] = array(
-    'group' => 'payment',
-  );
-  $hooks['payment_operation_access'] = array(
-    'group' => 'payment',
-  );
-  $hooks['payment_pre_operation'] = array(
-    'group' => 'payment',
-  );
-  $hooks['payment_type_pre_resume_context'] = array(
-    'group' => 'payment',
-  );
-  $hooks['payment_status_alter'] = array(
-    'group' => 'payment',
-  );
-  $hooks['payment_status_set'] = array(
-    'group' => 'payment',
-  );
-
-  return $hooks;
+  return \Drupal::service('payment.hook.hook_info')->invoke();
 }
 
 /**
  * Implements hook_field_extra_fields().
  */
 function payment_field_extra_fields() {
-  $fields = array();
-  foreach (array_keys(Payment::typeManager()->getDefinitions()) as $plugin_id) {
-    $fields['payment'][$plugin_id] = array(
-      'form' => array(
-        'payment_line_items' => array(
-          'label' => t('Line items'),
-          'weight' => 0,
-        ),
-        'payment_method' => array(
-          'label' => t('Payment method selection and configuration'),
-          'weight' => 0,
-        ),
-        'payment_status' => array(
-          'label' => t('Status'),
-          'weight' => 0,
-        ),
-      ),
-      'display' => array(
-        'method' => array(
-          'label' => t('Payment method label'),
-          'weight' => 0,
-        ),
-        'line_items' => array(
-          'label' => t('Line items'),
-          'weight' => 0,
-        ),
-        'statuses' => array(
-          'label' => t('Status items'),
-          'weight' => 0,
-        ),
-        'links' => array(
-          'label' => t('Links'),
-          'weight' => 0,
-        ),
-      ),
-    );
-  }
-
-  return $fields;
+  return \Drupal::service('payment.hook.field_extra_fields')->invoke();
 }
 
 /**
  * Implements hook_element_info().
  */
 function payment_element_info() {
-  // Line item configuration. Use
-  // \Drupal\payment\Element\PaymentLineItemsInput::getLineItemsData() to get
-  // the 'return' value.
-  $elements['payment_line_items_input'] = array(
-    '#attached' => array(
-      'css' => array(drupal_get_path('module', 'payment') . '/css/payment.css'),
-    ),
-    // The number of values this element allows, which must be at least as many
-    // as the number of line items in the default value. For unlimited values,
-    // use \Drupal\payment\Element\PaymentLineItemsInput::CARDINALITY_UNLIMITED.
-    '#cardinality' => PaymentLineItemsInput::CARDINALITY_UNLIMITED,
-    // Values are arrays with two keys:
-    // - plugin_id: the ID of the line item plugin instance.
-    // - plugin_configuration: the configuration of the line item plugin
-    //   instance.
-    '#default_value' => array(),
-    '#element_validate' => array(array('\Drupal\payment\Element\PaymentLineItemsInput', 'validate')),
-    '#input' => TRUE,
-    '#process' => array('form_process_container', array('\Drupal\payment\Element\PaymentLineItemsInput', 'process')),
-    '#tree' => TRUE,
-    '#theme_wrappers' => array('container'),
-    '#value' => array(),
-  );
-
-  // Line item display.
-  $elements['payment_line_items_display'] = array(
-    // A \Drupal\payment\Entity\PaymentInterface object (required).
-    '#payment' => NULL,
-    '#pre_render' => array(array('\Drupal\payment\Element\PaymentLineItemsDisplay', 'preRender')),
-  );
-
-  // Payment statuses display.
-  $elements['payment_statuses_display'] = array(
-    // A \Drupal\payment\Entity\PaymentInterface object (required).
-    '#payment' => NULL,
-    '#pre_render' => array(array('\Drupal\payment\Element\PaymentStatusesDisplay', 'preRender')),
-  );
-
-  return $elements;
+  return \Drupal::service('payment.hook.element_info')->invoke();
 }
 
 /**
  * Implements hook_entity_bundle_info().
  */
 function payment_entity_bundle_info() {
-  $bundles = array();
-
-  $map = array(
-    'payment' => Payment::typeManager(),
-    'payment_method' => payment::methodConfigurationManager(),
-  );
-  /** @var \Drupal\Component\Plugin\PluginManagerInterface $manager */
-  foreach ($map as $entity_type => $manager) {
-    foreach ($manager->getDefinitions() as $plugin_id => $definition) {
-      $bundles[$entity_type][$plugin_id] = array(
-        'label' => $definition['label'],
-      );
-    }
-  }
-
-  return $bundles;
+  return \Drupal::service('payment.hook.entity_bundle_info')->invoke();
 }
