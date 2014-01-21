@@ -43,7 +43,7 @@ class EntityBundleInfoUnitTest extends UnitTestCase {
     return array(
       'description' => '',
       'name' => '\Drupal\payment\Hook\EntityBundleInfo unit test',
-      'group' => 'payment',
+      'group' => 'Payment',
     );
   }
 

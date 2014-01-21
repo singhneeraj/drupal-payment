@@ -43,7 +43,7 @@ class FieldExtraFieldsUnitTest extends UnitTestCase {
     return array(
       'description' => '',
       'name' => '\Drupal\payment\Hook\FieldExtraFields unit test',
-      'group' => 'payment',
+      'group' => 'Payment',
     );
   }
 

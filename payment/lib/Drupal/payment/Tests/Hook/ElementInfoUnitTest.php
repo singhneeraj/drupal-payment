@@ -30,7 +30,7 @@ class ElementInfoUnitTest extends UnitTestCase {
     return array(
       'description' => '',
       'name' => '\Drupal\payment\Hook\ElementInfo unit test',
-      'group' => 'payment',
+      'group' => 'Payment',
     );
   }
 

@@ -29,7 +29,7 @@ class MenuUnitTest extends UnitTestCase {
     return array(
       'description' => '',
       'name' => '\Drupal\payment\Hook\Menu unit test',
-      'group' => 'payment',
+      'group' => 'Payment',
     );
   }
 

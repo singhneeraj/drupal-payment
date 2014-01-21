@@ -29,7 +29,7 @@ class HookInfoUnitTest extends UnitTestCase {
     return array(
       'description' => '',
       'name' => '\Drupal\payment\Hook\HookInfo unit test',
-      'group' => 'payment',
+      'group' => 'Payment',
     );
   }
 

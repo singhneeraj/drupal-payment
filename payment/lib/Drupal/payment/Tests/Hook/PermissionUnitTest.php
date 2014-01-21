@@ -43,7 +43,7 @@ class PermissionUnitTest extends UnitTestCase {
     return array(
       'description' => '',
       'name' => '\Drupal\payment\Hook\Permission unit test',
-      'group' => 'payment',
+      'group' => 'Payment',
     );
   }
 
