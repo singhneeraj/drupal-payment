@@ -107,14 +107,14 @@ payment.payment_method.duplicate:
 payment.payment_status.list:
   path: '/admin/config/services/payment/status'
   defaults:
-    _content: '\Drupal\payment\PaymentStatusUI::listing'
+    _content: '\Drupal\payment\PaymentStatusUi::listing'
   requirements:
     _permission: 'payment.payment_status.administer'
 
 payment.payment_status.add:
   path: '/admin/config/services/payment/status/add'
   defaults:
-    _content: '\Drupal\payment\PaymentStatusUI::add'
+    _content: '\Drupal\payment\PaymentStatusUi::add'
     _title: 'Add a payment status'
   requirements:
     _permission: 'payment.payment_status.administer'
@@ -137,7 +137,7 @@ payment.payment_status.delete:
 payment.payment_type.list:
   path: '/admin/config/services/payment/type'
   defaults:
-    _content: '\Drupal\payment\PaymentTypeUI::listing'
+    _content: '\Drupal\payment\PaymentTypeUi::listing'
   requirements:
     _permission: 'payment.payment_type.administer'
 

@@ -37,7 +37,7 @@ class PaymentUiWebTest extends WebTestBase {
   /**
    * Tests the payment UI.
    */
-  protected function testPaymentUI() {
+  protected function testPaymentUi() {
     $payment_method = Payment::methodManager()->createInstance('payment_test');
     $payment = Generate::createPayment(2, $payment_method);
     $payment->save();
