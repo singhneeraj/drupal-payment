@@ -11,5 +11,5 @@
 function payment_form_entity_info_alter(&$entity_info) {
   /** @var \Drupal\Core\Entity\EntityTypeInterface $info */
   $info = $entity_info['payment'];
-  $info->setForm('payment_form', 'Drupal\payment_form\Entity\PaymentFormController');
+  $info->setFormClass('payment_form', 'Drupal\payment_form\Entity\PaymentFormController');
 }

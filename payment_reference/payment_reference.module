@@ -7,6 +7,7 @@
 
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\field\FieldInstanceInterface;
 use Drupal\field\FieldInterface;
@@ -46,7 +47,7 @@ function payment_reference_element_info() {
  */
 function payment_reference_page_alter(&$page) {
   if (\Drupal::request()->attributes->get(RouteObjectInterface::ROUTE_NAME) == 'payment_reference.pay') {
-    $skip_regions = array_diff(element_children($page), array('content'));
+    $skip_regions = array_diff(Element::children($page), array('content'));
     foreach ($skip_regions as $skip_region) {
       $page[$skip_region]['#access'] = FALSE;
     }
@@ -59,7 +60,7 @@ function payment_reference_page_alter(&$page) {
 function payment_reference_entity_info_alter(&$entity_info) {
   /** @var \Drupal\Core\Entity\EntityTypeInterface $info */
   $info = $entity_info['payment'];
-  $info->setForm('payment_reference', 'Drupal\payment_reference\Entity\PaymentFormController');
+  $info->setFormClass('payment_reference', 'Drupal\payment_reference\Entity\PaymentFormController');
 }
 
 /**
