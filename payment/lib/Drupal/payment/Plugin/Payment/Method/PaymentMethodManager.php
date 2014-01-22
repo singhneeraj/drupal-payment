@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Contains \Drupal\payment\Plugin\Payment\Method\Manager.
+ * Contains \Drupal\payment\Plugin\Payment\Method\PaymentMethodManager.
  */
 
 namespace Drupal\payment\Plugin\Payment\Method;
@@ -17,7 +17,7 @@ use Drupal\Core\Plugin\DefaultPluginManager;
  *
  * @see \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
  */
-class Manager extends DefaultPluginManager {
+class PaymentMethodManager extends DefaultPluginManager implements PaymentMethodManagerInterface {
 
   /**
    * Constructor.
@@ -52,10 +52,7 @@ class Manager extends DefaultPluginManager {
   }
 
   /**
-   * Returns payment method options.
-   *
-   * @return array
-   *   Keys are plugin IDs. Values are plugin labels.
+   * {@inheritdoc}
    */
   function options() {
     $options = array();

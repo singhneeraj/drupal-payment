@@ -1,28 +1,26 @@
 <?php
 
 /**
- * @file
- * Contains class \Drupal\payment\Tests\Plugin\Payment\MethodSelector\ManagerUnitTest.
+ * @file Contains \Drupal\payment\Tests\Plugin\Payment\LineItem\PaymentLineItemManagerUnitTest.
  */
 
-namespace Drupal\payment\Tests\Plugin\Payment\MethodSelector;
+namespace Drupal\payment\Tests\Plugin\Payment\LineItem;
 
-use Drupal\Component\Plugin\Exception\PluginException;
-use Drupal\payment\Plugin\Payment\MethodSelector\Manager;
+use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManager;
 use Drupal\Tests\UnitTestCase;
 use Zend\Stdlib\ArrayObject;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\MethodSelector\Manager.
+ * Tests \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface.
  */
-class ManagerUnitTest extends UnitTestCase {
+class PaymentLineItemManagerUnitTest extends UnitTestCase {
 
   /**
    * The cache backend used for testing.
    *
    * @var \Drupal\Core\Cache\CacheBackendInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  public $cache;
+  protected $cache;
 
   /**
    * The plugin discovery used for testing.
@@ -34,7 +32,7 @@ class ManagerUnitTest extends UnitTestCase {
   /**
    * The plugin factory used for testing.
    *
-   * @var \Drupal\Component\Plugin\Factory\FactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Component\Plugin\Factory\DefaultFactory|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $factory;
 
@@ -53,11 +51,11 @@ class ManagerUnitTest extends UnitTestCase {
   protected $moduleHandler;
 
   /**
-   * The payment method plugin manager under test.
+   * The payment line_item plugin manager under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\MethodSelector\Manager
+   * @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface
    */
-  public $paymentMethodSelectorManager;
+  public $paymentLineItemManager;
 
   /**
    * {@inheritdoc}
@@ -65,7 +63,7 @@ class ManagerUnitTest extends UnitTestCase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\MethodSelector\Manager unit test',
+      'name' => '\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManager unit test',
       'group' => 'Payment',
     );
   }
@@ -76,7 +74,9 @@ class ManagerUnitTest extends UnitTestCase {
   public function setUp() {
     $this->discovery = $this->getMock('\Drupal\Component\Plugin\Discovery\DiscoveryInterface');
 
-    $this->factory = $this->getMock('\Drupal\Component\Plugin\Factory\FactoryInterface');
+    $this->factory = $this->getMockBuilder('\Drupal\Component\Plugin\Factory\DefaultFactory')
+      ->disableOriginalConstructor()
+      ->getMock();
 
     $language = (object) array(
       'id' => $this->randomName(),
@@ -94,33 +94,13 @@ class ManagerUnitTest extends UnitTestCase {
 
     $namespaces = new ArrayObject();
 
-    $this->paymentMethodSelectorManager = new Manager($namespaces, $this->cache, $this->languageManager, $this->moduleHandler);
-    $property = new \ReflectionProperty($this->paymentMethodSelectorManager, 'discovery');
-    $property->setAccessible(TRUE);
-    $property->setValue($this->paymentMethodSelectorManager, $this->discovery);
-    $property = new \ReflectionProperty($this->paymentMethodSelectorManager, 'factory');
-    $property->setAccessible(TRUE);
-    $property->setValue($this->paymentMethodSelectorManager, $this->factory);
-  }
-
-  /**
-   * Tests createInstance().
-   */
-  public function testCreateInstance() {
-    $existing_plugin_id = 'payment_select';
-    $non_existing_plugin_id = $this->randomName();
-    $this->factory->expects($this->at(0))
-      ->method('createInstance')
-      ->with($non_existing_plugin_id)
-      ->will($this->throwException(new PluginException()));
-    $this->factory->expects($this->at(1))
-      ->method('createInstance')
-      ->with($existing_plugin_id);
-    $this->factory->expects($this->at(2))
-      ->method('createInstance')
-      ->with($existing_plugin_id);
-    $this->paymentMethodSelectorManager->createInstance($non_existing_plugin_id);
-    $this->paymentMethodSelectorManager->createInstance($existing_plugin_id);
+    $this->paymentLineItemManager = new PaymentLineItemManager($namespaces, $this->cache, $this->languageManager, $this->moduleHandler);
+    $discovery_property = new \ReflectionProperty($this->paymentLineItemManager, 'discovery');
+    $discovery_property->setAccessible(TRUE);
+    $discovery_property->setValue($this->paymentLineItemManager, $this->discovery);
+    $factory_property = new \ReflectionProperty($this->paymentLineItemManager, 'factory');
+    $factory_property->setAccessible(TRUE);
+    $factory_property->setValue($this->paymentLineItemManager, $this->factory);
   }
 
   /**
@@ -137,8 +117,8 @@ class ManagerUnitTest extends UnitTestCase {
       ->will($this->returnValue($definitions));
     $this->moduleHandler->expects($this->once())
       ->method('alter')
-      ->with('payment_method_selector');
-    $this->assertSame($definitions, $this->paymentMethodSelectorManager->getDefinitions());
+      ->with('payment_line_item');
+    $this->assertSame($definitions, $this->paymentLineItemManager->getDefinitions());
   }
 
   /**
@@ -159,6 +139,6 @@ class ManagerUnitTest extends UnitTestCase {
     $expected_options = array(
       'foo' => $label,
     );
-    $this->assertSame($expected_options, $this->paymentMethodSelectorManager->options());
+    $this->assertSame($expected_options, $this->paymentLineItemManager->options());
   }
 }

@@ -21,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("Basic")
  * )
  */
-class Basic extends Base implements ContainerFactoryPluginInterface {
+class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterface {
 
   /**
    * The database connection.

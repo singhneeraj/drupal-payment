@@ -17,7 +17,7 @@ use Drupal\payment\Entity\PaymentInterface;
  *   label = @Translation("Drop-down selector")
  * )
  */
-class PaymentSelect extends Base {
+class PaymentSelect extends PaymentMethodSelectorBase {
 
   /**
    * {@inheritdoc}

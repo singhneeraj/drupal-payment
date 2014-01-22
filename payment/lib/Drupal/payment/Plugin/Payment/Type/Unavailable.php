@@ -19,7 +19,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  *   label = @Translation("Unavailable")
  * )
  */
-class Unavailable extends Base {
+class Unavailable extends PaymentTypeBase {
 
   /**
    * The translation manager.

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Tests\Plugin\Payment\MethodConfiguration\BaseUnitTest.
+ * Contains \Drupal\payment\Tests\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationBaseUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Payment\MethodConfiguration;
@@ -10,21 +10,21 @@ namespace Drupal\payment\Tests\Plugin\Payment\MethodConfiguration;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\MethodConfiguration\Base.
+ * Tests \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationBase.
  */
 class BaseUnitTest extends UnitTestCase {
 
   /**
    * The payment method configuration plugin under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\MethodConfiguration\Base|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationBase|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $plugin;
 
   /**
    * The payment status manager used for testing.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\manager|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentStatusManager;
 
@@ -34,7 +34,7 @@ class BaseUnitTest extends UnitTestCase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\MethodConfiguration\Base unit test',
+      'name' => '\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationBase unit test',
       'group' => 'Payment',
     );
   }
@@ -43,11 +43,9 @@ class BaseUnitTest extends UnitTestCase {
    * {@inheritdoc
    */
   public function setUp() {
-    $this->paymentStatusManager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Status\Manager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
-    $this->plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodConfiguration\Base')
+    $this->plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationBase')
       ->setConstructorArgs(array(array(), '', array(), $this->paymentStatusManager))
       ->setMethods(array('t'))
       ->getMock();

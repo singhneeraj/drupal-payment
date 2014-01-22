@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Contains \Drupal\payment\Plugin\Payment\Type\Base.
+ * Contains \Drupal\payment\Plugin\Payment\Type\PaymentTypeBase.
  */
 
 namespace Drupal\payment\Plugin\Payment\Type;
@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * A base payment type.
  */
-abstract class Base extends PluginBase implements ContainerFactoryPluginInterface, PaymentTypeInterface {
+abstract class PaymentTypeBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentTypeInterface {
 
   /**
    * The module handler.

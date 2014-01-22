@@ -13,7 +13,7 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormBuilder;
 use Drupal\field\FieldInstanceInterface;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Plugin\Payment\LineItem\Manager as PaymentLineItemManager;
+use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface as PaymentLineItemManager;
 use Drupal\payment\QueueInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,7 +33,7 @@ class PaymentReferenceUi extends ControllerBase implements ContainerInjectionInt
   /**
    * The payment line item manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\LineItem\Manager
+   * @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface
    */
   protected $paymentLineItemManager;
 
@@ -48,7 +48,7 @@ class PaymentReferenceUi extends ControllerBase implements ContainerInjectionInt
    * Constructor.
    *
    * @param \Drupal\Core\Form\FormBuilder $form_builder
-   * @param \Drupal\payment\Plugin\Payment\LineItem\Manager $payment_line_item_manager
+   * @param \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface $payment_line_item_manager
    * @param \Drupal\payment\QueueInterface $queue
    */
   public function __construct(FormBuilder $form_builder, PaymentLineItemManager $payment_line_item_manager, QueueInterface $queue) {

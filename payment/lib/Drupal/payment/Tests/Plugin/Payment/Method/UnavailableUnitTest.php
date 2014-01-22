@@ -66,9 +66,7 @@ class UnavailableUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->paymentStatusManager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Status\Manager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
     $this->plugin = new Unavailable(array(), '', array(), $this->moduleHandler, $this->token, $this->paymentStatusManager);
   }

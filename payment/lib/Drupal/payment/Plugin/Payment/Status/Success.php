@@ -15,5 +15,5 @@ namespace Drupal\payment\Plugin\Payment\Status;
  *   parent_id = "payment_money_transferred"
  * )
  */
-class Success extends Base {
+class Success extends PaymentStatusBase {
 }

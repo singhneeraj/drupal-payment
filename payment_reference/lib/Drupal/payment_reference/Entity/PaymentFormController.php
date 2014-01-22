@@ -8,7 +8,7 @@
 namespace Drupal\payment_reference\Entity;
 
 use Drupal\Core\Entity\EntityFormController;
-use Drupal\payment\Plugin\Payment\MethodSelector\Manager;
+use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -19,16 +19,16 @@ class PaymentFormController extends EntityFormController {
   /**
    * The payment method selector manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\MethodSelector\Manager
+   * @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface
    */
   protected $paymentMethodSelectorManager;
 
   /**
    * Constructor.
    *
-   * @param \Drupal\payment\Plugin\Payment\MethodSelector\Manager $payment_method_selector_manager
+   * @param \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface $payment_method_selector_manager
    */
-  public function __construct(Manager $payment_method_selector_manager) {
+  public function __construct(PaymentMethodSelectorManagerInterface $payment_method_selector_manager) {
     $this->paymentMethodSelectorManager = $payment_method_selector_manager;
   }
 
@@ -66,6 +66,7 @@ class PaymentFormController extends EntityFormController {
    * {@inheritdoc}
    */
   public function submit(array $form, array &$form_state) {
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->getEntity();
     $payment_method = $this->paymentMethodSelectorManager->createInstance('payment_select')->getPaymentMethodFromFormElements($form['payment_method'], $form_state);
     $payment->setPaymentMethod($payment_method);

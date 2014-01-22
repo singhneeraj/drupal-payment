@@ -14,5 +14,5 @@ namespace Drupal\payment\Plugin\Payment\Status;
  *   label = @Translation("No money has been transferred")
  * )
  */
-class NoMoneyTransferred extends Base {
+class NoMoneyTransferred extends PaymentStatusBase {
 }

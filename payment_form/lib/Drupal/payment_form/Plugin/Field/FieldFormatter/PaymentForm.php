@@ -12,7 +12,7 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\payment\Plugin\Payment\LineItem\Manager;
+use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -45,7 +45,7 @@ class PaymentForm extends FormatterBase implements ContainerFactoryPluginInterfa
   /**
    * The payment line item manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\LineItem\Manager
+   * @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface
    */
   protected $paymentLineItemManager;
 
@@ -57,9 +57,9 @@ class PaymentForm extends FormatterBase implements ContainerFactoryPluginInterfa
    * @param array $plugin_definition
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
-   * @param \Drupal\payment\Plugin\Payment\LineItem\Manager $payment_line_item_manager
+   * @param \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface $payment_line_item_manager
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, EntityManagerInterface $entity_manager, FormBuilderInterface $form_builder, Manager $payment_line_item_manager) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, EntityManagerInterface $entity_manager, FormBuilderInterface $form_builder, PaymentLineItemManagerInterface $payment_line_item_manager) {
     parent::__construct($plugin_id, $plugin_definition, $configuration['field_definition'], $configuration['settings'], $configuration['label'], $configuration['view_mode']);
     $this->entityManager = $entity_manager;
     $this->formBuilder = $form_builder;

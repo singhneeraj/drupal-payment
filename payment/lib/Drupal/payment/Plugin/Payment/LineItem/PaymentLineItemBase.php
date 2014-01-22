@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Contains \Drupal\payment\Plugin\Payment\LineItem\Base.
+ * Contains \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase.
  */
 
 namespace Drupal\payment\Plugin\Payment\LineItem;
@@ -12,7 +12,7 @@ use Drupal\Core\Plugin\PluginBase;
 /**
  * A base line item.
  */
-abstract class Base extends PluginBase implements PaymentLineItemInterface {
+abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItemInterface {
 
   /**
    * {@inheritdoc}

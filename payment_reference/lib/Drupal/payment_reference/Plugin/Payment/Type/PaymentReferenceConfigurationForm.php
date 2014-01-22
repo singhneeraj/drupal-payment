@@ -7,10 +7,9 @@
 namespace Drupal\payment_reference\Plugin\Payment\Type;
 
 use Drupal\Core\Config\ConfigFactory;
-use Drupal\Core\Config\Context\ContextInterface;
 use Drupal\Core\Form\ConfigFormBase;
-use Drupal\payment\Plugin\Payment\Method\Manager as PaymentMethodManager;
-use Drupal\payment\Plugin\Payment\MethodSelector\Manager as PaymentMethodSelectorManager;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
+use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -21,14 +20,14 @@ class PaymentReferenceConfigurationForm extends ConfigFormBase {
   /**
    * The payment method manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\Manager
+   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface
    */
   protected $paymentMethodManager;
 
   /**
    * The payment method selector manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\MethodSelector\Manager
+   * @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface
    */
   protected $paymentMethodSelectorManager;
 
@@ -36,14 +35,12 @@ class PaymentReferenceConfigurationForm extends ConfigFormBase {
    * Constructs a \Drupal\system\ConfigFormBase object.
    *
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
-   *   The factory for configuration objects.
-   * @param \Drupal\Core\Config\Context\ContextInterface $context
    *   The configuration context to use.
-   * @param \Drupal\payment\Plugin\Payment\Method\Manager $payment_method_manager
-   * @param \Drupal\payment\Plugin\Payment\MethodSelector\Manager $payment_method_selector_manager
+   * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface $payment_method_manager
+   * @param \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface $payment_method_selector_manager
    */
-  public function __construct(ConfigFactory $config_factory, ContextInterface $context, PaymentMethodManager $payment_method_manager, PaymentMethodSelectorManager $payment_method_selector_manager) {
-    parent::__construct($config_factory, $context);
+  public function __construct(ConfigFactory $config_factory, PaymentMethodManagerInterface $payment_method_manager, PaymentMethodSelectorManagerInterface $payment_method_selector_manager) {
+    parent::__construct($config_factory);
     $this->paymentMethodManager = $payment_method_manager;
     $this->paymentMethodSelectorManager = $payment_method_selector_manager;
   }
@@ -54,7 +51,6 @@ class PaymentReferenceConfigurationForm extends ConfigFormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
-      $container->get('config.context.free'),
       $container->get('plugin.manager.payment.method'),
       $container->get('plugin.manager.payment.method_selector')
     );

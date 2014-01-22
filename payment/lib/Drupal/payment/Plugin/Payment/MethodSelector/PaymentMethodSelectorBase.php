@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Contains \Drupal\payment\Plugin\Payment\MethodSelector\Base.
+ * Contains \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorBase.
  */
 
 namespace Drupal\payment\Plugin\Payment\MethodSelector;
@@ -10,13 +10,13 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Plugin\Payment\Method\Manager as PaymentMethodManager;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A base payment method selector plugin.
  */
-abstract class Base extends PluginBase implements ContainerFactoryPluginInterface, PaymentMethodSelectorInterface {
+abstract class PaymentMethodSelectorBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentMethodSelectorInterface {
 
   /**
    * The current user.
@@ -28,7 +28,7 @@ abstract class Base extends PluginBase implements ContainerFactoryPluginInterfac
   /**
    * The payment method manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\Manager
+   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface
    */
   protected $paymentMethodManager;
 
@@ -39,9 +39,9 @@ abstract class Base extends PluginBase implements ContainerFactoryPluginInterfac
    * @param string $plugin_id
    * @param array $plugin_definition
    * @param \Drupal\Core\Session\AccountInterface $current_user
-   * @param \Drupal\payment\Plugin\Payment\Method\Manager $payment_method_manager
+   * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface $payment_method_manager
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, AccountInterface $current_user, PaymentMethodManager $payment_method_manager) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, AccountInterface $current_user, PaymentMethodManagerInterface $payment_method_manager) {
     $configuration += $this->defaultConfiguration();
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->currentUser = $current_user;

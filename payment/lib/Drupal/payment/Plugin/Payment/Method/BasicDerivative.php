@@ -10,7 +10,7 @@ namespace Drupal\payment\Plugin\Payment\Method;
 use Drupal\Component\Plugin\Derivative\DerivativeBase;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
 use Drupal\Core\Plugin\Discovery\ContainerDerivativeInterface;
-use Drupal\payment\Plugin\Payment\MethodConfiguration\Manager as PaymentMethodConfiguratonManager;
+use Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -23,7 +23,7 @@ class BasicDerivative extends DerivativeBase implements ContainerDerivativeInter
   /**
    * The payment method configuration manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\MethodConfiguration\Manager
+   * @var \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface
    */
   protected $paymentMethodConfigurationManager;
 
@@ -37,7 +37,7 @@ class BasicDerivative extends DerivativeBase implements ContainerDerivativeInter
   /**
    * Constructor.
    */
-  public function __construct(EntityStorageControllerInterface $payment_method_storage, PaymentMethodConfiguratonManager $payment_method_configuration_manager) {
+  public function __construct(EntityStorageControllerInterface $payment_method_storage, PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager) {
     $this->paymentMethodStorage = $payment_method_storage;
     $this->paymentMethodConfigurationManager = $payment_method_configuration_manager;
   }
@@ -57,6 +57,7 @@ class BasicDerivative extends DerivativeBase implements ContainerDerivativeInter
     $payment_methods = $this->paymentMethodStorage->loadMultiple();
     foreach ($payment_methods as $payment_method) {
       if ($payment_method->getPluginId() == 'payment_basic') {
+        /** @var \Drupal\payment\Plugin\Payment\MethodConfiguration\Basic $configuration_plugin */
         $configuration_plugin = $this->paymentMethodConfigurationManager->createInstance($payment_method->getPluginId(), $payment_method->getPluginConfiguration());
         $this->derivatives[$payment_method->id()] = array(
           'active' => $payment_method->status(),

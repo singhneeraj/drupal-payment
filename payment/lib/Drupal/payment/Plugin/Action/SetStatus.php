@@ -10,7 +10,7 @@ namespace Drupal\payment\Plugin\Action;
 use Drupal\Core\Action\ConfigurableActionBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Plugin\Payment\Status\Manager;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -27,7 +27,7 @@ class SetStatus extends ConfigurableActionBase implements ContainerFactoryPlugin
   /**
    * The payment status manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\Manager
+   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    */
   protected $paymentStatusManager;
 
@@ -40,9 +40,9 @@ class SetStatus extends ConfigurableActionBase implements ContainerFactoryPlugin
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\payment\Plugin\Payment\Status\Manager $payment_status_manager
+   * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface $payment_status_manager
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, Manager $payment_status_manager) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, PaymentStatusManagerInterface $payment_status_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->paymentStatusManager = $payment_status_manager;
   }

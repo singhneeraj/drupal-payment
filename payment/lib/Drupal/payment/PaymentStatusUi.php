@@ -9,7 +9,7 @@ namespace Drupal\payment;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
-use Drupal\payment\Plugin\Payment\Status\Manager;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -27,14 +27,14 @@ class PaymentStatusUi implements ContainerInjectionInterface {
   /**
    * The payment status plugin manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\Manager
+   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    */
   protected $paymentStatusManager;
 
   /**
    * Constructor.
    */
-  public function __construct(EntityManagerInterface $entity_manager, Manager $payment_status_manager) {
+  public function __construct(EntityManagerInterface $entity_manager, PaymentStatusManagerInterface $payment_status_manager) {
     $this->entityManager = $entity_manager;
     $this->paymentStatusManager = $payment_status_manager;
   }
@@ -74,7 +74,7 @@ class PaymentStatusUi implements ContainerInjectionInterface {
    *
    * @param array $hierarchy
    *   A payment status hierarchy as returned by
-   *   \Drupal\payment\Plugin\Payment\Status\Manager::hierarchy().
+   *   \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface::hierarchy().
    * @param integer $depth
    *   The depth of $hierarchy's top-level items as seen from the original
    *   hierarchy's root (this function is recursive), starting with 0.
@@ -85,6 +85,7 @@ class PaymentStatusUi implements ContainerInjectionInterface {
     $rows = array();
     foreach ($hierarchy as $plugin_id => $children) {
       $definition = $this->paymentStatusManager->getDefinition($plugin_id);
+      /** @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface $class */
       $class = $definition['class'];
       $rows[$plugin_id] = array(
         'label' => array(

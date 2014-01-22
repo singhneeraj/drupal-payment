@@ -6,9 +6,7 @@
 
 namespace Drupal\payment_test\Plugin\Payment\Type;
 
-use Drupal\Core\Annotation\Translation;
-use Drupal\payment\Annotations\PaymentType;
-use Drupal\payment\Plugin\Payment\Type\Base;
+use Drupal\payment\Plugin\Payment\Type\PaymentTypeBase;
 
 /**
  * A testing payment type.
@@ -18,7 +16,7 @@ use Drupal\payment\Plugin\Payment\Type\Base;
  *   label = @Translation("Test type")
  * )
  */
-class PaymentTest extends Base {
+class PaymentTest extends PaymentTypeBase {
 
   /**
    * {@inheritdoc}

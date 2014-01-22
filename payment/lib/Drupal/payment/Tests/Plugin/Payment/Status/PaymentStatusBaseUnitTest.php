@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\Payment\Status\BaseUnitTest.
+ * Contains class \Drupal\payment\Tests\Plugin\Payment\Status\PaymentStatusBaseUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Payment\Status;
@@ -10,14 +10,14 @@ namespace Drupal\payment\Tests\Plugin\Payment\Status;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\Status\Base.
+ * Tests \Drupal\payment\Plugin\Payment\Status\PaymentStatusBase.
  */
-class BaseUnitTest extends UnitTestCase {
+class PaymentStatusBaseUnitTest extends UnitTestCase {
 
   /**
    * The payment status plugin manager used for testing.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\Manager|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   public $paymentStatusManager;
 
@@ -31,7 +31,7 @@ class BaseUnitTest extends UnitTestCase {
   /**
    * The payment status under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\Base|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusBase|\PHPUnit_Framework_MockObject_MockObject
    */
   public $status;
 
@@ -41,7 +41,7 @@ class BaseUnitTest extends UnitTestCase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\Status\Base unit test',
+      'name' => '\Drupal\payment\Plugin\Payment\Status\PaymentStatusBase unit test',
       'group' => 'Payment',
     );
   }
@@ -50,14 +50,12 @@ class BaseUnitTest extends UnitTestCase {
    * {@inheritdoc
    */
   public function setup() {
-    $this->paymentStatusManager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Status\Manager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
     $configuration = array();
     $this->pluginId = $this->randomName();
     $plugin_definition = array();
-    $this->status = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Status\Base')
+    $this->status = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Status\PaymentStatusBase')
       ->setConstructorArgs(array($configuration, $this->pluginId, $plugin_definition, $this->paymentStatusManager))
       ->setMethods(NULL)
       ->getMock();

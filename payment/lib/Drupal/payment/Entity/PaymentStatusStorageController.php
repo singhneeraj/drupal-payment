@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Entity;
 
+use Drupal\Component\Plugin\Discovery\CachedDiscoveryInterface;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\Entity\ConfigStorageController;
@@ -14,7 +15,7 @@ use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
-use Drupal\payment\Plugin\Payment\Status\Manager;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -25,14 +26,14 @@ class PaymentStatusStorageController extends ConfigStorageController {
   /**
    * The payment status plugin manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\Manager
+   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    */
   protected $paymentStatusManager;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityTypeInterface $entity_info, ConfigFactory $config_factory, StorageInterface $config_storage, QueryFactory $entity_query_factory, Manager $payment_status_manager, UuidInterface $uuid_service) {
+  public function __construct(EntityTypeInterface $entity_info, ConfigFactory $config_factory, StorageInterface $config_storage, QueryFactory $entity_query_factory, PaymentStatusManagerInterface $payment_status_manager, UuidInterface $uuid_service) {
     parent::__construct($entity_info, $config_factory, $config_storage, $entity_query_factory, $uuid_service);
     $this->paymentStatusManager = $payment_status_manager;
   }
@@ -49,7 +50,9 @@ class PaymentStatusStorageController extends ConfigStorageController {
    */
   public function save(EntityInterface $entity) {
     parent::save($entity);
-    $this->paymentStatusManager->clearCachedDefinitions();
+    if ($this->paymentStatusManager instanceof CachedDiscoveryInterface) {
+      $this->paymentStatusManager->clearCachedDefinitions();
+    }
   }
 
   /**
@@ -57,6 +60,8 @@ class PaymentStatusStorageController extends ConfigStorageController {
    */
   public function delete(array $entities) {
     parent::delete($entities);
-    $this->paymentStatusManager->clearCachedDefinitions();
+    if ($this->paymentStatusManager instanceof CachedDiscoveryInterface) {
+      $this->paymentStatusManager->clearCachedDefinitions();
+    }
   }
 }

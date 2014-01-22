@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Tests\Plugin\Payment\Type\BaseUnitTest.
+ * Contains \Drupal\payment\Tests\Plugin\Payment\Type\PaymentTypeBaseUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Payment\Type;
@@ -10,9 +10,9 @@ namespace Drupal\payment\Tests\Plugin\Payment\Type;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\Status\Base.
+ * Tests \Drupal\payment\Plugin\Payment\Status\PaymentTypeBase.
  */
-class BaseUnitTest extends UnitTestCase {
+class PaymentTypeBaseUnitTest extends UnitTestCase {
 
   /**
    * The module handler.
@@ -24,7 +24,7 @@ class BaseUnitTest extends UnitTestCase {
   /**
    * The payment type under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\Type\Base|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\Type\PaymentTypeBase|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentType;
 
@@ -34,7 +34,7 @@ class BaseUnitTest extends UnitTestCase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\Type\Base unit test',
+      'name' => '\Drupal\payment\Plugin\Payment\Type\PaymentTypeBase unit test',
       'group' => 'Payment',
     );
   }
@@ -48,7 +48,7 @@ class BaseUnitTest extends UnitTestCase {
     $configuration = array();
     $plugin_id = $this->randomName();
     $plugin_definition = array();
-    $this->paymentType = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Type\Base')
+    $this->paymentType = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Type\PaymentTypeBase')
       ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->moduleHandler))
       ->setMethods(array('paymentDescription'))
       ->getMock();

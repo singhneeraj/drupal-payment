@@ -11,7 +11,7 @@ use Drupal\Component\Utility\Random;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\payment\Plugin\Payment\Status\Manager;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 
 /**
  * The payment queue.
@@ -43,7 +43,7 @@ class Queue implements QueueInterface {
   /**
    * The database connection.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\Manager
+   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    */
   protected $paymentStatusManager;
 
@@ -70,10 +70,10 @@ class Queue implements QueueInterface {
    *   A database connection.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface
    *   The module handler.
-   * @param \Drupal\payment\Plugin\Payment\Status\Manager
+   * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    *   The payment status plugin manager.
    */
-  public function __construct($queue_id, Connection $database, ModuleHandlerInterface $module_handler, Manager $payment_status_manager) {
+  public function __construct($queue_id, Connection $database, ModuleHandlerInterface $module_handler, PaymentStatusManagerInterface $payment_status_manager) {
     $this->database = $database;
     $this->moduleHandler = $module_handler;
     $this->paymentStatusManager = $payment_status_manager;

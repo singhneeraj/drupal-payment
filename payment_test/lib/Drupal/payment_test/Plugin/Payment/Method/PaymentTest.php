@@ -6,7 +6,7 @@
 
 namespace Drupal\payment_test\Plugin\Payment\Method;
 
-use Drupal\payment\Plugin\Payment\Method\Base;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodBase;
 
 /**
  * A testing payment method.
@@ -16,7 +16,7 @@ use Drupal\payment\Plugin\Payment\Method\Base;
  *   label = @Translation("Test method")
  * )
  */
-class PaymentTest extends Base {
+class PaymentTest extends PaymentMethodBase {
 
   /**
    * {@inheritdoc}

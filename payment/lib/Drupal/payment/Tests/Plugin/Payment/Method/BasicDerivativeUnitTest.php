@@ -25,7 +25,7 @@ class BasicDerivativeUnitTest extends UnitTestCase {
   /**
    * The payment method configuration manager used for testing.
    *
-   * @var \Drupal\payment\Plugin\Payment\MethodConfiguration\Manager|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentMethodConfigurationManager;
 
@@ -51,9 +51,7 @@ class BasicDerivativeUnitTest extends UnitTestCase {
    * {@inheritdoc
    */
   public function setUp() {
-    $this->paymentMethodConfigurationManager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodConfiguration\Manager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->paymentMethodConfigurationManager = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface');
 
     $this->paymentMethodStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageControllerInterface');
 

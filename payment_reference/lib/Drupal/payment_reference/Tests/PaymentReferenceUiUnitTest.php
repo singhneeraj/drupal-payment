@@ -39,7 +39,7 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
   /**
    * The payment line item manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\LineItem\Manager|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentLineItemManager;
 
@@ -84,7 +84,7 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->paymentLineItemManager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\Manager')
+    $this->paymentLineItemManager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface')
       ->disableOriginalConstructor()
       ->getMock();
 

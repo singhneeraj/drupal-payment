@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\Payment\LineItem\BaseUnitTest.
+ * Contains class \Drupal\payment\Tests\Plugin\Payment\LineItem\PaymentLineItemBaseUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Payment\LineItem;
@@ -10,9 +10,9 @@ namespace Drupal\payment\Tests\Plugin\Payment\LineItem;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\LineItem\Base.
+ * Tests \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase.
  */
-class BaseUnitTest extends UnitTestCase {
+class PaymentLineItemBaseUnitTest extends UnitTestCase {
 
   /**
    * The line item under test.
@@ -27,7 +27,7 @@ class BaseUnitTest extends UnitTestCase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\LineItem\Base unit test',
+      'name' => '\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase unit test',
       'group' => 'Payment',
     );
   }
@@ -39,7 +39,7 @@ class BaseUnitTest extends UnitTestCase {
     $configuration = array();
     $plugin_id = $this->randomName();
     $plugin_definition = array();
-    $this->lineItem = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\Base')
+    $this->lineItem = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase')
       ->setMethods(array('formElements', 'getConfigurationFromFormValues', 'getDescription'))
       ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition))
       ->getMock();

@@ -45,7 +45,7 @@ class PaymentTypeUiUnitTest extends UnitTestCase {
   /**
    * The payment type plugin manager used for testing.
    *
-   * @var \Drupal\payment\Plugin\Payment\Type\Manager|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentTypeManager;
 
@@ -79,9 +79,7 @@ class PaymentTypeUiUnitTest extends UnitTestCase {
 
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
 
-    $this->paymentTypeManager= $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Type\Manager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->paymentTypeManager= $this->getMock('\Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface');
 
     $this->paymentTypeUi = $this->getMockBuilder('\Drupal\payment\PaymentTypeUi')
       ->setConstructorArgs(array($this->moduleHandler, $this->entityManager, $this->formBuilder, $this->paymentTypeManager, $this->currentUser))

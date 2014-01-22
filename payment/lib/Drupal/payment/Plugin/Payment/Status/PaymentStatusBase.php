@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Contains \Drupal\payment\Plugin\Payment\Status\Base.
+ * Contains \Drupal\payment\Plugin\Payment\Status\PaymentStatusBase.
  */
 
 namespace Drupal\payment\Plugin\Payment\Status;
@@ -13,12 +13,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * A base payment status.
  */
-abstract class Base extends PluginBase implements ContainerFactoryPluginInterface, PaymentStatusInterface {
+abstract class PaymentStatusBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentStatusInterface {
 
   /**
    * The payment status plugin manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\Manager
+   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    */
   protected $paymentStatusManager;
 
@@ -31,9 +31,9 @@ abstract class Base extends PluginBase implements ContainerFactoryPluginInterfac
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\payment\Plugin\Payment\Status\Manager $payment_status_manager
+   * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface $payment_status_manager
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, Manager $payment_status_manager) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, PaymentStatusManagerInterface $payment_status_manager) {
     $configuration += $this->defaultConfiguration();
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->paymentStatusManager = $payment_status_manager;

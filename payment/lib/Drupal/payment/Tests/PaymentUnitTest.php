@@ -33,9 +33,7 @@ class PaymentUnitTest extends UnitTestCase {
    */
   public function testLineItemManager() {
     $container = new Container();
-    $line_item_manager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\Manager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $line_item_manager = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface');
     $container->set('plugin.manager.payment.line_item', $line_item_manager);
     \Drupal::setContainer($container);
     $this->assertSame($line_item_manager, Payment::lineItemManager());
@@ -46,9 +44,7 @@ class PaymentUnitTest extends UnitTestCase {
    */
   public function testMethodManager() {
     $container = new Container();
-    $method_manager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\Manager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $method_manager = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface');
     $container->set('plugin.manager.payment.method', $method_manager);
     \Drupal::setContainer($container);
     $this->assertSame($method_manager, Payment::methodManager());
@@ -59,9 +55,7 @@ class PaymentUnitTest extends UnitTestCase {
    */
   public function testMethodConfigurationManager() {
     $container = new Container();
-    $method_configuration_manager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodConfiguration\Manager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $method_configuration_manager = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface');
     $container->set('plugin.manager.payment.method_configuration', $method_configuration_manager);
     \Drupal::setContainer($container);
     $this->assertSame($method_configuration_manager, Payment::methodConfigurationManager());
@@ -72,9 +66,7 @@ class PaymentUnitTest extends UnitTestCase {
    */
   public function testMethodSelectorManager() {
     $container = new Container();
-    $method_selector_manager= $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodSelector\Manager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $method_selector_manager= $this->getMock('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface');
     $container->set('plugin.manager.payment.method_selector', $method_selector_manager);
     \Drupal::setContainer($container);
     $this->assertSame($method_selector_manager, Payment::methodSelectorManager());
@@ -85,9 +77,7 @@ class PaymentUnitTest extends UnitTestCase {
    */
   public function testStatusManager() {
     $container = new Container();
-    $status_manager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Status\Manager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $status_manager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
     $container->set('plugin.manager.payment.status', $status_manager);
     \Drupal::setContainer($container);
     $this->assertSame($status_manager, Payment::statusManager());
@@ -98,9 +88,7 @@ class PaymentUnitTest extends UnitTestCase {
    */
   public function testTypeManager() {
     $container = new Container();
-    $type_manager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Type\Manager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $type_manager = $this->getMock('\Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface');
     $container->set('plugin.manager.payment.type', $type_manager);
     \Drupal::setContainer($container);
     $this->assertSame($type_manager, Payment::typeManager());

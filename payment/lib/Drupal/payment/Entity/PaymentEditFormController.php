@@ -8,8 +8,7 @@
 namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\EntityFormController;
-use Drupal\payment\Element\PaymentMethodInput;
-use Drupal\payment\Plugin\Payment\Status\Manager;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -20,17 +19,17 @@ class PaymentEditFormController extends EntityFormController {
   /**
    * The payment status plugin manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\Manager
+   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    */
   protected $paymentStatusManager;
 
   /**
    * Constructor.
    *
-   * @param \Drupal\payment\Plugin\Payment\Status\Manager The payment status
+   * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface The payment status
    *   plugin manager.
    */
-  function __construct(Manager $payment_status_manager) {
+  function __construct(PaymentStatusManagerInterface $payment_status_manager) {
     $this->paymentStatusManager = $payment_status_manager;
   }
 
@@ -65,7 +64,6 @@ class PaymentEditFormController extends EntityFormController {
     parent::submit($form, $form_state);
     $payment = $this->getEntity();
     $payment->save();
-    $uri = $payment->uri();
     $form_state['redirect_route'] = array(
       'route_name' => 'payment.payment.view',
       'route_parameters' => array(

@@ -15,5 +15,5 @@ namespace Drupal\payment\Plugin\Payment\Status;
  *   parent_id = "payment_no_money_transferred"
  * )
  */
-class Pending extends Base {
+class Pending extends PaymentStatusBase {
 }

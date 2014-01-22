@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Contains \Drupal\payment\Plugin\Payment\MethodConfiguration\Base.
+ * Contains \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationBase.
  */
 
 namespace Drupal\payment\Plugin\Payment\MethodConfiguration;
@@ -12,7 +12,7 @@ use Drupal\Component\Utility\NestedArray;
 /**
  * Provides a base payment method configuration plugin.
  */
-abstract class Base extends PluginBase implements PaymentMethodConfigurationInterface {
+abstract class PaymentMethodConfigurationBase extends PluginBase implements PaymentMethodConfigurationInterface {
 
   /**
    * Constructor.

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Tests\Plugin\Payment\MethodConfiguration\ManagerUnitTest.
+ * Contains \Drupal\payment\Tests\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Payment\MethodConfiguration;
@@ -12,21 +12,21 @@ use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\MethodConfiguration\Manager.
+ * Tests \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManager.
  */
-class ManagerUnitTest extends UnitTestCase {
+class PaymentMethodConfigurationManagerUnitTest extends UnitTestCase {
 
   /**
    * The plugin factory used for testing.
    *
-   * @var \Drupal\Component\Plugin\Factory\FactoryInterface
+   * @var \Drupal\Component\Plugin\Factory\FactoryInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $factory;
 
   /**
    * The plugin manager under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\MethodConfiguration\Manager|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManager|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $manager;
 
@@ -36,7 +36,7 @@ class ManagerUnitTest extends UnitTestCase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\MethodConfiguration\Manager unit test',
+      'name' => '\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManager unit test',
       'group' => 'Payment',
     );
   }
@@ -47,7 +47,7 @@ class ManagerUnitTest extends UnitTestCase {
   public function setUp() {
     $this->factory = $this->getMock('\Drupal\Component\Plugin\Factory\FactoryInterface');
 
-    $this->manager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodConfiguration\Manager')
+    $this->manager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManager')
       ->disableOriginalConstructor()
       ->setMethods(NULL)
       ->getMock();

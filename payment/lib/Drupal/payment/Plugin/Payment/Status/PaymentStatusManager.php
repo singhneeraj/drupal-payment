@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Contains \Drupal\payment\Plugin\Payment\Status\Manager.
+ * Contains \Drupal\payment\Plugin\Payment\Status\PaymentStatusManager.
  */
 
 namespace Drupal\payment\Plugin\Payment\Status;
@@ -17,7 +17,7 @@ use Drupal\Core\Plugin\DefaultPluginManager;
  *
  * @see \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface
  */
-class Manager extends DefaultPluginManager {
+class PaymentStatusManager extends DefaultPluginManager implements PaymentStatusManagerInterface {
 
   /**
    * Constructor.
@@ -53,21 +53,14 @@ class Manager extends DefaultPluginManager {
   }
 
   /**
-   * Returns payment method options.
-   *
-   * @return array
-   *   Keys are plugin IDs. Values are plugin labels.
+   * {@inheritdoc}
    */
   public function options() {
     return $this->optionsLevel($this->hierarchy(), 0);
   }
 
   /**
-   * Returns a hierarchical representation of payment statuses.
-   *
-   * @return array
-   *   A possibly infinitely nested associative array. Keys are plugin IDs and
-   *   values are arrays of similar structure as this method's return value.
+   * {@inheritdoc}
    */
   public function hierarchy() {
     static $hierarchy = NULL;
@@ -144,14 +137,9 @@ class Manager extends DefaultPluginManager {
   }
 
   /**
-   * Gets a payment status's ancestors.
-   *
-   * @param string $plugin_id
-   *
-   * @return array
-   *   The plugin IDs of this status's ancestors.
+   * {@inheritdoc}
    */
-  function getAncestors($plugin_id) {
+  public function getAncestors($plugin_id) {
     $definition = $this->getDefinition($plugin_id);
     if (isset($definition['parent_id'])) {
       $parent_id = $definition['parent_id'];
@@ -161,12 +149,7 @@ class Manager extends DefaultPluginManager {
   }
 
   /**
-   * Gets a payment status's children.
-   *
-   * @param string $plugin_id
-   *
-   * @return array
-   *   The plugin IDs of this status's children.
+   * {@inheritdoc}
    */
   public function getChildren($plugin_id) {
     $child_plugin_ids = array();
@@ -180,14 +163,9 @@ class Manager extends DefaultPluginManager {
   }
 
   /**
-   * Get a payment status's descendants.
-   *
-   * @param string $plugin_id
-   *
-   * @return array
-   *   The machine names of this status's descendants.
+   * {@inheritdoc}
    */
-  function getDescendants($plugin_id) {
+  public function getDescendants($plugin_id) {
     $child_plugin_ids = $this->getChildren($plugin_id);
     $descendant_plugin_ids = $child_plugin_ids;
     foreach ($child_plugin_ids as $child_plugin_id) {
@@ -198,29 +176,16 @@ class Manager extends DefaultPluginManager {
   }
 
   /**
-   * Checks if a status has a given other status as one of its ancestors.
-   *
-   * @param string $plugin_id
-   * @param string $ancestor_plugin_id
-   *   The payment status plugin ID to check against.
-   *
-   * @return boolean
+   * {@inheritdoc}
    */
-  function hasAncestor($plugin_id, $ancestor_plugin_id) {
+  public function hasAncestor($plugin_id, $ancestor_plugin_id) {
     return in_array($ancestor_plugin_id, $this->getAncestors($plugin_id));
   }
 
   /**
-   * Checks if the status is equal to a given other status or has it one of
-   * its ancestors.
-   *
-   * @param string $plugin_id
-   * @param string $ancestor_plugin_id
-   *   The payment status plugin ID to check against.
-   *
-   * @return boolean
+   * {@inheritdoc}
    */
-  function isOrHasAncestor($plugin_id, $ancestor_plugin_id) {
+  public function isOrHasAncestor($plugin_id, $ancestor_plugin_id) {
     return $plugin_id == $ancestor_plugin_id|| $this->hasAncestor($plugin_id, $ancestor_plugin_id);
   }
 }

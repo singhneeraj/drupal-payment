@@ -72,7 +72,7 @@ function hook_payment_status_set(PaymentInterface $payment, PaymentStatusInterfa
 /**
  * Executes before the payment type's original context is resumed.
  *
- * @see \Drupal\payment\Plugin\Payment\Type\Base::resumeContext()
+ * @see \Drupal\payment\Plugin\Payment\Type\PaymentTypeBase::resumeContext()
  *
  * @param \Drupal\payment\Entity\PaymentInterface $payment
  */
@@ -100,8 +100,8 @@ function hook_payment_type_pre_resume_context(PaymentInterface $payment) {
  *   \Drupal\Core\Access\AccessInterface::DENY, or
  *   \Drupal\Core\Access\AccessInterface::KILL.
  *
- * @see \Drupal\payment\Plugin\Payment\Method\Base::executePaymentAccess()
- * @see \Drupal\payment\Plugin\Payment\Method\Base::executePaymentAccessEvent()
+ * @see \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase::executePaymentAccess()
+ * @see \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase::executePaymentAccessEvent()
  */
 function hook_payment_execute_access(PaymentInterface $payment, PaymentMethodInterface $payment_method, AccountInterface $account) {}
 
@@ -110,7 +110,7 @@ function hook_payment_execute_access(PaymentInterface $payment, PaymentMethodInt
  *
  * @param \Drupal\payment\Entity\PaymentInterface $payment
  *
- * @see \Drupal\payment\Plugin\Payment\Method\Base::executePayment()
+ * @see \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase::executePayment()
  */
 function hook_payment_pre_execute(PaymentInterface $payment) {}
 

@@ -24,7 +24,7 @@ class SetStatusUnitTest extends UnitTestCase {
   /**
    * The payment status manager used for testing.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\Manager|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentStatusManager;
 
@@ -43,9 +43,7 @@ class SetStatusUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   public function setUp() {
-    $this->paymentStatusManager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Status\Manager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
     $configuration = array();
     $plugin_definition = array();

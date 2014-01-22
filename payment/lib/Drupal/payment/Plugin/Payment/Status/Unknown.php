@@ -15,5 +15,5 @@ namespace Drupal\payment\Plugin\Payment\Status;
  *   label = @Translation("Unknown")
  * )
  */
-class Unknown extends Base {
+class Unknown extends PaymentStatusBase {
 }

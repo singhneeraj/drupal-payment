@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Contains \Drupal\payment\Plugin\Payment\MethodConfiguration\Manager.
+ * Contains \Drupal\payment\Plugin\Payment\Type\PaymentTypeManager.
  */
 
-namespace Drupal\payment\Plugin\Payment\MethodConfiguration;
+namespace Drupal\payment\Plugin\Payment\Type;
 
 use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Core\Cache\CacheBackendInterface;
@@ -13,11 +13,11 @@ use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**
- * Manages discovery and instantiation of payment method configuration plugins.
+ * Manages discovery and instantiation of payment type plugins.
  *
- * @see \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface
+ * @see \Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface
  */
-class Manager extends DefaultPluginManager {
+class PaymentTypeManager extends DefaultPluginManager implements PaymentTypeManagerInterface {
 
   /**
    * Constructor.
@@ -33,9 +33,9 @@ class Manager extends DefaultPluginManager {
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, LanguageManager $language_manager, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/Payment/MethodConfiguration', $namespaces, '\Drupal\payment\Annotations\PaymentMethodConfiguration');
-    $this->alterInfo($module_handler, 'payment_method_configuration');
-    $this->setCacheBackend($cache_backend, $language_manager, 'payment_method_configuration');
+    parent::__construct('Plugin/Payment/Type', $namespaces, '\Drupal\payment\Annotations\PaymentType');
+    $this->alterInfo($module_handler, 'payment_type');
+    $this->setCacheBackend($cache_backend, $language_manager, 'payment_type');
   }
 
   /**

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Contains \Drupal\payment\Plugin\Payment\LineItem\Manager.
+ * Contains \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManager.
  */
 
 namespace Drupal\payment\Plugin\Payment\LineItem;
@@ -17,7 +17,7 @@ use Drupal\Core\Plugin\DefaultPluginManager;
  *
  * @see \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface
  */
-class Manager extends DefaultPluginManager {
+class PaymentLineItemManager extends DefaultPluginManager implements PaymentLineItemManagerInterface {
 
   /**
    * Constructor.
@@ -39,10 +39,7 @@ class Manager extends DefaultPluginManager {
   }
 
   /**
-   * Returns payment line item options.
-   *
-   * @return array
-   *   Keys are plugin IDs. Values are plugin labels.
+   * {@inheritdoc}
    */
   public function options() {
     $options = array();
@@ -55,11 +52,7 @@ class Manager extends DefaultPluginManager {
   }
 
   /**
-   * Returns the class name for a plugin ID.
-   *
-   * @param string $plugin_id
-   *
-   * @return string
+   * {@inheritdoc}
    */
   public function getPluginClass($plugin_id) {
     /** @var \Drupal\Core\Plugin\Factory\ContainerFactory $factory */

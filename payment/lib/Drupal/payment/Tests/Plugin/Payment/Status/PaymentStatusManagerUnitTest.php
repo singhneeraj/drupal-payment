@@ -2,20 +2,20 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\Payment\Status\ManagerUnitTest.
+ * Contains class \Drupal\payment\Tests\Plugin\Payment\Status\PaymentStatusManagerUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Payment\Status;
 
 use Drupal\Component\Plugin\Exception\PluginException;
-use Drupal\payment\Plugin\Payment\Status\Manager;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusManager;
 use Drupal\Tests\UnitTestCase;
 use Zend\Stdlib\ArrayObject;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\Status\Manager.
+ * Tests \Drupal\payment\Plugin\Payment\Status\PaymentStatusManager.
  */
-class ManagerUnitTest extends UnitTestCase {
+class PaymentStatusManagerUnitTest extends UnitTestCase {
 
   /**
    * The cache backend used for testing.
@@ -55,7 +55,7 @@ class ManagerUnitTest extends UnitTestCase {
   /**
    * The payment status plugin manager under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\Manager
+   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManager
    */
   public $paymentStatusManager;
 
@@ -65,7 +65,7 @@ class ManagerUnitTest extends UnitTestCase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\Status\Manager unit test',
+      'name' => '\Drupal\payment\Plugin\Payment\Status\PaymentStatusManager unit test',
       'group' => 'Payment',
     );
   }
@@ -94,7 +94,7 @@ class ManagerUnitTest extends UnitTestCase {
 
     $namespaces = new ArrayObject();
 
-    $this->paymentStatusManager = new Manager($namespaces, $this->cache, $this->languageManager, $this->moduleHandler);
+    $this->paymentStatusManager = new PaymentStatusManager($namespaces, $this->cache, $this->languageManager, $this->moduleHandler);
     $property = new \ReflectionProperty($this->paymentStatusManager, 'discovery');
     $property->setAccessible(TRUE);
     $property->setValue($this->paymentStatusManager, $this->discovery);

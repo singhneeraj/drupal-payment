@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Tests\Plugin\Payment\Method\BaseUnitTest.
+ * Contains \Drupal\payment\Tests\Plugin\Payment\Method\PaymentMethodBaseUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Payment\Method;
@@ -11,9 +11,9 @@ use Drupal\Core\Access\AccessInterface;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\Method\Base.
+ * Tests \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase.
  */
-class BaseUnitTest extends UnitTestCase {
+class PaymentMethodBaseUnitTest extends UnitTestCase {
 
   /**
    * The module handler used for testing.
@@ -32,7 +32,7 @@ class BaseUnitTest extends UnitTestCase {
   /**
    * The payment method plugin under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\Base|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $plugin;
 
@@ -49,7 +49,7 @@ class BaseUnitTest extends UnitTestCase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\Method\Base unit test',
+      'name' => '\Drupal\payment\Plugin\Payment\Method\PaymentMethodBase unit test',
       'group' => 'Payment',
     );
   }
@@ -72,7 +72,7 @@ class BaseUnitTest extends UnitTestCase {
       'message_text_format' => $this->randomName(),
     );
 
-    $this->plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\Base')
+    $this->plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\PaymentMethodBase')
       ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->token))
       ->setMethods(array('currencies', 'checkMarkup', 't'))
       ->getMock();

@@ -16,13 +16,6 @@ use Drupal\Tests\UnitTestCase;
 class PaymentFormConfigurationFormUnitTest extends UnitTestCase {
 
   /**
-   * The configuration context used for testing.
-   *
-   * @var \Drupal\Core\Config\Context\ContextInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $configContext;
-
-  /**
    * The config factory used for testing.
    *
    * @var \Drupal\Core\Config\ConfigFactory|\PHPUnit_Framework_MockObject_MockObject
@@ -39,14 +32,14 @@ class PaymentFormConfigurationFormUnitTest extends UnitTestCase {
   /**
    * The payment method manager used for testing.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\Manager|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentMethodManager;
 
   /**
    * The payment method selector manager used for testing.
    *
-   * @var \Drupal\payment\Plugin\Payment\MethodSelector\Manager|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentMethodSelectorManager;
 
@@ -65,22 +58,16 @@ class PaymentFormConfigurationFormUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   public function setUp() {
-    $this->configContext = $this->getMock('\Drupal\Core\Config\Context\ContextInterface');
-
     $this->configFactory = $this->getMockBuilder('Drupal\Core\Config\ConfigFactory')
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->paymentMethodManager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\Manager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->paymentMethodManager = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface');
 
-    $this->paymentMethodSelectorManager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodSelector\Manager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->paymentMethodSelectorManager = $this->getMock('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface');
 
     $this->form = $this->getMockBuilder('\Drupal\payment_form\Plugin\Payment\Type\PaymentFormConfigurationForm')
-      ->setConstructorArgs(array($this->configFactory, $this->configContext, $this->paymentMethodManager, $this->paymentMethodSelectorManager))
+      ->setConstructorArgs(array($this->configFactory, $this->paymentMethodManager, $this->paymentMethodSelectorManager))
       ->setMethods(array('t'))
       ->getMock();
   }

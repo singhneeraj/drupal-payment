@@ -10,10 +10,9 @@ namespace Drupal\payment_test;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormInterface;
-use Drupal\payment\Element\PaymentMethodInput;
 use Drupal\payment\Generate;
-use Drupal\payment\Plugin\Payment\MethodSelector\Manager as PaymentMethodSelectorManager;
-use Drupal\payment\Plugin\Payment\Type\Manager as PaymentTypeManager;
+use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface;
+use Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -31,21 +30,21 @@ class PaymentSelectPaymentMethodSelectorForm implements ContainerInjectionInterf
   /**
    * The payment method selector manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\MethodSelector\Manager
+   * @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface
    */
   protected $paymentMethodSelectorManager;
 
   /**
    * The payment method type manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\Type\Manager
+   * @var \Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface
    */
   protected $paymentTypeManager;
 
   /**
    * Constructor.
    */
-  function __construct(EntityManagerInterface $entity_manager, PaymentTypeManager $payment_type_manager, PaymentMethodSelectorManager $payment_method_selector_manager) {
+  function __construct(EntityManagerInterface $entity_manager, PaymentTypeManagerInterface $payment_type_manager, PaymentMethodSelectorManagerInterface $payment_method_selector_manager) {
     $this->entityManager = $entity_manager;
     $this->paymentTypeManager = $payment_type_manager;
     $this->paymentMethodSelectorManager = $payment_method_selector_manager;
@@ -69,9 +68,11 @@ class PaymentSelectPaymentMethodSelectorForm implements ContainerInjectionInterf
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->entityManager->getStorageController('payment')->create(array(
       'bundle' => 'payment_unavailable',
-    ))->setLineItems(Generate::createPaymentLineItems());
+    ));
+    $payment->setLineItems(Generate::createPaymentLineItems());
     $form['payment_method'] = $this->paymentMethodSelectorManager->createInstance('payment_select')->formElements(array(), $form_state, $payment);
     $form['submit'] = array(
       '#type' => 'submit',

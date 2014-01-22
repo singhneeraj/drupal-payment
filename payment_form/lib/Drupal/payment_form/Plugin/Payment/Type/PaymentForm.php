@@ -11,7 +11,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\HttpKernel;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
-use Drupal\payment\Plugin\Payment\Type\Base;
+use Drupal\payment\Plugin\Payment\Type\PaymentTypeBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -28,7 +28,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *   label = @Translation("Payment form field")
  * )
  */
-class PaymentForm extends Base implements ContainerFactoryPluginInterface {
+class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInterface {
 
   /**
    * The event dispatcher.

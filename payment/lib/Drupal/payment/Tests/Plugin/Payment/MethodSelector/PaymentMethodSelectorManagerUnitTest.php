@@ -2,20 +2,20 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\Payment\Method\ManagerUnitTest.
+ * Contains class \Drupal\payment\Tests\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerUnitTest.
  */
 
-namespace Drupal\payment\Tests\Plugin\Payment\Method;
+namespace Drupal\payment\Tests\Plugin\Payment\MethodSelector;
 
 use Drupal\Component\Plugin\Exception\PluginException;
-use Drupal\payment\Plugin\Payment\Method\Manager;
+use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManager;
 use Drupal\Tests\UnitTestCase;
 use Zend\Stdlib\ArrayObject;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\Method\Manager.
+ * Tests \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManager.
  */
-class ManagerUnitTest extends UnitTestCase {
+class PaymentMethodSelectorManagerUnitTest extends UnitTestCase {
 
   /**
    * The cache backend used for testing.
@@ -55,9 +55,9 @@ class ManagerUnitTest extends UnitTestCase {
   /**
    * The payment method plugin manager under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\Manager
+   * @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManager
    */
-  public $paymentMethodManager;
+  public $paymentMethodSelectorManager;
 
   /**
    * {@inheritdoc}
@@ -65,7 +65,7 @@ class ManagerUnitTest extends UnitTestCase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\Method\Manager unit test',
+      'name' => '\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManager unit test',
       'group' => 'Payment',
     );
   }
@@ -94,20 +94,20 @@ class ManagerUnitTest extends UnitTestCase {
 
     $namespaces = new ArrayObject();
 
-    $this->paymentMethodManager = new Manager($namespaces, $this->cache, $this->languageManager, $this->moduleHandler);
-    $property = new \ReflectionProperty($this->paymentMethodManager, 'discovery');
+    $this->paymentMethodSelectorManager = new PaymentMethodSelectorManager($namespaces, $this->cache, $this->languageManager, $this->moduleHandler);
+    $property = new \ReflectionProperty($this->paymentMethodSelectorManager, 'discovery');
     $property->setAccessible(TRUE);
-    $property->setValue($this->paymentMethodManager, $this->discovery);
-    $property = new \ReflectionProperty($this->paymentMethodManager, 'factory');
+    $property->setValue($this->paymentMethodSelectorManager, $this->discovery);
+    $property = new \ReflectionProperty($this->paymentMethodSelectorManager, 'factory');
     $property->setAccessible(TRUE);
-    $property->setValue($this->paymentMethodManager, $this->factory);
+    $property->setValue($this->paymentMethodSelectorManager, $this->factory);
   }
 
   /**
    * Tests createInstance().
    */
   public function testCreateInstance() {
-    $existing_plugin_id = 'payment_unavailable';
+    $existing_plugin_id = 'payment_select';
     $non_existing_plugin_id = $this->randomName();
     $this->factory->expects($this->at(0))
       ->method('createInstance')
@@ -119,8 +119,8 @@ class ManagerUnitTest extends UnitTestCase {
     $this->factory->expects($this->at(2))
       ->method('createInstance')
       ->with($existing_plugin_id);
-    $this->paymentMethodManager->createInstance($non_existing_plugin_id);
-    $this->paymentMethodManager->createInstance($existing_plugin_id);
+    $this->paymentMethodSelectorManager->createInstance($non_existing_plugin_id);
+    $this->paymentMethodSelectorManager->createInstance($existing_plugin_id);
   }
 
   /**
@@ -137,8 +137,8 @@ class ManagerUnitTest extends UnitTestCase {
       ->will($this->returnValue($definitions));
     $this->moduleHandler->expects($this->once())
       ->method('alter')
-      ->with('payment_method');
-    $this->assertSame($definitions, $this->paymentMethodManager->getDefinitions());
+      ->with('payment_method_selector');
+    $this->assertSame($definitions, $this->paymentMethodSelectorManager->getDefinitions());
   }
 
   /**
@@ -159,6 +159,6 @@ class ManagerUnitTest extends UnitTestCase {
     $expected_options = array(
       'foo' => $label,
     );
-    $this->assertSame($expected_options, $this->paymentMethodManager->options());
+    $this->assertSame($expected_options, $this->paymentMethodSelectorManager->options());
   }
 }

@@ -75,9 +75,7 @@ class BasicUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->paymentStatusManager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Status\Manager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
     $this->plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\Basic')
       ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->token, $this->paymentStatusManager))

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Tests\Plugin\Payment\MethodSelector\BaseUnitTest.
+ * Contains \Drupal\payment\Tests\Plugin\Payment\MethodSelector\PaymentMethodSelectorBaseUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Payment\MethodSelector;
@@ -10,9 +10,9 @@ namespace Drupal\payment\Tests\Plugin\Payment\MethodSelector;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\MethodSelector\Base.
+ * Tests \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorBase.
  */
-class BaseUnitTest extends UnitTestCase {
+class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
 
   /**
    * The current user used for testing.
@@ -24,14 +24,14 @@ class BaseUnitTest extends UnitTestCase {
   /**
    * The payment method manager used for testing.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\Manager|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentMethodManager;
 
   /**
    * The payment method selector plugin under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\MethodSelector\Base|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorBase|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentMethodSelectorPlugin;
 
@@ -41,7 +41,7 @@ class BaseUnitTest extends UnitTestCase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\MethodSelector\Base unit test',
+      'name' => '\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorBase unit test',
       'group' => 'Payment',
     );
   }
@@ -52,14 +52,12 @@ class BaseUnitTest extends UnitTestCase {
   public function setUp() {
     $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
-    $this->paymentMethodManager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\Manager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->paymentMethodManager = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface');
 
     $configuration = array();
     $plugin_id = $this->randomName();
     $plugin_definition = array();
-    $this->paymentMethodSelectorPlugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodSelector\Base')
+    $this->paymentMethodSelectorPlugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorBase')
       ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->currentUser, $this->paymentMethodManager))
       ->setMethods(array('getPaymentMethodFromFormElements', 'formElements'))
       ->getMock();

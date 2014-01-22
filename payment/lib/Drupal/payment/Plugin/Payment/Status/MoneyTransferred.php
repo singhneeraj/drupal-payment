@@ -14,5 +14,5 @@ namespace Drupal\payment\Plugin\Payment\Status;
  *   label = @Translation("Money has been transferred")
  * )
  */
-class MoneyTransferred extends Base {
+class MoneyTransferred extends PaymentStatusBase {
 }

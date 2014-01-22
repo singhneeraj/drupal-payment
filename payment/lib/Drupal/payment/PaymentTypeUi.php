@@ -13,7 +13,7 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\payment\Plugin\Payment\Type\Manager;
+use Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -53,7 +53,7 @@ class PaymentTypeUi extends ControllerBase implements ContainerInjectionInterfac
   /**
    * The payment type plugin manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\Type\Manager
+   * @var \Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface
    */
   protected $paymentTypeManager;
 
@@ -66,12 +66,12 @@ class PaymentTypeUi extends ControllerBase implements ContainerInjectionInterfac
    *   The entity manager.
    * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
    *   The form builder.
-   * @param \Drupal\payment\Plugin\Payment\Type\Manager $payment_type_manager
+   * @param \Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface $payment_type_manager
    *   The payment type plugin manager.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
    */
-  public function __construct(ModuleHandlerInterface $module_handler, EntityManagerInterface $entity_manager, FormBuilderInterface $form_builder, Manager $payment_type_manager, AccountInterface $current_user) {
+  public function __construct(ModuleHandlerInterface $module_handler, EntityManagerInterface $entity_manager, FormBuilderInterface $form_builder, PaymentTypeManagerInterface $payment_type_manager, AccountInterface $current_user) {
     $this->moduleHandler = $module_handler;
     $this->entityManager = $entity_manager;
     $this->formBuilder = $form_builder;

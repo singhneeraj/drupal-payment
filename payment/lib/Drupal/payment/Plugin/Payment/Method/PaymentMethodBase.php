@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Contains \Drupal\payment\PaymentMethod.
+ * Contains \Drupal\payment\PaymentMethod\PaymentMethodBase.
  */
 
 namespace Drupal\payment\Plugin\Payment\Method;
@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   form.
  * - message_text_format: The ID of the text format to format message_text with.
  */
-abstract class Base extends PluginBase implements AccessInterface, ContainerFactoryPluginInterface, PaymentMethodInterface {
+abstract class PaymentMethodBase extends PluginBase implements AccessInterface, ContainerFactoryPluginInterface, PaymentMethodInterface {
 
   /**
    * The module handler.

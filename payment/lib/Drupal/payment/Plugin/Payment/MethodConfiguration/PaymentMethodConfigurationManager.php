@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Contains \Drupal\payment\Plugin\Payment\MethodSelector\Manager.
+ * Contains \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManager.
  */
 
-namespace Drupal\payment\Plugin\Payment\MethodSelector;
+namespace Drupal\payment\Plugin\Payment\MethodConfiguration;
 
 use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Core\Cache\CacheBackendInterface;
@@ -13,11 +13,11 @@ use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**
- * Manages discovery and instantiation of payment method selector plugins.
+ * Manages discovery and instantiation of payment method configuration plugins.
  *
- * @see \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
+ * @see \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface
  */
-class Manager extends DefaultPluginManager {
+class PaymentMethodConfigurationManager extends DefaultPluginManager implements PaymentMethodConfigurationManagerInterface {
 
   /**
    * Constructor.
@@ -33,9 +33,9 @@ class Manager extends DefaultPluginManager {
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, LanguageManager $language_manager, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/Payment/MethodSelector', $namespaces, '\Drupal\payment\Annotations\PaymentMethodSelector');
-    $this->alterInfo($module_handler, 'payment_method_selector');
-    $this->setCacheBackend($cache_backend, $language_manager, 'payment_method_selector');
+    parent::__construct('Plugin/Payment/MethodConfiguration', $namespaces, '\Drupal\payment\Annotations\PaymentMethodConfiguration');
+    $this->alterInfo($module_handler, 'payment_method_configuration');
+    $this->setCacheBackend($cache_backend, $language_manager, 'payment_method_configuration');
   }
 
   /**
@@ -47,23 +47,7 @@ class Manager extends DefaultPluginManager {
       return parent::createInstance($plugin_id, $configuration);
     }
     catch (PluginException $e) {
-      return parent::createInstance('payment_select', $configuration);
+      return parent::createInstance('payment_unavailable', $configuration);
     }
-  }
-
-  /**
-   * Returns payment method options.
-   *
-   * @return array
-   *   Keys are plugin IDs. Values are plugin labels.
-   */
-  function options() {
-    $options = array();
-    foreach ($this->getDefinitions() as $plugin_id => $definition) {
-      $options[$plugin_id] = $definition['label'];
-    }
-    natcasesort($options);
-
-    return $options;
   }
 }

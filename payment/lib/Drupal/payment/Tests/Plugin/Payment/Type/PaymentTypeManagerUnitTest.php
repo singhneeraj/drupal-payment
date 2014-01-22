@@ -2,20 +2,20 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\Payment\Type\ManagerUnitTest.
+ * Contains class \Drupal\payment\Tests\Plugin\Payment\Type\PaymentTypeManagerUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Payment\Type;
 
 use Drupal\Component\Plugin\Exception\PluginException;
-use Drupal\payment\Plugin\Payment\Type\Manager;
+use Drupal\payment\Plugin\Payment\Type\PaymentTypeManager;
 use Drupal\Tests\UnitTestCase;
 use Zend\Stdlib\ArrayObject;;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\Type\Manager.
+ * Tests \Drupal\payment\Plugin\Payment\Type\PaymentTypeManager.
  */
-class ManagerUnitTest extends UnitTestCase {
+class PaymentTypeManagerUnitTest extends UnitTestCase {
 
   /**
    * The cache backend used for testing.
@@ -55,7 +55,7 @@ class ManagerUnitTest extends UnitTestCase {
   /**
    * The plugin manager under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\Type\Manager
+   * @var \Drupal\payment\Plugin\Payment\Type\PaymentTypeManager
    */
   protected $paymentTypeManager;
 
@@ -65,7 +65,7 @@ class ManagerUnitTest extends UnitTestCase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\Type\Manager unit test',
+      'name' => '\Drupal\payment\Plugin\Payment\Type\PaymentTypeManager unit test',
       'group' => 'Payment',
     );
   }
@@ -94,7 +94,7 @@ class ManagerUnitTest extends UnitTestCase {
 
     $namespaces = new ArrayObject();
 
-    $this->paymentTypeManager = new Manager($namespaces, $this->cache, $this->languageManager, $this->moduleHandler);
+    $this->paymentTypeManager = new PaymentTypeManager($namespaces, $this->cache, $this->languageManager, $this->moduleHandler);
     $property = new \ReflectionProperty($this->paymentTypeManager, 'discovery');
     $property->setAccessible(TRUE);
     $property->setValue($this->paymentTypeManager, $this->discovery);

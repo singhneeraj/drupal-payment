@@ -10,7 +10,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Plugin\Payment\Status\Manager as PaymentStatusManager;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -26,12 +26,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   id = "payment_basic"
  * )
  */
-class Basic extends Base implements ContainerFactoryPluginInterface {
+class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface {
 
   /**
    * The payment status manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\manager
+   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    */
   protected $paymentStatusManager;
 
@@ -48,10 +48,10 @@ class Basic extends Base implements ContainerFactoryPluginInterface {
    *   The module handler.
    * @param \Drupal\Core\Utility\Token $token
    *   The token API.
-   * @param \Drupal\payment\Plugin\Payment\Status\Manager
+   * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    *   The payment status manager.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler, Token $token, PaymentStatusManager $payment_status_manager) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler, Token $token, PaymentStatusManagerInterface $payment_status_manager) {
     $configuration += $this->defaultConfiguration();
     parent::__construct($configuration, $plugin_id, $plugin_definition, $module_handler, $token);
     $this->paymentStatusManager = $payment_status_manager;

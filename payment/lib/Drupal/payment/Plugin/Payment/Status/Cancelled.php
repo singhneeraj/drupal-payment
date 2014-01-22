@@ -15,5 +15,5 @@ namespace Drupal\payment\Plugin\Payment\Status;
  *   parent_id = "payment_failed"
  * )
  */
-class Cancelled extends Base {
+class Cancelled extends PaymentStatusBase {
 }

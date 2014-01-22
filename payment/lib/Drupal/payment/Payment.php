@@ -15,7 +15,7 @@ class Payment {
   /**
    * Returns the payment method manager.
    *
-   * @return \Drupal\payment\Plugin\Payment\Method\Manager
+   * @return \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface
    */
   public static function methodManager() {
     return \Drupal::service('plugin.manager.payment.method');
@@ -24,7 +24,7 @@ class Payment {
   /**
    * Returns the payment method configuration manager.
    *
-   * @return \Drupal\payment\Plugin\Payment\MethodConfiguration\Manager
+   * @return \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface
    */
   public static function methodConfigurationManager() {
     return \Drupal::service('plugin.manager.payment.method_configuration');
@@ -33,7 +33,7 @@ class Payment {
   /**
    * Returns the payment method selector manager.
    *
-   * @return \Drupal\payment\Plugin\Payment\MethodSelector\Manager
+   * @return \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface
    */
   public static function methodSelectorManager() {
     return \Drupal::service('plugin.manager.payment.method_selector');
@@ -42,7 +42,7 @@ class Payment {
   /**
    * Returns the payment line item manager.
    *
-   * @return \Drupal\payment\Plugin\Payment\LineItem\Manager
+   * @return \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface
    */
   public static function lineItemManager() {
     return \Drupal::service('plugin.manager.payment.line_item');
@@ -51,7 +51,7 @@ class Payment {
   /**
    * Returns the payment status manager.
    *
-   * @return \Drupal\payment\Plugin\Payment\Status\Manager
+   * @return \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    */
   public static function statusManager() {
     return \Drupal::service('plugin.manager.payment.status');
@@ -60,7 +60,7 @@ class Payment {
   /**
    * Returns the payment type manager.
    *
-   * @return \Drupal\payment\Plugin\Payment\Type\Manager
+   * @return \Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface
    */
   public static function typeManager() {
     return \Drupal::service('plugin.manager.payment.type');

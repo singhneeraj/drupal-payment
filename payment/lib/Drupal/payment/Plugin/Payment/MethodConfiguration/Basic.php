@@ -8,7 +8,7 @@ namespace Drupal\payment\Plugin\Payment\MethodConfiguration;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\payment\Plugin\Payment\Status\Manager as PaymentStatusManager;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -20,12 +20,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("Basic")
  * )
  */
-class Basic extends Base implements ContainerFactoryPluginInterface {
+class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPluginInterface {
 
   /**
    * The payment status manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\manager
+   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    */
   protected $paymentStatusManager;
 
@@ -38,10 +38,10 @@ class Basic extends Base implements ContainerFactoryPluginInterface {
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\payment\Plugin\Payment\Status\Manager
+   * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    *   The payment status manager.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, PaymentStatusManager $payment_status_manager) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, PaymentStatusManagerInterface $payment_status_manager) {
     $configuration += $this->defaultConfiguration();
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->paymentStatusManager = $payment_status_manager;

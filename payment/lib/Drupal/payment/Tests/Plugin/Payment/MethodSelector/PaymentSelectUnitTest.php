@@ -26,7 +26,7 @@ class PaymentSelectUnitTest extends UnitTestCase {
   /**
    * The payment method manager used for testing.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\Manager|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentMethodManager;
 
@@ -61,9 +61,7 @@ class PaymentSelectUnitTest extends UnitTestCase {
   public function setUp() {
     $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
-    $this->paymentMethodManager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\Manager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->paymentMethodManager = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface');
 
     $configuration = array();
     $this->paymentMethodSelectorPluginId = $this->randomName();

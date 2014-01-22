@@ -12,7 +12,7 @@ use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
 use Drupal\simpletest\WebTestBase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\Status\Basic.
+ * Tests \Drupal\payment\Plugin\Payment\LineItem\Basic.
  */
 class BasicWebTest extends WebTestBase {
 

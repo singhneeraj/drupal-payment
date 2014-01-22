@@ -1,21 +1,21 @@
 services:
   plugin.manager.payment.type:
-    class: Drupal\payment\Plugin\Payment\Type\Manager
+    class: Drupal\payment\Plugin\Payment\Type\PaymentTypeManager
     arguments: ['@container.namespaces', '@cache.cache', '@language_manager', '@module_handler']
   plugin.manager.payment.line_item:
-    class: Drupal\payment\Plugin\Payment\LineItem\Manager
+    class: Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManager
     arguments: ['@container.namespaces', '@cache.cache', '@language_manager', '@module_handler']
   plugin.manager.payment.method:
-    class: Drupal\payment\Plugin\Payment\Method\Manager
+    class: Drupal\payment\Plugin\Payment\Method\PaymentMethodManager
     arguments: ['@container.namespaces', '@cache.cache', '@language_manager', '@module_handler']
   plugin.manager.payment.method_configuration:
-    class: Drupal\payment\Plugin\Payment\MethodConfiguration\Manager
+    class: Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManager
     arguments: ['@container.namespaces', '@cache.cache', '@language_manager', '@module_handler']
   plugin.manager.payment.method_selector:
-    class: Drupal\payment\Plugin\Payment\MethodSelector\Manager
+    class: Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManager
     arguments: ['@container.namespaces', '@cache.cache', '@language_manager', '@module_handler']
   plugin.manager.payment.status:
-    class: Drupal\payment\Plugin\Payment\Status\Manager
+    class: Drupal\payment\Plugin\Payment\Status\PaymentStatusManager
     arguments: ['@container.namespaces', '@cache.cache', '@language_manager', '@module_handler']
   payment.hook.element_info:
     class: Drupal\payment\Hook\ElementInfo

@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Entity;
 
+use Drupal\Component\Plugin\Discovery\CachedDiscoveryInterface;
 use Drupal\Core\Config\Entity\ConfigStorageController;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Config\ConfigFactory;
@@ -14,7 +15,7 @@ use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Component\Uuid\UuidInterface;
-use Drupal\payment\Plugin\Payment\Method\Manager;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -25,7 +26,7 @@ class PaymentMethodStorageController extends ConfigStorageController {
   /**
    * The payment method manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\Manager
+   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface
    */
   protected $paymentMethodManager;
 
@@ -42,9 +43,9 @@ class PaymentMethodStorageController extends ConfigStorageController {
    *   The entity query factory.
    * @param \Drupal\Component\Uuid\UuidInterface $uuid_service
    *   The UUID service.
-   * @param \Drupal\payment\Plugin\Payment\Method\Manager $payment_method_manager
+   * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface $payment_method_manager
    */
-  public function __construct(EntityTypeInterface $entity_info, ConfigFactory $config_factory, StorageInterface $config_storage, QueryFactory $entity_query_factory, UuidInterface $uuid_service, Manager $payment_method_manager) {
+  public function __construct(EntityTypeInterface $entity_info, ConfigFactory $config_factory, StorageInterface $config_storage, QueryFactory $entity_query_factory, UuidInterface $uuid_service, PaymentMethodManagerInterface $payment_method_manager) {
     parent::__construct($entity_info, $config_factory, $config_storage, $entity_query_factory, $uuid_service);
     $this->paymentMethodManager = $payment_method_manager;
   }
@@ -83,7 +84,9 @@ class PaymentMethodStorageController extends ConfigStorageController {
    */
   public function save(EntityInterface $entity) {
     $return = parent::save($entity);
-    $this->paymentMethodManager->clearCachedDefinitions();
+    if ($this->paymentMethodManager instanceof CachedDiscoveryInterface) {
+      $this->paymentMethodManager->clearCachedDefinitions();
+    }
 
     return $return;
   }
@@ -93,6 +96,8 @@ class PaymentMethodStorageController extends ConfigStorageController {
    */
   public function delete(array $entities) {
     parent::delete($entities);
-    $this->paymentMethodManager->clearCachedDefinitions();
+    if ($this->paymentMethodManager instanceof CachedDiscoveryInterface) {
+      $this->paymentMethodManager->clearCachedDefinitions();
+    }
   }
 }

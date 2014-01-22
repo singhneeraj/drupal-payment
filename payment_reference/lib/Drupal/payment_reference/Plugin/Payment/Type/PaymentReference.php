@@ -11,7 +11,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\HttpKernel;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
-use Drupal\payment\Plugin\Payment\Type\Base;
+use Drupal\payment\Plugin\Payment\Type\PaymentTypeBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
  *   label = @Translation("Payment reference field")
  * )
  */
-class PaymentReference extends Base implements ContainerFactoryPluginInterface {
+class PaymentReference extends PaymentTypeBase implements ContainerFactoryPluginInterface {
 
   /**
    * The field instance storage.

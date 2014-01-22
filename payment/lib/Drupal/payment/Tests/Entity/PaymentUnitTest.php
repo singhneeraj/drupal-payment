@@ -29,7 +29,7 @@ class PaymentUnitTest extends DrupalUnitTestBase {
   /**
    * The payment line item manager used for testing.
    *
-   * @var \Drupal\payment\Plugin\Payment\LineItem\Manager
+   * @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface
    */
   protected $lineItemManager;
 
@@ -48,7 +48,7 @@ class PaymentUnitTest extends DrupalUnitTestBase {
   /**
    * The payment status manager used for testing.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\Manager
+   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    */
   protected $statusManager;
 

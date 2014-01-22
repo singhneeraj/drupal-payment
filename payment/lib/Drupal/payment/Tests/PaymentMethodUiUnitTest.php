@@ -40,14 +40,14 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
   /**
    * The payment method configuration plugin manager used for testing.
    *
-   * @var \Drupal\payment\Plugin\Payment\MethodConfiguration\Manager|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentMethodConfigurationManager;
 
   /**
    * The payment method plugin manager used for testing.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\Manager|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentMethodManager;
 
@@ -86,13 +86,9 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
 
     $this->formBuilder = $this->getMock('\Drupal\Core\Form\FormBuilderInterface');
 
-    $this->paymentMethodConfigurationManager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodConfiguration\Manager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->paymentMethodConfigurationManager = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface');
 
-    $this->paymentMethodManager= $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\Manager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->paymentMethodManager= $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface');
 
     $this->urlGenerator = $this->getMock('\Drupal\Core\Routing\UrlGeneratorInterface');
     $this->urlGenerator->expects($this->any())

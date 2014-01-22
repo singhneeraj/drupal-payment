@@ -27,14 +27,14 @@ class QueueWebTest extends WebTestBase {
   /**
    * The payment method plugin manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\Manager
+   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface
    */
   protected $paymentMethodManager;
 
   /**
    * The payment status plugin manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\Manager
+   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    */
   protected $paymentStatusManager;
 

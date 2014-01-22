@@ -19,7 +19,7 @@ class PaymentMethodUnitTest extends DrupalUnitTestBase {
   /**
    * The payment method plugin manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\Manager
+   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface
    */
   protected $manager;
 

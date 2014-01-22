@@ -15,8 +15,8 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentMethodInterface;
-use Drupal\payment\Plugin\Payment\Method\Manager as PaymentMethodManager;
-use Drupal\payment\Plugin\Payment\MethodConfiguration\Manager as PaymentMethodConfigurationManager;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
+use Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,14 +50,14 @@ class PaymentMethodUi extends ControllerBase implements AccessInterface, Contain
   /**
    * The payment method configuration plugin manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\MethodConfiguration\Manager
+   * @var \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface
    */
   protected $paymentMethodConfigurationManager;
 
   /**
-   * The payment method plugin manager.
+   * The payment method plugin manager used for testing.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\Manager
+   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface
    */
   protected $paymentMethodManager;
 
@@ -72,13 +72,13 @@ class PaymentMethodUi extends ControllerBase implements AccessInterface, Contain
    * Constructor.
    *
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   * @param \Drupal\payment\Plugin\Payment\Method\Manager $payment_method_manager
-   * @param \Drupal\payment\Plugin\Payment\MethodConfiguration\Manager $payment_method_configuration_manager
+   * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface $payment_method_manager
+   * @param \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager
    * @param \Drupal\Core\Form\FormBuilderInterface  $form_builder
    * @param \Drupal\Core\Routing\UrlGeneratorInterface $url_generator
    * @param \Drupal\Core\Session\AccountInterface $current_user
    */
-  public function __construct(EntityManagerInterface $entity_manager, PaymentMethodManager $payment_method_manager, PaymentMethodConfigurationManager $payment_method_configuration_manager, FormBuilderInterface $form_builder, UrlGeneratorInterface $url_generator, AccountInterface $current_user) {
+  public function __construct(EntityManagerInterface $entity_manager, PaymentMethodManagerInterface $payment_method_manager, PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager, FormBuilderInterface $form_builder, UrlGeneratorInterface $url_generator, AccountInterface $current_user) {
     $this->entityManager = $entity_manager;
     $this->formBuilder = $form_builder;
     $this->paymentMethodManager = $payment_method_manager;

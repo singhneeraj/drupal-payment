@@ -15,7 +15,7 @@ namespace Drupal\payment\Plugin\Payment\Status;
  *   label = @Translation("Configuration entity status")
  * )
  */
-class Config extends Base {
+class Config extends PaymentStatusBase {
 
   /**
    * {@inheritdoc}
