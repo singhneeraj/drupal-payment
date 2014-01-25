@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\payment\PaymentTypeUi.
+ * Contains \Drupal\payment\Controller\PaymentType.
  */
 
-namespace Drupal\payment;
+namespace Drupal\payment\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * Returns responses for payment type routes.
  */
-class PaymentTypeUi extends ControllerBase implements ContainerInjectionInterface {
+class PaymentType extends ControllerBase implements ContainerInjectionInterface {
 
   /**
    * The current user.

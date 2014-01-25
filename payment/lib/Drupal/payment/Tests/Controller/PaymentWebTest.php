@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\PaymentUiWebTest.
+ * Contains class \Drupal\payment\Tests\Controller\PaymentWebTest.
  */
 
 namespace Drupal\payment\Tests;
@@ -14,7 +14,7 @@ use Drupal\simpletest\WebTestBase ;
 /**
  * Tests the payment UI.
  */
-class PaymentUiWebTest extends WebTestBase {
+class PaymentWebTest extends WebTestBase {
 
   /**
    * {@inheritdoc}
@@ -86,6 +86,7 @@ class PaymentUiWebTest extends WebTestBase {
       ), t('Save'));
     }
     $this->assertUrl('payment/' . $payment->id());
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = entity_load_unchanged('payment', $payment->id());
     $this->assertEqual($payment->getStatus()->getPluginId(), 'payment_cancelled');
 

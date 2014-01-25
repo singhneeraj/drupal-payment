@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\payment\PaymentMethodUi.
+ * Contains \Drupal\payment\Controller\PaymentMethod.
  */
 
-namespace Drupal\payment;
+namespace Drupal\payment\Controller;
 
 use Drupal\Core\Access\AccessInterface;
 use Drupal\Core\Controller\ControllerBase;
@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Returns responses for payment method routes.
  */
-class PaymentMethodUi extends ControllerBase implements AccessInterface, ContainerInjectionInterface {
+class PaymentMethod extends ControllerBase implements AccessInterface, ContainerInjectionInterface {
 
   /**
    * The current user;
@@ -135,6 +135,7 @@ class PaymentMethodUi extends ControllerBase implements AccessInterface, Contain
   public function listPlugins() {
     $rows = array();
     foreach ($this->paymentMethodManager->getDefinitions() as $plugin_id => $definition) {
+      /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface $class */
       $class = $definition['class'];
       $row = array(
         'label' => array(

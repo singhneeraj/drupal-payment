@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\payment\PaymentStatusUi.
+ * Contains \Drupal\payment\Controller\PaymentStatus.
  */
 
-namespace Drupal\payment;
+namespace Drupal\payment\Controller;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Returns responses for payment status routes.
  */
-class PaymentStatusUi implements ContainerInjectionInterface {
+class PaymentStatus implements ContainerInjectionInterface {
 
   /**
    * The entity manager.

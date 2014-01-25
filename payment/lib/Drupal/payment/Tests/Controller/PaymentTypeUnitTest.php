@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Tests\PaymentTypeUiUnitTest.
+ * Contains \Drupal\payment\Tests\Controller\PaymentTypeUnitTest.
  */
 
-namespace Drupal\payment\Tests;
+namespace Drupal\payment\Tests\Controller;
 
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\PaymentTypeUi.
+ * Tests \Drupal\payment\Controller\PaymentType.
  */
-class PaymentTypeUiUnitTest extends UnitTestCase {
+class PaymentTypeUnitTest extends UnitTestCase {
 
   /**
    * The current user used for testing.
@@ -52,9 +52,9 @@ class PaymentTypeUiUnitTest extends UnitTestCase {
   /**
    * The controller class under test.
    *
-   * @var \Drupal\payment\PaymentTypeUi|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Controller\PaymentType|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $paymentTypeUi;
+  protected $controller;
 
   /**
    * {@inheritdoc}
@@ -63,7 +63,7 @@ class PaymentTypeUiUnitTest extends UnitTestCase {
     return array(
       'description' => '',
       'group' => 'Payment',
-      'name' => '\Drupal\payment\PaymentTypeUi unit test',
+      'name' => '\Drupal\payment\Controller\PaymentType unit test',
     );
   }
 
@@ -81,11 +81,11 @@ class PaymentTypeUiUnitTest extends UnitTestCase {
 
     $this->paymentTypeManager= $this->getMock('\Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface');
 
-    $this->paymentTypeUi = $this->getMockBuilder('\Drupal\payment\PaymentTypeUi')
+    $this->controller = $this->getMockBuilder('\Drupal\payment\Controller\PaymentType')
       ->setConstructorArgs(array($this->moduleHandler, $this->entityManager, $this->formBuilder, $this->paymentTypeManager, $this->currentUser))
       ->setMethods(array('t'))
       ->getMock();
-    $this->paymentTypeUi->expects($this->any())
+    $this->controller->expects($this->any())
       ->method('t')
       ->will($this->returnArgument(0));
   }
@@ -118,15 +118,15 @@ class PaymentTypeUiUnitTest extends UnitTestCase {
       ->will($this->returnValueMap($map));
 
     // Test with a bundle of a plugin with a form.
-    $build = $this->paymentTypeUi->configure($bundle_exists);
+    $build = $this->controller->configure($bundle_exists);
     $this->assertInternalType('array', $build);
 
     // Test with a bundle of a plugin without a form.
-    $build = $this->paymentTypeUi->configure($bundle_exists_no_form);
+    $build = $this->controller->configure($bundle_exists_no_form);
     $this->assertInternalType('string', $build);
 
     // Test with a non-existing bundle.
     $this->setExpectedException('\Symfony\Component\HttpKernel\Exception\NotFoundHttpException');
-    $this->paymentTypeUi->configure($bundle_no_exists);
+    $this->controller->configure($bundle_no_exists);
   }
 }

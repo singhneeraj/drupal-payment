@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\PaymentAdministrativeUIWebTest.
+ * Contains class \Drupal\payment\Tests\PaymentAdministrationCategoryWebTest.
  */
 
 namespace Drupal\payment\Tests;
@@ -10,9 +10,9 @@ namespace Drupal\payment\Tests;
 use Drupal\simpletest\WebTestBase ;
 
 /**
- * Tests general administrative parts of the UI.
+ * Tests Payment category in the administration UI.
  */
-class PaymentAdministrativeUIWebTest extends WebTestBase {
+class PaymentAdministrationCategoryWebTest extends WebTestBase {
 
   /**
    * {@inheritdoc}

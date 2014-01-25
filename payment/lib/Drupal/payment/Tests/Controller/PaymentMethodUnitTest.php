@@ -2,19 +2,19 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Tests\PaymentMethodUiUnitTest.
+ * Contains \Drupal\payment\Tests\Controller\PaymentMethodUnitTest.
  */
 
-namespace Drupal\payment\Tests;
+namespace Drupal\payment\Tests\Controller;
 
 use Drupal\Core\Access\AccessInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Tests \Drupal\payment\PaymentMethodUi.
+ * Tests \Drupal\payment\Controller\PaymentMethod.
  */
-class PaymentMethodUiUnitTest extends UnitTestCase {
+class PaymentMethodUnitTest extends UnitTestCase {
 
   /**
    * The current user used for testing.
@@ -54,9 +54,9 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
   /**
    * The class under test.
    *
-   * @var \Drupal\payment\PaymentMethodUi|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Controller\PaymentMethod|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $paymentMethodUi;
+  protected $controller;
 
   /**
    * The URL generator used for testing.
@@ -72,7 +72,7 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
     return array(
       'description' => '',
       'group' => 'Payment',
-      'name' => '\Drupal\payment\PaymentMethodUi unit test',
+      'name' => '\Drupal\payment\Controller\PaymentMethod unit test',
     );
   }
 
@@ -95,7 +95,7 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
       ->method('generateFromRoute')
       ->will($this->returnValue('http://example.com'));
 
-    $this->paymentMethodUi = $this->getMockBuilder('\Drupal\payment\PaymentMethodUi')
+    $this->controller = $this->getMockBuilder('\Drupal\payment\Controller\PaymentMethod')
       ->setConstructorArgs(array($this->entityManager, $this->paymentMethodManager, $this->paymentMethodConfigurationManager, $this->formBuilder, $this->urlGenerator, $this->currentUser))
       ->setMethods(array('drupalGetPath', 't', 'theme'))
       ->getMock();
@@ -110,7 +110,7 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
       ->method('enable');
     $payment_method->expects($this->once())
       ->method('save');
-    $this->paymentMethodUi->enable($payment_method);
+    $this->controller->enable($payment_method);
   }
 
   /**
@@ -122,7 +122,7 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
       ->method('disable');
     $payment_method->expects($this->once())
       ->method('save');
-    $this->paymentMethodUi->disable($payment_method);
+    $this->controller->disable($payment_method);
   }
 
   /**
@@ -154,7 +154,7 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
       ->with('payment_method')
       ->will($this->returnValue($access_controller));
 
-    $this->paymentMethodUi->select();
+    $this->controller->select();
   }
 
   /**
@@ -197,8 +197,8 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
 
     $request = new Request();
 
-    $this->assertSame(AccessInterface::ALLOW, $this->paymentMethodUi->selectAccess($request));
-    $this->assertSame(AccessInterface::DENY, $this->paymentMethodUi->selectAccess($request));
+    $this->assertSame(AccessInterface::ALLOW, $this->controller->selectAccess($request));
+    $this->assertSame(AccessInterface::DENY, $this->controller->selectAccess($request));
   }
 
   /**
@@ -233,7 +233,7 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
       ->method('getForm')
       ->with($form_controller);
 
-    $this->paymentMethodUi->add($plugin_id);
+    $this->controller->add($plugin_id);
   }
 
   /**
@@ -259,8 +259,8 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
       ->with('payment_method')
       ->will($this->returnValue($access_controller));
 
-    $this->assertSame(AccessInterface::ALLOW, $this->paymentMethodUi->addAccess($request));
-    $this->assertSame(AccessInterface::DENY, $this->paymentMethodUi->addAccess($request));
+    $this->assertSame(AccessInterface::ALLOW, $this->controller->addAccess($request));
+    $this->assertSame(AccessInterface::DENY, $this->controller->addAccess($request));
   }
 
   /**
@@ -289,7 +289,7 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
       ->method('getForm')
       ->with($form_controller);
 
-    $this->paymentMethodUi->duplicate($payment_method);
+    $this->controller->duplicate($payment_method);
   }
 
   /**
@@ -300,7 +300,7 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
     $definitions = array(
       $plugin_id => array(
         'active' => TRUE,
-        'class' => '\Drupal\payment\Tests\PaymentMethodUiUnitTestDummyPaymentMethodPlugin',
+        'class' => '\Drupal\payment\Tests\Controller\PaymentMethodUnitTestDummyPaymentMethodPlugin',
         'label' => $this->randomName(),
       ),
     );
@@ -309,7 +309,7 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
       ->method('getDefinitions')
       ->will($this->returnValue($definitions));
 
-    $build = $this->paymentMethodUi->listPlugins();
+    $build = $this->controller->listPlugins();
     $this->assertInternalType('array', $build);
   }
 }
@@ -317,7 +317,7 @@ class PaymentMethodUiUnitTest extends UnitTestCase {
 /**
  * Fakes a payment method plugin.
  */
-class PaymentMethodUiUnitTestDummyPaymentMethodPlugin {
+class PaymentMethodUnitTestDummyPaymentMethodPlugin {
 
   /**
    * Fakes \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface::getOperations().

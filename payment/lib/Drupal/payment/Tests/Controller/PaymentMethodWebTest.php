@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\PaymentMethodUiWebTest.
+ * Contains class \Drupal\payment\Tests\Controller\PaymentMethodWebTest.
  */
 
-namespace Drupal\payment\Tests;
+namespace Drupal\payment\Tests\Controller;
 
 use Drupal\payment\Entity\PaymentMethodInterface;
 use Drupal\payment\Payment;
@@ -14,7 +14,7 @@ use Drupal\simpletest\WebTestBase ;
 /**
  * Tests the payment method UI.
  */
-class PaymentMethodUiWebTest extends WebTestBase {
+class PaymentMethodWebTest extends WebTestBase {
 
   /**
    * {@inheritdoc}
@@ -67,6 +67,7 @@ class PaymentMethodUiWebTest extends WebTestBase {
     $this->assertNoLink(t('Enable'));
     $this->assertNoLink(t('Disable'));
 
+    /** @var \Drupal\payment\Entity\PaymentMethodInterface $payment_method */
     $payment_method = entity_load('payment_method', 'collect_on_delivery');
     $this->assertFalse($payment_method->status());
 
@@ -187,6 +188,7 @@ class PaymentMethodUiWebTest extends WebTestBase {
       'owner' => $user->label(),
       'plugin_form[brand_label]' => $brand_label,
     ), t('Save'));
+    /** @var \Drupal\payment\Entity\PaymentMethodInterface $payment_method */
     $payment_method = entity_load('payment_method', $id);
     if ($this->assertTrue($payment_method instanceof PaymentMethodInterface)) {
       $this->assertEqual($payment_method->label(), $label);
