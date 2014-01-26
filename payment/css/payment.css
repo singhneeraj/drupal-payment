@@ -23,11 +23,15 @@
 
 /* @group payment_basic line item plugin */
 
-.payment-line-item-payment-basic .form-item {
-    float: left;
-    margin-right: 1em;
+.payment-line-item-plugin-payment_basic .form-item {
+    float: left; /* LTR */
+    margin-right: 1em; /* LTR */
 }
-.payment-line-item-payment-basic .clear {
+[dir="rtl"] .payment-line-item-plugin-payment_basic .form-item {
+    float: right;
+    margin-left: 1em;
+}
+.payment-line-item-plugin-payment_basic .clear {
     clear: both;
 }
 
