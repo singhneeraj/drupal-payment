@@ -10,7 +10,7 @@ namespace Drupal\payment\Tests\Plugin\Payment\MethodConfiguration;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\MethodConfiguration\Basic.
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\MethodConfiguration\Basic
  */
 class BasicUnitTest extends UnitTestCase {
 
@@ -40,7 +40,7 @@ class BasicUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
   public function setUp() {
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
@@ -55,7 +55,7 @@ class BasicUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests defaultConfiguration().
+   * @covers ::defaultConfiguration
    */
   public function testDefaultConfiguration() {
     $configuration = $this->plugin->defaultConfiguration();
@@ -67,7 +67,8 @@ class BasicUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getStatus() setStatus().
+   * @covers ::getStatus
+   * @covers ::setStatus
    */
   public function testGetStatus() {
     $status = $this->randomName();
@@ -76,7 +77,7 @@ class BasicUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests formElements().
+   * @covers ::formElements
    */
   public function testFormElements() {
     $form = array();
@@ -90,7 +91,8 @@ class BasicUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getBrandLabel() and setBrandLabel().
+   * @covers ::getBrandLabel
+   * @covers ::setBrandLabel
    */
   public function testGetBrandLabel() {
     $label = $this->randomName();

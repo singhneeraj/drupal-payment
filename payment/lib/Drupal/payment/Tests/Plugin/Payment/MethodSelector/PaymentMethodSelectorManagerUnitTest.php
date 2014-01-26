@@ -13,7 +13,7 @@ use Drupal\Tests\UnitTestCase;
 use Zend\Stdlib\ArrayObject;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManager.
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManager
  */
 class PaymentMethodSelectorManagerUnitTest extends UnitTestCase {
 
@@ -104,7 +104,7 @@ class PaymentMethodSelectorManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests createInstance().
+   * @covers ::createInstance
    */
   public function testCreateInstance() {
     $existing_plugin_id = 'payment_select';
@@ -124,7 +124,7 @@ class PaymentMethodSelectorManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getDefinitions().
+   * @covers ::getDefinitions
    */
   public function testGetDefinitions() {
     $definitions = array(
@@ -142,8 +142,7 @@ class PaymentMethodSelectorManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests options().
-   *
+   * @covers ::options
    * @depends testGetDefinitions
    */
   public function testOptions() {

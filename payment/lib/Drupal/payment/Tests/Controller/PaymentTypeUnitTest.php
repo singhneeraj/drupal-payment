@@ -10,7 +10,7 @@ namespace Drupal\payment\Tests\Controller;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Controller\PaymentType.
+ * @coversDefaultClass \Drupal\payment\Controller\PaymentType
  */
 class PaymentTypeUnitTest extends UnitTestCase {
 
@@ -91,7 +91,7 @@ class PaymentTypeUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests configure().
+   * @covers ::configure
    */
   public function testConfigure() {
     $bundle_exists = $this->randomName();

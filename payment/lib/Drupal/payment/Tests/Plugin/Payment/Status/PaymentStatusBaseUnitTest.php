@@ -10,7 +10,7 @@ namespace Drupal\payment\Tests\Plugin\Payment\Status;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\Status\PaymentStatusBase.
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\Status\PaymentStatusBase
  */
 class PaymentStatusBaseUnitTest extends UnitTestCase {
 
@@ -47,7 +47,7 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
   public function setup() {
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
@@ -62,7 +62,8 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests setConfiguration() and getConfiguration().
+   * @covers ::setConfiguration
+   * @covers ::getConfiguration
    */
   public function testGetConfiguration() {
     $configuration = array(
@@ -73,7 +74,8 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests setCreated() and getCreated().
+   * @covers ::setCreated
+   * @covers ::getCreated
    */
   public function testGetCreated() {
     $created = mt_rand();
@@ -82,7 +84,8 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests setPaymentId() and getPaymentId().
+   * @covers ::setPaymentId
+   * @covers ::getPaymentId
    */
   public function testGetPaymentId() {
     $created = mt_rand();
@@ -91,7 +94,8 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests setId() and getId().
+   * @covers ::setId
+   * @covers ::getId
    */
   public function testGetId() {
     $created = mt_rand();
@@ -100,7 +104,7 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getChildren().
+   * @covers ::getChildren
    */
   public function testGetChildren() {
     $children = array($this->randomName());
@@ -112,7 +116,7 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getDescendants().
+   * @covers ::getDescendants
    */
   public function testGetDescendants() {
     $descendants = array($this->randomName());
@@ -124,7 +128,7 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getAncestors().
+   * @covers ::getAncestors
    */
   public function testGetAncestors() {
     $ancestors = array($this->randomName());
@@ -136,7 +140,7 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests hasAncestor().
+   * @covers ::hasAncestor
    */
   public function testHasAncestor() {
     $expected = TRUE;
@@ -148,7 +152,7 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests isOrHasAncestor().
+   * @covers ::isOrHasAncestor
    */
   public function testIsOrHasAncestor() {
     $expected = TRUE;
@@ -160,7 +164,7 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getOperations().
+   * @covers ::getOperations
    */
   public function testGetOperations() {
     $this->assertSame(array(), $this->status->getOperations($this->pluginId));

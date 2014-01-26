@@ -10,9 +10,9 @@ namespace Drupal\payment\Tests\Plugin\Payment\MethodConfiguration;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationBase.
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationBase
  */
-class BaseUnitTest extends UnitTestCase {
+class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
 
   /**
    * The payment method configuration plugin under test.
@@ -40,7 +40,7 @@ class BaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
   public function setUp() {
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
@@ -55,7 +55,7 @@ class BaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests defaultConfiguration().
+   * @covers ::defaultConfiguration
    */
   public function testDefaultConfiguration() {
     $configuration = $this->plugin->defaultConfiguration();
@@ -67,7 +67,7 @@ class BaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests formElements().
+   * @covers ::formElements
    */
   public function testFormElements() {
     $form = array();
@@ -79,7 +79,8 @@ class BaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests setConfiguration() and getConfiguration().
+   * @covers ::setConfiguration
+   * @covers ::getConfiguration
    */
   public function testGetConfiguration() {
     $configuration = array(

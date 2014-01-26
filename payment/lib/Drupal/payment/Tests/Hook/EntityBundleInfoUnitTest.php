@@ -11,19 +11,19 @@ use Drupal\payment\Hook\EntityBundleInfo;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Hook\EntityBundleInfo.
+ * @coversDefaultClass \Drupal\payment\Hook\EntityBundleInfo
  */
 class EntityBundleInfoUnitTest extends UnitTestCase {
 
   /**
-   * The payment method configuration manager.
+   * The payment method configuration manager used for testing.
    *
    * @var \Drupal\Component\Plugin\PluginManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentMethodConfigurationManager;
 
   /**
-   * The payment type manager
+   * The payment type manager used for testing.
    *
    * @var \Drupal\Component\Plugin\PluginManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
@@ -48,7 +48,7 @@ class EntityBundleInfoUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
   public function setUp() {
     $this->paymentMethodConfigurationManager = $this->getMock('\Drupal\Component\Plugin\PluginManagerInterface');
@@ -59,7 +59,7 @@ class EntityBundleInfoUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers \Drupal\payment\Hook\EntityBundleInfo::invoke()
+   * @covers ::invoke
    */
   public function testInvoke() {
     $payment_type_plugin_id = $this->randomName();

@@ -11,35 +11,35 @@ use Drupal\payment\Plugin\Payment\Method\Unavailable;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\Method\Unavailable.
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\Unavailable
  */
 class UnavailableUnitTest extends UnitTestCase {
 
   /**
-   * The module handler.
+   * The module handler used for testing.
    *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $moduleHandler;
 
   /**
-   * The token API.
+   * The token API used for testing.
    *
-   * @var \Drupal\Core\Utility\Token
+   * @var \Drupal\Core\Utility\Token|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $token;
 
   /**
-   * The payment method plugin.
+   * The payment method plugin under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\Basic
+   * @var \Drupal\payment\Plugin\Payment\Method\Unavailable
    */
   protected $plugin;
 
   /**
-   * The payment status manager.
+   * The payment status manager used for testing.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\manager
+   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentStatusManager;
 
@@ -55,7 +55,7 @@ class UnavailableUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
   public function setUp() {
     parent::setUp();
@@ -72,14 +72,14 @@ class UnavailableUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests defaultConfiguration().
+   * @covers ::defaultConfiguration
    */
   public function testDefaultConfiguration() {
     $this->assertSame(array(), $this->plugin->defaultConfiguration());
   }
 
   /**
-   * Tests formElements().
+   * @covers ::formElements
    */
   public function testFormElements() {
     $form = array();
@@ -93,7 +93,7 @@ class UnavailableUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests executePaymentAccess().
+   * @covers ::executePaymentAccess
    */
   public function testExecutePaymentAccess() {
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
@@ -106,8 +106,7 @@ class UnavailableUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests executePayment().
-   *
+   * @covers ::executePayment
    * @expectedException \RuntimeException
    */
   public function testExecutePayment() {

@@ -13,7 +13,7 @@ use Drupal\Tests\UnitTestCase;
 use Zend\Stdlib\ArrayObject;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\Status\PaymentStatusManager.
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\Status\PaymentStatusManager
  */
 class PaymentStatusManagerUnitTest extends UnitTestCase {
 
@@ -104,7 +104,7 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests createInstance().
+   * @covers ::createInstance
    */
   public function testCreateInstance() {
     $existing_plugin_id = 'payment_unknown';
@@ -124,7 +124,7 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getDefinitions().
+   * @covers ::getDefinitions
    */
   public function testGetDefinitions() {
     $definitions = array(
@@ -142,8 +142,7 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests hierarchy().
-   *
+   * @covers ::hierarchy
    * @depends testGetDefinitions
    */
   public function testHierarchy() {
@@ -170,8 +169,7 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests options().
-   *
+   * @covers ::options
    * @depends testGetDefinitions
    * @depends testHierarchy
    */
@@ -198,8 +196,7 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getChildren().
-   *
+   * @covers ::getChildren
    * @depends testGetDefinitions
    */
   public function testGetChildren() {
@@ -219,8 +216,7 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getDescendants().
-   *
+   * @covers ::getDescendants
    * @depends testGetDefinitions
    */
   public function testGetDescendants() {
@@ -244,8 +240,7 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getAncestors().
-   *
+   * @covers ::getAncestors
    * @depends testGetDefinitions
    */
   public function testGetAncestors() {
@@ -269,8 +264,7 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests hasAncestor().
-   *
+   * @covers ::hasAncestor
    * @depends testGetDefinitions
    */
   public function testHasAncestor() {
@@ -295,8 +289,7 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests isOrHasAncestor().
-   *
+   * @covers ::isOrHasAncestor
    * @depends testGetDefinitions
    */
   public function testIsOrHasAncestor() {

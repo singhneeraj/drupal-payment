@@ -11,12 +11,12 @@ use Drupal\payment\Hook\Permission;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Hook\Permission.
+ * @coversDefaultClass \Drupal\payment\Hook\Permission
  */
 class PermissionUnitTest extends UnitTestCase {
 
   /**
-   * The payment method configuration manager.
+   * The payment method configuration manager used for testing.
    *
    * @var \Drupal\Component\Plugin\PluginManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
@@ -30,7 +30,7 @@ class PermissionUnitTest extends UnitTestCase {
   protected $service;
 
   /**
-   * The translation manager service.
+   * The translation manager service used for testing.
    *
    * @var \Drupal\Core\StringTranslation\TranslationInterface
    */
@@ -48,7 +48,7 @@ class PermissionUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
   public function setUp() {
     $this->paymentMethodConfigurationManager = $this->getMock('\Drupal\Component\Plugin\PluginManagerInterface');
@@ -59,7 +59,7 @@ class PermissionUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers \Drupal\payment\Hook\Permission::invoke()
+   * @covers ::invoke
    */
   public function testInvoke() {
     $payment_method_configuration_plugin_id = $this->randomName();

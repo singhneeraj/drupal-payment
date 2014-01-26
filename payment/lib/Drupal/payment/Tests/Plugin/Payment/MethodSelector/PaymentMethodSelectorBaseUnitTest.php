@@ -10,7 +10,7 @@ namespace Drupal\payment\Tests\Plugin\Payment\MethodSelector;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorBase.
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorBase
  */
 class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
 
@@ -47,7 +47,7 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
   public function setUp() {
     $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
@@ -64,7 +64,7 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests defaultConfiguration().
+   * @covers ::defaultConfiguration
    */
   public function testDefaultConfiguration() {
     $configuration = $this->paymentMethodSelectorPlugin->defaultConfiguration();
@@ -74,7 +74,8 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests setConfiguration() and getConfiguration().
+   * @covers ::setConfiguration
+   * @covers ::getConfiguration
    */
   public function testGetConfiguration() {
     $configuration = array($this->randomName());
@@ -83,8 +84,9 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests setAllowedPaymentMethods(), resetAllowedPaymentMethods(), and
-   * getAllowedPaymentMethods().
+   * @covers ::setAllowedPaymentMethods
+   * @covers ::resetAllowedPaymentMethods
+   * @covers ::getAllowedPaymentMethods
    */
   public function testGetAllowedPaymentMethods() {
     $ids = array($this->randomName(), $this->randomName());
@@ -95,8 +97,7 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getAvailablePaymentMethods().
-   *
+   * @covers ::getAvailablePaymentMethods
    * @depends testGetAllowedPaymentMethods
    */
   public function testGetAvailablePaymentMethods() {

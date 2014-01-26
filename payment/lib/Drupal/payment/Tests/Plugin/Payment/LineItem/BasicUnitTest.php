@@ -9,7 +9,7 @@ namespace Drupal\payment\Tests\Plugin\Payment\LineItem;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\LineItem\Basic.
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\LineItem\Basic
  */
 class BasicUnitTest extends UnitTestCase {
 
@@ -53,7 +53,7 @@ class BasicUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
   public function setUp() {
     $this->database = $this->getMockBuilder('\Drupal\Core\Database\Connection')
@@ -77,7 +77,8 @@ class BasicUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests setDescription() and getDescription().
+   * @covers ::setDescription
+   * @covers ::getDescription
    */
   public function testGetDescription() {
     $description = $this->randomName();
@@ -86,7 +87,7 @@ class BasicUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests formElements().
+   * @covers ::formElements
    */
   public function testFormElements() {
     $this->lineItem->expects($this->once())

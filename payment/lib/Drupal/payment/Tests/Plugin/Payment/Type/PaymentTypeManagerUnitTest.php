@@ -13,7 +13,7 @@ use Drupal\Tests\UnitTestCase;
 use Zend\Stdlib\ArrayObject;;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\Type\PaymentTypeManager.
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\Type\PaymentTypeManager
  */
 class PaymentTypeManagerUnitTest extends UnitTestCase {
 
@@ -104,7 +104,7 @@ class PaymentTypeManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getDefinitions().
+   * @covers ::getDefinitions
    */
   public function testGetDefinitions() {
     $definitions = array(
@@ -122,7 +122,7 @@ class PaymentTypeManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests createInstance().
+   * @covers ::createInstance
    */
   public function testCreateInstance() {
     $existing_plugin_id = 'payment_unavailable';

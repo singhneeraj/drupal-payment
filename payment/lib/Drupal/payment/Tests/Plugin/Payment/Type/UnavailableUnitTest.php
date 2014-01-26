@@ -10,7 +10,7 @@ namespace Drupal\payment\Tests\Plugin\Payment\Type;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\Status\Unavailable.
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\Type\Unavailable
  */
 class UnavailableUnitTest extends UnitTestCase {
 
@@ -47,7 +47,7 @@ class UnavailableUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
   public function setUp() {
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
@@ -66,8 +66,7 @@ class UnavailableUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests resumeContext().
-   *
+   * @covers ::resumeContext
    * @expectedException \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    */
   public function testResumeContext() {
@@ -75,7 +74,7 @@ class UnavailableUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests paymentDescription().
+   * @covers ::paymentDescription
    */
   public function testPaymentDescription() {
     $this->translationManager->expects($this->once())

@@ -11,7 +11,7 @@ use Drupal\Tests\UnitTestCase;
 use Zend\Stdlib\ArrayObject;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface.
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface
  */
 class PaymentLineItemManagerUnitTest extends UnitTestCase {
 
@@ -104,7 +104,7 @@ class PaymentLineItemManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getDefinitions().
+   * @covers ::getDefinitions
    */
   public function testGetDefinitions() {
     $definitions = array(
@@ -122,8 +122,7 @@ class PaymentLineItemManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests options().
-   *
+   * @covers ::options
    * @depends testGetDefinitions
    */
   public function testOptions() {

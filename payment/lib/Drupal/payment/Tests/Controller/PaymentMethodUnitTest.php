@@ -12,7 +12,7 @@ use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Tests \Drupal\payment\Controller\PaymentMethod.
+ * @coversDefaultClass \Drupal\payment\Controller\PaymentMethod
  */
 class PaymentMethodUnitTest extends UnitTestCase {
 
@@ -102,7 +102,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests enable().
+   * @covers ::enable
    */
   public function testEnable() {
     $payment_method = $this->getMock('\Drupal\payment\Entity\PaymentMethodInterface');
@@ -114,7 +114,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests disable().
+   * @covers ::disable
    */
   public function testDisable() {
     $payment_method = $this->getMock('\Drupal\payment\Entity\PaymentMethodInterface');
@@ -126,7 +126,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests select().
+   * @covers ::select
    */
   public function testSelect() {
     $definitions = array(
@@ -158,7 +158,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests selectAccess().
+   * @covers ::selectAccess
    */
   public function testSelectAccess() {
     $definitions = array(
@@ -202,7 +202,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests add().
+   * @covers ::add
    */
   public function testAdd() {
     $plugin_id = $this->randomName();
@@ -237,7 +237,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests addAccess().
+   * @covers ::addAccess
    */
   public function testAddAccess() {
     $plugin_id = $this->randomName();
@@ -264,7 +264,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests duplicate().
+   * @covers ::duplicate
    */
   public function testDuplicate() {
     $payment_method = $this->getMock('\Drupal\payment\Entity\PaymentMethodInterface');
@@ -293,7 +293,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests listPlugins().
+   * @covers ::listPlugins
    */
   public function testListPlugins() {
     $plugin_id = $this->randomName();

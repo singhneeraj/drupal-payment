@@ -10,7 +10,7 @@ namespace Drupal\payment\Tests\Plugin\Action;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Action\UnsetLineItem.
+ * @coversDefaultClass \Drupal\payment\Plugin\Action\UnsetLineItem
  */
 class UnsetLineItemUnitTest extends UnitTestCase {
 
@@ -46,7 +46,7 @@ class UnsetLineItemUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests defaultConfiguration().
+   * @covers ::defaultConfiguration
    */
   public function testDefaultConfiguration() {
     $configuration = $this->action->defaultConfiguration();
@@ -55,7 +55,7 @@ class UnsetLineItemUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests buildConfigurationForm().
+   * @covers ::buildConfigurationForm
    */
   public function testBuildConfigurationForm() {
     $form = array();
@@ -66,8 +66,7 @@ class UnsetLineItemUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests submitConfigurationForm().
-   *
+   * @covers ::submitConfigurationForm
    * @depends testBuildConfigurationForm
    */
   public function testSubmitConfigurationForm() {
@@ -84,7 +83,7 @@ class UnsetLineItemUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests execute().
+   * @covers ::execute
    */
   public function testExecute() {
     $name = $this->randomName();

@@ -7,11 +7,10 @@
 
 namespace Drupal\payment\Tests\Plugin\Payment\Method;
 
-use Drupal\Core\Access\AccessInterface;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\Method\Basic.
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\Basic
  */
 class BasicUnitTest extends UnitTestCase {
 
@@ -48,7 +47,7 @@ class BasicUnitTest extends UnitTestCase {
   /**
    * The payment status manager used for testing.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\manager|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentStatusManager;
 
@@ -64,7 +63,7 @@ class BasicUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
   public function setUp() {
     parent::setUp();
@@ -87,24 +86,25 @@ class BasicUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests defaultConfiguration().
+   * @covers ::defaultConfiguration
    */
   public function testDefaultConfiguration() {
     $this->assertInternalType('array', $this->plugin->defaultConfiguration());
   }
 
   /**
-   * Tests getStatus() setStatus().
+   * @covers ::getStatus
    */
   public function testGetStatus() {
     $this->assertSame($this->pluginDefinition['status'], $this->plugin->getStatus());
   }
 
   /**
-   * Tests executePayment().
+   * @covers ::executePayment
    */
   public function testExecutePayment() {
     $payment_status_plugin_id = $this->randomName();
+    /** @var \Drupal\payment\Plugin\Payment\Method\Basic|\PHPUnit_Framework_MockObject_MockObject $payment_method_plugin */
     $payment_method_plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\Basic')
       ->setConstructorArgs(array(array(), '', array(), $this->moduleHandler, $this->token, $this->paymentStatusManager))
       ->setMethods(array('executePaymentAccess', 'getStatus'))
@@ -140,7 +140,7 @@ class BasicUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests currencies().
+   * @covers ::currencies
    */
   public function testCurrencies() {
     $this->assertSame(TRUE, $this->plugin->currencies());

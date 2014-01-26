@@ -12,7 +12,7 @@ use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManager.
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManager
  */
 class PaymentMethodConfigurationManagerUnitTest extends UnitTestCase {
 
@@ -42,7 +42,7 @@ class PaymentMethodConfigurationManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
   public function setUp() {
     $this->factory = $this->getMock('\Drupal\Component\Plugin\Factory\FactoryInterface');
@@ -57,7 +57,7 @@ class PaymentMethodConfigurationManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests createInstance().
+   * @covers ::createInstance
    */
   public function testCreateInstance() {
     $existing_plugin_id = 'payment_unavailable';

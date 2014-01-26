@@ -10,7 +10,7 @@ namespace Drupal\payment\Tests\Plugin\Payment\Type;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\Status\PaymentTypeBase.
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\Type\PaymentTypeBase
  */
 class PaymentTypeBaseUnitTest extends UnitTestCase {
 
@@ -40,7 +40,7 @@ class PaymentTypeBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
   public function setUp() {
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
@@ -55,7 +55,7 @@ class PaymentTypeBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests resumeContext().
+   * @covers ::resumeContext
    */
   public function testResumeContext() {
     $this->moduleHandler->expects($this->once())
@@ -65,7 +65,8 @@ class PaymentTypeBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests setPayment() and getPayment().
+   * @covers ::setPayment
+   * @covers ::getPayment
    */
   public function testGetPayment() {
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')

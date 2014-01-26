@@ -11,7 +11,7 @@ use Drupal\payment\Hook\HookInfo;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Hook\HookInfo.
+ * @coversDefaultClass \Drupal\payment\Hook\HookInfo
  */
 class HookInfoUnitTest extends UnitTestCase {
 
@@ -34,14 +34,14 @@ class HookInfoUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
   public function setUp() {
     $this->service = new HookInfo();
   }
 
   /**
-   * @covers \Drupal\payment\Hook\HookInfo::invoke()
+   * @covers ::invoke
    */
   public function testInvoke() {
     $hooks = $this->service->invoke();

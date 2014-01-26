@@ -10,7 +10,7 @@ namespace Drupal\payment\Tests\Plugin\Action;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Action\SetStatus.
+ * @coversDefaultClass \Drupal\payment\Plugin\Action\SetStatus
  */
 class SetStatusUnitTest extends UnitTestCase {
 
@@ -55,7 +55,7 @@ class SetStatusUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests defaultConfiguration().
+   * @covers ::defaultConfiguration
    */
   public function testDefaultConfiguration() {
     $configuration = $this->action->defaultConfiguration();
@@ -64,7 +64,7 @@ class SetStatusUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests buildConfigurationForm().
+   * @covers ::buildConfigurationForm
    */
   public function testBuildConfigurationForm() {
     $this->paymentStatusManager->expects($this->once())
@@ -78,8 +78,7 @@ class SetStatusUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests submitConfigurationForm().
-   *
+   * @covers ::submitConfigurationForm
    * @depends testBuildConfigurationForm
    */
   public function testSubmitConfigurationForm() {
@@ -96,7 +95,7 @@ class SetStatusUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests execute().
+   * @covers ::execute
    */
   public function testExecute() {
     $plugin_id = $this->randomName();

@@ -11,7 +11,7 @@ use Drupal\payment\Plugin\Payment\Method\BasicDerivative;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\Method\BasicDerivative .
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\BasicDerivative
  */
 class BasicDerivativeUnitTest extends UnitTestCase {
 
@@ -48,7 +48,7 @@ class BasicDerivativeUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
   public function setUp() {
     $this->paymentMethodConfigurationManager = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface');
@@ -59,7 +59,7 @@ class BasicDerivativeUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getDerivativeDefinitions().
+   * @covers ::getDerivativeDefinitions
    */
   public function testGetDerivativeDefinitions() {
     $id_enabled_basic = $this->randomName();

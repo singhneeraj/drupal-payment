@@ -11,7 +11,7 @@ use Drupal\Core\Access\AccessInterface;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase.
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase
  */
 class PaymentMethodBaseUnitTest extends UnitTestCase {
 
@@ -55,7 +55,7 @@ class PaymentMethodBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
   public function setUp() {
     parent::setUp();
@@ -92,7 +92,8 @@ class PaymentMethodBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests setConfiguration() and getConfiguration().
+   * @covers ::setConfiguration
+   * @covers ::getConfiguration
    */
   public function testGetConfiguration() {
     $configuration = array(
@@ -103,21 +104,21 @@ class PaymentMethodBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getMessageText().
+   * @covers ::getMessageText
    */
   public function testGetMessageText() {
     $this->assertSame($this->pluginDefinition['message_text'], $this->plugin->getMessageText());
   }
 
   /**
-   * Tests getMessageTextFormat().
+   * @covers ::getMessageTextFormat
    */
   public function testGetMessageTextFormat() {
     $this->assertSame($this->pluginDefinition['message_text_format'], $this->plugin->getMessageTextFormat());
   }
 
   /**
-   * Tests formElements().
+   * @covers ::formElements
    */
   public function testFormElements() {
     $form = array();
@@ -132,7 +133,7 @@ class PaymentMethodBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests executePayment().
+   * @covers ::executePayment
    */
   public function testExecutePayment() {
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
@@ -145,7 +146,7 @@ class PaymentMethodBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests executePaymentAccess().
+   * @covers ::executePaymentAccess
    */
   public function testExecutePaymentAccess() {
     $currency_code = 'EUR';

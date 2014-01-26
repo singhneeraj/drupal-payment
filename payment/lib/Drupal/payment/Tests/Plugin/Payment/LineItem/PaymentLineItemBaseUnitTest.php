@@ -10,7 +10,7 @@ namespace Drupal\payment\Tests\Plugin\Payment\LineItem;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase.
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase
  */
 class PaymentLineItemBaseUnitTest extends UnitTestCase {
 
@@ -33,7 +33,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
   public function setUp() {
     $configuration = array();
@@ -46,7 +46,8 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests setConfiguration() and getConfiguration().
+   * @covers ::setConfiguration
+   * @covers ::getConfiguration
    */
   public function testGetConfiguration() {
     $configuration = array(
@@ -57,7 +58,8 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests setAmount() and getAmount().
+   * @covers ::setAmount
+   * @covers ::getAmount
    */
   public function testGetAmount() {
     $amount = mt_rand();
@@ -66,7 +68,8 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests setQuantity() and getQuantity().
+   * @covers ::setQuantity
+   * @covers ::getQuantity
    */
   public function testGetQuantity() {
     $quantity = 7;
@@ -75,8 +78,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getTotalAmount().
-   *
+   * @covers ::getTotalAmount
    * @depends testGetAmount
    * @depends testGetQuantity
    */
@@ -89,7 +91,8 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests setName() and getName().
+   * @covers ::setName
+   * @covers ::getName
    */
   public function testGetName() {
     $name = $this->randomName();
@@ -98,7 +101,8 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests setCurrencyCode() and getCurrencyCode().
+   * @covers ::setCurrencyCode
+   * @covers ::getCurrencyCode
    */
   public function testGetCurrencyCode() {
     $currency_code = $this->randomName();
@@ -107,7 +111,8 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests setPaymentId() and getPaymentId().
+   * @covers ::setPaymentId
+   * @covers ::getPaymentId
    */
   public function testGetPaymentId() {
     $payment_id = mt_rand();

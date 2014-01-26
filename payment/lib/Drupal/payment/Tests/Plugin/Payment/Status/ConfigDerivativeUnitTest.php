@@ -11,7 +11,7 @@ use Drupal\payment\Plugin\Payment\Status\ConfigDerivative;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\Status\ConfigDerivative.
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\Status\ConfigDerivative
  */
 class ConfigDerivativeUnitTest extends UnitTestCase {
 
@@ -41,7 +41,7 @@ class ConfigDerivativeUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
   public function setUp() {
     $this->paymentStatusStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageControllerInterface');
@@ -50,7 +50,7 @@ class ConfigDerivativeUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getDerivativeDefinitions().
+   * @covers ::getDerivativeDefinitions
    */
   public function testGetDerivativeDefinitions() {
     $status_a = $this->getMock('\Drupal\payment\Entity\PaymentStatusInterface');

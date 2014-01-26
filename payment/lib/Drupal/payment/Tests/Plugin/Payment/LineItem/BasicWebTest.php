@@ -40,7 +40,7 @@ class BasicWebTest extends WebTestBase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
  protected function setUp() {
     parent::setUp();

@@ -11,7 +11,7 @@ use Drupal\payment\Hook\Menu;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Hook\Menu.
+ * @coversDefaultClass \Drupal\payment\Hook\Menu
  */
 class MenuUnitTest extends UnitTestCase {
 
@@ -34,14 +34,14 @@ class MenuUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
   public function setUp() {
     $this->service = new Menu();
   }
 
   /**
-   * @covers \Drupal\payment\Hook\Menu::invoke()
+   * @covers ::invoke
    */
   public function testInvoke() {
     $items = $this->service->invoke();

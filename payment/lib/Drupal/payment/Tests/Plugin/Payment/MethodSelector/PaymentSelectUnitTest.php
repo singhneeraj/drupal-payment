@@ -12,7 +12,7 @@ use Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect.
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect
  */
 class PaymentSelectUnitTest extends UnitTestCase {
 
@@ -56,7 +56,7 @@ class PaymentSelectUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
   public function setUp() {
     $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
@@ -70,7 +70,7 @@ class PaymentSelectUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests formElements().
+   * @covers ::formElements
    */
   public function testFormElements() {
     $form = array();
@@ -83,9 +83,9 @@ class PaymentSelectUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests extractPaymentMethodFromFormElements().
+   * @covers ::getPaymentMethodFromFormElements
    */
-  public function testExtractPaymentMethodFromFormElements() {
+  public function testGetPaymentMethodFromFormElements() {
     $element_name = $this->randomName();
     $plugin_id = $this->randomName();
     $plugin_configuration = array($this->randomName());

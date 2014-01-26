@@ -11,12 +11,12 @@ use Drupal\payment\Hook\FieldExtraFields;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Hook\FieldExtraFields.
+ * @coversDefaultClass \Drupal\payment\Hook\FieldExtraFields
  */
 class FieldExtraFieldsUnitTest extends UnitTestCase {
 
   /**
-   * The payment type manager
+   * The payment type manager used for testing.
    *
    * @var \Drupal\Component\Plugin\PluginManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
@@ -30,7 +30,7 @@ class FieldExtraFieldsUnitTest extends UnitTestCase {
   protected $service;
 
   /**
-   * The translation manager service.
+   * The translation manager service used for testing.
    *
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
@@ -48,7 +48,7 @@ class FieldExtraFieldsUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc
+   * {@inheritdoc}
    */
   public function setUp() {
     $this->paymentTypeManager = $this->getMock('\Drupal\Component\Plugin\PluginManagerInterface');
@@ -59,7 +59,7 @@ class FieldExtraFieldsUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers \Drupal\payment\Hook\FieldExtraFields::invoke()
+   * @covers ::invoke
    */
   public function testInvoke() {
     $payment_type_plugin_id = $this->randomName();

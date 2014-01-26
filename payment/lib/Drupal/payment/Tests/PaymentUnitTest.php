@@ -13,7 +13,7 @@ use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\Container;
 
 /**
- * Tests \Drupal\payment\Payment.
+ * @coversDefaultClass \Drupal\payment\Payment
  */
 class PaymentUnitTest extends UnitTestCase {
 
@@ -29,7 +29,7 @@ class PaymentUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests lineItemManager().
+   * @covers ::lineItemManager
    */
   public function testLineItemManager() {
     $container = new Container();
@@ -40,7 +40,7 @@ class PaymentUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests methodManager().
+   * @covers ::methodManager
    */
   public function testMethodManager() {
     $container = new Container();
@@ -51,7 +51,7 @@ class PaymentUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests methodConfigurationManager().
+   * @covers ::methodConfigurationManager
    */
   public function testMethodConfigurationManager() {
     $container = new Container();
@@ -62,7 +62,7 @@ class PaymentUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests methodSelectorManager().
+   * @covers ::methodSelectorManager
    */
   public function testMethodSelectorManager() {
     $container = new Container();
@@ -73,7 +73,7 @@ class PaymentUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests statusManager().
+   * @covers ::statusManager
    */
   public function testStatusManager() {
     $container = new Container();
@@ -84,7 +84,7 @@ class PaymentUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests typeManager().
+   * @covers ::typeManager
    */
   public function testTypeManager() {
     $container = new Container();
