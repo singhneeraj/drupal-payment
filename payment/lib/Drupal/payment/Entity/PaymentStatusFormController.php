@@ -102,7 +102,7 @@ class PaymentStatusFormController extends EntityFormController {
       '@label' => $payment_status->label()
     )));
     $form_state['redirect_route'] = array(
-      'route_name' => 'payment.payment_method.list',
+      'route_name' => 'payment.payment_status.list',
     );
   }
 
