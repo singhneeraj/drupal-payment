@@ -50,7 +50,7 @@ class PaymentListController extends EntityListController {
 
     if ($payment->getOwner()) {
       $owner = $payment->getOwner();
-      $uri = $owner->uri();
+      $uri = $owner->urlInfo();
       $owner_data = l($owner->label(), $uri['path'], $uri['options']);
     }
     else {
@@ -71,7 +71,7 @@ class PaymentListController extends EntityListController {
     $operations = parent::getOperations($entity);
 
     if ($entity->access('view')) {
-      $uri = $entity->uri();
+      $uri = $entity->urlInfo();
       $operations['view'] = array(
         'title' => $this->t('View'),
         'href' => $uri['path'],

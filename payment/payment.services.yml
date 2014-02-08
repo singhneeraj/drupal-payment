@@ -21,6 +21,8 @@ services:
     class: Drupal\payment\Hook\ElementInfo
   payment.hook.menu:
     class: Drupal\payment\Hook\Menu
+  payment.hook.menu_link_defaults:
+    class: Drupal\payment\Hook\MenuLinkDefaults
   payment.hook.permission:
     class: Drupal\payment\Hook\Permission
     arguments: ['@string_translation', '@plugin.manager.payment.method_configuration']

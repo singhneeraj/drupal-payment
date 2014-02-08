@@ -187,7 +187,7 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
         ));
         $items[] = array(
           'title' => $definition['label'],
-          'href' => $href,
+          'link_path' => $href,
           'description' => $definition['description'],
           'localized_options' => array(),
         );

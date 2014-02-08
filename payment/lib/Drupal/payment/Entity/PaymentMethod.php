@@ -36,9 +36,13 @@ use Drupal\Core\Entity\EntityStorageControllerInterface;
  *   id = "payment_method",
  *   label = @Translation("Payment method"),
  *   links = {
+ *     "enable" = "payment.payment_method.enable",
+ *     "disable" = "payment.payment_method.disable",
  *     "canonical" = "payment.payment_method.edit",
  *     "create-form" = "payment.payment_method.select",
- *     "edit-form" = "payment.payment_method.edit"
+ *     "edit-form" = "payment.payment_method.edit",
+ *     "delete-form" = "payment.payment_method.delete",
+ *     "duplicate-form" = "payment.payment_method.duplicate"
  *   }
  * )
  */

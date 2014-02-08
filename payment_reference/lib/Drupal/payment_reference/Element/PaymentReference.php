@@ -104,7 +104,7 @@ class PaymentReference {
         '#markup' => format_date($status->getCreated()),
       );
       if ($payment->access('view')) {
-        $uri = $payment->uri();
+        $uri = $payment->urlInfo();
         $element['payment']['header'][] = t('Operations');
         $element['payment'][0]['view'] = t('<a href="@url" target="_blank">View payment details</a> (opens in a new window)', array(
           '@url' => url($uri['path'], $uri['options']),

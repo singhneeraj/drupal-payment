@@ -25,7 +25,7 @@ class ElementInfo {
     // the 'return' value.
     $elements['payment_line_items_input'] = array(
       '#attached' => array(
-        'css' => array(drupal_get_path('module', 'payment') . '/css/payment.css'),
+        'css' => array($this->drupalGetPath('module', 'payment') . '/css/payment.css'),
       ),
       // The number of values this element allows, which must be at least as
       // many as the number of line items in the default value. For unlimited
@@ -62,4 +62,10 @@ class ElementInfo {
     return $elements;
   }
 
+  /**
+   * Wraps drupal_get_path().
+   */
+  protected function drupalGetPath($type, $name) {
+    return drupal_get_path($type, $name);
+  }
 }

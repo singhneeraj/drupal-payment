@@ -20,11 +20,11 @@ class PaymentMethodListController extends ConfigEntityListController {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $row['label'] = t('Name');
-    $row['plugin'] = t('Type');
-    $row['owner'] = t('Owner');
-    $row['status'] = t('Status');
-    $row['operations'] = t('Operations');
+    $row['label'] = $this->t('Name');
+    $row['plugin'] = $this->t('Type');
+    $row['owner'] = $this->t('Owner');
+    $row['status'] = $this->t('Status');
+    $row['operations'] = $this->t('Operations');
 
     return $row;
   }
@@ -41,10 +41,14 @@ class PaymentMethodListController extends ConfigEntityListController {
     $row['data']['plugin'] = $plugin_definition['label'];
 
     $owner = entity_load('user', $payment_method->getOwnerId());
-    $uri = $owner->uri();
-    $row['data']['owner'] = l($owner->label(), $uri['path'], $uri['options']);
+    $owner_label = $owner->label();
+    if ($owner->access('view')) {
+      $uri = $owner->urlInfo();
+      $owner_label = \Drupal::linkGenerator()->generate($owner_label, $uri['route_name'], $uri['route_parameters'], $uri['options']);
+    }
+    $row['data']['owner'] = $owner_label;
 
-    $row['data']['status'] = $payment_method->status() ? t('Enabled') : t('Disabled');
+    $row['data']['status'] = $payment_method->status() ? $this->t('Enabled') : $this->t('Disabled');
 
     $operations = $this->buildOperations($entity);
     $row['data']['operations']['data'] = $operations;
@@ -66,14 +70,11 @@ class PaymentMethodListController extends ConfigEntityListController {
         unset($operations[$operation]);
       }
     }
-    $uri = $entity->uri();
     if ($entity->access('duplicate')) {
       $operations['duplicate'] = array(
-        'href' => $uri['path'] . '/duplicate',
-        'options' => $uri['options'],
-        'title' => t('Duplicate'),
+        'title' => $this->t('Duplicate'),
         'weight' => 99,
-      );
+      ) + $entity->urlInfo('duplicate-form');
     }
 
     return $operations;

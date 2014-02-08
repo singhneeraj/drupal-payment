@@ -19,12 +19,19 @@ class PaymentFormControllerUnitTest extends UnitTestCase {
   /**
    * The config factory used for testing.
    *
-   * @var \Drupal\Core\Config\ConfigFactory
+   * @var \Drupal\Core\Config\ConfigFactory|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $configFactory;
 
   /**
-   * The form under test
+   * The entity type used for testing.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeInterface
+   */
+  protected $entityType;
+
+  /**
+   * The form under test.
    *
    * @var \Drupal\payment_reference\Entity\PaymentFormController
    */
@@ -66,9 +73,14 @@ class PaymentFormControllerUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   protected function setUp() {
+    $this->entityType = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
+
     $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
+    $this->payment->expects($this->any())
+      ->method('getEntityType')
+      ->will($this->returnValue($this->entityType));
 
     $this->paymentMethodSelector = $this->getMock('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface');
 

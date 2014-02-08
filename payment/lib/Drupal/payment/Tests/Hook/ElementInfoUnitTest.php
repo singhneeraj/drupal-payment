@@ -8,7 +8,6 @@
 namespace Drupal\payment\Tests\Hook;
 
 use Drupal\Core\Render\Element;
-use Drupal\payment\Hook\ElementInfo;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -19,7 +18,7 @@ class ElementInfoUnitTest extends UnitTestCase {
   /**
    * The service under test.
    *
-   * @var \Drupal\payment\Hook\ElementInfo.
+   * @var \Drupal\payment\Hook\ElementInfo|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $service;
 
@@ -38,7 +37,9 @@ class ElementInfoUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   public function setUp() {
-    $this->service = new ElementInfo();
+    $this->service = $this->getMockBuilder('\Drupal\payment\Hook\ElementInfo')
+      ->setMethods(array('drupalGetPath'))
+      ->getMock();
   }
 
   /**

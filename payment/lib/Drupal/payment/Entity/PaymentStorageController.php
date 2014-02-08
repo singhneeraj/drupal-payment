@@ -19,7 +19,7 @@ class PaymentStorageController extends FieldableDatabaseStorageController implem
   /**
    * {@inheritdoc}
    */
-  function create(array $values) {
+  public function create(array $values = array()) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = parent::create($values);
     $status = PaymentServiceWrapper::statusManager()->createInstance('payment_created')
