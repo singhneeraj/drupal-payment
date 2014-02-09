@@ -40,10 +40,9 @@ class PaymentMethodListController extends ConfigEntityListController {
     $plugin_definition = Payment::methodConfigurationManager()->getDefinition($payment_method->getPluginId());
     $row['data']['plugin'] = $plugin_definition['label'];
 
-    $owner = entity_load('user', $payment_method->getOwnerId());
-    $owner_label = $owner->label();
-    if ($owner->access('view')) {
-      $uri = $owner->urlInfo();
+    $owner_label = $payment_method->getOwner()->label();
+    if ($payment_method->getOwner()->access('view')) {
+      $uri = $payment_method->getOwner()->urlInfo();
       $owner_label = \Drupal::linkGenerator()->generate($owner_label, $uri['route_name'], $uri['route_parameters'], $uri['options']);
     }
     $row['data']['owner'] = $owner_label;

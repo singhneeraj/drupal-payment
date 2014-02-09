@@ -8,11 +8,12 @@
 namespace Drupal\payment\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
+use Drupal\user\EntityOwnerInterface;
 
 /**
  * Defines payment methods.
  */
-interface PaymentMethodInterface extends ConfigEntityInterface {
+interface PaymentMethodInterface extends ConfigEntityInterface, EntityOwnerInterface {
 
   /**
    * Sets the payment method ID.
@@ -46,22 +47,6 @@ interface PaymentMethodInterface extends ConfigEntityInterface {
    * @return \Drupal\payment\Entity\PaymentMethodInterface
    */
   public function setLabel($label);
-
-  /**
-   * Sets the owner's ID.
-   *
-   * @param int $id
-   *
-   * @return \Drupal\payment\Entity\PaymentMethodInterface
-   */
-  public function setOwnerId($id);
-
-  /**
-   * Gets the owner's ID.
-   *
-   * @return int
-   */
-  public function getOwnerId();
 
   /**
    * Sets the payment method's plugin configuration.

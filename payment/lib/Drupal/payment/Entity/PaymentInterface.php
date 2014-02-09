@@ -13,11 +13,12 @@ use Drupal\Core\Executable\ExecutableInterface;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface as PluginPaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface as PluginPaymentStatusInterface;
+use Drupal\user\EntityOwnerInterface;
 
 /**
  * Defines a payment entity type .
  */
-interface PaymentInterface extends ContentEntityInterface, EntityChangedInterface, ExecutableInterface {
+interface PaymentInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface, ExecutableInterface {
 
   /**
    * Gets the payment's type plugin.
@@ -154,29 +155,6 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
    * @return static
    */
   public function setPaymentMethod(PluginPaymentMethodInterface $payment_method);
-
-  /**
-   * Sets the ID of the user who owns this payment.
-   *
-   * @param int $id
-   *
-   * @return \Drupal\payment\Entity\PaymentInterface
-   */
-  public function setOwnerId($id);
-
-  /**
-   * Gets the ID of the user who owns this payment.
-   *
-   * @return int
-   */
-  public function getOwnerId();
-
-  /**
-   * Gets the owner.
-   *
-   * @return \Drupal\user\UserInterface
-   */
-  public function getOwner();
 
   /**
    * Gets the payment amount.

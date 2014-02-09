@@ -9,6 +9,7 @@ namespace Drupal\payment\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Defines a payment method entity.
@@ -125,8 +126,24 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
+  public function setOwner(UserInterface $user) {
+    $this->ownerId = $user->id();
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getOwnerId() {
     return $this->ownerId;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOwner() {
+    return \Drupal::entityManager()->getStorageController('user')->load($this->getOwnerId());
   }
 
   /**

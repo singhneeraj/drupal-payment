@@ -14,6 +14,7 @@ use Drupal\payment\Payment as PaymentServiceWrapper;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface as PluginPaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface as PluginPaymentStatusInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Defines a payment entity.
@@ -266,6 +267,15 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    */
   public function setOwnerId($id) {
     $this->owner[0]->setValue($id);
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOwner(UserInterface $user) {
+    $this->owner[0]->setValue($user->id());
 
     return $this;
   }

@@ -53,7 +53,7 @@ class PaymentMethodFormController extends EntityFormController {
     );
     $owner_label = '';
     if ($payment_method->getOwnerId()) {
-      $owner_label = entity_load('user', $payment_method->getOwnerId())->label();
+      $owner_label = $payment_method->getOwner()->label();
     }
     elseif ($this->currentUser() instanceof UserInterface) {
       $owner_label = $this->currentUser()->label();
