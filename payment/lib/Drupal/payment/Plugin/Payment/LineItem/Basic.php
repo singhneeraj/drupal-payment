@@ -89,6 +89,38 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    */
+  public function setAmount($amount) {
+    $this->configuration['amount'] = $amount;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAmount() {
+    return $this->configuration['amount'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCurrencyCode() {
+    return $this->configuration['currency_code'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setCurrencyCode($currency_code) {
+    $this->configuration['currency_code'] = $currency_code;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   function getDescription() {
     return $this->configuration['description'];
   }

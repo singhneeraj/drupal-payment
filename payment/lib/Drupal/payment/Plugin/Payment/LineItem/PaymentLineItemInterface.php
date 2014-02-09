@@ -31,15 +31,6 @@ interface PaymentLineItemInterface extends PluginInspectionInterface, Configurab
   public function getPaymentId();
 
   /**
-   * Sets the amount.
-   *
-   * @param float $amount
-   *
-   * @return static
-   */
-  public function setAmount($amount);
-
-  /**
    * Gets the amount.
    *
    * @return float
@@ -75,15 +66,6 @@ interface PaymentLineItemInterface extends PluginInspectionInterface, Configurab
    * @return string
    */
   public function getDescription();
-
-  /**
-   * Sets the currency code.
-   *
-   * @param string $currency_code
-   *
-   * @return static
-   */
-  public function setCurrencyCode($currency_code);
 
   /**
    * Gets the currency_code.

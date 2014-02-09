@@ -95,22 +95,6 @@ abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItem
   /**
    * {@inheritdoc}
    */
-  public function setAmount($amount) {
-    $this->configuration['amount'] = $amount;
-
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getAmount() {
-    return $this->configuration['amount'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   function getTotalAmount() {
     return $this->math->multiply($this->getAmount(), $this->getQuantity());
   }
@@ -120,22 +104,6 @@ abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItem
    */
   public function setName($name) {
     $this->configuration['name'] = $name;
-
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCurrencyCode() {
-    return $this->configuration['currency_code'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setCurrencyCode($currency_code) {
-    $this->configuration['currency_code'] = $currency_code;
 
     return $this;
   }

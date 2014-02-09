@@ -86,6 +86,26 @@ class BasicUnitTest extends UnitTestCase {
   }
 
   /**
+   * @covers ::setAmount
+   * @covers ::getAmount
+   */
+  public function testGetAmount() {
+    $amount = mt_rand();
+    $this->assertSame(spl_object_hash($this->lineItem), spl_object_hash($this->lineItem->setAmount($amount)));
+    $this->assertSame($amount, $this->lineItem->getAmount());
+  }
+
+  /**
+   * @covers ::setCurrencyCode
+   * @covers ::getCurrencyCode
+   */
+  public function testGetCurrencyCode() {
+    $currency_code = $this->randomName();
+    $this->assertSame(spl_object_hash($this->lineItem), spl_object_hash($this->lineItem->setCurrencyCode($currency_code)));
+    $this->assertSame($currency_code, $this->lineItem->getCurrencyCode());
+  }
+
+  /**
    * @covers ::setDescription
    * @covers ::getDescription
    */

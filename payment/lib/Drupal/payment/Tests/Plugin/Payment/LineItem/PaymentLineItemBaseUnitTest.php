@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\Payment\LineItem\PaymentLineItemBaseUnitTest.
+ * Contains \Drupal\payment\Tests\Plugin\Payment\LineItem\PaymentLineItemBaseUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Payment\LineItem;
@@ -49,7 +49,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
     $plugin_id = $this->randomName();
     $plugin_definition = array();
     $this->lineItem = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase')
-      ->setMethods(array('formElements', 'getConfigurationFromFormValues', 'getDescription'))
+      ->setMethods(array('formElements', 'getAmount', 'getConfigurationFromFormValues', 'getCurrencyCode', 'getDescription'))
       ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->math))
       ->getMock();
   }
@@ -67,16 +67,6 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::setAmount
-   * @covers ::getAmount
-   */
-  public function testGetAmount() {
-    $amount = mt_rand();
-    $this->assertSame(spl_object_hash($this->lineItem), spl_object_hash($this->lineItem->setAmount($amount)));
-    $this->assertSame($amount, $this->lineItem->getAmount());
-  }
-
-  /**
    * @covers ::setQuantity
    * @covers ::getQuantity
    */
@@ -88,8 +78,6 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
 
   /**
    * @covers ::getTotalAmount
-   * @depends testGetAmount
-   * @depends testGetQuantity
    */
   public function testGetTotalAmount() {
     $amount= 7;
@@ -101,9 +89,22 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
       ->with($amount, $quantity)
       ->will($this->returnValue($total_amount));
 
-    $this->lineItem->setAmount($amount);
-    $this->lineItem->setQuantity($quantity);
-    $this->assertSame($total_amount, $this->lineItem->getTotalAmount());
+    $configuration = array();
+    $plugin_id = $this->randomName();
+    $plugin_definition = array();
+    /** @var \Drupal\payment\Plugin\Payment\LineItem\Basic|\PHPUnit_Framework_MockObject_MockObject $line_item */
+    $line_item = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase')
+      ->setMethods(array('formElements', 'getAmount', 'getConfigurationFromFormValues', 'getCurrencyCode', 'getDescription', 'getQuantity'))
+      ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->math))
+      ->getMock();
+    $line_item->expects($this->once())
+      ->method('getAmount')
+      ->will($this->returnValue($amount));
+    $line_item->expects($this->once())
+      ->method('getQuantity')
+      ->will($this->returnValue($quantity));
+
+    $this->assertSame($total_amount, $line_item->getTotalAmount());
   }
 
   /**
@@ -114,16 +115,6 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
     $name = $this->randomName();
     $this->assertSame(spl_object_hash($this->lineItem), spl_object_hash($this->lineItem->setName($name)));
     $this->assertSame($name, $this->lineItem->getName());
-  }
-
-  /**
-   * @covers ::setCurrencyCode
-   * @covers ::getCurrencyCode
-   */
-  public function testGetCurrencyCode() {
-    $currency_code = $this->randomName();
-    $this->assertSame(spl_object_hash($this->lineItem), spl_object_hash($this->lineItem->setCurrencyCode($currency_code)));
-    $this->assertSame($currency_code, $this->lineItem->getCurrencyCode());
   }
 
   /**
