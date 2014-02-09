@@ -22,6 +22,13 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
   protected $lineItem;
 
   /**
+   * The math service used for testing.
+   *
+   * @var \Drupal\currency\MathInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $math;
+
+  /**
    * {@inheritdoc}
    */
   public static function getInfo() {
@@ -36,12 +43,14 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   public function setUp() {
+    $this->math = $this->getMock('\Drupal\currency\MathInterface');
+
     $configuration = array();
     $plugin_id = $this->randomName();
     $plugin_definition = array();
     $this->lineItem = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase')
       ->setMethods(array('formElements', 'getConfigurationFromFormValues', 'getDescription'))
-      ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition))
+      ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->math))
       ->getMock();
   }
 
@@ -85,9 +94,16 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
   public function testGetTotalAmount() {
     $amount= 7;
     $quantity = 7;
+    $total_amount = 49;
+
+    $this->math->expects($this->once())
+      ->method('multiply')
+      ->with($amount, $quantity)
+      ->will($this->returnValue($total_amount));
+
     $this->lineItem->setAmount($amount);
     $this->lineItem->setQuantity($quantity);
-    $this->assertSame(49, $this->lineItem->getTotalAmount());
+    $this->assertSame($total_amount, $this->lineItem->getTotalAmount());
   }
 
   /**

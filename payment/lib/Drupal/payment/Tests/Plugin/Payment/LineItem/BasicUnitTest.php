@@ -35,6 +35,13 @@ class BasicUnitTest extends UnitTestCase {
   protected $lineItem;
 
   /**
+   * The math service used for testing.
+   *
+   * @var \Drupal\currency\MathInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $math;
+
+  /**
    * The translation manager.
    *
    * @var \Drupal\Core\StringTranslation\TranslationManager|\PHPUnit_Framework_MockObject_MockObject
@@ -62,6 +69,8 @@ class BasicUnitTest extends UnitTestCase {
 
     $this->formBuilder = $this->getMock('\Drupal\Core\Form\FormBuilderInterface');
 
+    $this->math = $this->getMock('\Drupal\currency\MathInterface');
+
     $this->translationManager = $this->getMockBuilder('\Drupal\Core\StringTranslation\TranslationManager')
       ->disableOriginalConstructor()
       ->setMethods(array('translate'))
@@ -71,7 +80,7 @@ class BasicUnitTest extends UnitTestCase {
     $plugin_id = $this->randomName();
     $plugin_definition = array();
     $this->lineItem = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\Basic')
-      ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->translationManager, $this->database, $this->formBuilder))
+      ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->math, $this->translationManager, $this->database, $this->formBuilder))
       ->setMethods(array('drupalGetPath', 't'))
       ->getMock();
   }

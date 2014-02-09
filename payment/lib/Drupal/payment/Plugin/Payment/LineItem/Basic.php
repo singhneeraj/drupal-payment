@@ -11,6 +11,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslationManager;
+use Drupal\currency\MathInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -53,6 +54,8 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
+   * @param \Drupal\currency\MathInterface $math
+   *   The math service.
    * @param \Drupal\Core\StringTranslation\TranslationManager $translation_manager
    *   The translation manager.
    * @param \Drupal\Core\Database\Connection $database
@@ -60,8 +63,8 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
    * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
    *   The form builder.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, TranslationManager $translation_manager, Connection $database, FormBuilderInterface $form_builder) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, MathInterface $math, TranslationManager $translation_manager, Connection $database, FormBuilderInterface $form_builder) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $math);
     $this->translationManager = $translation_manager;
     $this->database = $database;
     $this->formBuilder = $form_builder;
@@ -71,7 +74,7 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, array $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'), $container->get('database'), $container->get('form_builder'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('currency.math'), $container->get('string_translation'), $container->get('database'), $container->get('form_builder'));
   }
 
   /**

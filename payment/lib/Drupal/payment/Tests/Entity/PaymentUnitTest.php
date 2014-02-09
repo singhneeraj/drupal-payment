@@ -217,6 +217,6 @@ class PaymentUnitTest extends DrupalUnitTestBase {
       $line_item->setQuantity($quantity);
       $this->payment->setLineItem($line_item);
     }
-    $this->assertIdentical($this->payment->getAmount(), 12);
+    $this->assertEqual($this->payment->getAmount(), 12);
   }
 }
