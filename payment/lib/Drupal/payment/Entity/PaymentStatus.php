@@ -13,9 +13,10 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  * Defines a payment status entity.
  *
  * @EntityType(
+ *   admin_permission = "payment.payment_status.administer",
  *   config_prefix = "payment.payment_status",
  *   controllers = {
- *     "access" = "Drupal\payment\Entity\PaymentStatusAccessController",
+ *     "access" = "\Drupal\Core\Entity\EntityAccessController",
  *     "form" = {
  *       "default" = "Drupal\payment\Entity\PaymentStatusFormController",
  *       "delete" = "Drupal\payment\Entity\PaymentStatusDeleteFormController"

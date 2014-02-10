@@ -2,23 +2,25 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\PaymentAccessControllerUnitTest.
+ * Contains \Drupal\payment\Tests\PaymentAccessControllerUnitTest.
  */
 
 namespace Drupal\payment\Tests\Entity;
 
-use Drupal\payment\AccessibleInterfaceUnitTestBase;
-use Drupal\payment\Generate;
+use Drupal\payment\Entity\PaymentAccessController;
+use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\Entity\PaymentAccessController.
+ * @coversDefaultClass \Drupal\payment\PaymentAccessController
  */
-class PaymentAccessControllerUnitTest extends AccessibleInterfaceUnitTestBase {
+class PaymentAccessControllerUnitTest extends UnitTestCase {
 
   /**
-   * {@inheritdoc}
+   * The access controller under test.
+   *
+   * @var \Drupal\payment\Entity\PaymentAccessController
    */
-  public static $modules = array('currency', 'field', 'payment', 'system', 'user');
+  protected $accessController;
 
   /**
    * {@inheritdoc}
@@ -32,41 +34,115 @@ class PaymentAccessControllerUnitTest extends AccessibleInterfaceUnitTestBase {
   }
 
   /**
-   * Tests access control.
+   * {@inheritdoc}
    */
-  protected function testAccessControl() {
-    $payment_1 = Generate::createPayment(1);
-    $payment_2 = Generate::createPayment(2);
-    $entity_manager = \Drupal::entityManager();
-    $user_storage_controller = $entity_manager->getStorageController('user');
-    $authenticated = $user_storage_controller->create(array(
-      'uid' => 2,
-    ));
-
-    // Create a new payment.
-    $this->assertDataAccess(entity_create('payment', array(
-      'bundle' => 'payment_unavailable',
-    )), 'a payment', 'create', $authenticated, array(), array(
-      'anonymous' => TRUE,
-      'authenticated_without_permissions' => TRUE,
-    ));
-
-    // Test deleting, updating and viewing a payment.
-    $operations = array('delete', 'update', 'view');
-    foreach ($operations as $operation) {
-      // Test a payment that belongs to user 1.
-      $data_label = 'a payment with UID ' . $payment_1->getOwnerId();
-      $this->assertDataAccess($payment_1, $data_label, $operation, $authenticated, array("payment.payment.$operation.any"));
-      $this->assertDataAccess($payment_1, $data_label, $operation, $authenticated, array("payment.payment.$operation.own"), array(
-        'authenticated_with_permissions' => FALSE,
-      ));
-      $this->assertDataAccess($payment_1, $data_label, $operation, $authenticated);
-
-      // Test a payment that belongs to user 2.
-      $data_label = 'a payment with UID ' . $payment_2->getOwnerId();
-      $this->assertDataAccess($payment_2, $data_label, $operation, $authenticated, array("payment.payment.$operation.any"));
-      $this->assertDataAccess($payment_2, $data_label, $operation, $authenticated, array("payment.payment.$operation.own"));
-      $this->assertDataAccess($payment_2, $data_label, $operation, $authenticated);
-    }
+  public function setUp() {
+    $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
+    $this->accessController = new PaymentAccessController($entity_type);
   }
+
+  /**
+   * @covers ::checkAccess
+   */
+  public function testCheckAccessWithoutPermission() {
+    $operation = $this->randomName();
+    $language_code = $this->randomName();
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account->expects($this->any())
+      ->method('hasPermission')
+      ->will($this->returnValue(FALSE));
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $class = new \ReflectionClass($this->accessController);
+    $method = $class->getMethod('checkAccess');
+    $method->setAccessible(TRUE);
+    $this->assertFalse($method->invokeArgs($this->accessController, array($payment, $operation, $language_code, $account)));
+  }
+
+  /**
+   * @covers ::checkAccess
+   */
+  public function testCheckAccessWithAnyPermission() {
+    $operation = $this->randomName();
+    $language_code = $this->randomName();
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account->expects($this->once())
+      ->method('hasPermission')
+      ->with('payment.payment.' . $operation . '.any')
+      ->will($this->returnValue(TRUE));
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $class = new \ReflectionClass($this->accessController);
+    $method = $class->getMethod('checkAccess');
+    $method->setAccessible(TRUE);
+    $this->assertTrue($method->invokeArgs($this->accessController, array($payment, $operation, $language_code, $account)));
+  }
+
+  /**
+   * @covers ::checkAccess
+   */
+  public function testCheckAccessWithOwnPermission() {
+    $owner_id = mt_rand();
+    $operation = $this->randomName();
+    $language_code = $this->randomName();
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account->expects($this->any())
+      ->method('id')
+      ->will($this->returnValue($owner_id));
+    $map = array(
+      array('payment.payment.' . $operation . '.any', FALSE),
+      array('payment.payment.' . $operation . '.own', TRUE),
+    );
+    $account->expects($this->any())
+      ->method('hasPermission')
+      ->will($this->returnValueMap($map));
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $payment->expects($this->at(0))
+      ->method('getOwnerId')
+      ->will($this->returnValue($owner_id));
+    $payment->expects($this->at(1))
+      ->method('getOwnerId')
+      ->will($this->returnValue($owner_id + 1));
+
+    $class = new \ReflectionClass($this->accessController);
+    $method = $class->getMethod('checkAccess');
+    $method->setAccessible(TRUE);
+    $this->assertTrue($method->invokeArgs($this->accessController, array($payment, $operation, $language_code, $account)));
+    $this->assertFalse($method->invokeArgs($this->accessController, array($payment, $operation, $language_code, $account)));
+  }
+
+  /**
+   * @covers ::checkCreateAccess
+   */
+  public function testCheckCreateAccess() {
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $context = array();
+
+    $class = new \ReflectionClass($this->accessController);
+    $method = $class->getMethod('checkCreateAccess');
+    $method->setAccessible(TRUE);
+    $this->assertTrue($method->invokeArgs($this->accessController, array($account, $context)));
+  }
+
+  /**
+   * @covers ::getCache
+   */
+  public function testGetCache() {
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $cache_id = $this->randomName();
+    $operation = $this->randomName();
+    $language_code = $this->randomName();
+
+    $class = new \ReflectionClass($this->accessController);
+    $method = $class->getMethod('getCache');
+    $method->setAccessible(TRUE);
+    $this->assertNull($method->invokeArgs($this->accessController, array($cache_id, $operation, $language_code, $account)));
+  }
+
 }

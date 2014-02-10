@@ -2,24 +2,25 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Entity\PaymentMethodAccessControllerUnitTest.
+ * Contains \Drupal\payment\Tests\Entity\PaymentMethodAccessControllerUnitTest.
  */
 
 namespace Drupal\payment\Tests\Entity;
 
-use Drupal\payment\AccessibleInterfaceUnitTestBase;
-use Drupal\payment\Generate;
-use Drupal\payment\Payment;
+use Drupal\payment\Entity\PaymentMethodAccessController;
+use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment\PaymentMethodAccessController.
+ * @coversDefaultClass \Drupal\payment\PaymentMethodAccessController
  */
-class PaymentMethodAccessControllerUnitTest extends AccessibleInterfaceUnitTestBase {
+class PaymentMethodAccessControllerUnitTest extends UnitTestCase {
 
   /**
-   * {@inheritdoc}
+   * The access controller under test.
+   *
+   * @var \Drupal\payment\Entity\PaymentMethodAccessController
    */
-  public static $modules = array('field', 'payment', 'system', 'user');
+  protected $accessController;
 
   /**
    * {@inheritdoc}
@@ -33,87 +34,259 @@ class PaymentMethodAccessControllerUnitTest extends AccessibleInterfaceUnitTestB
   }
 
   /**
-   * Tests access control.
+   * {@inheritdoc}
    */
-  protected function testAccessControl() {
-    $entity_manager = \Drupal::entityManager();
-    $user_storage_controller = $entity_manager->getStorageController('user');
-    $authenticated = $user_storage_controller->create(array());
+  public function setUp() {
+    $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
+    $this->accessController = new PaymentMethodAccessController($entity_type);
+  }
 
-    // Create a new payment method.
-    $bundle = 'payment_basic';
-    $this->assertDataAccess(Generate::createPaymentMethod(0, $bundle), 'a payment method', 'create', $authenticated, array('payment.payment_method.create.payment_basic'));
+  /**
+   * @covers ::checkAccess
+   */
+  public function testCheckAccessWithoutPermission() {
+    $operation = $this->randomName();
+    $language_code = $this->randomName();
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account->expects($this->any())
+      ->method('hasPermission')
+      ->will($this->returnValue(FALSE));
+    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethod')
+      ->disableOriginalConstructor()
+      ->getMock();
 
-    // Update a payment method that belongs to user 1.
-    $this->assertDataAccess(Generate::createPaymentMethod(1, $bundle), 'a payment method', 'update', $authenticated, array('payment.payment_method.update.any'));
+    $class = new \ReflectionClass($this->accessController);
+    $method = $class->getMethod('checkAccess');
+    $method->setAccessible(TRUE);
+    $this->assertFalse($method->invokeArgs($this->accessController, array($payment_method, $operation, $language_code, $account)));
+  }
 
-    // Update a payment method that belongs to user 2.
-    $this->assertDataAccess(Generate::createPaymentMethod($authenticated->id(), $bundle), 'a payment method', 'update', $authenticated, array('payment.payment_method.update.own'));
+  /**
+   * @covers ::checkAccess
+   */
+  public function testCheckAccessWithAnyPermission() {
+    $operation = $this->randomName();
+    $language_code = $this->randomName();
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account->expects($this->once())
+      ->method('hasPermission')
+      ->with('payment.payment_method.' . $operation . '.any')
+      ->will($this->returnValue(TRUE));
+    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethod')
+      ->disableOriginalConstructor()
+      ->getMock();
 
-    // Delete a payment method that belongs to user 1.
-    $this->assertDataAccess(Generate::createPaymentMethod(1, $bundle), 'a payment method', 'delete', $authenticated, array('payment.payment_method.delete.any'));
+    $class = new \ReflectionClass($this->accessController);
+    $method = $class->getMethod('checkAccess');
+    $method->setAccessible(TRUE);
+    $this->assertTrue($method->invokeArgs($this->accessController, array($payment_method, $operation, $language_code, $account)));
+  }
 
-    // Delete a payment method that belongs to user 2.
-    $this->assertDataAccess(Generate::createPaymentMethod($authenticated->id(), $bundle), 'a payment method', 'delete', $authenticated, array('payment.payment_method.delete.own'));
+  /**
+   * @covers ::checkAccess
+   */
+  public function testCheckAccessWithOwnPermission() {
+    $owner_id = mt_rand();
+    $operation = $this->randomName();
+    $language_code = $this->randomName();
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account->expects($this->any())
+      ->method('id')
+      ->will($this->returnValue($owner_id));
+    $map = array(
+      array('payment.payment_method.' . $operation . '.any', FALSE),
+      array('payment.payment_method.' . $operation . '.own', TRUE),
+    );
+    $account->expects($this->any())
+      ->method('hasPermission')
+      ->will($this->returnValueMap($map));
+    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethod')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $payment_method->expects($this->at(0))
+      ->method('getOwnerId')
+      ->will($this->returnValue($owner_id));
+    $payment_method->expects($this->at(1))
+      ->method('getOwnerId')
+      ->will($this->returnValue($owner_id + 1));
 
-    // Enable an enabled payment method that belongs to user 1.
-    $payment_method = Generate::createPaymentMethod(1, $bundle);
-    $this->assertDataAccess($payment_method, 'an enabled payment method', 'enable', $authenticated, array('payment.payment_method.update.any'), array(
-      'root' => FALSE,
-      'authenticated_with_permissions' => FALSE,
-    ));
+    $class = new \ReflectionClass($this->accessController);
+    $method = $class->getMethod('checkAccess');
+    $method->setAccessible(TRUE);
+    $this->assertTrue($method->invokeArgs($this->accessController, array($payment_method, $operation, $language_code, $account)));
+    $this->assertFalse($method->invokeArgs($this->accessController, array($payment_method, $operation, $language_code, $account)));
+  }
 
-    // Enable an enabled payment method that belongs to user 2.
-    $payment_method = Generate::createPaymentMethod($authenticated->id(), $bundle);
-    $this->assertDataAccess($payment_method, 'an enabled payment method', 'enable', $authenticated, array('payment.payment_method.update.own'), array(
-      'root' => FALSE,
-      'authenticated_with_permissions' => FALSE,
-    ));
+  /**
+   * @covers ::checkAccess
+   */
+  public function testCheckAccessEnable() {
+    $operation = 'enable';
+    $language_code = $this->randomName();
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account->expects($this->any())
+      ->method('hasPermission')
+      ->will($this->returnValue(FALSE));
+    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethod')
+      ->disableOriginalConstructor()
+      ->getMock();
+    // Enabled.
+    $payment_method->expects($this->at(0))
+      ->method('status')
+      ->will($this->returnValue(TRUE));
+    // Disabled, with permission.
+    $payment_method->expects($this->at(1))
+      ->method('status')
+      ->will($this->returnValue(FALSE));
+    $payment_method->expects($this->at(2))
+      ->method('access')
+      ->with('update', $account)
+      ->will($this->returnValue(TRUE));
+    // Disabled, without permission.
+    $payment_method->expects($this->at(3))
+      ->method('status')
+      ->will($this->returnValue(FALSE));
+    $payment_method->expects($this->at(4))
+      ->method('access')
+      ->with('update', $account)
+      ->will($this->returnValue(FALSE));
 
-    // Enable a disabled payment method that belongs to user 1.
-    $payment_method = Generate::createPaymentMethod(1, $bundle);
-    $payment_method->disable();
-    $this->assertDataAccess($payment_method, 'a disabled payment method', 'enable', $authenticated, array('payment.payment_method.update.any'));
+    $class = new \ReflectionClass($this->accessController);
+    $method = $class->getMethod('checkAccess');
+    $method->setAccessible(TRUE);
+    // Enabled.
+    $this->assertFalse($method->invokeArgs($this->accessController, array($payment_method, $operation, $language_code, $account)));
+    // Disabled, with permission.
+    $this->assertTrue($method->invokeArgs($this->accessController, array($payment_method, $operation, $language_code, $account)));
+    // Disabled, without permission.
+    $this->assertFalse($method->invokeArgs($this->accessController, array($payment_method, $operation, $language_code, $account)));
+  }
 
-    // Enable a disabled payment method that belongs to user 2.
-    $payment_method = Generate::createPaymentMethod($authenticated->id(), $bundle);
-    $payment_method->disable();
-    $this->assertDataAccess($payment_method, 'a disabled payment method', 'enable', $authenticated, array('payment.payment_method.update.own'));
+  /**
+   * @covers ::checkAccess
+   */
+  public function testCheckAccessDisable() {
+    $operation = 'disable';
+    $language_code = $this->randomName();
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account->expects($this->any())
+      ->method('hasPermission')
+      ->will($this->returnValue(FALSE));
+    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethod')
+      ->disableOriginalConstructor()
+      ->getMock();
+    // Disabled.
+    $payment_method->expects($this->at(0))
+      ->method('status')
+      ->will($this->returnValue(FALSE));
+    // Enabled, with permission.
+    $payment_method->expects($this->at(1))
+      ->method('status')
+      ->will($this->returnValue(TRUE));
+    $payment_method->expects($this->at(2))
+      ->method('access')
+      ->with('update', $account)
+      ->will($this->returnValue(TRUE));
+    // Enabled, without permission.
+    $payment_method->expects($this->at(3))
+      ->method('status')
+      ->will($this->returnValue(TRUE));
+    $payment_method->expects($this->at(4))
+      ->method('access')
+      ->with('update', $account)
+      ->will($this->returnValue(FALSE));
 
-    // Disable a disabled payment method that belongs to user 1.
-    $payment_method = Generate::createPaymentMethod(1, $bundle);
-    $payment_method->disable();
-    $this->assertDataAccess($payment_method, 'a disabled payment method', 'disable', $authenticated, array('payment.payment_method.update.any'), array(
-      'root' => FALSE,
-      'authenticated_with_permissions' => FALSE,
-    ));
+    $class = new \ReflectionClass($this->accessController);
+    $method = $class->getMethod('checkAccess');
+    $method->setAccessible(TRUE);
+    // Disabled.
+    $this->assertFalse($method->invokeArgs($this->accessController, array($payment_method, $operation, $language_code, $account)));
+    // Enabled, with permission.
+    $this->assertTrue($method->invokeArgs($this->accessController, array($payment_method, $operation, $language_code, $account)));
+    // Enabled, without permission.
+    $this->assertFalse($method->invokeArgs($this->accessController, array($payment_method, $operation, $language_code, $account)));
+  }
 
-    // Disable a disabled payment method that belongs to user 2.
-    $payment_method = Generate::createPaymentMethod($authenticated->id(), $bundle);
-    $payment_method->disable();
-    $this->assertDataAccess($payment_method, 'a disabled payment method', 'disable', $authenticated, array('payment.payment_method.update.own'), array(
-      'root' => FALSE,
-      'authenticated_with_permissions' => FALSE,
-    ));
+  /**
+   * @covers ::checkAccess
+   */
+  public function testCheckAccessDuplicate() {
+    $operation = 'duplicate';
+    $language_code = $this->randomName();
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account->expects($this->any())
+      ->method('hasPermission')
+      ->will($this->returnValue(FALSE));
+    $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
+    $access_controller = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodAccessController')
+      ->setConstructorArgs(array($entity_type))
+      ->setMethods(array('createAccess'))
+      ->getMock();
+    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethod')
+      ->disableOriginalConstructor()
+      ->getMock();
+    // No create access.
+    $access_controller->expects($this->at(0))
+      ->method('createAccess')
+      ->will($this->returnValue(FALSE));
+    // Create access, with view permission.
+    $access_controller->expects($this->at(1))
+      ->method('createAccess')
+      ->will($this->returnValue(TRUE));
+    $payment_method->expects($this->at(2))
+      ->method('access')
+      ->with('view', $account)
+      ->will($this->returnValue(TRUE));
+    // Create access, without view permission.
+    $access_controller->expects($this->at(2))
+      ->method('createAccess')
+      ->will($this->returnValue(TRUE));
+    $payment_method->expects($this->at(4))
+      ->method('access')
+      ->with('view', $account)
+      ->will($this->returnValue(FALSE));
 
-    // Disable an enabled payment method that belongs to user 1.
-    $payment_method = Generate::createPaymentMethod(1, $bundle);
-    $this->assertDataAccess($payment_method, 'a disabled payment method', 'disable', $authenticated, array('payment.payment_method.update.any'));
+    $class = new \ReflectionClass($access_controller);
+    $method = $class->getMethod('checkAccess');
+    $method->setAccessible(TRUE);
+    // No create access.
+    $this->assertFalse($method->invokeArgs($access_controller, array($payment_method, $operation, $language_code, $account)));
+    // Create access, with view permission.
+    $this->assertTrue($method->invokeArgs($access_controller, array($payment_method, $operation, $language_code, $account)));
+    // Create access, without view permission.
+    $this->assertFalse($method->invokeArgs($access_controller, array($payment_method, $operation, $language_code, $account)));
+  }
 
-    // Enable am enabled payment method that belongs to user 2.
-    $payment_method = Generate::createPaymentMethod($authenticated->id(), $bundle);
-    $this->assertDataAccess($payment_method, 'a disabled payment method', 'disable', $authenticated, array('payment.payment_method.update.own'));
+  /**
+   * @covers ::checkCreateAccess
+   */
+  public function testCheckCreateAccess() {
+    $bundle = $this->randomName();
+    $context = array();
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account->expects($this->once())
+      ->method('hasPermission')
+      ->with('payment.payment_method.create.' . $bundle)
+      ->will($this->returnValue(TRUE));
 
-    // Clone a payment method that belongs to user 1.
-    $this->assertDataAccess(Generate::createPaymentMethod(1, $bundle), 'a payment method', 'duplicate', $authenticated, array('payment.payment_method.view.any', 'payment.payment_method.create.payment_basic'));
+    $class = new \ReflectionClass($this->accessController);
+    $method = $class->getMethod('checkCreateAccess');
+    $method->setAccessible(TRUE);
+    $this->assertTrue($method->invokeArgs($this->accessController, array($account, $context, $bundle)));
+  }
 
-    // Clone a payment method that belongs to user 2.
-    $this->assertDataAccess(Generate::createPaymentMethod($authenticated->id(), $bundle), 'a payment method', 'duplicate', $authenticated, array('payment.payment_method.view.own', 'payment.payment_method.create.payment_basic'));
+  /**
+   * @covers ::getCache
+   */
+  public function testGetCache() {
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $cache_id = $this->randomName();
+    $operation = $this->randomName();
+    $language_code = $this->randomName();
 
-    // View a payment method that belongs to user 1.
-    $this->assertDataAccess(Generate::createPaymentMethod(1, $bundle), 'a payment method', 'view', $authenticated, array('payment.payment_method.view.any'));
-
-    // View a payment method that belongs to user 2.
-    $this->assertDataAccess(Generate::createPaymentMethod($authenticated->id(), $bundle), 'a payment method', 'view', $authenticated, array('payment.payment_method.view.own'));
+    $class = new \ReflectionClass($this->accessController);
+    $method = $class->getMethod('getCache');
+    $method->setAccessible(TRUE);
+    $this->assertNull($method->invokeArgs($this->accessController, array($cache_id, $operation, $language_code, $account)));
   }
 }
