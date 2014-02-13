@@ -2,13 +2,11 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Entity\PaymentMethodStorageControllerUnitTest.
+ * Contains \Drupal\payment\Tests\Entity\PaymentMethodStorageControllerUnitTest.
  */
 
 namespace Drupal\payment\Tests\Entity;
 
-use Drupal\payment\Payment;
-use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface as PluginPaymentMethodInterface;
 use Drupal\payment\Entity\PaymentMethodInterface;
 use Drupal\payment\Generate;
 use Drupal\simpletest\DrupalUnitTestBase;
@@ -38,6 +36,7 @@ class PaymentMethodStorageControllerUnitTest extends DrupalUnitTestBase {
    * Tests create();
    */
   protected function testCreate() {
+    /** @var \Drupal\payment\Entity\PaymentMethodInterface $payment_method */
     $payment_method = entity_create('payment_method', array());
     $this->assertTrue($payment_method instanceof PaymentMethodInterface);
     $this->assertTrue(is_int($payment_method->getOwnerId()));

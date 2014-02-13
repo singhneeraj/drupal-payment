@@ -6,7 +6,6 @@
 
 namespace Drupal\payment\Plugin\Payment\LineItem;
 
-use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\currency\MathInterface;

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\payment_reference\Entity\PaymentFormController.
+ * Contains \Drupal\payment_reference\Entity\PaymentFormController.
  */
 
 namespace Drupal\payment_reference\Entity;
@@ -24,7 +24,7 @@ class PaymentFormController extends EntityFormController {
   protected $paymentMethodSelectorManager;
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    *
    * @param \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface $payment_method_selector_manager
    */

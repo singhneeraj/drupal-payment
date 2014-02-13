@@ -13,7 +13,7 @@ use Drupal\payment\Entity\PaymentInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * A base payment type.
+ * Defines base payment type.
  */
 abstract class PaymentTypeBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentTypeInterface {
 
@@ -32,7 +32,7 @@ abstract class PaymentTypeBase extends PluginBase implements ContainerFactoryPlu
   protected $payment;
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.

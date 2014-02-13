@@ -33,7 +33,7 @@ abstract class PaymentMethodSelectorBase extends PluginBase implements Container
   protected $paymentMethodManager;
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    *
    * @param array $configuration
    * @param string $plugin_id

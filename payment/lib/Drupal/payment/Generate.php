@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Generate.
+ * Contains \Drupal\payment\Generate.
  */
 
 namespace Drupal\payment;

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\PaymentSelectWebTest.
+ * Contains \Drupal\payment\Tests\PaymentSelectWebTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Payment\MethodSelector;
@@ -53,6 +53,8 @@ class PaymentSelectWebTest extends WebTestBase {
    */
   protected function testElement() {
     $state = \Drupal::state();
+    /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface|\Drupal\Component\Plugin\Discovery\CachedDiscoveryInterface $payment_method_manager */
+    $payment_method_manager = Payment::methodManager();
 
     // Test the presence of default elements without available payment methods.
     $this->drupalGet('payment_test-payment_method_selector-payment_select');
@@ -62,7 +64,7 @@ class PaymentSelectWebTest extends WebTestBase {
 
     // Test the presence of default elements with one available payment method.
     $payment_method_1 = $this->createPaymentMethod();
-    Payment::methodManager()->clearCachedDefinitions();
+    $payment_method_manager->clearCachedDefinitions();
     $this->drupalGet('payment_test-payment_method_selector-payment_select');
     $this->assertNoFieldByName('payment_method[select][payment_method_plugin_id]');
     $this->assertNoFieldByName('payment_method[select][change]', t('Choose payment method'));
@@ -71,7 +73,7 @@ class PaymentSelectWebTest extends WebTestBase {
     // Test the presence of default elements with multiple available payment
     // methods.
     $payment_method_2 = $this->createPaymentMethod();
-    Payment::methodManager()->clearCachedDefinitions();
+    $payment_method_manager->clearCachedDefinitions();
     $this->drupalGet('payment_test-payment_method_selector-payment_select');
     $this->assertFieldByName('payment_method[select][payment_method_plugin_id]');
     $this->assertFieldByName('payment_method[select][change]', t('Choose payment method'));

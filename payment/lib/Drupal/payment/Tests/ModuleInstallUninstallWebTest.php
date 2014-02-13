@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\ModuleInstallUninstallWebTest.
+ * Contains \Drupal\payment\Tests\ModuleInstallUninstallWebTest.
  */
 
 namespace Drupal\payment\Tests;

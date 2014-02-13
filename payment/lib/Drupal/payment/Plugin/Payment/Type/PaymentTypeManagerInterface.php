@@ -10,7 +10,7 @@ namespace Drupal\payment\Plugin\Payment\Type;
 use Drupal\Component\Plugin\PluginManagerInterface;
 
 /**
- * Defines a payment tyoe manager.
+ * Defines a payment type manager.
  */
 interface PaymentTypeManagerInterface extends PluginManagerInterface {
 

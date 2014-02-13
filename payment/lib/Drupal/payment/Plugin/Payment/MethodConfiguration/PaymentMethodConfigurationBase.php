@@ -15,7 +15,7 @@ use Drupal\Component\Utility\NestedArray;
 abstract class PaymentMethodConfigurationBase extends PluginBase implements PaymentMethodConfigurationInterface {
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    *
    * @param array $configuration
    * @param string $plugin_id

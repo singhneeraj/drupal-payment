@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerUnitTest.
+ * Contains \Drupal\payment\Tests\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Payment\MethodSelector;

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\payment\Entity\PaymentStatusDeleteFormController.
+ * Contains \Drupal\payment\Entity\PaymentStatusDeleteFormController.
  */
 
 namespace Drupal\payment\Entity;
@@ -24,7 +24,7 @@ class PaymentStatusDeleteFormController extends ContentEntityConfirmFormBase {
   protected $urlGenerator;
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    *
    * @param \Drupal\Core\Routing\UrlGeneratorInterface $url_generator
    *   The URL generator.

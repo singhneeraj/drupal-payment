@@ -45,7 +45,7 @@ class PaymentReferenceUi extends ControllerBase implements ContainerInjectionInt
   protected $queue;
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    *
    * @param \Drupal\Core\Form\FormBuilder $form_builder
    * @param \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface $payment_line_item_manager

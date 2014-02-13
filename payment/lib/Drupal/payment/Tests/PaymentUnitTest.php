@@ -8,7 +8,6 @@
 namespace Drupal\payment\Test;
 
 use Drupal\payment\Payment;
-use Drupal\payment_reference\PaymentReference;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\Container;
 

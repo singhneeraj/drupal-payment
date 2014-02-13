@@ -2,16 +2,14 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Entity\PaymentUnitTest.
+ * Contains \Drupal\payment\Tests\Entity\PaymentUnitTest.
  */
 
 namespace Drupal\payment\Tests\Entity;
 
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Entity\PaymentMethodInterface;
 use Drupal\payment\Payment;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface;
-use Drupal\payment\Generate;
 use Drupal\simpletest\DrupalUnitTestBase;
 
 /**
@@ -211,6 +209,7 @@ class PaymentUnitTest extends DrupalUnitTestBase {
     $amount = 3;
     $quantity = 2;
     for ($i = 0; $i < 2; $i++) {
+      /** @var \Drupal\payment\Plugin\Payment\LineItem\Basic $line_item */
       $line_item = $this->lineItemManager->createInstance('payment_basic');
       $line_item->setName($this->randomName());
       $line_item->setAmount($amount);

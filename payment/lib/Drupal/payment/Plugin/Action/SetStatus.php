@@ -32,7 +32,7 @@ class SetStatus extends ConfigurableActionBase implements ContainerFactoryPlugin
   protected $paymentStatusManager;
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.

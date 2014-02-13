@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment_reference\Tests\Element\PaymentReferenceWebTest.
+ * Contains \Drupal\payment_reference\Tests\Element\PaymentReferenceWebTest.
  */
 
 namespace Drupal\payment_reference\Tests\Element;

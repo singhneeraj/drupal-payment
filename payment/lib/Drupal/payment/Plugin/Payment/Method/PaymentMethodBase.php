@@ -48,7 +48,7 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
   protected $token;
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.

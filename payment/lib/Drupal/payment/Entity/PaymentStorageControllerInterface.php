@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\payment\Entity\PaymentStorageControllerInterface.
+ * Contains \Drupal\payment\Entity\PaymentStorageControllerInterface.
  */
 
 namespace Drupal\payment\Entity;

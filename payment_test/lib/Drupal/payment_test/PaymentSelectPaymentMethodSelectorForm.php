@@ -42,7 +42,7 @@ class PaymentSelectPaymentMethodSelectorForm implements ContainerInjectionInterf
   protected $paymentTypeManager;
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    */
   function __construct(EntityManagerInterface $entity_manager, PaymentTypeManagerInterface $payment_type_manager, PaymentMethodSelectorManagerInterface $payment_method_selector_manager) {
     $this->entityManager = $entity_manager;

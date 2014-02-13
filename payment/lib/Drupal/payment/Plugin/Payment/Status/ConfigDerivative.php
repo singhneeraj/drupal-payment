@@ -25,7 +25,7 @@ class ConfigDerivative extends DerivativeBase implements ContainerDerivativeInte
   protected $paymentStatusStorage;
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    */
   public function __construct(EntityStorageControllerInterface $payment_status_storage) {
     $this->paymentStatusStorage = $payment_status_storage;

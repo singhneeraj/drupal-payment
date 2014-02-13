@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\payment\Entity\PaymentMethodDeleteFormController.
+ * Contains \Drupal\payment\Entity\PaymentMethodDeleteFormController.
  */
 
 namespace Drupal\payment\Entity;

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\payment\Entity\PaymentEditFormController.
+ * Contains \Drupal\payment\Entity\PaymentEditFormController.
  */
 
 namespace Drupal\payment\Entity;
@@ -24,7 +24,7 @@ class PaymentEditFormController extends EntityFormController {
   protected $paymentStatusManager;
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    *
    * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface The payment status
    *   plugin manager.

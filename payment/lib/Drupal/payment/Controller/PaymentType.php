@@ -58,7 +58,7 @@ class PaymentType extends ControllerBase implements ContainerInjectionInterface 
   protected $paymentTypeManager;
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    *
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.

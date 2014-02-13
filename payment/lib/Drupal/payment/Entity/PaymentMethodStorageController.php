@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\payment\Entity\PaymentMethodStorageController.
+ * Contains \Drupal\payment\Entity\PaymentMethodStorageController.
  */
 
 namespace Drupal\payment\Entity;
@@ -31,7 +31,7 @@ class PaymentMethodStorageController extends ConfigStorageController {
   protected $paymentMethodManager;
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_info
    *   The entity type.

@@ -16,7 +16,7 @@ use Drupal\payment\Entity\PaymentInterface;
 interface PaymentTypeInterface extends PluginInspectionInterface, ConfigurablePluginInterface {
 
   /**
-   * Sets the ID of the payment this pluhin is of.
+   * Sets the ID of the payment this plugin is of.
    *
    * @param \Drupal\payment\Entity\PaymentInterface $payment
    *

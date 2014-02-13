@@ -32,7 +32,7 @@ class PaymentStatus implements ContainerInjectionInterface {
   protected $paymentStatusManager;
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    */
   public function __construct(EntityManagerInterface $entity_manager, PaymentStatusManagerInterface $payment_status_manager) {
     $this->entityManager = $entity_manager;

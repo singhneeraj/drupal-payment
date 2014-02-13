@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Controller\PaymentStatusWebTest.
+ * Contains \Drupal\payment\Tests\Controller\PaymentStatusWebTest.
  */
 
 namespace Drupal\payment\Tests\Controller;
@@ -95,6 +95,7 @@ class PaymentStatusWebTest extends WebTestBase {
         'parent_id' => $parent_id,
         'description' => $description,
       ), t('Save'));
+      /** @var \Drupal\payment\Entity\PaymentStatusInterface $status */
       $status = $this->paymentStatusStorage->loadUnchanged($id);
       if ($this->assertTrue((bool) $status)) {
         $this->assertEqual($status->id(), $id);
@@ -117,9 +118,10 @@ class PaymentStatusWebTest extends WebTestBase {
    */
   protected function doTestDelete() {
     $id = strtolower($this->randomName());
-    $status = $this->paymentStatusStorage->create(array())
-      ->setId($id);
-    $status->save();
+    /** @var \Drupal\payment\Entity\PaymentStatusInterface $status */
+    $status = $this->paymentStatusStorage->create(array());
+    $status->setId($id)
+      ->save();
     if ($this->assertTrue((bool) $this->paymentStatusStorage->loadUnchanged($id))) {
       $status->delete();
       $this->assertFalse((bool) $this->paymentStatusStorage->loadUnchanged($id));

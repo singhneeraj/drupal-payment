@@ -69,7 +69,7 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
   protected $urlGenerator;
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    *
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface $payment_method_manager

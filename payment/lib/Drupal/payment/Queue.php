@@ -62,7 +62,7 @@ class Queue implements QueueInterface {
   protected $queueId;
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    *
    * @param string $queue_id
    *   The unique ID of the queue (instance).

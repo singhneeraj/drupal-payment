@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment_reference\Tests\Plugin\Field\FieldType\PaymentReferenceWebTest.
+ * Contains \Drupal\payment_reference\Tests\Plugin\Field\FieldType\PaymentReferenceWebTest.
  */
 
 namespace Drupal\payment_reference\Tests\Plugin\Field\FieldType;

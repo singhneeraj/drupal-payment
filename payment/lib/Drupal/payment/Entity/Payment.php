@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Entity;
 
+use Drupal\Component\Plugin\Discovery\CachedDiscoveryInterface;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
 use Drupal\Core\Field\FieldDefinition;
@@ -81,11 +82,14 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   protected $statuses = array();
 
   /**
-   * Overrides Entity::__construct().
+   * {@inheritdoc}
    */
   public function __construct(array $values, $entity_type, $bundle = FALSE, $translations = array()) {
     parent::__construct($values, $entity_type, $bundle, $translations);
-    PaymentServiceWrapper::typeManager()->clearCachedDefinitions();
+    $payment_type_manager = PaymentServiceWrapper::typeManager();
+    if ($payment_type_manager instanceof CachedDiscoveryInterface) {
+      $payment_type_manager->clearCachedDefinitions();
+    }
     // When a payment is newly created, its bundle is set, but there is no
     // plugin yet.
     if (!isset($values['type'])) {
@@ -223,7 +227,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
         // invocations has already been executed and we don't need to continue
         // with this one.
         if ($this->getStatus()->getPluginId() != $status->getPluginId()) {
-          return;
+          return NULL;
         }
       }
       // @todo Invoke Rules event.

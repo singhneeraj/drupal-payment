@@ -20,7 +20,7 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 class PaymentStatusManager extends DefaultPluginManager implements PaymentStatusManagerInterface {
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths

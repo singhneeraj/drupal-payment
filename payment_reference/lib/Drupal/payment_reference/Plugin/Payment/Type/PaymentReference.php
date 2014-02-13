@@ -56,7 +56,7 @@ class PaymentReference extends PaymentTypeBase implements ContainerFactoryPlugin
   protected $urlGenerator;
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.

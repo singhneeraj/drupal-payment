@@ -2,13 +2,12 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\Payment\LineItem\BasicWebTest.
+ * Contains \Drupal\payment\Tests\Plugin\Payment\LineItem\BasicWebTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Payment\LineItem;
 
 use Drupal\payment\Payment;
-use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
 use Drupal\simpletest\WebTestBase;
 
 /**

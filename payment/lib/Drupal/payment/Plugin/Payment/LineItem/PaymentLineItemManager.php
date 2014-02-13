@@ -6,7 +6,6 @@
 
 namespace Drupal\payment\Plugin\Payment\LineItem;
 
-use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManager;
@@ -20,7 +19,7 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 class PaymentLineItemManager extends DefaultPluginManager implements PaymentLineItemManagerInterface {
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths

@@ -38,7 +38,7 @@ class PaymentReference extends WidgetBase implements ContainerFactoryPluginInter
   protected $currentUser;
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    *
    * @param array $plugin_id
    *   The plugin_id for the widget.

@@ -35,7 +35,7 @@ class BasicDerivative extends DerivativeBase implements ContainerDerivativeInter
   protected $paymentMethodStorage;
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    */
   public function __construct(EntityStorageControllerInterface $payment_method_storage, PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager) {
     $this->paymentMethodStorage = $payment_method_storage;

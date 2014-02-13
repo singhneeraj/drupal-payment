@@ -10,8 +10,6 @@ use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\PaymentProcessingInterface;
-use Drupal\payment\Entity\PaymentMethodInterface as EntityPaymentMethodInterface;
 
 /**
  * A payment method plugin (the logic behind a payment method entity).

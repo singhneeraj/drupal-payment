@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Entity\PaymentStatusUnitTest.
+ * Contains \Drupal\payment\Tests\Entity\PaymentStatusUnitTest.
  */
 
 namespace Drupal\payment\Tests\Entity;

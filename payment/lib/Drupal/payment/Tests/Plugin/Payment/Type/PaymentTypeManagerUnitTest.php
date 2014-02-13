@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\Plugin\Payment\Type\PaymentTypeManagerUnitTest.
+ * Contains \Drupal\payment\Tests\Plugin\Payment\Type\PaymentTypeManagerUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Payment\Type;

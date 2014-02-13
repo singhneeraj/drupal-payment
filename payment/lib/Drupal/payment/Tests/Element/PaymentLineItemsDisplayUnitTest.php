@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\PaymentLineItemsDisplayUnitTest.
+ * Contains \Drupal\payment\Tests\PaymentLineItemsDisplayUnitTest.
  */
 
 namespace Drupal\payment\Tests\Element;

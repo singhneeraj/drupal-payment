@@ -86,7 +86,8 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
     $configuration = array(
       $this->randomName() => $this->randomName(),
     );
-    $this->assertSame(NULL, $this->plugin->setConfiguration($configuration));
+    $return = $this->plugin->setConfiguration($configuration);
+    $this->assertSame(NULL, $return);
     $this->assertSame($configuration, $this->plugin->getConfiguration());
   }
 }

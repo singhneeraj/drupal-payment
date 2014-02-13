@@ -50,7 +50,7 @@ class PaymentForm extends FormatterBase implements ContainerFactoryPluginInterfa
   protected $paymentLineItemManager;
 
   /**
-   * Constructor.
+   * Constructs a new class instance.
    *
    * @param array $configuration
    * @param array $plugin_id

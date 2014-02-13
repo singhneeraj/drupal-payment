@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Contains Drupal\payment_form\Plugin\field\field_type\PaymentForm.
+ * Contains \Drupal\payment_form\Plugin\field\field_type\PaymentForm.
  */
 
 namespace Drupal\payment_form\Plugin\Field\FieldType;

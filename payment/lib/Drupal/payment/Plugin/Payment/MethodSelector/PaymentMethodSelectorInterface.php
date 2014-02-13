@@ -28,14 +28,14 @@ interface PaymentMethodSelectorInterface extends PluginInspectionInterface, Conf
   public function formElements(array $form, array &$form_state, PaymentInterface $payment);
 
   /**
-   * Gets selected payment method plugin.
+   * Gets the selected payment method plugin.
    *
    * @param array $form
    *   The form elements as built by self::formElements().
    * @param array $form_state
    *   The form's global state.
    *
-   * @return array
+   * @return \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface|null
    */
   public function getPaymentMethodFromFormElements(array $form, array &$form_state);
 

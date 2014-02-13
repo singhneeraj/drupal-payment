@@ -2,14 +2,13 @@
 
 /**
  * @file
- * Contains class \Drupal\payment\Tests\PaymentLineItemsInputWebTest.
+ * Contains \Drupal\payment\Tests\PaymentLineItemsInputWebTest.
  */
 
 namespace Drupal\payment\Tests\Element;
 
 use Drupal\payment\Generate;
 use Drupal\payment\Payment;
-use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
 use Drupal\simpletest\WebTestBase ;
 
 /**

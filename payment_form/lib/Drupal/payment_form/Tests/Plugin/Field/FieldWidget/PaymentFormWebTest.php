@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains class \Drupal\payment_form\Tests\Plugin\Field\FieldWidget\PaymentFormWebTest.
+ * Contains \Drupal\payment_form\Tests\Plugin\Field\FieldWidget\PaymentFormWebTest.
  */
 
 namespace Drupal\payment_form\Tests\Plugin\Field\FieldWidget;
