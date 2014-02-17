@@ -8,10 +8,10 @@
 namespace Drupal\payment_reference\Plugin\Field\FieldType;
 
 use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\Field\ConfigEntityReferenceItemBase;
 use Drupal\Core\Field\ConfigFieldItemInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\currency\Entity\Currency;
+use Drupal\entity_reference\ConfigurableEntityReferenceItem;
 use Drupal\payment\Element\PaymentLineItemsInput;
 
 /**
@@ -35,7 +35,7 @@ use Drupal\payment\Element\PaymentLineItemsInput;
  *   list_class = "\Drupal\payment_reference\Plugin\Field\FieldType\PaymentReferenceItemList"
  * )
  */
-class PaymentReference extends ConfigEntityReferenceItemBase implements ConfigFieldItemInterface {
+class PaymentReference extends ConfigurableEntityReferenceItem {
 
   /**
    * {@inheritdoc}
