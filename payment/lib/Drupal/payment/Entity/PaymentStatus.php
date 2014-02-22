@@ -12,7 +12,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
 /**
  * Defines a payment status entity.
  *
- * @EntityType(
+ * @ConfigEntityType(
  *   admin_permission = "payment.payment_status.administer",
  *   config_prefix = "payment.payment_status",
  *   controllers = {

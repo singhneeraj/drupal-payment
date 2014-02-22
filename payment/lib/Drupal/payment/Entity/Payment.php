@@ -20,7 +20,7 @@ use Drupal\user\UserInterface;
 /**
  * Defines a payment entity.
  *
- * @EntityType(
+ * @ContentEntityType(
  *   base_table = "payment",
  *   bundle_label = @Translation("Payment type"),
  *   controllers = {

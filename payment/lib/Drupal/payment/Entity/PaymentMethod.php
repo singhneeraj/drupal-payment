@@ -14,7 +14,7 @@ use Drupal\user\UserInterface;
 /**
  * Defines a payment method entity.
  *
- * @EntityType(
+ * @ConfigEntityType(
  *   bundle_label = @Translation("Payment method type"),
  *   config_prefix = "payment.payment_method",
  *   controllers = {
