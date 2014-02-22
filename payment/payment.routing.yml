@@ -7,7 +7,7 @@ payment.admin:
     _permission: 'access administration pages'
 
 payment.payment.admin_list:
-  path: '/admin/content/payment'
+  path: '/admin/payment'
   defaults:
     _content: '\Drupal\Core\Entity\Controller\EntityListController::listing'
     entity_type: 'payment'

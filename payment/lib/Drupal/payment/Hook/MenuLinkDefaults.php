@@ -27,7 +27,7 @@ class MenuLinkDefaults {
     $items['payment.payment.admin_list'] = array(
       'route_name' => 'payment.payment.admin_list',
       'link_title' => 'Payments',
-      'parent' => 'node.admin.content',
+      'parent' => 'system.admin',
     );
 
     $items['payment.payment_type.list'] = array(

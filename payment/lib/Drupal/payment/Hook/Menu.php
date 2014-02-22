@@ -25,7 +25,7 @@ class Menu {
     );
 
     // Payments.
-    $items['admin/content/payments'] = array(
+    $items['admin/payments'] = array(
       'route_name' => 'payment.payment.admin_list',
       'title' => 'Payments',
     );
