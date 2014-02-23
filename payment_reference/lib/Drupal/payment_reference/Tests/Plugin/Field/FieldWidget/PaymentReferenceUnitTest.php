@@ -27,7 +27,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    *
    * @var \Drupal\field\FieldInstanceInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $fieldInstance;
+  protected $fieldInstanceConfig;
 
   /**
    * The field widget plugin under test.
@@ -51,12 +51,12 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   protected function setUp() {
-    $this->fieldInstance = $this->getMock('\Drupal\field\FieldInstanceInterface');
+    $this->fieldInstanceConfig = $this->getMock('\Drupal\field\FieldInstanceInterface');
 
     $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
     $this->widget = $this->getMockBuilder('\Drupal\payment_reference\Plugin\Field\FieldWidget\PaymentReference')
-      ->setConstructorArgs(array($this->randomName(), array(), $this->fieldInstance, array(), $this->currentUser))
+      ->setConstructorArgs(array($this->randomName(), array(), $this->fieldInstanceConfig, array(), $this->currentUser))
       ->setMethods(array('getFieldSetting'))
       ->getMock();
   }
@@ -65,7 +65,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    * Tests formElement().
    */
   public function testFormElement() {
-    $this->fieldInstance->expects($this->once())
+    $this->fieldInstanceConfig->expects($this->once())
       ->method('isRequired')
       ->will($this->returnValue(TRUE));
 

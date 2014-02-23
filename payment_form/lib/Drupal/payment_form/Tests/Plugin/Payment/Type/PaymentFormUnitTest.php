@@ -25,11 +25,11 @@ class PaymentFormUnitTest extends UnitTestCase {
   protected $eventDispatcher;
 
   /**
-   * The field instance used for testing.
+   * The field instance config used for testing.
    *
-   * @var \Drupal\field\Entity\FieldInstance|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\field\Entity\FieldInstanceConfig|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $fieldInstance;
+  protected $fieldInstanceConfig;
 
   /**
    * The module handler used for testing.
@@ -83,19 +83,19 @@ class PaymentFormUnitTest extends UnitTestCase {
 
     $this->eventDispatcher = $this->getMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
-    $this->fieldInstance = $this->getMockBuilder('\Drupal\field\Entity\FieldInstance')
+    $this->fieldInstanceConfig = $this->getMockBuilder('\Drupal\field\Entity\FieldInstanceConfig')
       ->disableOriginalConstructor()
       ->getMock();
-    $this->fieldInstance->expects($this->any())
+    $this->fieldInstanceConfig->expects($this->any())
       ->method('label')
       ->will($this->returnValue($this->randomName()));
 
-    $field_instance_storage = $this->getMockBuilder('\Drupal\field\FieldInstanceStorageController')
+    $field_instance_config_storage = $this->getMockBuilder('\Drupal\field\FieldInstanceConfigStorageController')
       ->disableOriginalConstructor()
       ->getMock();
-    $field_instance_storage->expects($this->any())
+    $field_instance_config_storage->expects($this->any())
       ->method('load')
-      ->will($this->returnValue($this->fieldInstance));
+      ->will($this->returnValue($this->fieldInstanceConfig));
 
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandler');
 
@@ -107,7 +107,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->paymentType = new PaymentForm(array(), 'payment_form', array(), $http_kernel, $this->eventDispatcher, $request, $this->moduleHandler, $this->urlGenerator, $field_instance_storage);
+    $this->paymentType = new PaymentForm(array(), 'payment_form', array(), $http_kernel, $this->eventDispatcher, $request, $this->moduleHandler, $this->urlGenerator, $field_instance_config_storage);
 
     $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
@@ -116,31 +116,31 @@ class PaymentFormUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getFieldInstanceId().
+   * Tests getFieldInstanceConfigId().
    */
-  public function testGetFieldInstanceId() {
+  public function testGetFieldInstanceConfigId() {
     $this->payment->expects($this->once())
       ->method('get')
-      ->with('payment_form_field_instance');
-    $this->paymentType->getFieldInstanceId();
+      ->with('payment_form_field_instance_config');
+    $this->paymentType->getFieldInstanceConfigId();
   }
 
   /**
-   * Tests setFieldInstanceId().
+   * Tests setFieldInstanceConfigId().
    */
-  public function testSetFieldInstanceId() {
+  public function testSetFieldInstanceConfigId() {
     $this->payment->expects($this->once())
       ->method('set')
-      ->with('payment_form_field_instance')
+      ->with('payment_form_field_instance_config')
       ->will($this->returnValue($this->paymentType));
-    $this->assertSame(spl_object_hash($this->paymentType), spl_object_hash($this->paymentType->setFieldInstanceId($this->randomName())));
+    $this->assertSame(spl_object_hash($this->paymentType), spl_object_hash($this->paymentType->setFieldInstanceConfigId($this->randomName())));
   }
 
   /**
    * Tests paymentDescription().
    */
   public function testPaymentDescription() {
-    $this->assertSame($this->paymentType->paymentDescription(), $this->fieldInstance->label());
+    $this->assertSame($this->paymentType->paymentDescription(), $this->fieldInstanceConfig->label());
   }
 
   /**

@@ -25,7 +25,7 @@ class PaymentLineItemElement implements ContainerInjectionInterface, FormInterfa
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'payment_test_payment_line_item_element';
   }
 

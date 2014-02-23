@@ -19,7 +19,7 @@ class PaymentSelectWebTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('payment_test');
+  public static $modules = array('filter', 'payment_test');
 
   /**
    * {@inheritdoc}

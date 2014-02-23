@@ -87,11 +87,13 @@ class PaymentStatus implements ContainerInjectionInterface {
       $definition = $this->paymentStatusManager->getDefinition($plugin_id);
       /** @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface $class */
       $class = $definition['class'];
+      $indentation = array(
+        '#theme' => 'indentation',
+        '#size' => $depth,
+      );
       $rows[$plugin_id] = array(
         'label' => array(
-          '#markup' => theme('indentation', array(
-            'size' => $depth,
-          )) . $definition['label'],
+          '#markup' => drupal_render($indentation) . $definition['label'],
         ),
         'description' => array(
           '#markup' => $definition['description'],

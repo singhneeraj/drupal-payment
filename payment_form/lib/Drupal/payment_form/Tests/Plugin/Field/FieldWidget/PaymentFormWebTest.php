@@ -55,7 +55,7 @@ class PaymentFormWebTest extends WebTestBase {
       'default_value_input[field_' . $field_name . '][line_items][line_items][payment_basic][plugin_form][description]' => $this->randomString(),
     ), t('Save settings'));
     // Get all payment_form fields.
-    $field_names = \Drupal::entityQuery('field_entity')
+    $field_names = \Drupal::entityQuery('field_config')
       ->condition('type', 'payment_form')
       ->execute();
     $this->assertTrue(in_array('user.field_' . $field_name, $field_names));

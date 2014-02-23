@@ -1,5 +1,5 @@
 payment_reference.pay:
-  path: '/payment_reference/pay/{field_instance}'
+  path: '/payment_reference/pay/{field_instance_config}'
   defaults:
     _content: '\Drupal\payment_reference\PaymentReferenceUi::pay'
     _title_callback: '\Drupal\payment_reference\PaymentReferenceUi::payLabel'

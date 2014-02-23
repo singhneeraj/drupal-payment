@@ -112,7 +112,7 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
     $payment_type->expects($this->once())
-      ->method('setFieldInstanceId')
+      ->method('setFieldInstanceConfigId')
       ->will($this->returnSelf());
 
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
@@ -149,8 +149,8 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
       ->method('createInstance')
       ->will($this->returnValue($payment_line_item));
 
-    $field_instance = $this->getMock('\Drupal\field\FieldInstanceInterface');
-    $field_instance->expects($this->once())
+    $field_instance_config = $this->getMock('\Drupal\field\FieldInstanceInterface');
+    $field_instance_config->expects($this->once())
       ->method('id')
       ->will($this->returnValue($this->randomName()));
     $map = array(
@@ -160,11 +160,11 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
         'plugin_id' => '',
       ))),
     );
-    $field_instance->expects($this->exactly(2))
+    $field_instance_config->expects($this->exactly(2))
       ->method('getSetting')
       ->will($this->returnValueMap($map));
 
-    $this->paymentReferenceUi->pay($field_instance);
+    $this->paymentReferenceUi->pay($field_instance_config);
   }
 
   /**
@@ -176,11 +176,11 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
       ->method('id')
       ->will($this->returnValue($user_id));
 
-    $field_instance_id = $this->randomName();
-    $field_instance = $this->getMock('\Drupal\field\FieldInstanceInterface');
-    $field_instance->expects($this->any())
+    $field_instance_config_id = $this->randomName();
+    $field_instance_config = $this->getMock('\Drupal\field\FieldInstanceInterface');
+    $field_instance_config->expects($this->any())
       ->method('id')
-      ->will($this->returnValue($field_instance_id));
+      ->will($this->returnValue($field_instance_config_id));
 
     $request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
       ->disableOriginalConstructor()
@@ -223,16 +223,16 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
       ->will($this->returnValue($access_controller));
 
     // Test a payment without create access, without queued payments.
-    $this->assertSame(AccessInterface::DENY, $this->paymentReferenceUi->payAccess($request, $field_instance));
+    $this->assertSame(AccessInterface::DENY, $this->paymentReferenceUi->payAccess($request, $field_instance_config));
 
     // Test a payment with create access, without queued payments.
-    $this->assertSame(AccessInterface::ALLOW, $this->paymentReferenceUi->payAccess($request, $field_instance));
+    $this->assertSame(AccessInterface::ALLOW, $this->paymentReferenceUi->payAccess($request, $field_instance_config));
 
     // Test a payment without create access, with queued payments.
-    $this->assertSame(AccessInterface::DENY, $this->paymentReferenceUi->payAccess($request, $field_instance));
+    $this->assertSame(AccessInterface::DENY, $this->paymentReferenceUi->payAccess($request, $field_instance_config));
 
     // Test a payment with create access, with queued payments.
-    $this->assertSame(AccessInterface::DENY, $this->paymentReferenceUi->payAccess($request, $field_instance));
+    $this->assertSame(AccessInterface::DENY, $this->paymentReferenceUi->payAccess($request, $field_instance_config));
   }
 
   /**
@@ -240,12 +240,12 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
    */
   public function testPayLabel() {
     $label = $this->randomName();
-    $field_instance = $this->getMock('\Drupal\field\FieldInstanceInterface');
-    $field_instance->expects($this->once())
+    $field_instance_config = $this->getMock('\Drupal\field\FieldInstanceInterface');
+    $field_instance_config->expects($this->once())
       ->method('label')
       ->will($this->returnValue($label));
 
-    $this->assertSame($label, $this->paymentReferenceUi->payLabel($field_instance));
+    $this->assertSame($label, $this->paymentReferenceUi->payLabel($field_instance_config));
   }
 
   /**
@@ -280,18 +280,18 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
    * Tests resumeContextLabel().
    */
   public function testResumeContextLabel() {
-    $field_instance_label = $this->randomName();
-    $field_instance_id = $this->randomName();
-    $field_instance = $this->getMock('\Drupal\field\FieldInstanceInterface');
-    $field_instance->expects($this->once())
+    $field_instance_config_label = $this->randomName();
+    $field_instance_config_id = $this->randomName();
+    $field_instance_config = $this->getMock('\Drupal\field\FieldInstanceInterface');
+    $field_instance_config->expects($this->once())
       ->method('label')
-      ->will($this->returnValue($field_instance_label));
+      ->will($this->returnValue($field_instance_config_label));
 
     $storage_controller = $this->getMock('\Drupal\Core\Entity\EntityStorageControllerInterface');
     $storage_controller->expects($this->once())
       ->method('load')
-      ->with($field_instance_id)
-      ->will($this->returnValue($field_instance));
+      ->with($field_instance_config_id)
+      ->will($this->returnValue($field_instance_config));
 
     $this->entityManager->expects($this->once())
       ->method('getStorageController')
@@ -301,8 +301,8 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
     $payment_type->expects($this->once())
-      ->method('getFieldInstanceId')
-      ->will($this->returnValue($field_instance_id));
+      ->method('getFieldInstanceConfigId')
+      ->will($this->returnValue($field_instance_config_id));
 
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
@@ -311,7 +311,7 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
       ->method('getPaymentType')
       ->will($this->returnValue($payment_type));
 
-    $this->assertSame($field_instance_label, $this->paymentReferenceUi->resumeContextLabel($payment));
+    $this->assertSame($field_instance_config_label, $this->paymentReferenceUi->resumeContextLabel($payment));
   }
 
 }

@@ -45,14 +45,14 @@ class PaymentFormControllerWebTest extends WebTestBase {
 
     // Create the field and field instance.
     $field_name = strtolower($this->randomName());
-    entity_create('field_entity', array(
+    entity_create('field_config', array(
       'cardinality' => FieldDefinitionInterface::CARDINALITY_UNLIMITED,
       'entity_type' => 'user',
       'name' => $field_name,
       'type' => 'payment_reference',
     ))->save();
 
-    $field_instance = entity_create('field_instance', array(
+    $field_instance_config = entity_create('field_instance_config', array(
       'bundle' => 'user',
       'entity_type' => 'user',
       'field_name' => $field_name,
@@ -61,9 +61,9 @@ class PaymentFormControllerWebTest extends WebTestBase {
         'line_items' => array(),
       ),
     ));
-    $field_instance->save();
+    $field_instance_config->save();
 
-    $path = '/payment_reference/pay/' . $field_instance->id();
+    $path = '/payment_reference/pay/' . $field_instance_config->id();
     $this->drupalGet($path);
     $this->drupalPostForm($path, array(), t('Pay'));
     // This actually tests the payment_reference payment type plugin, but it lets

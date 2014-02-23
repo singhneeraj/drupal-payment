@@ -30,14 +30,14 @@ class PaymentReference {
     if (!is_string($element['#payment_currency_code'])) {
       throw new \InvalidArgumentException('The currency code must be a string, but ' . gettype($element['#payment_currency_code']) . ' was given.');
     }
-    if (!is_string($element['#field_instance_id'])) {
-      throw new \InvalidArgumentException('The field instance ID must be a string, but ' . gettype($element['#field_instance_id']) . ' was given.');
+    if (!is_string($element['#field_instance_config_id'])) {
+      throw new \InvalidArgumentException('The field instance config ID must be a string, but ' . gettype($element['#field_instance_config_id']) . ' was given.');
     }
 
     // Find the default payment to use.
     $pid = $element['#default_value'];
     if (!$pid) {
-      $pids = PaymentReferenceServiceWrapper::queue()->loadPaymentIds($element['#field_instance_id'], $element['#owner_id']);
+      $pids = PaymentReferenceServiceWrapper::queue()->loadPaymentIds($element['#field_instance_config_id'], $element['#owner_id']);
       $pid = reset($pids);
     }
     // Form API considers an empty string to be an empty value, but not NULL.
@@ -82,7 +82,7 @@ class PaymentReference {
         ),
         '#markup' => t('<a href="@url" target="_blank">Add a new payment</a> (opens in a new window)', array(
           '@url' => \Drupal::urlGenerator()->generateFromRoute('payment_reference.pay', array(
-            'field_instance' => $element['#field_instance_id'],
+            'field_instance_config' => $element['#field_instance_config_id'],
           )),
         )),
       );

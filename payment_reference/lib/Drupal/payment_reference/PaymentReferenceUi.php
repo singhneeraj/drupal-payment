@@ -71,23 +71,23 @@ class PaymentReferenceUi extends ControllerBase implements ContainerInjectionInt
   /**
    * Returns a payment page.
    *
-   * @param \Drupal\field\FieldInstanceInterface $field_instance
+   * @param \Drupal\field\FieldInstanceInterface $field_instance_config
    *
    * @return array
    *   A render array.
    */
-  public function pay(FieldInstanceInterface $field_instance) {
+  public function pay(FieldInstanceInterface $field_instance_config) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->entityManager()
       ->getStorageController('payment')
       ->create(array(
         'bundle' => 'payment_reference',
       ));
-    $payment->setCurrencyCode($field_instance->getSetting('currency_code'));
+    $payment->setCurrencyCode($field_instance_config->getSetting('currency_code'));
     /** @var \Drupal\payment_reference\Plugin\Payment\Type\PaymentReference $payment_type */
     $payment_type = $payment->getPaymentType();
-    $payment_type->setFieldInstanceId($field_instance->id());
-    foreach ($field_instance->getSetting('line_items_data') as $line_item_data) {
+    $payment_type->setFieldInstanceConfigId($field_instance_config->id());
+    foreach ($field_instance_config->getSetting('line_items_data') as $line_item_data) {
       $line_item = $this->paymentLineItemManager->createInstance($line_item_data['plugin_id'], $line_item_data['plugin_configuration']);
       $payment->setLineItem($line_item);
     }
@@ -100,13 +100,13 @@ class PaymentReferenceUi extends ControllerBase implements ContainerInjectionInt
    * Checks if the user has access to add a payment for a field instance.
    *
    * @param \Symfony\Component\HttpFoundation\Request $request
-   * @param \Drupal\field\FieldInstanceInterface $field_instance
+   * @param \Drupal\field\FieldInstanceInterface $field_instance_config
    *
    * @return string
    */
-  public function payAccess(Request $request, FieldInstanceInterface $field_instance) {
+  public function payAccess(Request $request, FieldInstanceInterface $field_instance_config) {
     $access_controller = $this->entityManager()->getAccessController('payment');
-    $payment_ids = $this->queue->loadPaymentIds($field_instance->id(), $this->currentUser()->id());
+    $payment_ids = $this->queue->loadPaymentIds($field_instance_config->id(), $this->currentUser()->id());
     // Only grant access if the current user does not already have payments
     // available for this instance, and he has the permission to create them.
     if ($access_controller->createAccess('payment_reference') && empty($payment_ids)) {
@@ -118,12 +118,12 @@ class PaymentReferenceUi extends ControllerBase implements ContainerInjectionInt
   /**
    * Returns the label of a field instance.
    *
-   * @param \Drupal\field\FieldInstanceInterface $field_instance
+   * @param \Drupal\field\FieldInstanceInterface $field_instance_config
    *
    * @return string
    */
-  public function payLabel(FieldInstanceInterface $field_instance) {
-    return $field_instance->label();
+  public function payLabel(FieldInstanceInterface $field_instance_config) {
+    return $field_instance_config->label();
   }
 
   /**
@@ -134,7 +134,12 @@ class PaymentReferenceUi extends ControllerBase implements ContainerInjectionInt
    * @return string
    */
   public function resumeContextLabel(PaymentInterface $payment) {
-    return $this->entityManager()->getStorageController('field_instance')->load($payment->getPaymentType()->getFieldInstanceId())->label();
+    /** @var \Drupal\payment_reference\Plugin\Payment\Type\PaymentReference $payment_type */
+    $payment_type = $payment->getPaymentType();
+    $field_instance_config_storage = $this->entityManager()->getStorageController('field_instance');
+    $field_instance_config = $field_instance_config_storage->load($payment_type->getFieldInstanceConfigId());
+
+    return $field_instance_config->label();
   }
 
   /**

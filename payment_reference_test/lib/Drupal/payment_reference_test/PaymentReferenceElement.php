@@ -18,7 +18,7 @@ class PaymentReferenceElement implements FormInterface {
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'payment_reference_test_payment_reference_element';
   }
 
@@ -28,7 +28,7 @@ class PaymentReferenceElement implements FormInterface {
   public function buildForm(array $form, array &$form_state) {
     $form['payment_reference'] = array(
       // The ID of the field instance the element is used for.
-      '#field_instance_id' => 'payment_reference_test_payment_reference_element',
+      '#field_instance_config_id' => 'payment_reference_test_payment_reference_element',
       // The ID of the account that must own the payment.
       '#owner_id' => 2,
       // An array of

@@ -73,7 +73,7 @@ class PaymentReference extends WidgetBase implements ContainerFactoryPluginInter
 
     $element['payment_id'] = array(
       '#default_value' => isset($items[$delta]) ? $items[$delta]->target_id : NULL,
-      '#field_instance_id' => $this->fieldDefinition->id(),
+      '#field_instance_config_id' => $this->fieldDefinition->id(),
       // The requested user account may contain a string numeric ID.
       '#owner_id' => (int) $this->currentUser->id(),
       '#payment_line_items_data' => $this->getFieldSetting('line_items_data'),

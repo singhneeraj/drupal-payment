@@ -8,6 +8,7 @@
 namespace Drupal\payment_test;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\DependencyInjection\DependencySerialization;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormInterface;
 use Drupal\payment\Generate;
@@ -18,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides a form to test the payment_select payment method selector plugin.
  */
-class PaymentSelectPaymentMethodSelectorForm implements ContainerInjectionInterface, FormInterface {
+class PaymentSelectPaymentMethodSelectorForm extends DependencySerialization implements ContainerInjectionInterface, FormInterface {
 
   /**
    * The entity manager.
@@ -60,7 +61,7 @@ class PaymentSelectPaymentMethodSelectorForm implements ContainerInjectionInterf
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'payment_test_payment_method_element';
   }
 

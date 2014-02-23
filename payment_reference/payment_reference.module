@@ -23,8 +23,8 @@ function payment_reference_element_info() {
   $elements['payment_reference'] = array(
     // The ID of a payment as the default value.
     '#default_value' => NULL,
-    // The ID of the field instance the element is used for.
-    '#field_instance_id' => NULL,
+    // The ID of the field instance config the element is used for.
+    '#field_instance_config_id' => NULL,
     '#input' => TRUE,
     // The ID of the account that must own the payment.
     '#owner_id' => NULL,
@@ -66,7 +66,7 @@ function payment_reference_entity_info_alter(&$entity_info) {
 /**
  * Implements hook_ENTITY_TYPE_delete().
  */
-function payment_reference_field_entity_delete(FieldInterface $field) {
+function payment_reference_field_config_delete(FieldInterface $field) {
   if ($field->getType() == 'payment_reference') {
     PaymentReference::queue()->deleteByCategoryIdPrefix($field->id());
   }
@@ -75,8 +75,8 @@ function payment_reference_field_entity_delete(FieldInterface $field) {
 /**
  * Implements hook_ENTITY_TYPE_delete().
  */
-function payment_reference_field_instance_delete(FieldInstanceInterface $field_instance) {
-  PaymentReference::queue()->deleteByCategoryId($field_instance->id());
+function payment_reference_field_instance_config_delete(FieldInstanceInterface $field_instance_config) {
+  PaymentReference::queue()->deleteByCategoryId($field_instance_config->id());
 }
 
 /**
@@ -86,7 +86,7 @@ function payment_reference_payment_insert(PaymentInterface $payment) {
   if ($payment->getPaymentType() instanceof PaymentReferencePlugin) {
     /** @var \Drupal\payment_reference\Plugin\Payment\Type\PaymentReference $payment_type */
     $payment_type = $payment->getPaymentType();
-    PaymentReference::queue()->save($payment_type->getFieldInstanceId(), $payment->id());
+    PaymentReference::queue()->save($payment_type->getFieldInstanceConfigId(), $payment->id());
   }
 }
 
@@ -113,7 +113,7 @@ function payment_reference_entity_field_access($operation, FieldDefinitionInterf
  * https://drupal.org/node/2040559 has been fixed.
  */
 function payment_reference_element_payment_reference_value(array $element, $input, array &$form_state) {
-  $payment_ids = PaymentReference::queue()->loadPaymentIds($element['#field_instance_id'], $element['#owner_id']);
+  $payment_ids = PaymentReference::queue()->loadPaymentIds($element['#field_instance_config_id'], $element['#owner_id']);
   if ($payment_ids) {
     return reset($payment_ids);
   }

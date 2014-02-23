@@ -1,12 +1,12 @@
-id: payment.payment_reference_field_instance
-uuid: e54e5e54-1832-46be-9a3b-6ba355ba86de
+id: payment.payment_form_field_instance_config
+uuid: f9aa0b68-63bb-4ebb-8800-b581f75e13b5
 status: true
 langcode: en
-name: payment_reference_field_instance
+name: payment_form_field_instance
 entity_type: payment
 type: entity_reference
 settings:
-  target_type: field_instance
+  target_type: field_instance_config
 module: entity_reference
 active: true
 locked: true

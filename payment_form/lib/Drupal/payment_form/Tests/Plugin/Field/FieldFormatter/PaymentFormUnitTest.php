@@ -93,7 +93,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
     $payment_type->expects($this->once())
-      ->method('setFieldInstanceId');
+      ->method('setFieldInstanceConfigId');
 
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()

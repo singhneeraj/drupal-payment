@@ -193,12 +193,10 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
         );
       }
     }
-    $rendered_content = $this->theme('admin_block_content', array(
-      'content' => $items,
-    ));
 
     return array(
-      '#markup' => $rendered_content,
+      '#theme' => 'admin_block_content',
+      '#content' => $items,
     );
   }
 
@@ -221,13 +219,6 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
       }
     }
     return static::DENY;
-  }
-
-  /**
-   * Wraps theme().
-   */
-  protected function theme($hook, $variables = array()) {
-    return theme($hook, $variables);
   }
 
   /**

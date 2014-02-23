@@ -77,13 +77,17 @@ class PaymentForm extends FormatterBase implements ContainerFactoryPluginInterfa
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items) {
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->entityManager->getStorageController('payment')->create(array(
       'bundle' => 'payment_form',
-    ))->setCurrencyCode($this->fieldDefinition->getSetting('currency_code'));
+    ));
+    $payment->setCurrencyCode($this->fieldDefinition->getSetting('currency_code'));
     foreach ($items as $item) {
       $payment->setLineItem($this->paymentLineItemManager->createInstance($item->plugin_id, $item->plugin_configuration));
     }
-    $payment->getPaymentType()->setFieldInstanceId($this->fieldDefinition->getName());
+    /** @var \Drupal\payment_form\Plugin\Payment\Type\PaymentForm $payment_type */
+    $payment_type = $payment->getPaymentType();
+    $payment_type->setFieldInstanceConfigId($this->fieldDefinition->getName());
 
     return $this->formBuilder->getForm($this->entityManager->getFormController('payment', 'payment_form')->setEntity($payment));
   }

@@ -35,7 +35,7 @@ class PaymentMethodDeleteFormController extends EntityConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'payment_method_delete';
   }
 

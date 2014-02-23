@@ -24,7 +24,7 @@ class PaymentLineItemPaymentBasicFormElements implements ContainerInjectionInter
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'payment_test-payment-line_item-payment_basic';
   }
 

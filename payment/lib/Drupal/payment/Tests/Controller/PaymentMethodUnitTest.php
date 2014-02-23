@@ -97,7 +97,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
 
     $this->controller = $this->getMockBuilder('\Drupal\payment\Controller\PaymentMethod')
       ->setConstructorArgs(array($this->entityManager, $this->paymentMethodManager, $this->paymentMethodConfigurationManager, $this->formBuilder, $this->urlGenerator, $this->currentUser))
-      ->setMethods(array('drupalGetPath', 't', 'theme'))
+      ->setMethods(array('drupalGetPath', 't'))
       ->getMock();
   }
 

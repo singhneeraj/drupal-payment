@@ -17,11 +17,11 @@ use Drupal\Tests\UnitTestCase;
 class PaymentReferenceUnitTest extends UnitTestCase {
 
   /**
-   * The field instance used for testing.
+   * The field instance config used for testing.
    *
-   * @var \Drupal\field\Entity\FieldInstance|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\field\Entity\FieldInstanceConfigConfig|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $fieldInstance;
+  protected $fieldInstanceConfig;
 
   /**
    * The module handler used for testing.
@@ -66,19 +66,19 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       ->method('generateFromRoute')
       ->will($this->returnValue('http://example.com'));
 
-    $this->fieldInstance = $this->getMockBuilder('\Drupal\field\Entity\FieldInstance')
+    $this->fieldInstanceConfig = $this->getMockBuilder('\Drupal\field\Entity\FieldInstanceConfig')
       ->disableOriginalConstructor()
       ->getMock();
-    $this->fieldInstance->expects($this->any())
+    $this->fieldInstanceConfig->expects($this->any())
       ->method('label')
       ->will($this->returnValue($this->randomName()));
 
-    $field_instance_storage = $this->getMockBuilder('\Drupal\field\FieldInstanceStorageController')
+    $field_instance_config_storage = $this->getMockBuilder('\Drupal\field\FieldInstanceConfigStorageController')
       ->disableOriginalConstructor()
       ->getMock();
-    $field_instance_storage->expects($this->any())
+    $field_instance_config_storage->expects($this->any())
       ->method('load')
-      ->will($this->returnValue($this->fieldInstance));
+      ->will($this->returnValue($this->fieldInstanceConfig));
 
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandler');
 
@@ -90,7 +90,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->paymentType = new PaymentReference(array(), 'payment_reference', array(), $http_kernel, $request, $this->moduleHandler, $url_generator, $field_instance_storage);
+    $this->paymentType = new PaymentReference(array(), 'payment_reference', array(), $http_kernel, $request, $this->moduleHandler, $url_generator, $field_instance_config_storage);
 
     $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
@@ -99,30 +99,30 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getFieldInstanceId().
+   * Tests getFieldInstanceConfigId().
    */
-  public function testGetFieldInstanceId() {
+  public function testGetFieldInstanceConfigId() {
     $this->payment->expects($this->once())
       ->method('get');
-    $this->paymentType->getFieldInstanceId();
+    $this->paymentType->getFieldInstanceConfigId();
   }
 
   /**
-   * Tests setFieldInstanceId().
+   * Tests setFieldInstanceConfigId().
    */
-  public function testSetFieldInstanceId() {
-    $map = array(array('payment_reference_field_instance', $this->paymentType));
+  public function testSetFieldInstanceConfigId() {
+    $map = array(array('payment_reference_field_instance_config', $this->paymentType));
     $this->payment->expects($this->once())
       ->method('set')
       ->will($this->returnValueMap($map));
-    $this->paymentType->setFieldInstanceId($this->randomName());
+    $this->paymentType->setFieldInstanceConfigId($this->randomName());
   }
 
   /**
    * Tests paymentDescription().
    */
   public function testPaymentDescription() {
-    $this->assertSame($this->paymentType->paymentDescription(), $this->fieldInstance->label());
+    $this->assertSame($this->paymentType->paymentDescription(), $this->fieldInstanceConfig->label());
   }
 
 }
