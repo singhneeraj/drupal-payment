@@ -107,7 +107,7 @@ class PaymentFormConfigurationFormUnitTest extends UnitTestCase {
     $config = $this->getMockBuilder('\Drupal\Core\Config\Config')
       ->disableOriginalConstructor()
       ->getMock();
-    $config->expects($this->exactly(2))
+    $config->expects($this->exactly(3))
       ->method('set');
     $config->expects($this->once())
       ->method('save');

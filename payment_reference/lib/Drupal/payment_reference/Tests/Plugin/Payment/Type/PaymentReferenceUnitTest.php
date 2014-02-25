@@ -111,7 +111,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    * Tests setFieldInstanceConfigId().
    */
   public function testSetFieldInstanceConfigId() {
-    $map = array(array('payment_reference_field_instance_config', $this->paymentType));
+    $map = array(array('payment_reference_field_instance', $this->paymentType));
     $this->payment->expects($this->once())
       ->method('set')
       ->will($this->returnValueMap($map));

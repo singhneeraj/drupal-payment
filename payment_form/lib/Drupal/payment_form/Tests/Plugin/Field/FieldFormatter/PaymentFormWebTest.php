@@ -7,10 +7,8 @@
 
 namespace Drupal\payment_form\Tests\Plugin\Field\FieldFormatter;
 
-use Drupal\field\Field;
-use Drupal\field\FieldInterface;
+use Drupal\field\FieldConfigInterface;
 use Drupal\payment\Generate;
-use Drupal\payment\Payment;
 use Drupal\payment_form\Plugin\Payment\Type\PaymentForm;
 use Drupal\simpletest\WebTestBase;
 
@@ -50,7 +48,7 @@ class PaymentFormWebTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('entity_reference', 'field', 'payment', 'payment_form');
+  public static $modules = array('entity_reference', 'field', 'filter', 'payment', 'payment_form');
 
   /**
    * {@inheritdoc}
@@ -73,7 +71,7 @@ class PaymentFormWebTest extends WebTestBase {
     // Create the field and field instance.
     $field_name = strtolower($this->randomName());
     entity_create('field_config', array(
-      'cardinality' => FieldInterface::CARDINALITY_UNLIMITED,
+      'cardinality' => FieldConfigInterface::CARDINALITY_UNLIMITED,
       'entity_type' => 'user',
       'name' => $field_name,
       'type' => 'payment_form',
@@ -97,8 +95,8 @@ class PaymentFormWebTest extends WebTestBase {
       'name' => $this->randomString(),
     ));
     foreach (Generate::createPaymentLineItems() as $i => $line_item) {
-      $this->user->{$field_name}[$i]->plugin_id = $line_item->getPluginId();
-      $this->user->{$field_name}[$i]->plugin_configuration = $line_item->getConfiguration();
+      $this->user->{$field_name}[$i]->get('plugin_id')->setValue($line_item->getPluginId());
+      $this->user->{$field_name}[$i]->get('plugin_configuration')->setValue($line_item->getConfiguration());
     }
     $this->user->save();
 
@@ -118,11 +116,12 @@ class PaymentFormWebTest extends WebTestBase {
     $this->assertEqual(count($this->paymentStorage->loadMultiple()), 0);
     $user = $this->drupalCreateUser(array('access user profiles'));
     $this->drupalLogin($user);
-    $path = 'user/' . $user->id();
-    $this->drupalPostForm($path, array(), t('Pay'));
-    $this->assertUrl($path);
+    $this->drupalPostForm('user/' . $this->user->id(), array(), t('Pay'));
+    // The front page is the currently logged-in user.
+    $this->assertUrl('user/' . $user->id());
     $this->assertResponse('200');
     // This is supposed to be the first and only payment.
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->paymentStorage->load(1);
     if ($this->assertTrue((bool) $payment)) {
       $this->assertTrue($payment->getPaymentType() instanceof PaymentForm);

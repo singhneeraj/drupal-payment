@@ -1,0 +1,15 @@
+payment_reference.payment_type:
+  label: Payment reference configuration
+  type: mapping
+  mapping:
+    payment_method_selector_id:
+      label: Payment method selector ID
+      type: string
+    limit_allowed_payment_methods:
+      label: Limit the allowed payment methods
+      type: boolean
+    allowed_payment_method_ids:
+      label: Allowed payment method IDs
+      type: sequence
+      sequence:
+        - type: string

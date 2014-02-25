@@ -139,7 +139,7 @@ class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInter
    * @return static
    */
   public function setFieldInstanceConfigId($field_instance_config_id) {
-    $this->getPayment()->set('payment_form_field_instance_config', $field_instance_config_id);
+    $this->getPayment()->set('payment_form_field_instance', $field_instance_config_id);
 
     return $this;
   }
@@ -150,7 +150,7 @@ class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInter
    * @return string
    */
   public function getFieldInstanceConfigId() {
-    $values =  $this->getPayment()->get('payment_form_field_instance_config');
+    $values =  $this->getPayment()->get('payment_form_field_instance');
 
     return isset($values[0]) ? $values[0]->get('target_id')->getValue() : NULL;
   }

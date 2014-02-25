@@ -11,7 +11,7 @@ use Drupal\Core\Access\AccessInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormBuilder;
-use Drupal\field\FieldInstanceInterface;
+use Drupal\field\FieldInstanceConfigInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface as PaymentLineItemManager;
 use Drupal\payment\QueueInterface;
@@ -71,12 +71,12 @@ class PaymentReferenceUi extends ControllerBase implements ContainerInjectionInt
   /**
    * Returns a payment page.
    *
-   * @param \Drupal\field\FieldInstanceInterface $field_instance_config
+   * @param \Drupal\field\FieldInstanceConfigInterface $field_instance_config
    *
    * @return array
    *   A render array.
    */
-  public function pay(FieldInstanceInterface $field_instance_config) {
+  public function pay(FieldInstanceConfigInterface $field_instance_config) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->entityManager()
       ->getStorageController('payment')
@@ -100,11 +100,11 @@ class PaymentReferenceUi extends ControllerBase implements ContainerInjectionInt
    * Checks if the user has access to add a payment for a field instance.
    *
    * @param \Symfony\Component\HttpFoundation\Request $request
-   * @param \Drupal\field\FieldInstanceInterface $field_instance_config
+   * @param \Drupal\field\FieldInstanceConfigInterface $field_instance_config
    *
    * @return string
    */
-  public function payAccess(Request $request, FieldInstanceInterface $field_instance_config) {
+  public function payAccess(Request $request, FieldInstanceConfigInterface $field_instance_config) {
     $access_controller = $this->entityManager()->getAccessController('payment');
     $payment_ids = $this->queue->loadPaymentIds($field_instance_config->id(), $this->currentUser()->id());
     // Only grant access if the current user does not already have payments
@@ -118,11 +118,11 @@ class PaymentReferenceUi extends ControllerBase implements ContainerInjectionInt
   /**
    * Returns the label of a field instance.
    *
-   * @param \Drupal\field\FieldInstanceInterface $field_instance_config
+   * @param \Drupal\field\FieldInstanceConfigInterface $field_instance_config
    *
    * @return string
    */
-  public function payLabel(FieldInstanceInterface $field_instance_config) {
+  public function payLabel(FieldInstanceConfigInterface $field_instance_config) {
     return $field_instance_config->label();
   }
 

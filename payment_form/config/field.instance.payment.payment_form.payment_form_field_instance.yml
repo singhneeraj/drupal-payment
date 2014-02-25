@@ -1,4 +1,4 @@
-id: payment.payment_form.payment_form_field_instance_config
+id: payment.payment_form.payment_form_field_instance
 uuid: db943107-c6a4-4b34-8700-ff6d019e2771
 status: true
 langcode: en
@@ -7,7 +7,7 @@ entity_type: payment
 bundle: payment_form
 label: 'Payment form field instance'
 description: ''
-required: 1
+required: true
 default_value: {  }
 default_value_function: ''
 settings:

@@ -149,7 +149,7 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
       ->method('createInstance')
       ->will($this->returnValue($payment_line_item));
 
-    $field_instance_config = $this->getMock('\Drupal\field\FieldInstanceInterface');
+    $field_instance_config = $this->getMock('\Drupal\field\FieldInstanceConfigInterface');
     $field_instance_config->expects($this->once())
       ->method('id')
       ->will($this->returnValue($this->randomName()));
@@ -177,7 +177,7 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
       ->will($this->returnValue($user_id));
 
     $field_instance_config_id = $this->randomName();
-    $field_instance_config = $this->getMock('\Drupal\field\FieldInstanceInterface');
+    $field_instance_config = $this->getMock('\Drupal\field\FieldInstanceConfigInterface');
     $field_instance_config->expects($this->any())
       ->method('id')
       ->will($this->returnValue($field_instance_config_id));
@@ -240,7 +240,7 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
    */
   public function testPayLabel() {
     $label = $this->randomName();
-    $field_instance_config = $this->getMock('\Drupal\field\FieldInstanceInterface');
+    $field_instance_config = $this->getMock('\Drupal\field\FieldInstanceConfigInterface');
     $field_instance_config->expects($this->once())
       ->method('label')
       ->will($this->returnValue($label));
@@ -282,7 +282,7 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
   public function testResumeContextLabel() {
     $field_instance_config_label = $this->randomName();
     $field_instance_config_id = $this->randomName();
-    $field_instance_config = $this->getMock('\Drupal\field\FieldInstanceInterface');
+    $field_instance_config = $this->getMock('\Drupal\field\FieldInstanceConfigInterface');
     $field_instance_config->expects($this->once())
       ->method('label')
       ->will($this->returnValue($field_instance_config_label));

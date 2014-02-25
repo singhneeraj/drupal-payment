@@ -139,12 +139,26 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->with($plugin_id, $plugin_configuration)
       ->will($this->returnValue($payment_line_item));
 
-    $iterator = new \ArrayIterator(array(
-      (object) array(
-      'plugin_configuration' => $plugin_configuration,
-      'plugin_id' => $plugin_id,
-    )
-    ));
+    $plugin_id_property = $this->getMock('\Drupal\Core\TypedData\TypedDataInterface');
+    $plugin_id_property->expects($this->once())
+      ->method('getValue')
+      ->will($this->returnValue($plugin_id));
+    $plugin_configuration_property = $this->getMock('\Drupal\Core\TypedData\TypedDataInterface');
+    $plugin_configuration_property->expects($this->once())
+      ->method('getValue')
+      ->will($this->returnValue($plugin_configuration));
+    $map = array(
+      array('plugin_id', $plugin_id_property),
+      array('plugin_configuration', $plugin_configuration_property),
+    );
+    $item = $this->getMockBuilder('\Drupal\payment_form\Plugin\Field\FieldType\PaymentForm')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $item->expects($this->exactly(2))
+      ->method('get')
+      ->will($this->returnValueMap($map));
+
+    $iterator = new \ArrayIterator(array($item));
     $items = $this->getMockBuilder('Drupal\Core\Field\FieldItemList')
       ->disableOriginalConstructor()
       ->setMethods(array('getIterator'))

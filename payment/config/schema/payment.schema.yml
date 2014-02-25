@@ -16,10 +16,18 @@ payment.payment_method.*:
       label: Configuration
       mapping:
         # This is for payment method entities that use a plugin that extends
+        # \Drupal\payment\Plugin\Payment\MethodConfiguration\Basic
+        status:
+          label: Payment status
+          type: string
+        # This is for payment method entities that use a plugin that extends
         # \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationBase
         message_text:
           label: Message text
           type: text
+        message_text_format:
+          label: Message text format
+          type: string
     pluginId:
       type: string
       label: Plugin ID

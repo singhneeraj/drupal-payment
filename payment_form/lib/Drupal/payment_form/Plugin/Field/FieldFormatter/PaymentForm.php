@@ -83,7 +83,11 @@ class PaymentForm extends FormatterBase implements ContainerFactoryPluginInterfa
     ));
     $payment->setCurrencyCode($this->fieldDefinition->getSetting('currency_code'));
     foreach ($items as $item) {
-      $payment->setLineItem($this->paymentLineItemManager->createInstance($item->plugin_id, $item->plugin_configuration));
+      /** @var \Drupal\payment_form\Plugin\Field\FieldType\PaymentForm $item */
+      $plugin_id = $item->get('plugin_id')->getValue();
+      if ($plugin_id) {
+        $payment->setLineItem($this->paymentLineItemManager->createInstance($plugin_id, $item->get('plugin_configuration')->getValue()));
+      }
     }
     /** @var \Drupal\payment_form\Plugin\Payment\Type\PaymentForm $payment_type */
     $payment_type = $payment->getPaymentType();

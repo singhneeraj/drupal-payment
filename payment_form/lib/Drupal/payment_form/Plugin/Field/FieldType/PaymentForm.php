@@ -43,7 +43,7 @@ class PaymentForm extends ConfigFieldItemBase {
       '#type' => 'select',
       '#title' => $this->t('Payment currency'),
       '#options' => $this->currencyOptions(),
-      '#default_value' => $this->getFieldSetting('currency_code'),
+      '#default_value' => $this->getSetting('currency_code'),
       '#required' => TRUE,
     );
 
@@ -76,10 +76,8 @@ class PaymentForm extends ConfigFieldItemBase {
    */
   public function getPropertyDefinitions() {
     if (!isset(static::$propertyDefinitions)) {
-      static::$propertyDefinitions = parent::getPropertyDefinitions();
       static::$propertyDefinitions['plugin_configuration'] = DataDefinition::create('any')
         ->setLabel($this->t('Plugin configuration'))
-        ->setSetting('default_value', array())
         ->setRequired(TRUE);
       static::$propertyDefinitions['plugin_id'] = DataDefinition::create('string')
         ->setLabel($this->t('Plugin ID'))
@@ -87,6 +85,25 @@ class PaymentForm extends ConfigFieldItemBase {
     }
 
     return static::$propertyDefinitions;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function propertyDefinitions(FieldDefinitionInterface $field_definition) {
+    // @todo Find out the difference between this method and
+    //   $this->getPropertyDefinitions().
+    // @todo Find out how to test this method, as it cannot use t() or
+    //   self::t().
+    $definitions = array();
+    $definitions['plugin_configuration'] = DataDefinition::create('any')
+      ->setLabel(t('Plugin configuration'))
+      ->setRequired(TRUE);
+    $definitions['plugin_id'] = DataDefinition::create('string')
+      ->setLabel(t('Plugin ID'))
+      ->setRequired(TRUE);
+
+    return $definitions;
   }
 
   /**
@@ -106,5 +123,15 @@ class PaymentForm extends ConfigFieldItemBase {
    */
   protected function currencyOptions() {
     return Currency::options();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function applyDefaultValue($notify = TRUE) {
+    $this->get('plugin_id')->setValue('', $notify);
+    $this->get('plugin_configuration')->setValue(array(), $notify);
+
+    return $this;
   }
 }

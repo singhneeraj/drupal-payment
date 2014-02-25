@@ -25,7 +25,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   /**
    * A field instance used for testing.
    *
-   * @var \Drupal\field\FieldInstanceInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\field\FieldInstanceConfigInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $fieldInstanceConfig;
 
@@ -51,7 +51,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   protected function setUp() {
-    $this->fieldInstanceConfig = $this->getMock('\Drupal\field\FieldInstanceInterface');
+    $this->fieldInstanceConfig = $this->getMock('\Drupal\field\FieldInstanceConfigInterface');
 
     $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
 

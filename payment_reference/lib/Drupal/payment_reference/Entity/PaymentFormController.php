@@ -52,9 +52,10 @@ class PaymentFormController extends EntityFormController {
     );
     $config = $this->config('payment_reference.payment_type');
     $payment_method_selector_id = $config->get('payment_selector_id');
+    $limit_allowed_payment_methods = $config->get('limit_allowed_payment_methods');
     $allowed_payment_method_ids = $config->get('allowed_payment_method_ids');
     $payment_method_selector = $this->paymentMethodSelectorManager->createInstance($payment_method_selector_id);
-    if (!is_null($allowed_payment_method_ids)) {
+    if ($limit_allowed_payment_methods) {
       $payment_method_selector->setAllowedPaymentMethods($allowed_payment_method_ids);
     }
     $form['payment_method'] = $payment_method_selector->formElements(array(), $form_state, $payment);

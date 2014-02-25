@@ -8,7 +8,6 @@
 namespace Drupal\payment_reference\Plugin\Field\FieldType;
 
 use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\Field\ConfigFieldItemInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\currency\Entity\Currency;
 use Drupal\entity_reference\ConfigurableEntityReferenceItem;
@@ -32,7 +31,10 @@ use Drupal\payment\Element\PaymentLineItemsInput;
  *     "line_items_data" = {}
  *   },
  *   label = @Translation("Payment reference"),
- *   list_class = "\Drupal\payment_reference\Plugin\Field\FieldType\PaymentReferenceItemList"
+ *   list_class = "\Drupal\payment_reference\Plugin\Field\FieldType\PaymentReferenceItemList",
+ *   settings = {
+ *     "target_type" = "payment"
+ *   }
  * )
  */
 class PaymentReference extends ConfigurableEntityReferenceItem {
@@ -66,15 +68,6 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
   /**
    * {@inheritdoc}
    */
-  public function getPropertyDefinitions() {
-    $this->definition['settings']['target_type'] = 'payment';
-
-    return parent::getPropertyDefinitions();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function instanceSettingsForm(array $form, array &$form_state) {
     $form['#element_validate'] = array(get_class() . '::instanceSettingsFormValidate');
     $form['currency_code'] = array(
@@ -82,13 +75,13 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
       '#type' => 'select',
       '#title' => $this->t('Payment currency'),
       '#options' => $this->currencyOptions(),
-      '#default_value' => $this->getFieldSetting('currency_code'),
+      '#default_value' => $this->getSetting('currency_code'),
       '#required' => TRUE,
     );
     $form['line_items'] = array(
       '#type' => 'payment_line_items_input',
       '#title' => $this->t('Line items'),
-      '#default_value' => $this->getFieldSetting('line_items_data'),
+      '#default_value' => $this->getSetting('line_items_data'),
       '#required' => TRUE,
       '#currency_code' => '',
     );

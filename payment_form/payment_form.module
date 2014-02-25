@@ -6,10 +6,10 @@
  */
 
 /**
- * Implements hook_entity_info_alter().
+ * Implements hook_entity_type_alter().
  */
-function payment_form_entity_info_alter(&$entity_info) {
-  /** @var \Drupal\Core\Entity\EntityTypeInterface $info */
-  $info = $entity_info['payment'];
-  $info->setFormClass('payment_form', 'Drupal\payment_form\Entity\PaymentFormController');
+function payment_form_entity_type_alter(array &$entity_types) {
+  /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
+  $entity_type = $entity_types['payment'];
+  $entity_type->setFormClass('payment_form', 'Drupal\payment_form\Entity\PaymentFormController');
 }

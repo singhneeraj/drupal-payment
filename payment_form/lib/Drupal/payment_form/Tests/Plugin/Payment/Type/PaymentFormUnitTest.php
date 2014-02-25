@@ -121,7 +121,7 @@ class PaymentFormUnitTest extends UnitTestCase {
   public function testGetFieldInstanceConfigId() {
     $this->payment->expects($this->once())
       ->method('get')
-      ->with('payment_form_field_instance_config');
+      ->with('payment_form_field_instance');
     $this->paymentType->getFieldInstanceConfigId();
   }
 
@@ -131,7 +131,7 @@ class PaymentFormUnitTest extends UnitTestCase {
   public function testSetFieldInstanceConfigId() {
     $this->payment->expects($this->once())
       ->method('set')
-      ->with('payment_form_field_instance_config')
+      ->with('payment_form_field_instance')
       ->will($this->returnValue($this->paymentType));
     $this->assertSame(spl_object_hash($this->paymentType), spl_object_hash($this->paymentType->setFieldInstanceConfigId($this->randomName())));
   }

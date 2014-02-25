@@ -39,7 +39,7 @@ class PaymentFormUnitTest extends UnitTestCase {
   protected function setUp() {
     $this->fieldType = $this->getMockBuilder('\Drupal\payment_form\Plugin\Field\FieldType\PaymentForm')
       ->disableOriginalConstructor()
-      ->setMethods(array('currencyOptions', 'getFieldSetting', 't'))
+      ->setMethods(array('currencyOptions', 'getSetting', 't'))
       ->getMock();
   }
 
@@ -48,7 +48,7 @@ class PaymentFormUnitTest extends UnitTestCase {
    */
   public function testInstanceSettingsForm() {
     $this->fieldType->expects($this->once())
-      ->method('getFieldSetting')
+      ->method('getSetting')
       ->with('currency_code');
     $form = array();
     $form_state = array();
@@ -59,7 +59,7 @@ class PaymentFormUnitTest extends UnitTestCase {
    * Tests schema().
    */
   public function testSchema() {
-    $field = $this->getMock('\Drupal\field\FieldInterface');
+    $field = $this->getMock('\Drupal\field\FieldConfigInterface');
     $schema = $this->fieldType->schema($field);
     $this->assertInternalType('array', $schema);
     $this->assertArrayHasKey('plugin_configuration', $schema['columns']);

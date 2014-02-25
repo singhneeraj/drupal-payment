@@ -79,7 +79,7 @@ class PaymentFormConfigurationForm extends ConfigFormBase {
     // See \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface::getAllowedPaymentMethods().
     $allowed_payment_method_ids = $config->get('allowed_payment_method_ids');
     $form['allowed_payment_method_ids'] = array(
-      '#default_value' => is_null($allowed_payment_method_ids) ? array() : $allowed_payment_method_ids,
+      '#default_value' => $allowed_payment_method_ids,
       '#description' => $this->t('If no methods are selected, all methods are allowed.'),
       '#multiple' => TRUE,
       '#options' => $this->paymentMethodManager->options(),
@@ -96,8 +96,8 @@ class PaymentFormConfigurationForm extends ConfigFormBase {
   public function submitForm(array &$form, array &$form_state) {
     $config = $this->configFactory->get('payment_form.payment_type');
     $config->set('payment_method_selector_id', $form_state['values']['payment_method_selector_id']);
-    $allowed_payment_method_ids = empty($form_state['values']['allowed_payment_method_ids']) ? NULL : $form_state['values']['allowed_payment_method_ids'];
-    $config->set('allowed_payment_method_ids', $allowed_payment_method_ids);
+    $config->set('limit_allowed_payment_methods', empty($form_state['values']['allowed_payment_method_ids']));
+    $config->set('allowed_payment_method_ids', $form_state['values']['allowed_payment_method_ids']);
     $config->save();
     parent::submitForm($form, $form_state);
   }

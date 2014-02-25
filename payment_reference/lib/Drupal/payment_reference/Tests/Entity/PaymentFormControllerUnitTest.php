@@ -88,7 +88,8 @@ class PaymentFormControllerUnitTest extends UnitTestCase {
 
     $this->configFactory = $this->getConfigFactoryStub(array(
         'payment_reference.payment_type' => array(
-          'allowed_payment_method_ids' => NULL,
+          'limit_allowed_payment_methods' => FALSE,
+          'allowed_payment_method_ids' => array(),
           'payment_selector_id' => 'payment_select',
         ),
     ));

@@ -19,7 +19,7 @@ class PaymentFormControllerWebTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('payment', 'payment_reference', 'payment_reference_test');
+  public static $modules = array('filter', 'payment', 'payment_reference', 'payment_reference_test');
 
   /**
    * {@inheritdoc}

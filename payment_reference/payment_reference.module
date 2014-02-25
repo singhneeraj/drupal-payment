@@ -9,8 +9,8 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\field\FieldInstanceInterface;
-use Drupal\field\FieldInterface;
+use Drupal\field\FieldConfigInterface;
+use Drupal\field\FieldInstanceConfigInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment_reference\PaymentReference;
 use Drupal\payment_reference\Plugin\Payment\Type\PaymentReference as PaymentReferencePlugin;
@@ -55,18 +55,18 @@ function payment_reference_page_alter(&$page) {
 }
 
 /**
- * Implements hook_entity_info_alter().
+ * Implements hook_entity_type_alter().
  */
-function payment_reference_entity_info_alter(&$entity_info) {
-  /** @var \Drupal\Core\Entity\EntityTypeInterface $info */
-  $info = $entity_info['payment'];
-  $info->setFormClass('payment_reference', 'Drupal\payment_reference\Entity\PaymentFormController');
+function payment_reference_entity_type_alter(&$entity_types) {
+  /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
+  $entity_type = $entity_types['payment'];
+  $entity_type->setFormClass('payment_reference', 'Drupal\payment_reference\Entity\PaymentFormController');
 }
 
 /**
  * Implements hook_ENTITY_TYPE_delete().
  */
-function payment_reference_field_config_delete(FieldInterface $field) {
+function payment_reference_field_config_delete(FieldConfigInterface $field) {
   if ($field->getType() == 'payment_reference') {
     PaymentReference::queue()->deleteByCategoryIdPrefix($field->id());
   }
@@ -75,7 +75,7 @@ function payment_reference_field_config_delete(FieldInterface $field) {
 /**
  * Implements hook_ENTITY_TYPE_delete().
  */
-function payment_reference_field_instance_config_delete(FieldInstanceInterface $field_instance_config) {
+function payment_reference_field_instance_config_delete(FieldInstanceConfigInterface $field_instance_config) {
   PaymentReference::queue()->deleteByCategoryId($field_instance_config->id());
 }
 

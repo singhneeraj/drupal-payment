@@ -12,7 +12,7 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\field\FieldInstanceInterface;
+use Drupal\field\FieldInstanceConfigInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -67,7 +67,7 @@ class PaymentReference extends WidgetBase implements ContainerFactoryPluginInter
    * Implements hook_field_widget_form().
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, array &$form_state) {
-    if (!($this->fieldDefinition instanceof FieldInstanceInterface)) {
+    if (!($this->fieldDefinition instanceof FieldInstanceConfigInterface)) {
       throw new \RuntimeException('This widget can only be used on configurable fields.');
     }
 
