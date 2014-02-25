@@ -16,7 +16,6 @@ use Drupal\user\UserInterface;
  *
  * @ConfigEntityType(
  *   bundle_label = @Translation("Payment method type"),
- *   config_prefix = "payment.payment_method",
  *   controllers = {
  *     "access" = "Drupal\payment\Entity\PaymentMethodAccessController",
  *     "form" = {
