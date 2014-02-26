@@ -44,6 +44,7 @@ abstract class PaymentTypeBase extends PluginBase implements ContainerFactoryPlu
    *   The module handler.
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler) {
+    $configuration += $this->defaultConfiguration();
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->moduleHandler = $module_handler;
   }

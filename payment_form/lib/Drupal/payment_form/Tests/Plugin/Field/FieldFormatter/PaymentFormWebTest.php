@@ -116,9 +116,10 @@ class PaymentFormWebTest extends WebTestBase {
     $this->assertEqual(count($this->paymentStorage->loadMultiple()), 0);
     $user = $this->drupalCreateUser(array('access user profiles'));
     $this->drupalLogin($user);
-    $this->drupalPostForm('user/' . $this->user->id(), array(), t('Pay'));
+    $path = 'user/' . $this->user->id();
+    $this->drupalPostForm($path, array(), t('Pay'));
     // The front page is the currently logged-in user.
-    $this->assertUrl('user/' . $user->id());
+    $this->assertUrl($path);
     $this->assertResponse('200');
     // This is supposed to be the first and only payment.
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */

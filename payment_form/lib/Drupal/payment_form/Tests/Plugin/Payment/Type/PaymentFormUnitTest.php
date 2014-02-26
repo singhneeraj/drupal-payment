@@ -103,11 +103,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
-      ->disableOriginalConstructor()
-      ->getMock();
-
-    $this->paymentType = new PaymentForm(array(), 'payment_form', array(), $http_kernel, $this->eventDispatcher, $request, $this->moduleHandler, $this->urlGenerator, $field_instance_config_storage);
+    $this->paymentType = new PaymentForm(array(), 'payment_form', array(), $http_kernel, $this->eventDispatcher, $this->moduleHandler, $this->urlGenerator, $field_instance_config_storage);
 
     $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
@@ -157,6 +153,26 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->will($this->returnValue('http://example.com'));
 
     $this->paymentType->resumeContext();
+  }
+
+  /**
+   * @covers ::defaultConfiguration
+   */
+  public function testDefaultConfiguration() {
+    $configuration = $this->paymentType->defaultConfiguration();
+    $this->assertInternalType('array', $configuration);
+    $this->assertArrayHasKey('destination_url', $configuration);
+    $this->assertInternalType('string', $configuration['destination_url']);
+  }
+
+  /**
+   * @covers ::setDestinationUrl
+   * @covers ::getDestinationUrl
+   */
+  public function testGetDestinationUrl() {
+    $destination_url = $this->randomName();
+    $this->assertSame(spl_object_hash($this->paymentType), spl_object_hash($this->paymentType->setDestinationUrl($destination_url)));
+    $this->assertSame($destination_url, $this->paymentType->getDestinationUrl());
   }
 
 }
