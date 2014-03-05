@@ -33,8 +33,8 @@ class PaymentStatusManager extends DefaultPluginManager implements PaymentStatus
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, LanguageManager $language_manager, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/Payment/Status', $namespaces, '\Drupal\payment\Annotations\PaymentStatus');
-    $this->alterInfo($module_handler, 'payment_status');
+    parent::__construct('Plugin/Payment/Status', $namespaces, $module_handler, '\Drupal\payment\Annotations\PaymentStatus');
+    $this->alterInfo('payment_status');
     $this->setCacheBackend($cache_backend, $language_manager, 'payment_status');
   }
 

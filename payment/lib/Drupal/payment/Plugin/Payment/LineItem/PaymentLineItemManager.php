@@ -32,8 +32,8 @@ class PaymentLineItemManager extends DefaultPluginManager implements PaymentLine
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, LanguageManager $language_manager, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/Payment/LineItem', $namespaces, '\Drupal\payment\Annotations\PaymentLineItem');
-    $this->alterInfo($module_handler, 'payment_line_item');
+    parent::__construct('Plugin/Payment/LineItem', $namespaces, $module_handler, '\Drupal\payment\Annotations\PaymentLineItem');
+    $this->alterInfo('payment_line_item');
     $this->setCacheBackend($cache_backend, $language_manager, 'payment_line_item');
   }
 

@@ -33,8 +33,8 @@ class PaymentTypeManager extends DefaultPluginManager implements PaymentTypeMana
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, LanguageManager $language_manager, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/Payment/Type', $namespaces, '\Drupal\payment\Annotations\PaymentType');
-    $this->alterInfo($module_handler, 'payment_type');
+    parent::__construct('Plugin/Payment/Type', $namespaces, $module_handler, '\Drupal\payment\Annotations\PaymentType');
+    $this->alterInfo('payment_type');
     $this->setCacheBackend($cache_backend, $language_manager, 'payment_type');
   }
 

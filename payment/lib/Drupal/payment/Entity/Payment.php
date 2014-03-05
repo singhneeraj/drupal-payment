@@ -10,6 +10,7 @@ namespace Drupal\payment\Entity;
 use Drupal\Component\Plugin\Discovery\CachedDiscoveryInterface;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityStorageControllerInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\FieldDefinition;
 use Drupal\payment\Payment as PaymentServiceWrapper;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
@@ -371,7 +372,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public static function baseFieldDefinitions($entity_type) {
+  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields['bundle'] = FieldDefinition::create('string')
       ->setLabel(t('Payment type'))
       ->setReadOnly(TRUE);
