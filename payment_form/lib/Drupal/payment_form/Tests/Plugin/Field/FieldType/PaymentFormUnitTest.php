@@ -3,10 +3,10 @@
 /**
  * @file
  * Contains
- * \Drupal\payment_form\Test\Plugin\Field\FieldType\PaymentFormUnitTest.
+ * \Drupal\payment_form\Tests\Plugin\Field\FieldType\PaymentFormUnitTest.
  */
 
-namespace Drupal\payment_form\Test\Plugin\Field\FieldType;
+namespace Drupal\payment_form\Tests\Plugin\Field\FieldType;
 
 use Drupal\Tests\UnitTestCase;
 

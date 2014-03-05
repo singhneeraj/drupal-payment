@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Test\Hook\EntityBundleInfoUnitTest.
+ * Contains \Drupal\payment\Tests\Hook\EntityBundleInfoUnitTest.
  */
 
 namespace Drupal\payment\Tests\Hook;

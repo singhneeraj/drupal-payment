@@ -3,10 +3,10 @@
 /**
  * @file
  * Contains
- * \Drupal\payment_form\Test\Plugin\Field\FieldFormatter\PaymentFormUnitTest.
+ * \Drupal\payment_form\Tests\Plugin\Field\FieldFormatter\PaymentFormUnitTest.
  */
 
-namespace Drupal\payment_form\Test\Plugin\Field\FieldFormatter;
+namespace Drupal\payment_form\Tests\Plugin\Field\FieldFormatter;
 
 use Drupal\payment_form\Plugin\Field\FieldFormatter\PaymentForm;
 use Drupal\Tests\UnitTestCase;
@@ -52,6 +52,13 @@ class PaymentFormUnitTest extends UnitTestCase {
   protected $paymentLineItemManager;
 
   /**
+   * The request used for testing.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $request;
+
+  /**
    * {@inheritdoc}
    */
   public static function getInfo() {
@@ -76,13 +83,17 @@ class PaymentFormUnitTest extends UnitTestCase {
 
     $this->fieldDefinition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
 
+    $this->request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
+      ->disableOriginalConstructor()
+      ->getMock();
+
     $configuration = array(
       'field_definition' => $this->fieldDefinition,
       'label' => $this->randomName(),
       'settings' => array(),
       'view_mode' => $this->randomName(),
     );
-    $this->fieldFormatter = new PaymentForm($configuration, 'payment_form', array(), $this->entityManager, $this->formBuilder, $this->paymentLineItemManager);
+    $this->fieldFormatter = new PaymentForm($configuration, 'payment_form', array(), $this->request, $this->entityManager, $this->formBuilder, $this->paymentLineItemManager);
   }
 
   /**

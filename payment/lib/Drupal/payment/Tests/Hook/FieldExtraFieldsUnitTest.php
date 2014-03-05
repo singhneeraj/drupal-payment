@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Test\Hook\FieldExtraFieldsUnitTest.
+ * Contains \Drupal\payment\Tests\Hook\FieldExtraFieldsUnitTest.
  */
 
 namespace Drupal\payment\Tests\Hook;

@@ -3,10 +3,10 @@
 /**
  * @file
  * Contains
- * \Drupal\payment_reference\Test\Plugin\Payment\Type\PaymentReferenceConfigurationFormUnitTest.
+ * \Drupal\payment_reference\Tests\Plugin\Payment\Type\PaymentReferenceConfigurationFormUnitTest.
  */
 
-namespace Drupal\payment_reference\Test\Plugin\Payment\Type;
+namespace Drupal\payment_reference\Tests\Plugin\Payment\Type;
 
 use Drupal\Tests\UnitTestCase;
 

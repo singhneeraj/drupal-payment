@@ -3,10 +3,10 @@
 /**
  * @file
  * Contains
- * \Drupal\payment_form\Test\Plugin\Payment\Type\PaymentFormUnitTest.
+ * \Drupal\payment_form\Tests\Plugin\Payment\Type\PaymentFormUnitTest.
  */
 
-namespace Drupal\payment_form\Test\Plugin\Payment\Type;
+namespace Drupal\payment_form\Tests\Plugin\Payment\Type;
 
 use Drupal\payment_form\Plugin\Payment\Type\PaymentForm;
 use Drupal\Tests\UnitTestCase;
@@ -53,13 +53,6 @@ class PaymentFormUnitTest extends UnitTestCase {
   protected $paymentType;
 
   /**
-   * The URL generator used for testing.
-   *
-   * @var \Drupal\Core\Routing\UrlGenerator|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $urlGenerator;
-
-  /**
    * {@inheritdoc}
    */
   public static function getInfo() {
@@ -74,13 +67,6 @@ class PaymentFormUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   protected function setUp() {
-    $this->urlGenerator = $this->getMockBuilder('\Drupal\Core\Routing\UrlGenerator')
-      ->disableOriginalConstructor()
-      ->getMock();
-    $this->urlGenerator->expects($this->any())
-      ->method('generateFromRoute')
-      ->will($this->returnValue('http://example.com'));
-
     $this->eventDispatcher = $this->getMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
     $this->fieldInstanceConfig = $this->getMockBuilder('\Drupal\field\Entity\FieldInstanceConfig')
@@ -103,7 +89,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->paymentType = new PaymentForm(array(), 'payment_form', array(), $http_kernel, $this->eventDispatcher, $this->moduleHandler, $this->urlGenerator, $field_instance_config_storage);
+    $this->paymentType = new PaymentForm(array(), 'payment_form', array(), $http_kernel, $this->eventDispatcher, $this->moduleHandler, $field_instance_config_storage);
 
     $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
@@ -140,17 +126,27 @@ class PaymentFormUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests resumeContext().
+   * @covers ::setDestinationUrl
+   * @covers ::getDestinationUrl
+   */
+  public function testGetDestinationUrl() {
+    $destination_url = $this->randomName();
+    $this->assertSame(spl_object_hash($this->paymentType), spl_object_hash($this->paymentType->setDestinationUrl($destination_url)));
+    $this->assertSame($destination_url, $this->paymentType->getDestinationUrl());
+  }
+
+  /**
+   * @covers ::resumeContext.
+   * @depends testGetDestinationUrl
    */
   public function testResumeContext() {
-    $this->urlGenerator->expects($this->once())
-      ->method('generateFromRoute')
-      ->will($this->returnValue('http://example.com'));
-
     $this->eventDispatcher->expects($this->once())
       ->method('addListener')
       ->with(KernelEvents::RESPONSE)
       ->will($this->returnValue('http://example.com'));
+
+    $url = 'http://example.com';
+    $this->paymentType->setDestinationUrl($url);
 
     $this->paymentType->resumeContext();
   }
@@ -162,17 +158,7 @@ class PaymentFormUnitTest extends UnitTestCase {
     $configuration = $this->paymentType->defaultConfiguration();
     $this->assertInternalType('array', $configuration);
     $this->assertArrayHasKey('destination_url', $configuration);
-    $this->assertInternalType('string', $configuration['destination_url']);
-  }
-
-  /**
-   * @covers ::setDestinationUrl
-   * @covers ::getDestinationUrl
-   */
-  public function testGetDestinationUrl() {
-    $destination_url = $this->randomName();
-    $this->assertSame(spl_object_hash($this->paymentType), spl_object_hash($this->paymentType->setDestinationUrl($destination_url)));
-    $this->assertSame($destination_url, $this->paymentType->getDestinationUrl());
+    $this->assertInternalType('null', $configuration['destination_url']);
   }
 
 }

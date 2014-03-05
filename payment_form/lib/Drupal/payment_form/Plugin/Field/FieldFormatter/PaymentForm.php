@@ -102,8 +102,6 @@ class PaymentForm extends FormatterBase implements ContainerFactoryPluginInterfa
         $payment->setLineItem($this->paymentLineItemManager->createInstance($plugin_id, $item->get('plugin_configuration')->getValue()));
       }
     }
-    /** @var \Drupal\payment_form\Plugin\Payment\Type\PaymentForm $payment_type */
-    $payment_type = $payment->getPaymentType();
     $payment_type->setFieldInstanceConfigId($this->fieldDefinition->getName());
 
     return $this->formBuilder->getForm($this->entityManager->getFormController('payment', 'payment_form')->setEntity($payment));

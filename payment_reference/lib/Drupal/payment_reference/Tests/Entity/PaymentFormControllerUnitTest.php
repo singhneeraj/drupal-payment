@@ -3,10 +3,10 @@
 /**
  * @file
  * Contains
- * \Drupal\payment_reference\Test\Entity\PaymentFormControllerUnitTest.
+ * \Drupal\payment_reference\Tests\Entity\PaymentFormControllerUnitTest.
  */
 
-namespace Drupal\payment_reference\Test\Entity;
+namespace Drupal\payment_reference\Tests\Entity;
 
 use Drupal\payment_reference\Entity\PaymentFormController;
 use Drupal\Tests\UnitTestCase;
