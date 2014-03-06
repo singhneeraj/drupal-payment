@@ -2,18 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\payment_reference\Test\PaymentReferenceUiUnitTest.
+ * Contains \Drupal\payment_reference\Test\Controller\PaymentReferenceUnitTest.
  */
 
-namespace Drupal\payment_reference\Test;
+namespace Drupal\payment_reference\Test\Controller;
 
 use Drupal\Core\Access\AccessInterface;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment_reference\PaymentReferenceUi.
+ * Tests \Drupal\payment_reference\Controller\PaymentReference.
  */
-class PaymentReferenceUiUnitTest extends UnitTestCase {
+class PaymentReferenceUnitTest extends UnitTestCase {
 
   /**
    * The entity manager.
@@ -46,9 +46,9 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
   /**
    * The controller under test.
    *
-   * @var \Drupal\payment_reference\PaymentReferenceUi|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment_reference\Controller\PaymentReference|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $paymentReferenceUi;
+  protected $controller;
 
   /**
    * The payment reference queue.
@@ -64,7 +64,7 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
     return array(
       'description' => '',
       'group' => 'Payment Reference Field',
-      'name' => '\Drupal\payment_reference\PaymentReferenceUi unit test',
+      'name' => '\Drupal\payment_reference\PaymentReference unit test',
     );
   }
 
@@ -92,14 +92,14 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->paymentReferenceUi = $this->getMockBuilder('\Drupal\payment_reference\PaymentReferenceUi')
+    $this->controller = $this->getMockBuilder('\Drupal\payment_reference\Controller\PaymentReference')
       ->setMethods(array('currentUser', 'entityManager', 't'))
       ->setConstructorArgs(array($this->formBuilder, $this->paymentLineItemManager, $this->queue))
       ->getMock();
-    $this->paymentReferenceUi->expects($this->any())
+    $this->controller->expects($this->any())
       ->method('entityManager')
       ->will($this->returnValue($this->entityManager));
-    $this->paymentReferenceUi->expects($this->any())
+    $this->controller->expects($this->any())
       ->method('currentUser')
       ->will($this->returnValue($this->currentUser));
   }
@@ -164,7 +164,7 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
       ->method('getSetting')
       ->will($this->returnValueMap($map));
 
-    $this->paymentReferenceUi->pay($field_instance_config);
+    $this->controller->pay($field_instance_config);
   }
 
   /**
@@ -223,16 +223,16 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
       ->will($this->returnValue($access_controller));
 
     // Test a payment without create access, without queued payments.
-    $this->assertSame(AccessInterface::DENY, $this->paymentReferenceUi->payAccess($request, $field_instance_config));
+    $this->assertSame(AccessInterface::DENY, $this->controller->payAccess($request, $field_instance_config));
 
     // Test a payment with create access, without queued payments.
-    $this->assertSame(AccessInterface::ALLOW, $this->paymentReferenceUi->payAccess($request, $field_instance_config));
+    $this->assertSame(AccessInterface::ALLOW, $this->controller->payAccess($request, $field_instance_config));
 
     // Test a payment without create access, with queued payments.
-    $this->assertSame(AccessInterface::DENY, $this->paymentReferenceUi->payAccess($request, $field_instance_config));
+    $this->assertSame(AccessInterface::DENY, $this->controller->payAccess($request, $field_instance_config));
 
     // Test a payment with create access, with queued payments.
-    $this->assertSame(AccessInterface::DENY, $this->paymentReferenceUi->payAccess($request, $field_instance_config));
+    $this->assertSame(AccessInterface::DENY, $this->controller->payAccess($request, $field_instance_config));
   }
 
   /**
@@ -245,18 +245,18 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
       ->method('label')
       ->will($this->returnValue($label));
 
-    $this->assertSame($label, $this->paymentReferenceUi->payLabel($field_instance_config));
+    $this->assertSame($label, $this->controller->payLabel($field_instance_config));
   }
 
   /**
    * Tests resumeContext().
    */
   public function testResumeContext() {
-    $this->paymentReferenceUi = $this->getMockBuilder('\Drupal\payment_reference\PaymentReferenceUi')
+    $this->controller = $this->getMockBuilder('\Drupal\payment_reference\Controller\PaymentReference')
       ->disableOriginalConstructor()
       ->setMethods(array('drupalGetPath', 't'))
       ->getMock();
-    $this->paymentReferenceUi->expects($this->once())
+    $this->controller->expects($this->once())
       ->method('drupalGetPath')
       ->will($this->returnValue($this->randomName()));
 
@@ -273,7 +273,7 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
       ->method('getStatus')
       ->will($this->returnValue($payment_status));
 
-    $this->paymentReferenceUi->resumeContext($payment);
+    $this->controller->resumeContext($payment);
   }
 
   /**
@@ -311,7 +311,7 @@ class PaymentReferenceUiUnitTest extends UnitTestCase {
       ->method('getPaymentType')
       ->will($this->returnValue($payment_type));
 
-    $this->assertSame($field_instance_config_label, $this->paymentReferenceUi->resumeContextLabel($payment));
+    $this->assertSame($field_instance_config_label, $this->controller->resumeContextLabel($payment));
   }
 
 }

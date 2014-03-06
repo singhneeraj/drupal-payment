@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\payment_reference\PaymentReferenceUi.
+ * Contains \Drupal\payment_reference\PaymentReference\Controller.
  */
 
-namespace Drupal\payment_reference;
+namespace Drupal\payment_reference\Controller;
 
 use Drupal\Core\Access\AccessInterface;
 use Drupal\Core\Controller\ControllerBase;
@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Returns responses for payment reference routes.
  */
-class PaymentReferenceUi extends ControllerBase implements ContainerInjectionInterface, AccessInterface {
+class PaymentReference extends ControllerBase implements ContainerInjectionInterface, AccessInterface {
 
   /**
    * The form builder.
