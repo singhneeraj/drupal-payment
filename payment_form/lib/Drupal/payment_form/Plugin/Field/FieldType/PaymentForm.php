@@ -6,8 +6,8 @@
 
 namespace Drupal\payment_form\Plugin\Field\FieldType;
 
-use Drupal\Core\Field\ConfigFieldItemBase;
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\currency\Entity\Currency;
 
@@ -24,7 +24,7 @@ use Drupal\currency\Entity\Currency;
  *   label = @Translation("Payment form")
  * )
  */
-class PaymentForm extends ConfigFieldItemBase {
+class PaymentForm extends FieldItemBase {
 
   /**
    * Definitions of the contained properties.

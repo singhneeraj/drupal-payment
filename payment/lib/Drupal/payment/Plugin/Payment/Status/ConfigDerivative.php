@@ -41,7 +41,7 @@ class ConfigDerivative extends DerivativeBase implements ContainerDerivativeInte
   /**
    * {@inheritdoc}
    */
-  public function getDerivativeDefinitions(array $base_plugin_definition) {
+  public function getDerivativeDefinitions($base_plugin_definition) {
     /** @var \Drupal\payment\Entity\PaymentStatusInterface[] $statuses */
     $statuses = $this->paymentStatusStorage->loadMultiple();
     foreach ($statuses as $status) {

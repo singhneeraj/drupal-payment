@@ -7,7 +7,7 @@
 
 namespace Drupal\payment_reference\Plugin\Field\FieldType;
 
-use Drupal\Core\Field\ConfigFieldItemList;
+use Drupal\Core\Field\FieldItemList;
 
 /**
  * Provides a payment reference field item list.
@@ -15,7 +15,7 @@ use Drupal\Core\Field\ConfigFieldItemList;
  * This class removes the functionality to add a default value through the user
  * interface.
  */
-class PaymentReferenceItemList extends ConfigFieldItemList {
+class PaymentReferenceItemList extends FieldItemList {
 
   /**
    * {@inheritdoc}
