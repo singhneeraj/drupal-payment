@@ -100,31 +100,4 @@ class PaymentFormConfigurationFormUnitTest extends UnitTestCase {
     $this->assertInternalType('array', $form);
   }
 
-  /**
-   * Tests submitForm().
-   */
-  public function testSubmitForm() {
-    $config = $this->getMockBuilder('\Drupal\Core\Config\Config')
-      ->disableOriginalConstructor()
-      ->getMock();
-    $config->expects($this->exactly(3))
-      ->method('set');
-    $config->expects($this->once())
-      ->method('save');
-
-    $this->configFactory->expects($this->any())
-      ->method('get')
-      ->with('payment_form.payment_type')
-      ->will($this->returnValue($config));
-
-    $form = array();
-    $form_state = array(
-      'values' => array(
-        'payment_method_selector_id' => 'payment_select',
-        'allowed_payment_method_ids' => array(),
-      ),
-    );
-    $this->form->submitForm($form, $form_state);
-  }
-
 }

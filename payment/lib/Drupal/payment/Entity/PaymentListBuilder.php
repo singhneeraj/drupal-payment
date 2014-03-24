@@ -8,12 +8,12 @@
 namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityListController;
+use Drupal\Core\Entity\EntityListBuilder;
 
 /**
  * Lists payment entities.
  */
-class PaymentListController extends EntityListController {
+class PaymentListBuilder extends EntityListBuilder {
 
   /**
    * {@inheritdoc}

@@ -13,7 +13,7 @@ use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Tests \Drupal\payment_form\Plugin\Payment\Type\PaymentForm.
+ * @coversDefaultClass \Drupal\payment_form\Plugin\Payment\Type\PaymentForm
  */
 class PaymentFormUnitTest extends UnitTestCase {
 
@@ -136,7 +136,7 @@ class PaymentFormUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::resumeContext.
+   * @covers ::resumeContext
    * @depends testGetDestinationUrl
    */
   public function testResumeContext() {

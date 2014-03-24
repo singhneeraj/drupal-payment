@@ -9,12 +9,11 @@ namespace Drupal\payment\Entity;
 
 use Drupal\Component\Plugin\Discovery\CachedDiscoveryInterface;
 use Drupal\Component\Uuid\UuidInterface;
-use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\Entity\ConfigStorageController;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -33,8 +32,8 @@ class PaymentStatusStorageController extends ConfigStorageController {
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityTypeInterface $entity_info, ConfigFactory $config_factory, StorageInterface $config_storage, QueryFactory $entity_query_factory, PaymentStatusManagerInterface $payment_status_manager, UuidInterface $uuid_service) {
-    parent::__construct($entity_info, $config_factory, $config_storage, $entity_query_factory, $uuid_service);
+  public function __construct(EntityTypeInterface $entity_info, ConfigFactoryInterface $config_factory, StorageInterface $config_storage, PaymentStatusManagerInterface $payment_status_manager, UuidInterface $uuid_service) {
+    parent::__construct($entity_info, $config_factory, $config_storage, $uuid_service);
     $this->paymentStatusManager = $payment_status_manager;
   }
 
@@ -42,7 +41,7 @@ class PaymentStatusStorageController extends ConfigStorageController {
    * {@inheritdoc}
    */
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_info) {
-    return new static($entity_info,$container->get('config.factory'), $container->get('config.storage'), $container->get('entity.query'), $container->get('plugin.manager.payment.status'), $container->get('uuid'));
+    return new static($entity_info,$container->get('config.factory'), $container->get('config.storage'), $container->get('plugin.manager.payment.status'), $container->get('uuid'));
   }
 
   /**

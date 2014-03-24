@@ -127,8 +127,8 @@ class PaymentStatus extends ConfigEntityBase implements PaymentStatusInterface {
   /**
    * {@inheritdoc}
    */
-  public function getExportProperties() {
-    $properties = parent::getExportProperties();
+  public function toArray() {
+    $properties = parent::toArray();
     $properties['id'] = $this->id();
     $properties['label'] = $this->label();
     $properties['parentId'] = $this->getParentId();

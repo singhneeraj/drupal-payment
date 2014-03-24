@@ -7,14 +7,14 @@
 
 namespace Drupal\payment\Entity;
 
+use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Config\Entity\ConfigEntityListController;
 use Drupal\payment\Payment;
 
 /**
  * Lists payment method entities.
  */
-class PaymentMethodListController extends ConfigEntityListController {
+class PaymentMethodListBuilder extends ConfigEntityListBuilder {
 
   /**
    * {@inheritdoc}
@@ -35,10 +35,11 @@ class PaymentMethodListController extends ConfigEntityListController {
   public function buildRow(EntityInterface $entity) {
     /** @var \Drupal\payment\Entity\PaymentMethodInterface $payment_method */
     $payment_method = $entity;
+
     $row['data']['label'] = $payment_method->label();
 
     $plugin_definition = Payment::methodConfigurationManager()->getDefinition($payment_method->getPluginId());
-    $row['data']['plugin'] = $plugin_definition['label'];
+    $row['data']['plugin'] = isset($plugin_definition['label']) ? $plugin_definition['label'] : $this->t('Unknown');
 
     $owner_label = $payment_method->getOwner()->label();
     if ($payment_method->getOwner()->access('view')) {

@@ -30,7 +30,7 @@ use Drupal\user\UserInterface;
  *       "delete" = "Drupal\payment\Entity\PaymentDeleteFormController",
  *       "edit" = "Drupal\payment\Entity\PaymentEditFormController"
  *     },
- *     "list" = "Drupal\payment\Entity\PaymentListController",
+ *     "list_builder" = "Drupal\payment\Entity\PaymentListBuilder",
  *     "view_builder" = "Drupal\payment\Entity\PaymentViewBuilder",
  *     "storage" = "Drupal\payment\Entity\PaymentStorageController",
  *   },

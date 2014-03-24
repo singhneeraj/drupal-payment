@@ -11,7 +11,7 @@ use Drupal\payment\Entity\PaymentAccessController;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * @coversDefaultClass \Drupal\payment\PaymentAccessController
+ * @coversDefaultClass \Drupal\payment\Entity\PaymentAccessController
  */
 class PaymentAccessControllerUnitTest extends UnitTestCase {
 

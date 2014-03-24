@@ -22,7 +22,7 @@ use Drupal\user\UserInterface;
  *       "default" = "Drupal\payment\Entity\PaymentMethodFormController",
  *       "delete" = "Drupal\payment\Entity\PaymentMethodDeleteFormController"
  *     },
- *     "list" = "Drupal\payment\Entity\PaymentMethodListController",
+ *     "list_builder" = "Drupal\payment\Entity\PaymentMethodListBuilder",
  *     "storage" = "Drupal\payment\Entity\PaymentMethodStorageController",
  *   },
  *   entity_keys = {
@@ -102,8 +102,8 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
    *
    * @see \Drupal\payment\PaymentMethodStorageController
    */
-  public function getExportProperties() {
-    $properties = parent::getExportProperties();
+  public function toArray() {
+    $properties = parent::toArray();
     $properties['id'] = $this->id();
     $properties['label'] = $this->label();
     $properties['ownerId'] = $this->getOwnerId();

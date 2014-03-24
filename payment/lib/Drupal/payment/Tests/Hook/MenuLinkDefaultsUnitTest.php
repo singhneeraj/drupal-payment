@@ -11,7 +11,7 @@ use Drupal\payment\Hook\MenuLinkDefaults;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * @coversDefaultClass \Drupal\payment\Hook\MenuLinkDefaults.
+ * @coversDefaultClass \Drupal\payment\Hook\MenuLinkDefaults
  */
 class MenuLinkDefaultsUnitTest extends UnitTestCase {
 
