@@ -10,7 +10,7 @@ namespace Drupal\payment\Entity;
 use Drupal\Component\Plugin\Discovery\CachedDiscoveryInterface;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Config\Entity\ConfigStorage;
+use Drupal\Core\Config\Entity\ConfigEntityStorage;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Handles storage for payment_status entities.
  */
-class PaymentStatusStorage extends ConfigStorage {
+class PaymentStatusStorage extends ConfigEntityStorage {
 
   /**
    * The payment status plugin manager.

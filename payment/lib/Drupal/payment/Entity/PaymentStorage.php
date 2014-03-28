@@ -7,14 +7,14 @@
 
 namespace Drupal\payment\Entity;
 
+use Drupal\Core\Entity\ContentEntityDatabaseStorage;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\FieldableDatabaseStorage;
 use Drupal\payment\Payment as PaymentServiceWrapper;
 
 /**
  * Handles storage for payment entities.
  */
-class PaymentStorage extends FieldableDatabaseStorage implements PaymentStorageInterface {
+class PaymentStorage extends ContentEntityDatabaseStorage implements PaymentStorageInterface {
 
   /**
    * {@inheritdoc}
