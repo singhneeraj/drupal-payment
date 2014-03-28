@@ -8,7 +8,7 @@
 namespace Drupal\payment\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
-use Drupal\Core\Entity\EntityStorageControllerInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -23,7 +23,7 @@ use Drupal\user\UserInterface;
  *       "delete" = "Drupal\payment\Entity\PaymentMethodDeleteFormController"
  *     },
  *     "list_builder" = "Drupal\payment\Entity\PaymentMethodListBuilder",
- *     "storage" = "Drupal\payment\Entity\PaymentMethodStorageController",
+ *     "storage" = "Drupal\payment\Entity\PaymentMethodStorage",
  *   },
  *   entity_keys = {
  *     "id" = "id",
@@ -100,7 +100,7 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    *
-   * @see \Drupal\payment\PaymentMethodStorageController
+   * @see \Drupal\payment\PaymentMethodStorage
    */
   public function toArray() {
     $properties = parent::toArray();
@@ -142,7 +142,7 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
    * {@inheritdoc}
    */
   public function getOwner() {
-    return \Drupal::entityManager()->getStorageController('user')->load($this->getOwnerId());
+    return \Drupal::entityManager()->getStorage('user')->load($this->getOwnerId());
   }
 
   /**
@@ -198,7 +198,7 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
-  public static function preCreate(EntityStorageControllerInterface $storage_controller, array &$values) {
+  public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
     $values += array(
       'ownerId' => (int) \Drupal::currentUser()->id(),
     );

@@ -8,7 +8,7 @@
 namespace Drupal\payment\Plugin\Payment\Status;
 
 use Drupal\Component\Plugin\Derivative\DerivativeBase;
-use Drupal\Core\Entity\EntityStorageControllerInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Plugin\Discovery\ContainerDerivativeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -20,14 +20,14 @@ class ConfigDerivative extends DerivativeBase implements ContainerDerivativeInte
   /**
    * The payment status storage controller.
    *
-   * @var \Drupal\Core\Entity\EntityStorageControllerInterface
+   * @var \Drupal\Core\Entity\EntityStorageInterface
    */
   protected $paymentStatusStorage;
 
   /**
    * Constructs a new class instance.
    */
-  public function __construct(EntityStorageControllerInterface $payment_status_storage) {
+  public function __construct(EntityStorageInterface $payment_status_storage) {
     $this->paymentStatusStorage = $payment_status_storage;
   }
 
@@ -35,7 +35,7 @@ class ConfigDerivative extends DerivativeBase implements ContainerDerivativeInte
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, $base_plugin_id) {
-    return new static($container->get('entity.manager')->getStorageController('payment_status'));
+    return new static($container->get('entity.manager')->getStorage('payment_status'));
   }
 
   /**

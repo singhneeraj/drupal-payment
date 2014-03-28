@@ -27,7 +27,7 @@ class PaymentFormWebTest extends WebTestBase {
   /**
    * The payment entity storage controller.
    *
-   * @var \Drupal\payment\Entity\PaymentStorageController
+   * @var \Drupal\payment\Entity\PaymentStorage
    */
   protected $paymentStorage;
 
@@ -66,7 +66,7 @@ class PaymentFormWebTest extends WebTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->paymentStorage = \Drupal::entityManager()->getStorageController('payment');
+    $this->paymentStorage = \Drupal::entityManager()->getStorage('payment');
 
     // Create the field and field instance.
     $field_name = strtolower($this->randomName());

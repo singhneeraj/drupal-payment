@@ -25,7 +25,7 @@ class ConfigDerivativeUnitTest extends UnitTestCase {
   /**
    * The payment status storage controller used for testing.
    *
-   * @var \Drupal\Core\Entity\EntityStorageControllerInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\Entity\EntityStorageInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentStatusStorage;
 
@@ -44,7 +44,7 @@ class ConfigDerivativeUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   public function setUp() {
-    $this->paymentStatusStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageControllerInterface');
+    $this->paymentStatusStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
 
     $this->deriver = new ConfigDerivative($this->paymentStatusStorage);
   }

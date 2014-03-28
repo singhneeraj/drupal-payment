@@ -8,7 +8,7 @@
 namespace Drupal\payment\Plugin\Payment\Method;
 
 use Drupal\Component\Plugin\Derivative\DerivativeBase;
-use Drupal\Core\Entity\EntityStorageControllerInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Plugin\Discovery\ContainerDerivativeInterface;
 use Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -30,14 +30,14 @@ class BasicDerivative extends DerivativeBase implements ContainerDerivativeInter
   /**
    * The payment method storage controller.
    *
-   * @var \Drupal\Core\Entity\EntityStorageControllerInterface
+   * @var \Drupal\Core\Entity\EntityStorageInterface
    */
   protected $paymentMethodStorage;
 
   /**
    * Constructs a new class instance.
    */
-  public function __construct(EntityStorageControllerInterface $payment_method_storage, PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager) {
+  public function __construct(EntityStorageInterface $payment_method_storage, PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager) {
     $this->paymentMethodStorage = $payment_method_storage;
     $this->paymentMethodConfigurationManager = $payment_method_configuration_manager;
   }
@@ -46,7 +46,7 @@ class BasicDerivative extends DerivativeBase implements ContainerDerivativeInter
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, $base_plugin_id) {
-    return new static($container->get('entity.manager')->getStorageController('payment_method'), $container->get('plugin.manager.payment.method_configuration'));
+    return new static($container->get('entity.manager')->getStorage('payment_method'), $container->get('plugin.manager.payment.method_configuration'));
   }
 
   /**

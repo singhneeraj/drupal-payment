@@ -2,19 +2,19 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Entity\PaymentStorageController.
+ * Contains \Drupal\payment\Entity\PaymentStorage.
  */
 
 namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\FieldableDatabaseStorageController;
+use Drupal\Core\Entity\FieldableDatabaseStorage;
 use Drupal\payment\Payment as PaymentServiceWrapper;
 
 /**
  * Handles storage for payment entities.
  */
-class PaymentStorageController extends FieldableDatabaseStorageController implements PaymentStorageControllerInterface {
+class PaymentStorage extends FieldableDatabaseStorage implements PaymentStorageInterface {
 
   /**
    * {@inheritdoc}

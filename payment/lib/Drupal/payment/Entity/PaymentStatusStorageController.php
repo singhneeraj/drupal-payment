@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Entity\PaymentStatusStorageController.
+ * Contains \Drupal\payment\Entity\PaymentStatusStorage.
  */
 
 namespace Drupal\payment\Entity;
@@ -10,7 +10,7 @@ namespace Drupal\payment\Entity;
 use Drupal\Component\Plugin\Discovery\CachedDiscoveryInterface;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Config\Entity\ConfigStorageController;
+use Drupal\Core\Config\Entity\ConfigStorage;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Handles storage for payment_status entities.
  */
-class PaymentStatusStorageController extends ConfigStorageController {
+class PaymentStatusStorage extends ConfigStorage {
 
   /**
    * The payment status plugin manager.

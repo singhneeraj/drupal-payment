@@ -102,7 +102,7 @@ class PaymentWebTest extends WebTestBase {
       $this->drupalGet($path);
       $this->drupalPostForm(NULL, array(), t('Delete'));
       $this->assertResponse('200');
-      $this->assertFalse((bool) \Drupal::entityManager()->getStorageController('payment')->loadUnchanged($payment->id()));
+      $this->assertFalse((bool) \Drupal::entityManager()->getStorage('payment')->loadUnchanged($payment->id()));
     }
   }
 }

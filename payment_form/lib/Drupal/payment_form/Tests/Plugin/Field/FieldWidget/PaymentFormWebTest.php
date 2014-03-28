@@ -36,7 +36,7 @@ class PaymentFormWebTest extends WebTestBase {
    * Tests the widget.
    */
   protected function testWidget() {
-    $user_storage = \Drupal::entityManager()->getStorageController('user');
+    $user_storage = \Drupal::entityManager()->getStorage('user');
     $line_item_manager = Payment::lineItemManager();
 
     $user = $this->drupalCreateUser(array('administer user fields'));

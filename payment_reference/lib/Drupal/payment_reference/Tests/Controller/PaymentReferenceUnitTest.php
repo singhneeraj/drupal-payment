@@ -125,13 +125,13 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       ->method('setCurrencyCode')
       ->will($this->returnSelf());
 
-    $storage_controller = $this->getMock('\Drupal\Core\Entity\EntityStorageControllerInterface');
+    $storage_controller = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
     $storage_controller->expects($this->once())
       ->method('create')
       ->will($this->returnValue($payment));
 
     $this->entityManager->expects($this->once())
-      ->method('getStorageController')
+      ->method('getStorage')
       ->with($this->equalTo('payment'))
       ->will($this->returnValue($storage_controller));
 
@@ -287,14 +287,14 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       ->method('label')
       ->will($this->returnValue($field_instance_config_label));
 
-    $storage_controller = $this->getMock('\Drupal\Core\Entity\EntityStorageControllerInterface');
+    $storage_controller = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
     $storage_controller->expects($this->once())
       ->method('load')
       ->with($field_instance_config_id)
       ->will($this->returnValue($field_instance_config));
 
     $this->entityManager->expects($this->once())
-      ->method('getStorageController')
+      ->method('getStorage')
       ->will($this->returnValue($storage_controller));
 
     $payment_type = $this->getMockBuilder('\Drupal\payment_reference\Plugin\Payment\Type\PaymentReference')

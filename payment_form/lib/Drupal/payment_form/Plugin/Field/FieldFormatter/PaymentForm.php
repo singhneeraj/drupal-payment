@@ -88,7 +88,7 @@ class PaymentForm extends FormatterBase implements ContainerFactoryPluginInterfa
    */
   public function viewElements(FieldItemListInterface $items) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
-    $payment = $this->entityManager->getStorageController('payment')->create(array(
+    $payment = $this->entityManager->getStorage('payment')->create(array(
       'bundle' => 'payment_form',
     ));
     $payment->setCurrencyCode($this->fieldDefinition->getSetting('currency_code'));

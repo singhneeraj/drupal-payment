@@ -6,7 +6,7 @@
 
 namespace Drupal\payment_reference\Plugin\Payment\Type;
 
-use Drupal\Core\Entity\EntityStorageControllerInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\HttpKernel;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -30,7 +30,7 @@ class PaymentReference extends PaymentTypeBase implements ContainerFactoryPlugin
   /**
    * The field instance config storage.
    *
-   * @var \Drupal\Core\Entity\EntityStorageControllerInterface
+   * @var \Drupal\Core\Entity\EntityStorageInterface
    */
   protected $fieldInstanceConfigStorage;
 
@@ -68,9 +68,9 @@ class PaymentReference extends PaymentTypeBase implements ContainerFactoryPlugin
    * @param \Symfony\Component\HttpFoundation\Request $request
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    * @param \Drupal\Core\Routing\UrlGeneratorInterface $url_generator
-   * @param \Drupal\Core\Entity\EntityStorageControllerInterface $field_instance_config_storage
+   * @param \Drupal\Core\Entity\EntityStorageInterface $field_instance_config_storage
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, HttpKernel $http_kernel, Request $request, ModuleHandlerInterface $module_handler , UrlGeneratorInterface $url_generator, EntityStorageControllerInterface $field_instance_config_storage) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, HttpKernel $http_kernel, Request $request, ModuleHandlerInterface $module_handler , UrlGeneratorInterface $url_generator, EntityStorageInterface $field_instance_config_storage) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $module_handler);
     $this->httpKernel = $http_kernel;
     $this->request = $request;
@@ -90,7 +90,7 @@ class PaymentReference extends PaymentTypeBase implements ContainerFactoryPlugin
       $container->get('request'),
       $container->get('module_handler'),
       $container->get('url_generator'),
-      $container->get('entity.manager')->getStorageController('field_instance_config')
+      $container->get('entity.manager')->getStorage('field_instance_config')
     );
   }
 

@@ -89,7 +89,7 @@ class PaymentMethodWebTest extends WebTestBase {
     $this->drupalLogout();
     $entity_id = 'collect_on_delivery';
     $plugin_id = 'payment_basic';
-    $storage = \Drupal::entityManager()->getStorageController('payment_method');
+    $storage = \Drupal::entityManager()->getStorage('payment_method');
 
     // Test that only the original exists.
     $this->assertTrue((bool) $storage->load($entity_id));

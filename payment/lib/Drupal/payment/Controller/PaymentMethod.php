@@ -229,7 +229,7 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
    * @return array
    */
   public function add($plugin_id) {
-    $payment_method = $this->entityManager->getStorageController('payment_method')->create(array(
+    $payment_method = $this->entityManager->getStorage('payment_method')->create(array(
       'pluginId' => $plugin_id,
     ));
 

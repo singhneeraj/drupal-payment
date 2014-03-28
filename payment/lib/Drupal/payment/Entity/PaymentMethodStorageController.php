@@ -2,13 +2,13 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Entity\PaymentMethodStorageController.
+ * Contains \Drupal\payment\Entity\PaymentMethodStorage.
  */
 
 namespace Drupal\payment\Entity;
 
 use Drupal\Component\Plugin\Discovery\CachedDiscoveryInterface;
-use Drupal\Core\Config\Entity\ConfigStorageController;
+use Drupal\Core\Config\Entity\ConfigStorage;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\StorageInterface;
@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Handles storage for payment_method entities.
  */
-class PaymentMethodStorageController extends ConfigStorageController {
+class PaymentMethodStorage extends ConfigStorage {
 
   /**
    * The payment method manager.

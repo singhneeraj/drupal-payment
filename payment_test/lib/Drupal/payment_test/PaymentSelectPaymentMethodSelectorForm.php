@@ -70,7 +70,7 @@ class PaymentSelectPaymentMethodSelectorForm extends DependencySerialization imp
    */
   public function buildForm(array $form, array &$form_state) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
-    $payment = $this->entityManager->getStorageController('payment')->create(array(
+    $payment = $this->entityManager->getStorage('payment')->create(array(
       'bundle' => 'payment_unavailable',
     ));
     $payment->setLineItems(Generate::createPaymentLineItems());

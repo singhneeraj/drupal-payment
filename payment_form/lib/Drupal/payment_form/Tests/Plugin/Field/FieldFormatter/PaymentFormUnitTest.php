@@ -122,7 +122,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->with($payment)
       ->will($this->returnSelf());
 
-    $storage = $this->getMock('\Drupal\Core\Entity\EntityStorageControllerInterface');
+    $storage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
     $storage->expects($this->once())
       ->method('create')
       ->with(array(
@@ -131,7 +131,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->will($this->returnValue($payment));
 
     $this->entityManager->expects($this->once())
-      ->method('getStorageController')
+      ->method('getStorage')
       ->with('payment')
       ->will($this->returnValue($storage));
 

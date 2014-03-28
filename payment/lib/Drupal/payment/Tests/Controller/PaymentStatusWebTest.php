@@ -23,7 +23,7 @@ class PaymentStatusWebTest extends WebTestBase {
   /**
    * The payment status storage controller.
    *
-   * @var \Drupal\Core\Entity\EntityStorageControllerInterface
+   * @var \Drupal\Core\Entity\EntityStorageInterface
    */
   public $paymentStatusStorage;
 
@@ -43,7 +43,7 @@ class PaymentStatusWebTest extends WebTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->paymentStatusStorage = \Drupal::entityManager()->getStorageController('payment_status');
+    $this->paymentStatusStorage = \Drupal::entityManager()->getStorage('payment_status');
   }
 
   /**

@@ -9,7 +9,7 @@ namespace Drupal\payment\Entity;
 
 use Drupal\Component\Plugin\Discovery\CachedDiscoveryInterface;
 use Drupal\Core\Entity\ContentEntityBase;
-use Drupal\Core\Entity\EntityStorageControllerInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\FieldDefinition;
 use Drupal\payment\Payment as PaymentServiceWrapper;
@@ -32,7 +32,7 @@ use Drupal\user\UserInterface;
  *     },
  *     "list_builder" = "Drupal\payment\Entity\PaymentListBuilder",
  *     "view_builder" = "Drupal\payment\Entity\PaymentViewBuilder",
- *     "storage" = "Drupal\payment\Entity\PaymentStorageController",
+ *     "storage" = "Drupal\payment\Entity\PaymentStorage",
  *   },
  *   entity_keys = {
  *     "bundle" = "bundle",
@@ -332,7 +332,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public static function preCreate(EntityStorageControllerInterface $storage, array &$values) {
+  public static function preCreate(EntityStorageInterface $storage, array &$values) {
     $values += array(
       'ownerId' => (int) \Drupal::currentUser()->id(),
     );
@@ -341,8 +341,8 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public static function postLoad(EntityStorageControllerInterface $storage, array &$entities) {
-    /** @var \Drupal\payment\Entity\PaymentStorageControllerInterface $storage */
+  public static function postLoad(EntityStorageInterface $storage, array &$entities) {
+    /** @var \Drupal\payment\Entity\PaymentStorageInterface $storage */
     $storage->loadLineItems($entities);
     $storage->loadPaymentStatuses($entities);
   }
@@ -350,8 +350,8 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public function postSave(EntityStorageControllerInterface $storage, $update = TRUE) {
-    /** @var \Drupal\payment\Entity\PaymentStorageControllerInterface $storage */
+  public function postSave(EntityStorageInterface $storage, $update = TRUE) {
+    /** @var \Drupal\payment\Entity\PaymentStorageInterface $storage */
     $storage->saveLineItems(array(
       $this->id() => $this->getLineItems(),
     ));
@@ -363,8 +363,8 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public static function postDelete(EntityStorageControllerInterface $storage, array $entities) {
-    /** @var \Drupal\payment\Entity\PaymentStorageControllerInterface $storage */
+  public static function postDelete(EntityStorageInterface $storage, array $entities) {
+    /** @var \Drupal\payment\Entity\PaymentStorageInterface $storage */
     $storage->deleteLineItems(array_keys($entities));
     $storage->deletePaymentStatuses(array_keys($entities));
   }

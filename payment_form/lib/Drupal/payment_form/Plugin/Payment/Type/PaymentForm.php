@@ -6,7 +6,7 @@
 
 namespace Drupal\payment_form\Plugin\Payment\Type;
 
-use Drupal\Core\Entity\EntityStorageControllerInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\HttpKernel;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -38,7 +38,7 @@ class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInter
   /**
    * The field instance storage.
    *
-   * @var \Drupal\Core\Entity\EntityStorageControllerInterface
+   * @var \Drupal\Core\Entity\EntityStorageInterface
    */
   protected $fieldInstanceConfigStorage;
 
@@ -61,9 +61,9 @@ class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInter
    * @param \Drupal\Core\HttpKernel $http_kernel
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   * @param \Drupal\Core\Entity\EntityStorageControllerInterface $field_instance_config_storage
+   * @param \Drupal\Core\Entity\EntityStorageInterface $field_instance_config_storage
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, HttpKernel $http_kernel, EventDispatcherInterface $event_dispatcher, ModuleHandlerInterface $module_handler, EntityStorageControllerInterface $field_instance_config_storage) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, HttpKernel $http_kernel, EventDispatcherInterface $event_dispatcher, ModuleHandlerInterface $module_handler, EntityStorageInterface $field_instance_config_storage) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $module_handler);
     $this->httpKernel = $http_kernel;
     $this->eventDispatcher = $event_dispatcher;
@@ -81,7 +81,7 @@ class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInter
       $container->get('http_kernel'),
       $container->get('event_dispatcher'),
       $container->get('module_handler'),
-      $container->get('entity.manager')->getStorageController('field_instance_config')
+      $container->get('entity.manager')->getStorage('field_instance_config')
     );
   }
 

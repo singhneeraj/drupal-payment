@@ -79,7 +79,7 @@ class PaymentReference extends ControllerBase implements ContainerInjectionInter
   public function pay(FieldInstanceConfigInterface $field_instance_config) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->entityManager()
-      ->getStorageController('payment')
+      ->getStorage('payment')
       ->create(array(
         'bundle' => 'payment_reference',
       ));
@@ -136,7 +136,7 @@ class PaymentReference extends ControllerBase implements ContainerInjectionInter
   public function resumeContextLabel(PaymentInterface $payment) {
     /** @var \Drupal\payment_reference\Plugin\Payment\Type\PaymentReference $payment_type */
     $payment_type = $payment->getPaymentType();
-    $field_instance_config_storage = $this->entityManager()->getStorageController('field_instance');
+    $field_instance_config_storage = $this->entityManager()->getStorage('field_instance');
     $field_instance_config = $field_instance_config_storage->load($payment_type->getFieldInstanceConfigId());
 
     return $field_instance_config->label();

@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Entity\PaymentStorageControllerInterface.
+ * Contains \Drupal\payment\Entity\PaymentStorageInterface.
  */
 
 namespace Drupal\payment\Entity;
 
-use Drupal\Core\Entity\EntityStorageControllerInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 
 /**
  * A storage controller for payment entities.
  */
-interface PaymentStorageControllerInterface extends EntityStorageControllerInterface {
+interface PaymentStorageInterface extends EntityStorageInterface {
 
   /**
    * Loads payment line items.

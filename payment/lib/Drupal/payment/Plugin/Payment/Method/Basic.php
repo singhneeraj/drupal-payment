@@ -118,7 +118,7 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
 
     // Strip the base plugin ID and the colon.
     $entity_id = substr($plugin_id, 14);
-    $payment_method = \Drupal::entityManager()->getStorageController('payment_method')->load($entity_id);
+    $payment_method = \Drupal::entityManager()->getStorage('payment_method')->load($entity_id);
     $operations = array();
     if ($payment_method->access('update')) {
       $operations['update'] = array(

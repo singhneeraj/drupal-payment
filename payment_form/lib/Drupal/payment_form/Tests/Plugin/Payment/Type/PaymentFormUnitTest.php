@@ -76,7 +76,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->method('label')
       ->will($this->returnValue($this->randomName()));
 
-    $field_instance_config_storage = $this->getMockBuilder('\Drupal\field\FieldInstanceConfigStorageController')
+    $field_instance_config_storage = $this->getMockBuilder('\Drupal\field\FieldInstanceConfigStorage')
       ->disableOriginalConstructor()
       ->getMock();
     $field_instance_config_storage->expects($this->any())
