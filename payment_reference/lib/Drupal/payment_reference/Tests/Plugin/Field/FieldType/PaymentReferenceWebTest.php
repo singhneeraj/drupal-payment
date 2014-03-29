@@ -52,7 +52,7 @@ class PaymentReferenceWebTest extends WebTestBase {
       'field_name' => $field_name,
       'settings' => array(
         'currency_code' => 'EUR',
-        'line_items' => array(),
+        'line_items_data' => array(),
       ),
     ))->save();
 

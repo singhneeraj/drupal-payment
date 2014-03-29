@@ -55,9 +55,7 @@ class PaymentReferenceWebTest extends WebTestBase {
     ))->save();
 
     entity_get_form_display('user', 'user', 'default')
-      ->setComponent($field_name, array(
-        'type' => 'file_generic',
-      ))
+      ->setComponent($field_name, array())
       ->save();
 
     $user = $this->drupalCreateUser();

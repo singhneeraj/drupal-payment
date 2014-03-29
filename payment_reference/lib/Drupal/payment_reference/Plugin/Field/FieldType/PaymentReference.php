@@ -26,18 +26,30 @@ use Drupal\payment\Element\PaymentLineItemsInput;
  *   default_formatter = "entity_reference_label",
  *   default_widget = "payment_reference",
  *   id = "payment_reference",
- *   instance_settings = {
- *     "currency_code" = "",
- *     "line_items_data" = {}
- *   },
  *   label = @Translation("Payment reference"),
- *   list_class = "\Drupal\payment_reference\Plugin\Field\FieldType\PaymentReferenceItemList",
- *   settings = {
- *     "target_type" = "payment"
- *   }
+ *   list_class = "\Drupal\payment_reference\Plugin\Field\FieldType\PaymentReferenceItemList"
  * )
  */
 class PaymentReference extends ConfigurableEntityReferenceItem {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function defaultSettings() {
+    return parent::defaultSettings() + array(
+      'target_type' => 'payment',
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function defaultInstanceSettings() {
+    return parent::defaultInstanceSettings() + array(
+      'currency_code' => '',
+      'line_items_data' => array(),
+    );
+  }
 
   /**
    * {@inheritdoc}

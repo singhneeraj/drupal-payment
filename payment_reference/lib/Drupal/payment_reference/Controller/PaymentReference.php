@@ -87,6 +87,7 @@ class PaymentReference extends ControllerBase implements ContainerInjectionInter
     /** @var \Drupal\payment_reference\Plugin\Payment\Type\PaymentReference $payment_type */
     $payment_type = $payment->getPaymentType();
     $payment_type->setFieldInstanceConfigId($field_instance_config->id());
+    debug($field_instance_config->getSettings());
     foreach ($field_instance_config->getSetting('line_items_data') as $line_item_data) {
       $line_item = $this->paymentLineItemManager->createInstance($line_item_data['plugin_id'], $line_item_data['plugin_configuration']);
       $payment->setLineItem($line_item);
