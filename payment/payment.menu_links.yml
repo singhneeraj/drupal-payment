@@ -16,5 +16,5 @@ payment.payment_method_plugin.list:
   route_name: payment.payment_method_plugin.list
 payment.payment_status.list:
   title: Payment statuses
-  parent: system.admin.config.services
+  parent: payment.admin
   route_name: payment.payment_status.list
