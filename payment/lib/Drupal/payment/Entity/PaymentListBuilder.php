@@ -71,12 +71,9 @@ class PaymentListBuilder extends EntityListBuilder {
     $operations = parent::getOperations($entity);
 
     if ($entity->access('view')) {
-      $uri = $entity->urlInfo();
       $operations['view'] = array(
         'title' => $this->t('View'),
-        'href' => $uri['path'],
-        'options' => $uri['options'],
-      );
+      ) + $entity->urlInfo()->toArray();
     }
 
     return $operations;

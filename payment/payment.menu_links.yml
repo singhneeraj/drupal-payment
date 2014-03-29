@@ -1,6 +1,6 @@
 payment.admin:
   title: Payment
-  parent: system.admin.config.services
+  parent: system.admin_config_services
   route_name: payment.admin
 payment.payment.admin_list:
   title: Payments

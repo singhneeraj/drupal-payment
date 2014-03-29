@@ -43,8 +43,7 @@ class PaymentMethodListBuilder extends ConfigEntityListBuilder {
 
     $owner_label = $payment_method->getOwner()->label();
     if ($payment_method->getOwner()->access('view')) {
-      $uri = $payment_method->getOwner()->urlInfo();
-      $owner_label = \Drupal::linkGenerator()->generate($owner_label, $uri['route_name'], $uri['route_parameters'], $uri['options']);
+      $owner_label = \Drupal::linkGenerator()->generateFromUrl($owner_label, $payment_method->getOwner()->urlInfo());
     }
     $row['data']['owner'] = $owner_label;
 
@@ -74,7 +73,7 @@ class PaymentMethodListBuilder extends ConfigEntityListBuilder {
       $operations['duplicate'] = array(
         'title' => $this->t('Duplicate'),
         'weight' => 99,
-      ) + $entity->urlInfo('duplicate-form');
+      ) + $entity->urlInfo('duplicate-form')->toArray();
     }
 
     return $operations;
