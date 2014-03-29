@@ -27,6 +27,8 @@ payment.payment.edit:
     _entity_form: 'payment.edit'
   requirements:
     _entity_access: 'payment.update'
+  options:
+    _admin_route: TRUE
 
 payment.payment.delete:
   path: '/payment/{payment}/delete'

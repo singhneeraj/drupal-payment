@@ -5,18 +5,6 @@
  * Contains hook implementations.
  */
 
-
-/**
- * Implements hook_admin_paths().
- */
-function payment_admin_paths() {
-  $paths = array(
-    'payment/*/edit' => TRUE,
-  );
-
-  return $paths;
-}
-
 /**
  * Implements hook_permission().
  *
