@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Definition of Drupal\payment\Entity\PaymentMethodListController.
+ * Definition of Drupal\payment\Entity\PaymentMethodListBuilder.
  */
 
 namespace Drupal\payment\Entity;

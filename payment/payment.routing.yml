@@ -9,8 +9,7 @@ payment.admin:
 payment.payment.admin_list:
   path: '/admin/payment'
   defaults:
-    _content: '\Drupal\Core\Entity\Controller\EntityListController::listing'
-    entity_type: 'payment'
+    _entity_list: payment
     _title: 'Payments'
   requirements:
     _permission: 'payment.payment.view.any'

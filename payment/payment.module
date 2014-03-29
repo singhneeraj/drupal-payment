@@ -5,19 +5,6 @@
  * Contains hook implementations.
  */
 
-/**
- * Implements hook_menu().
- */
-function payment_menu() {
-  return \Drupal::service('payment.hook.menu')->invoke();
-}
-
-/**
- * Implements hook_menu_link_defaults().
- */
-function payment_menu_link_defaults() {
-  return \Drupal::service('payment.hook.menu_link_defaults')->invoke();
-}
 
 /**
  * Implements hook_admin_paths().

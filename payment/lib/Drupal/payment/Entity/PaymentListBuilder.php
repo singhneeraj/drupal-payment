@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Entity\PaymentListController.
+ * Contains \Drupal\payment\Entity\PaymentListBuilder.
  */
 
 namespace Drupal\payment\Entity;

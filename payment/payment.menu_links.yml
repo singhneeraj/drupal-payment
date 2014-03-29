@@ -1,0 +1,20 @@
+payment.admin:
+  title: Payment
+  parent: system.admin.config.services
+  route_name: payment.admin
+payment.payment.admin_list:
+  title: Payments
+  parent: system.admin
+  route_name: payment.payment.admin_list
+payment.payment_type.list:
+  title: Payment types
+  parent: payment.admin
+  route_name: payment.payment_type.list
+payment.payment_method_plugin.list:
+  title: Payment methods
+  parent: payment.admin
+  route_name: payment.payment_method_plugin.list
+payment.payment_status.list:
+  title: Payment statuses
+  parent: system.admin.config.services
+  route_name: payment.payment_status.list
