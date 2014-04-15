@@ -6,8 +6,8 @@
 
 namespace Drupal\payment_form\Plugin\Field\FieldType;
 
-use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemBase;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\currency\Entity\Currency;
 
@@ -53,7 +53,7 @@ class PaymentForm extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
-  public static function schema(FieldDefinitionInterface $field_definition) {
+  public static function schema(FieldStorageDefinitionInterface $field_storage_definition) {
     $schema = array(
       'columns' => array(
         'plugin_configuration' => array(
@@ -90,7 +90,7 @@ class PaymentForm extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
-  public static function propertyDefinitions(FieldDefinitionInterface $field_definition) {
+  public static function propertyDefinitions(FieldStorageDefinitionInterface $field_storage_definition) {
     // @todo Find out the difference between this method and
     //   $this->getPropertyDefinitions().
     // @todo Find out how to test this method, as it cannot use t() or

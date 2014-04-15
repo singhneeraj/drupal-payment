@@ -8,7 +8,7 @@
 namespace Drupal\payment_reference\Plugin\Field\FieldType;
 
 use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\currency\Entity\Currency;
 use Drupal\entity_reference\ConfigurableEntityReferenceItem;
 use Drupal\payment\Element\PaymentLineItemsInput;
@@ -54,7 +54,7 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
   /**
    * {@inheritdoc}
    */
-  public static function schema(FieldDefinitionInterface $field_definition) {
+  public static function schema(FieldStorageDefinitionInterface $field_storage_definition) {
     return array(
       'columns' => array(
         'target_id' => array(

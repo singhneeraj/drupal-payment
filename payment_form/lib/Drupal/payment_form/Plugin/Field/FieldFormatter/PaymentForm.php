@@ -79,7 +79,7 @@ class PaymentForm extends FormatterBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, array $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static($configuration, $plugin_id, $plugin_definition, $container->get('request'), $container->get('entity.manager'), $container->get('form_builder'), $container->get('plugin.manager.payment.line_item'));
   }
 

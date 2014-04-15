@@ -73,7 +73,7 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, array $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static($configuration, $plugin_id, $plugin_definition, $container->get('currency.math'), $container->get('string_translation'), $container->get('database'), $container->get('form_builder'));
   }
 
