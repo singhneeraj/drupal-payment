@@ -80,7 +80,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       ->method('load')
       ->will($this->returnValue($this->fieldInstanceConfig));
 
-    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandler');
+    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
 
     $http_kernel = $this->getMockBuilder('\Drupal\Core\HttpKernel')
       ->disableOriginalConstructor()
