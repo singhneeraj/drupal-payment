@@ -5,7 +5,7 @@
  * Contains \Drupal\payment\Tests\PaymentUnitTest.
  */
 
-namespace Drupal\payment\Test;
+namespace Drupal\payment\Tests;
 
 use Drupal\payment\Payment;
 use Drupal\Tests\UnitTestCase;
@@ -17,6 +17,11 @@ use Symfony\Component\DependencyInjection\Container;
 class PaymentUnitTest extends UnitTestCase {
 
   /**
+   * The host site's container.
+   */
+  protected $originalContainer;
+
+  /**
    * {@inheritdoc}
    */
   public static function getInfo() {
@@ -25,6 +30,20 @@ class PaymentUnitTest extends UnitTestCase {
       'group' => 'Payment',
       'name' => '\Drupal\payment\Payment unit test',
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setUp() {
+    $this->originalContainer = \Drupal::getContainer();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function tearDown() {
+    \Drupal::setContainer($this->originalContainer);
   }
 
   /**
