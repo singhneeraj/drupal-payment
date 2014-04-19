@@ -31,6 +31,9 @@ services:
       - { name: plugin_manager_cache_clear}
   payment.hook.element_info:
     class: Drupal\payment\Hook\ElementInfo
+  payment.hook.entity_crud:
+    class: Drupal\payment\Hook\EntityCrud
+    arguments: ['@plugin.manager.payment.method', '@plugin.manager.payment.status']
   payment.hook.menu:
     class: Drupal\payment\Hook\Menu
   payment.hook.menu_link_defaults:

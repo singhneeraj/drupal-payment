@@ -5,6 +5,8 @@
  * Contains hook implementations.
  */
 
+use Drupal\Core\Entity\EntityInterface;
+
 /**
  * Implements hook_permission().
  *
@@ -40,4 +42,25 @@ function payment_element_info() {
  */
 function payment_entity_bundle_info() {
   return \Drupal::service('payment.hook.entity_bundle_info')->invoke();
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function payment_entity_delete(EntityInterface $entity) {
+  return \Drupal::service('payment.hook.entity_crud')->invoke($entity);
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function payment_entity_insert(EntityInterface $entity) {
+  return \Drupal::service('payment.hook.entity_crud')->invoke($entity);
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function payment_entity_update(EntityInterface $entity) {
+  return \Drupal::service('payment.hook.entity_crud')->invoke($entity);
 }

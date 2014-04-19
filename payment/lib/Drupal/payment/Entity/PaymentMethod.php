@@ -23,7 +23,7 @@ use Drupal\user\UserInterface;
  *       "delete" = "Drupal\payment\Entity\PaymentMethodDeleteFormController"
  *     },
  *     "list_builder" = "Drupal\payment\Entity\PaymentMethodListBuilder",
- *     "storage" = "Drupal\payment\Entity\PaymentMethodStorage",
+ *     "storage" = "\Drupal\Core\Config\Entity\ConfigEntityStorage",
  *   },
  *   entity_keys = {
  *     "id" = "id",

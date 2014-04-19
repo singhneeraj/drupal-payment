@@ -20,7 +20,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *       "default" = "Drupal\payment\Entity\PaymentStatusFormController",
  *       "delete" = "Drupal\payment\Entity\PaymentStatusDeleteFormController"
  *     },
- *     "storage" = "Drupal\payment\Entity\PaymentStatusStorage"
+ *     "storage" = "\Drupal\Core\Config\Entity\ConfigEntityStorage"
  *   },
  *   entity_keys = {
  *     "id" = "id",
