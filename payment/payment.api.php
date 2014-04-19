@@ -36,6 +36,34 @@ function hook_payment_method_alter(array &$definitions) {
 }
 
 /**
+ * Alters payment method configuration plugins.
+ *
+ * @param array $definitions
+ *   Keys are plugin IDs. Values are plugin definitions.
+ */
+function hook_payment_method_configuration_alter(array &$definitions) {
+  // Remvove a payment method configuration plugin.
+  unset($definitions['foo_plugin_id']);
+
+  // Replace a payment method configuration plugin with another.
+  $definitions['foo_plugin_id']['class'] = 'Drupal\foo\FooPaymentMethodConfiguration';
+}
+
+/**
+ * Alters payment method selector plugins.
+ *
+ * @param array $definitions
+ *   Keys are plugin IDs. Values are plugin definitions.
+ */
+function hook_payment_method_selector_alter(array &$definitions) {
+  // Remvove a payment method selector plugin.
+  unset($definitions['foo_plugin_id']);
+
+  // Replace a payment method selector plugin with another.
+  $definitions['foo_plugin_id']['class'] = 'Drupal\foo\FooPaymentMethodSelector';
+}
+
+/**
  * Alters line item plugins.
  *
  * @param array $definitions
@@ -117,14 +145,14 @@ function hook_payment_pre_execute(PaymentInterface $payment) {}
 /**
  * Alters the IDs of payments available for referencing through an instance.
  *
- * @param string $field_instance_config_id
- *   The ID of the field instance config to load payment IDs for.
+ * @param string $category_id
+ *   The ID of the category to load payment IDs for.
  * @param integer $owner_id
  *   The UID of the user for whom the payment should be available.
  * @param array $payment_ids
  *   The IDs of the payments that are available.
  */
-function hook_payment_reference_queue_payment_ids_alter($field_instance_config_id, $owner_id, array &$payment_ids) {
+function hook_payment_queue_payment_ids_alter($category_id, $owner_id, array &$payment_ids) {
   // Add or remove payment IDs. All IDs MUST be stored in the queue before they
   // can be used.
 }

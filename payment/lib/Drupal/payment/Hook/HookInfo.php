@@ -18,7 +18,7 @@ class HookInfo {
    * Invokes the implementation.
    */
   public function invoke() {
-    $hooks['payment_type_alter'] = array(
+    $hooks['payment_execute_access'] = array(
       'group' => 'payment',
     );
     $hooks['payment_line_item_alter'] = array(
@@ -27,19 +27,28 @@ class HookInfo {
     $hooks['payment_method_alter'] = array(
       'group' => 'payment',
     );
-    $hooks['payment_operation_access'] = array(
+    $hooks['payment_method_configuration_alter'] = array(
       'group' => 'payment',
     );
-    $hooks['payment_pre_operation'] = array(
+    $hooks['payment_method_selector_alter'] = array(
       'group' => 'payment',
     );
-    $hooks['payment_type_pre_resume_context'] = array(
+    $hooks['payment_pre_execute'] = array(
+      'group' => 'payment',
+    );
+    $hooks['payment_queue_payment_ids_alter'] = array(
       'group' => 'payment',
     );
     $hooks['payment_status_alter'] = array(
       'group' => 'payment',
     );
     $hooks['payment_status_set'] = array(
+      'group' => 'payment',
+    );
+    $hooks['payment_type_alter'] = array(
+      'group' => 'payment',
+    );
+    $hooks['payment_type_pre_resume_context'] = array(
       'group' => 'payment',
     );
 
