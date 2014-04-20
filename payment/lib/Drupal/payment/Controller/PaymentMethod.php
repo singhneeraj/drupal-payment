@@ -14,7 +14,7 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\payment\Entity\PaymentMethodInterface;
+use Drupal\payment\Entity\PaymentMethodConfigurationInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -95,33 +95,33 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
   }
 
   /**
-   * Enables a payment method.
+   * Enables a payment method configuration.
    *
-   * @param \Drupal\payment\Entity\PaymentMethodInterface
+   * @param \Drupal\payment\Entity\PaymentMethodConfigurationInterface $payment_method_configuration
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
    */
-  public function enable(PaymentMethodInterface $payment_method) {
-    $payment_method->enable();
-    $payment_method->save();
+  public function enable(PaymentMethodConfigurationInterface $payment_method_configuration) {
+    $payment_method_configuration->enable();
+    $payment_method_configuration->save();
 
-    return new RedirectResponse($this->urlGenerator->generateFromRoute('payment.payment_method.list', array(), array(
+    return new RedirectResponse($this->urlGenerator->generateFromRoute('payment.payment_method_configuration.list', array(), array(
       'absolute' => TRUE,
     )));
   }
 
   /**
-   * Disables a payment method.
+   * Disables a payment method configuration.
    *
-   * @param \Drupal\payment\Entity\PaymentMethodInterface
+   * @param \Drupal\payment\Entity\PaymentMethodConfigurationInterface $payment_method_configuration
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
    */
-  public function disable(PaymentMethodInterface $payment_method) {
-    $payment_method->disable();
-    $payment_method->save();
+  public function disable(PaymentMethodConfigurationInterface $payment_method_configuration) {
+    $payment_method_configuration->disable();
+    $payment_method_configuration->save();
 
-    return new RedirectResponse($this->urlGenerator->generateFromRoute('payment.payment_method.list', array(), array(
+    return new RedirectResponse($this->urlGenerator->generateFromRoute('payment.payment_method_configuration.list', array(), array(
       'absolute' => TRUE,
     )));
   }
@@ -177,12 +177,12 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
   public function select() {
     $definitions = $this->paymentMethodConfigurationManager->getDefinitions();
     unset($definitions['payment_unavailable']);
-    $access_controller = $this->entityManager->getAccessController('payment_method');
+    $access_controller = $this->entityManager->getAccessController('payment_method_configuration');
     $items = array();
     foreach ($definitions as $plugin_id => $definition) {
       $access = $access_controller->createAccess($plugin_id);
       if ($access) {
-        $href = $this->urlGenerator->getPathFromRoute('payment.payment_method.add', array(
+        $href = $this->urlGenerator->getPathFromRoute('payment.payment_method_configuration.add', array(
           'plugin_id' => $plugin_id,
         ));
         $items[] = array(
@@ -212,7 +212,7 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
   public function selectAccess(Request $request) {
     $definitions = $this->paymentMethodConfigurationManager->getDefinitions();
     unset($definitions['payment_unavailable']);
-    $access_controller = $this->entityManager->getAccessController('payment_method');
+    $access_controller = $this->entityManager->getAccessController('payment_method_configuration');
     foreach (array_keys($definitions) as $plugin_id) {
       if ($access_controller->createAccess($plugin_id, $this->currentUser)) {
         return static::ALLOW;
@@ -229,11 +229,11 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
    * @return array
    */
   public function add($plugin_id) {
-    $payment_method = $this->entityManager->getStorage('payment_method')->create(array(
+    $payment_method_configuration = $this->entityManager->getStorage('payment_method_configuration')->create(array(
       'pluginId' => $plugin_id,
     ));
 
-    return $this->formBuilder->getForm($this->entityManager->getFormController('payment_method', 'default')->setEntity($payment_method));
+    return $this->formBuilder->getForm($this->entityManager->getFormController('payment_method_configuration', 'default')->setEntity($payment_method_configuration));
   }
 
   /**
@@ -248,25 +248,25 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
   public function addAccess(Request $request) {
     $plugin_id = $request->attributes->get('plugin_id');
 
-    return $this->entityManager->getAccessController('payment_method')->createAccess($plugin_id, $this->currentUser) ? self::ALLOW : self::DENY;
+    return $this->entityManager->getAccessController('payment_method_configuration')->createAccess($plugin_id, $this->currentUser) ? self::ALLOW : self::DENY;
   }
 
   /**
    * Displays a payment method clone form.
    *
-   * @param \Drupal\payment\Entity\PaymentMethodInterface $payment_method
+   * @param \Drupal\payment\Entity\PaymentMethodConfigurationInterface $payment_method_configuration
    *
    * @return array
    */
-  public function duplicate(PaymentMethodInterface $payment_method) {
-    /** @var \Drupal\payment\Entity\PaymentMethodInterface $clone */
-    $clone = $payment_method
+  public function duplicate(PaymentMethodConfigurationInterface $payment_method_configuration) {
+    /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface $clone */
+    $clone = $payment_method_configuration
       ->createDuplicate();
-    $payment_method->setLabel($this->t('!label (duplicate)', array(
-        '!label' => $payment_method->label(),
+    $clone->setLabel($this->t('!label (duplicate)', array(
+        '!label' => $payment_method_configuration->label(),
       )));
 
-    return $this->formBuilder->getForm($this->entityManager->getFormController('payment_method', 'default')->setEntity($clone));
+    return $this->formBuilder->getForm($this->entityManager->getFormController('payment_method_configuration', 'default')->setEntity($clone));
   }
 
   /**

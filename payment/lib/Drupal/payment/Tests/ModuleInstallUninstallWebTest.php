@@ -7,7 +7,7 @@
 
 namespace Drupal\payment\Tests;
 
-use Drupal\payment\Entity\PaymentMethodInterface;
+use Drupal\payment\Entity\PaymentMethodConfigurationInterface;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -41,8 +41,8 @@ class ModuleInstallUninstallWebTest extends WebTestBase {
     // Test default configuration.
     $names = array('collect_on_delivery', 'no_payment_required');
     foreach ($names as $name) {
-      $payment_method = entity_load('payment_method', $name);
-      $this->assertTrue($payment_method instanceof PaymentMethodInterface);
+      $payment_method = entity_load('payment_method_configuration', $name);
+      $this->assertTrue($payment_method instanceof PaymentMethodConfigurationInterface);
     }
 
     $handler->uninstall(array('payment'));

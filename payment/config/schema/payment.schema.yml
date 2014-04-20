@@ -1,4 +1,4 @@
-payment.payment_method.*:
+payment.payment_method_configuration.*:
   type: mapping
   label: Payment method
   mapping:

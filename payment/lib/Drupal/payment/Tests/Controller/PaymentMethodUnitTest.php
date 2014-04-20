@@ -105,7 +105,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
    * @covers ::enable
    */
   public function testEnable() {
-    $payment_method = $this->getMock('\Drupal\payment\Entity\PaymentMethodInterface');
+    $payment_method = $this->getMock('\Drupal\payment\Entity\PaymentMethodConfigurationInterface');
     $payment_method->expects($this->once())
       ->method('enable');
     $payment_method->expects($this->once())
@@ -117,7 +117,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
    * @covers ::disable
    */
   public function testDisable() {
-    $payment_method = $this->getMock('\Drupal\payment\Entity\PaymentMethodInterface');
+    $payment_method = $this->getMock('\Drupal\payment\Entity\PaymentMethodConfigurationInterface');
     $payment_method->expects($this->once())
       ->method('disable');
     $payment_method->expects($this->once())
@@ -151,7 +151,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
 
     $this->entityManager->expects($this->once())
       ->method('getAccessController')
-      ->with('payment_method')
+      ->with('payment_method_configuration')
       ->will($this->returnValue($access_controller));
 
     $this->controller->select();
@@ -192,7 +192,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
 
     $this->entityManager->expects($this->exactly(2))
       ->method('getAccessController')
-      ->with('payment_method')
+      ->with('payment_method_configuration')
       ->will($this->returnValue($access_controller));
 
     $request = new Request();
@@ -207,7 +207,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
   public function testAdd() {
     $plugin_id = $this->randomName();
 
-    $payment_method = $this->getMock('\Drupal\payment\Entity\PaymentMethodInterface');
+    $payment_method = $this->getMock('\Drupal\payment\Entity\PaymentMethodConfigurationInterface');
 
     $storage_controller = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
     $storage_controller->expects($this->once())
@@ -221,12 +221,12 @@ class PaymentMethodUnitTest extends UnitTestCase {
 
     $this->entityManager->expects($this->once())
       ->method('getStorage')
-      ->with('payment_method')
+      ->with('payment_method_configuration')
       ->will($this->returnValue($storage_controller));
 
     $this->entityManager->expects($this->once())
       ->method('getFormController')
-      ->with('payment_method', 'default')
+      ->with('payment_method_configuration', 'default')
       ->will($this->returnValue($form_controller));
 
     $this->formBuilder->expects($this->once())
@@ -256,7 +256,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
 
     $this->entityManager->expects($this->exactly(2))
       ->method('getAccessController')
-      ->with('payment_method')
+      ->with('payment_method_configuration')
       ->will($this->returnValue($access_controller));
 
     $this->assertSame(AccessInterface::ALLOW, $this->controller->addAccess($request));
@@ -267,7 +267,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
    * @covers ::duplicate
    */
   public function testDuplicate() {
-    $payment_method = $this->getMock('\Drupal\payment\Entity\PaymentMethodInterface');
+    $payment_method = $this->getMock('\Drupal\payment\Entity\PaymentMethodConfigurationInterface');
     $payment_method->expects($this->once())
       ->method('createDuplicate')
       ->will($this->returnSelf());
@@ -282,7 +282,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
 
     $this->entityManager->expects($this->once())
       ->method('getFormController')
-      ->with('payment_method', 'default')
+      ->with('payment_method_configuration', 'default')
       ->will($this->returnValue($form_controller));
 
     $this->formBuilder->expects($this->once())

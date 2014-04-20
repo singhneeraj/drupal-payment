@@ -8,13 +8,13 @@ payment.payment.edit:
   route_name: payment.payment.edit
   title: 'Edit'
 
-payment.payment_method_plugin.list:
-  base_route: payment.payment_method_plugin.list
-  route_name: payment.payment_method_plugin.list
+payment.payment_method.list:
+  base_route: payment.payment_method.list
+  route_name: payment.payment_method.list
   title: 'List'
 
-payment.payment_method.list:
-  base_route: payment.payment_method_plugin.list
+payment.payment_method_configuration.list:
+  base_route: payment.payment_method.list
   route_name: payment.payment_method.list
   title: 'Configuration'
 

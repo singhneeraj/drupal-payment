@@ -18,7 +18,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 class Permission {
 
   /**
-   * The payment method configuration manager.
+   * The payment method configuration configuration manager.
    *
    * @var \Drupal\Component\Plugin\PluginManagerInterface
    */
@@ -65,25 +65,25 @@ class Permission {
       'payment.payment.delete.own' => array(
         'title' => $this->t('Delete own payments'),
       ),
-      'payment.payment_method.update.any' => array(
-        'title' => $this->t('Update any payment method'),
+      'payment.payment_method_configuration.update.any' => array(
+        'title' => $this->t('Update any payment method configuration'),
         'restrict access' => TRUE,
       ),
-      'payment.payment_method.update.own' => array(
-        'title' => $this->t('Update own payment methods'),
+      'payment.payment_method_configuration.update.own' => array(
+        'title' => $this->t('Update own payment method configurations'),
       ),
-      'payment.payment_method.delete.any' => array(
-        'title' => $this->t('Delete any payment method'),
+      'payment.payment_method_configuration.delete.any' => array(
+        'title' => $this->t('Delete any payment method configuration'),
       ),
-      'payment.payment_method.delete.own' => array(
-        'title' => $this->t('Delete own payment methods'),
+      'payment.payment_method_configuration.delete.own' => array(
+        'title' => $this->t('Delete own payment method configurations'),
       ),
-      'payment.payment_method.view.any' => array(
-        'title' => $this->t('View any payment method'),
+      'payment.payment_method_configuration.view.any' => array(
+        'title' => $this->t('View any payment method configuration'),
         'restrict access' => TRUE,
       ),
-      'payment.payment_method.view.own' => array(
-        'title' => $this->t('View own payment methods'),
+      'payment.payment_method_configuration.view.own' => array(
+        'title' => $this->t('View own payment method configurations'),
       ),
       'payment.payment_status.administer' => array(
         'title' => $this->t('Administer payment statuses'),
@@ -94,8 +94,8 @@ class Permission {
     );
     $definitions = $this->paymentMethodConfigurationManager->getDefinitions();
     foreach ($definitions as $plugin_id => $definition) {
-      $permissions['payment.payment_method.create.' . $plugin_id] = array(
-        'title' => $this->t('Create %plugin_label payment methods', array(
+      $permissions['payment.payment_method_configuration.create.' . $plugin_id] = array(
+        'title' => $this->t('Create %plugin_label payment method configurations', array(
           '%plugin_label' => $definition['label'],
         )),
       );

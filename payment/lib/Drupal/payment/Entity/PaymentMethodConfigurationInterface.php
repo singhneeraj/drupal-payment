@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Definition of Drupal\payment\Entity\PaymentMethodInterface.
+ * Definition of Drupal\payment\Entity\PaymentMethodConfigurationInterface.
  */
 
 namespace Drupal\payment\Entity;
@@ -11,18 +11,18 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\user\EntityOwnerInterface;
 
 /**
- * Defines payment methods.
+ * Defines payment method configurations.
  */
-interface PaymentMethodInterface extends ConfigEntityInterface, EntityOwnerInterface {
+interface PaymentMethodConfigurationInterface extends ConfigEntityInterface, EntityOwnerInterface {
 
   /**
-   * Sets the payment method ID.
+   * Sets the payment method configuration ID.
    *
    * @see \Drupal\Core\Entity\EntityInterface::id()
    *
    * @param string $id
    *
-   * @return \Drupal\payment\Entity\PaymentMethodInterface
+   * @return $this
    */
   public function setId($id);
 
@@ -33,7 +33,7 @@ interface PaymentMethodInterface extends ConfigEntityInterface, EntityOwnerInter
    *
    * @param string $uuid
    *
-   * @return \Drupal\payment\Entity\PaymentMethodInterface
+   * @return $this
    */
   public function setUuid($uuid);
 
@@ -44,12 +44,12 @@ interface PaymentMethodInterface extends ConfigEntityInterface, EntityOwnerInter
    *
    * @param string $label
    *
-   * @return \Drupal\payment\Entity\PaymentMethodInterface
+   * @return $this
    */
   public function setLabel($label);
 
   /**
-   * Sets the payment method's plugin configuration.
+   * Sets the payment method configuration's plugin configuration.
    *
    * @param array $configuration
    *
@@ -58,14 +58,14 @@ interface PaymentMethodInterface extends ConfigEntityInterface, EntityOwnerInter
   public function setPluginConfiguration(array $configuration);
 
   /**
-   * Gets the payment method's plugin configuration.
+   * Gets the payment method configuration's plugin configuration.
    *
    * @return array
    */
   public function getPluginConfiguration();
 
   /**
-   * Gets the payment method's plugin ID.
+   * Gets the payment method configuration's plugin ID.
    *
    * @return string
    */

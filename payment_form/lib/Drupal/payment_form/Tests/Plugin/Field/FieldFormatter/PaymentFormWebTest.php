@@ -101,7 +101,7 @@ class PaymentFormWebTest extends WebTestBase {
     $this->user->save();
 
     // Create a payment method.
-    $this->paymentMethod = Generate::createPaymentMethod(2, 'payment_basic');
+    $this->paymentMethod = Generate::createPaymentMethodConfiguration(2, 'payment_basic');
     $this->paymentMethod->setPluginConfiguration(array(
       'status' => $this->statusPluginId,
     ));

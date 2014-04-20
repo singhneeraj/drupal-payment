@@ -48,7 +48,7 @@ class EntityCrud {
    * Invokes the implementation.
    */
   public function invoke(EntityInterface $entity) {
-    if ($entity->getEntityTypeId() == 'payment_method') {
+    if ($entity->getEntityTypeId() == 'payment_method_configuration') {
       $manager = $this->paymentMethodManager;
     }
     elseif ($entity->getEntityTypeId() == 'payment_status') {

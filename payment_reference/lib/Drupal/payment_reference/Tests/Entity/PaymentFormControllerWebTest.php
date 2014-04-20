@@ -37,7 +37,7 @@ class PaymentFormControllerWebTest extends WebTestBase {
    */
   protected function testForm() {
     // Create a payment method.
-    $payment_method = Generate::createPaymentMethod(2, 'payment_basic');
+    $payment_method = Generate::createPaymentMethodConfiguration(2, 'payment_basic');
     $payment_method->setPluginConfiguration(array(
       'status' => 'payment_success',
     ));

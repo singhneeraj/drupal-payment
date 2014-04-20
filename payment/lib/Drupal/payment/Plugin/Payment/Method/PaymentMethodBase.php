@@ -36,7 +36,7 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
   /**
    * The payment method entity this plugin belongs to.
    *
-   * @var \Drupal\payment\Entity\PaymentMethodInterface
+   * @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface
    */
   protected $paymentMethod;
 

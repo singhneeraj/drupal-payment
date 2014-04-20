@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Entity\PaymentMethodDeleteFormController.
+ * Contains \Drupal\payment\Entity\PaymentMethodConfigurationDeleteForm.
  */
 
 namespace Drupal\payment\Entity;
@@ -10,9 +10,9 @@ namespace Drupal\payment\Entity;
 use Drupal\Core\Entity\EntityConfirmFormBase;
 
 /**
- * Provides the payment method deletion form.
+ * Provides the payment method configuration deletion form.
  */
-class PaymentMethodDeleteFormController extends EntityConfirmFormBase {
+class PaymentMethodConfigurationDeleteForm extends EntityConfirmFormBase {
 
   /**
    * {@inheritdoc}
@@ -28,7 +28,7 @@ class PaymentMethodDeleteFormController extends EntityConfirmFormBase {
    */
   public function getCancelRoute() {
     return array(
-      'route_name' => 'payment.payment_method.list',
+      'route_name' => 'payment.payment_method_configuration.list',
     );
   }
 
@@ -36,7 +36,7 @@ class PaymentMethodDeleteFormController extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'payment_method_delete';
+    return 'payment_method_configuration_delete';
   }
 
   /**

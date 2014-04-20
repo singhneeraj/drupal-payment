@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Definition of Drupal\payment\Entity\PaymentMethodListBuilder.
+ * Definition of Drupal\payment\Entity\PaymentMethodConfigurationListBuilder.
  */
 
 namespace Drupal\payment\Entity;
@@ -12,9 +12,9 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\payment\Payment;
 
 /**
- * Lists payment method entities.
+ * Lists payment method configurations..
  */
-class PaymentMethodListBuilder extends ConfigEntityListBuilder {
+class PaymentMethodConfigurationListBuilder extends ConfigEntityListBuilder {
 
   /**
    * {@inheritdoc}
@@ -33,7 +33,7 @@ class PaymentMethodListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /** @var \Drupal\payment\Entity\PaymentMethodInterface $payment_method */
+    /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface $payment_method */
     $payment_method = $entity;
 
     $row['data']['label'] = $payment_method->label();
@@ -53,7 +53,7 @@ class PaymentMethodListBuilder extends ConfigEntityListBuilder {
     $row['data']['operations']['data'] = $operations;
 
     if (!$payment_method->status()) {
-      $row['class']= array('payment-method-disabled');
+      $row['class']= array('payment-method-configuration-disabled');
     }
 
     return $row;
@@ -85,7 +85,7 @@ class PaymentMethodListBuilder extends ConfigEntityListBuilder {
   public function render() {
     $build = parent::render();
     $build['#attached']['css'][] = drupal_get_path('module', 'payment') . '/css/payment.css';
-    $build['#attributes']['class'][] = 'payment-method-list';
+    $build['#attributes']['class'][] = 'payment-method-configuration-list';
 
     return $build;
   }

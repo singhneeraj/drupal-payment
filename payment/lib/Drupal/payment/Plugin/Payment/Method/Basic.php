@@ -118,12 +118,12 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
 
     // Strip the base plugin ID and the colon.
     $entity_id = substr($plugin_id, 14);
-    $payment_method = \Drupal::entityManager()->getStorage('payment_method')->load($entity_id);
+    $payment_method = \Drupal::entityManager()->getStorage('payment_method_configuration')->load($entity_id);
     $operations = array();
     if ($payment_method->access('update')) {
       $operations['update'] = array(
         'title' => t('Edit configuration'),
-        'route_name' => 'payment.payment_method.edit',
+        'route_name' => 'payment.payment_method_configuration.edit',
         'route_parameters' => array(
           'payment_method' => $entity_id,
         ),
@@ -132,7 +132,7 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
     if ($payment_method->access('delete')) {
       $operations['delete'] = array(
         'title' => t('Delete configuration'),
-        'route_name' => 'payment.payment_method.delete',
+        'route_name' => 'payment.payment_method_configuration.delete',
         'route_parameters' => array(
           'payment_method' => $entity_id,
         ),
@@ -141,7 +141,7 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
     if ($payment_method->access('enable')) {
       $operations['enable'] = array(
         'title' => t('Enable configuration'),
-        'route_name' => 'payment.payment_method.enable',
+        'route_name' => 'payment.payment_method_configuration.enable',
         'route_parameters' => array(
           'payment_method' => $entity_id,
         ),
@@ -150,7 +150,7 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
     if ($payment_method->access('disable')) {
       $operations['disable'] = array(
         'title' => t('Disable configuration'),
-        'route_name' => 'payment.payment_method.disable',
+        'route_name' => 'payment.payment_method_configuration.disable',
         'route_parameters' => array(
           'payment_method' => $entity_id,
         ),

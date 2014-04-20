@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Entity\PaymentMethodFormController.
+ * Contains \Drupal\payment\Entity\PaymentMethodConfigurationForm..
  */
 
 namespace Drupal\payment\Entity;
@@ -12,15 +12,15 @@ use Drupal\payment\Payment;
 use Drupal\user\UserInterface;
 
 /**
- * Provides the payment method form.
+ * Provides the payment method configuration form.
  */
-class PaymentMethodFormController extends EntityFormController {
+class PaymentMethodConfigurationForm extends EntityFormController {
 
   /**
    * {@inheritdoc}
    */
   public function form(array $form, array &$form_state) {
-    /** @var \Drupal\payment\Entity\PaymentMethodInterface $payment_method */
+    /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface $payment_method */
     $payment_method = $this->getEntity();
     $definition = Payment::methodConfigurationManager()->getDefinition($payment_method->bundle());
     $form['type'] = array(
@@ -47,7 +47,7 @@ class PaymentMethodFormController extends EntityFormController {
       '#required' => TRUE,
       '#machine_name' => array(
         'source' => array('label'),
-        'exists' => array($this, 'paymentMethodIdExists'),
+        'exists' => array($this, 'paymentMethodConfigurationIdExists'),
       ),
       '#disabled' => (bool) $payment_method->id(),
     );
@@ -91,7 +91,7 @@ class PaymentMethodFormController extends EntityFormController {
   public function submit(array $form, array &$form_state) {
     parent::submit($form, $form_state);
     $values = $form_state['values'];
-    /** @var \Drupal\payment\Entity\PaymentMethodInterface $payment_method */
+    /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface $payment_method */
     $payment_method = $this->getEntity();
     $payment_method->setLabel($values['label'])
       ->setStatus($values['status'])
@@ -108,7 +108,7 @@ class PaymentMethodFormController extends EntityFormController {
       '@label' => $payment_method->label()
     )));
     $form_state['redirect_route'] = array(
-      'route_name' => 'payment.payment_method.list',
+      'route_name' => 'payment.payment_method_configuration.list',
     );
   }
 
@@ -127,8 +127,8 @@ class PaymentMethodFormController extends EntityFormController {
    *
    * @return bool
    */
-  function paymentMethodIdExists($id) {
-    return (bool) entity_load('payment_method', $id);
+  function paymentMethodConfigurationIdExists($id) {
+    return (bool) entity_load('payment_method_configuration', $id);
   }
 
   /**

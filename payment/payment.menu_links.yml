@@ -10,10 +10,10 @@ payment.payment_type.list:
   title: Payment types
   parent: payment.admin
   route_name: payment.payment_type.list
-payment.payment_method_plugin.list:
+payment.payment_method.list:
   title: Payment methods
   parent: payment.admin
-  route_name: payment.payment_method_plugin.list
+  route_name: payment.payment_method.list
 payment.payment_status.list:
   title: Payment statuses
   parent: payment.admin

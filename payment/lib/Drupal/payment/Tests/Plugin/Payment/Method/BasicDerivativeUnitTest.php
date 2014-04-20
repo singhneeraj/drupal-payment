@@ -69,7 +69,7 @@ class BasicDerivativeUnitTest extends UnitTestCase {
     $message_text_format = $this->randomName();
     $status = $this->randomName();
 
-    $payment_method_enabled_basic = $this->getMock('\Drupal\payment\Entity\PaymentMethodInterface');
+    $payment_method_enabled_basic = $this->getMock('\Drupal\payment\Entity\PaymentMethodConfigurationInterface');
     $payment_method_enabled_basic->expects($this->any())
       ->method('status')
       ->will($this->returnValue(TRUE));
@@ -88,7 +88,7 @@ class BasicDerivativeUnitTest extends UnitTestCase {
       ->method('getPluginId')
       ->will($this->returnValue('payment_basic'));
 
-    $payment_method_disabled_basic = $this->getMock('\Drupal\payment\Entity\PaymentMethodInterface');
+    $payment_method_disabled_basic = $this->getMock('\Drupal\payment\Entity\PaymentMethodConfigurationInterface');
     $payment_method_disabled_basic->expects($this->any())
       ->method('status')
       ->will($this->returnValue(FALSE));
@@ -107,7 +107,7 @@ class BasicDerivativeUnitTest extends UnitTestCase {
       ->method('getPluginId')
       ->will($this->returnValue('payment_basic'));
 
-    $payment_method_enabled_no_basic = $this->getMock('\Drupal\payment\Entity\PaymentMethodInterface');
+    $payment_method_enabled_no_basic = $this->getMock('\Drupal\payment\Entity\PaymentMethodConfigurationInterface');
     $payment_method_enabled_no_basic->expects($this->any())
       ->method('status')
       ->will($this->returnValue(TRUE));

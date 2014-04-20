@@ -46,7 +46,7 @@ class BasicDerivative extends DerivativeBase implements ContainerDerivativeInter
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, $base_plugin_id) {
-    return new static($container->get('entity.manager')->getStorage('payment_method'), $container->get('plugin.manager.payment.method_configuration'));
+    return new static($container->get('entity.manager')->getStorage('payment_method_configuration'), $container->get('plugin.manager.payment.method_configuration'));
   }
 
   /**

@@ -73,7 +73,7 @@ class EntityCrudUnitTest extends UnitTestCase {
     $payment_method = $this->getMock('\Drupal\Core\Entity\EntityInterface');
     $payment_method->expects($this->any())
       ->method('getEntityTypeId')
-      ->will($this->returnValue('payment_method'));
+      ->will($this->returnValue('payment_method_configuration'));
 
     $payment_status = $this->getMock('\Drupal\Core\Entity\EntityInterface');
     $payment_status->expects($this->any())

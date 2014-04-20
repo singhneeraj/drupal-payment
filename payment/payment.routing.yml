@@ -37,30 +37,30 @@ payment.payment.delete:
   requirements:
     _entity_access: 'payment.delete'
 
-payment.payment_method_plugin.list:
+payment.payment_method.list:
   path: '/admin/config/services/payment/method'
   defaults:
     _content: '\Drupal\payment\Controller\PaymentMethod::listPlugins'
     _title: 'Payment methods'
   requirements:
-    _permission: 'payment.payment_method.view.any'
+    _permission: 'payment.payment_method_configuration.view.any'
 
-payment.payment_method.list:
+payment.payment_method_configuration.list:
   path: '/admin/config/services/payment/method/configuration'
   defaults:
-    _entity_list: 'payment_method'
+    _entity_list: 'payment_method_configuration'
     _title: 'Payment method configurations'
   requirements:
-    _permission: 'payment.payment_method.view.any'
+    _permission: 'payment.payment_method_configuration.view.any'
 
-payment.payment_method.select:
+payment.payment_method_configuration.select:
   path: '/admin/config/services/payment/method/configuration-add'
   defaults:
     _content: '\Drupal\payment\Controller\PaymentMethod::select'
   requirements:
     _custom_access: '\Drupal\payment\Controller\PaymentMethod::selectAccess'
 
-payment.payment_method.add:
+payment.payment_method_configuration.add:
   path: '/admin/config/services/payment/method/configuration-add/{plugin_id}'
   defaults:
     _content: '\Drupal\payment\Controller\PaymentMethod::add'
@@ -68,42 +68,42 @@ payment.payment_method.add:
   requirements:
     _custom_access: '\Drupal\payment\Controller\PaymentMethod::addAccess'
 
-payment.payment_method.edit:
-  path: '/admin/config/services/payment/method/configuration/{payment_method}'
+payment.payment_method_configuration.edit:
+  path: '/admin/config/services/payment/method/configuration/{payment_method_configuration}'
   defaults:
-    _entity_form: 'payment_method.default'
+    _entity_form: 'payment_method_configuration.default'
     _title: 'Edit payment method'
   requirements:
-    _entity_access: 'payment_method.update'
+    _entity_access: 'payment_method_configuration.update'
 
-payment.payment_method.enable:
-  path: '/admin/config/services/payment/method/configuration/{payment_method}/enable'
+payment.payment_method_configuration.enable:
+  path: '/admin/config/services/payment/method/configuration/{payment_method_configuration}/enable'
   defaults:
     _content: '\Drupal\payment\Controller\PaymentMethod::enable'
   requirements:
-    _entity_access: 'payment_method.enable'
+    _entity_access: 'payment_method_configuration.enable'
 
-payment.payment_method.disable:
-  path: '/admin/config/services/payment/method/configuration/{payment_method}/disable'
+payment.payment_method_configuration.disable:
+  path: '/admin/config/services/payment/method/configuration/{payment_method_configuration}/disable'
   defaults:
     _content: '\Drupal\payment\Controller\PaymentMethod::disable'
   requirements:
-    _entity_access: 'payment_method.disable'
+    _entity_access: 'payment_method_configuration.disable'
 
-payment.payment_method.delete:
-  path: '/admin/config/services/payment/method/configuration/{payment_method}/delete'
+payment.payment_method_configuration.delete:
+  path: '/admin/config/services/payment/method/configuration/{payment_method_configuration}/delete'
   defaults:
-    _entity_form: 'payment_method.delete'
+    _entity_form: 'payment_method_configuration.delete'
   requirements:
-    _entity_access: 'payment_method.delete'
+    _entity_access: 'payment_method_configuration.delete'
 
-payment.payment_method.duplicate:
-  path: '/admin/config/services/payment/method/configuration/{payment_method}/duplicate'
+payment.payment_method_configuration.duplicate:
+  path: '/admin/config/services/payment/method/configuration/{payment_method_configuration}/duplicate'
   defaults:
     _content: '\Drupal\payment\Controller\PaymentMethod::duplicate'
     _title: 'Add a payment method'
   requirements:
-    _entity_access: 'payment_method.duplicate'
+    _entity_access: 'payment_method_configuration.duplicate'
 
 payment.payment_status.list:
   path: '/admin/config/services/payment/status'

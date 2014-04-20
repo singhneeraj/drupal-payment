@@ -79,6 +79,6 @@ class PermissionUnitTest extends UnitTestCase {
       $this->assertInternalType('array', $permission);
       $this->assertArrayHasKey('title', $permission);
     }
-    $this->arrayHasKey('payment.payment_method.create.'. $payment_method_configuration_plugin_id, $permissions);
+    $this->arrayHasKey('payment.payment_method_configuration.create.'. $payment_method_configuration_plugin_id, $permissions);
   }
 }

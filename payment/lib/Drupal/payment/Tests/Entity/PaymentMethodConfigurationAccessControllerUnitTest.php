@@ -2,23 +2,23 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Tests\Entity\PaymentMethodAccessControllerUnitTest.
+ * Contains \Drupal\payment\Tests\Entity\PaymentMethodConfigurationAccessControllerUnitTest.
  */
 
 namespace Drupal\payment\Tests\Entity;
 
-use Drupal\payment\Entity\PaymentMethodAccessController;
+use Drupal\payment\Entity\PaymentMethodConfigurationAccessController;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * @coversDefaultClass \Drupal\payment\Entity\PaymentMethodAccessController
+ * @coversDefaultClass \Drupal\payment\Entity\PaymentMethodConfigurationAccessController
  */
-class PaymentMethodAccessControllerUnitTest extends UnitTestCase {
+class PaymentMethodConfigurationAccessControllerUnitTest extends UnitTestCase {
 
   /**
    * The access controller under test.
    *
-   * @var \Drupal\payment\Entity\PaymentMethodAccessController
+   * @var \Drupal\payment\Entity\PaymentMethodConfigurationAccessController
    */
   protected $accessController;
 
@@ -28,7 +28,7 @@ class PaymentMethodAccessControllerUnitTest extends UnitTestCase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\PaymentMethodAccessController unit test',
+      'name' => '\Drupal\payment\PaymentMethodConfigurationAccessController unit test',
       'group' => 'Payment',
     );
   }
@@ -38,7 +38,7 @@ class PaymentMethodAccessControllerUnitTest extends UnitTestCase {
    */
   public function setUp() {
     $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
-    $this->accessController = new PaymentMethodAccessController($entity_type);
+    $this->accessController = new PaymentMethodConfigurationAccessController($entity_type);
   }
 
   /**
@@ -51,7 +51,7 @@ class PaymentMethodAccessControllerUnitTest extends UnitTestCase {
     $account->expects($this->any())
       ->method('hasPermission')
       ->will($this->returnValue(FALSE));
-    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethod')
+    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
       ->disableOriginalConstructor()
       ->getMock();
 
@@ -70,9 +70,9 @@ class PaymentMethodAccessControllerUnitTest extends UnitTestCase {
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
     $account->expects($this->once())
       ->method('hasPermission')
-      ->with('payment.payment_method.' . $operation . '.any')
+      ->with('payment.payment_method_configuration.' . $operation . '.any')
       ->will($this->returnValue(TRUE));
-    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethod')
+    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
       ->disableOriginalConstructor()
       ->getMock();
 
@@ -94,13 +94,13 @@ class PaymentMethodAccessControllerUnitTest extends UnitTestCase {
       ->method('id')
       ->will($this->returnValue($owner_id));
     $map = array(
-      array('payment.payment_method.' . $operation . '.any', FALSE),
-      array('payment.payment_method.' . $operation . '.own', TRUE),
+      array('payment.payment_method_configuration.' . $operation . '.any', FALSE),
+      array('payment.payment_method_configuration.' . $operation . '.own', TRUE),
     );
     $account->expects($this->any())
       ->method('hasPermission')
       ->will($this->returnValueMap($map));
-    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethod')
+    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
       ->disableOriginalConstructor()
       ->getMock();
     $payment_method->expects($this->at(0))
@@ -127,7 +127,7 @@ class PaymentMethodAccessControllerUnitTest extends UnitTestCase {
     $account->expects($this->any())
       ->method('hasPermission')
       ->will($this->returnValue(FALSE));
-    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethod')
+    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
       ->disableOriginalConstructor()
       ->getMock();
     // Enabled.
@@ -172,7 +172,7 @@ class PaymentMethodAccessControllerUnitTest extends UnitTestCase {
     $account->expects($this->any())
       ->method('hasPermission')
       ->will($this->returnValue(FALSE));
-    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethod')
+    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
       ->disableOriginalConstructor()
       ->getMock();
     // Disabled.
@@ -218,11 +218,11 @@ class PaymentMethodAccessControllerUnitTest extends UnitTestCase {
       ->method('hasPermission')
       ->will($this->returnValue(FALSE));
     $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
-    $access_controller = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodAccessController')
+    $access_controller = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfigurationAccessController')
       ->setConstructorArgs(array($entity_type))
       ->setMethods(array('createAccess'))
       ->getMock();
-    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethod')
+    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
       ->disableOriginalConstructor()
       ->getMock();
     // No create access.
@@ -266,7 +266,7 @@ class PaymentMethodAccessControllerUnitTest extends UnitTestCase {
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
     $account->expects($this->once())
       ->method('hasPermission')
-      ->with('payment.payment_method.create.' . $bundle)
+      ->with('payment.payment_method_configuration.create.' . $bundle)
       ->will($this->returnValue(TRUE));
 
     $class = new \ReflectionClass($this->accessController);

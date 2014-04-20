@@ -1,10 +1,12 @@
-/* @group payment method overview */
+/* @group payment method configuration overview */
 
-.payment-method-list .payment-method-disabled td {
+.payment-method-list .payment-method-disabled td,
+.payment-method-configuration-list .payment-method-configuration-disabled td {
   color: #999;
 }
 
-.payment-method-list .payment-method-disabled td {
+.payment-method-list .payment-method-disabled td,
+.payment-method-configuration-list .payment-method-configuration-disabled td {
   color: #999;
 }
 

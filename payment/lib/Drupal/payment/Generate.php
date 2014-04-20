@@ -95,7 +95,7 @@ class Generate {
   }
 
   /**
-   * Creates a payment method.
+   * Creates a payment method configuration.
    *
    * @param integer $uid
    *   The user ID of the payment method's owner.
@@ -103,13 +103,13 @@ class Generate {
    *   The ID of the payment method configuration plugin to use as the entity's
    *   bundle.
    *
-   * @return \Drupal\payment\Entity\PaymentMethod
+   * @return \Drupal\payment\Entity\PaymentMethodConfigurationInterface
    */
-  static function createPaymentMethod($uid, $plugin_id) {
+  static function createPaymentMethodConfiguration($uid, $plugin_id) {
     $name = static::getRandom()->name();
 
-    /** @var \Drupal\payment\Entity\PaymentMethodInterface $payment_method */
-    $payment_method = entity_create('payment_method', array(
+    /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface $payment_method */
+    $payment_method = entity_create('payment_method_configuration', array(
       'pluginId' => $plugin_id,
     ));
     $payment_method->setId($name)

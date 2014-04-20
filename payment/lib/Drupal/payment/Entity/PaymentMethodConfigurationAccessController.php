@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Definition of Drupal\payment\Entity\PaymentMethodAccessController.
+ * Definition of Drupal\payment\Entity\PaymentMethodConfigurationAccessController.
  */
 
 namespace Drupal\payment\Entity;
@@ -12,15 +12,15 @@ use Drupal\Core\Entity\EntityAccessController;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Checks access for payment methods.
+ * Checks access for payment method configurations.
  */
-class PaymentMethodAccessController extends EntityAccessController {
+class PaymentMethodConfigurationAccessController extends EntityAccessController {
 
   /**
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $payment_method, $operation, $langcode, AccountInterface $account) {
-    /** @var \Drupal\payment\Entity\PaymentMethodInterface $payment_method */
+    /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface $payment_method */
     if ($operation == 'enable') {
       return !$payment_method->status() && $payment_method->access('update', $account);
     }
@@ -31,7 +31,7 @@ class PaymentMethodAccessController extends EntityAccessController {
       return $this->createAccess($payment_method->bundle(), $account) && $payment_method->access('view', $account);
     }
     else {
-      $permission = 'payment.payment_method.' . $operation;
+      $permission = 'payment.payment_method_configuration.' . $operation;
       return $account->hasPermission($permission . '.any') || $account->hasPermission($permission . '.own') && $payment_method->getOwnerId() == $account->id();
     }
   }
@@ -40,7 +40,7 @@ class PaymentMethodAccessController extends EntityAccessController {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $bundle = NULL) {
-    return $account->hasPermission('payment.payment_method.create.' . $bundle);
+    return $account->hasPermission('payment.payment_method_configuration.create.' . $bundle);
   }
 
   /**

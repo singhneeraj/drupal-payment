@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Definition of Drupal\payment\Entity\PaymentMethod.
+ * Definition of Drupal\payment\Entity\PaymentMethodConfiguration.
  */
 
 namespace Drupal\payment\Entity;
@@ -12,17 +12,17 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\user\UserInterface;
 
 /**
- * Defines a payment method entity.
+ * Defines a payment method configuration entity.
  *
  * @ConfigEntityType(
  *   bundle_label = @Translation("Payment method type"),
  *   controllers = {
- *     "access" = "Drupal\payment\Entity\PaymentMethodAccessController",
+ *     "access" = "Drupal\payment\Entity\PaymentMethodConfigurationAccessController",
  *     "form" = {
- *       "default" = "Drupal\payment\Entity\PaymentMethodFormController",
- *       "delete" = "Drupal\payment\Entity\PaymentMethodDeleteFormController"
+ *       "default" = "Drupal\payment\Entity\PaymentMethodConfigurationForm",
+ *       "delete" = "Drupal\payment\Entity\PaymentMethodConfigurationDeleteForm"
  *     },
- *     "list_builder" = "Drupal\payment\Entity\PaymentMethodListBuilder",
+ *     "list_builder" = "Drupal\payment\Entity\PaymentMethodConfigurationListBuilder",
  *     "storage" = "\Drupal\Core\Config\Entity\ConfigEntityStorage",
  *   },
  *   entity_keys = {
@@ -33,20 +33,20 @@ use Drupal\user\UserInterface;
  *     "status" = "status"
  *   },
  *   fieldable = FALSE,
- *   id = "payment_method",
- *   label = @Translation("Payment method"),
+ *   id = "payment_method_configuration",
+ *   label = @Translation("Payment method configuration"),
  *   links = {
- *     "enable" = "payment.payment_method.enable",
- *     "disable" = "payment.payment_method.disable",
- *     "canonical" = "payment.payment_method.edit",
- *     "create-form" = "payment.payment_method.select",
- *     "edit-form" = "payment.payment_method.edit",
- *     "delete-form" = "payment.payment_method.delete",
- *     "duplicate-form" = "payment.payment_method.duplicate"
+ *     "enable" = "payment.payment_method_configuration.enable",
+ *     "disable" = "payment.payment_method_configuration.disable",
+ *     "canonical" = "payment.payment_method_configuration.edit",
+ *     "create-form" = "payment.payment_method_configuration.select",
+ *     "edit-form" = "payment.payment_method_configuration.edit",
+ *     "delete-form" = "payment.payment_method_configuration.delete",
+ *     "duplicate-form" = "payment.payment_method_configuration.duplicate"
  *   }
  * )
  */
-class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
+class PaymentMethodConfiguration extends ConfigEntityBase implements PaymentMethodConfigurationInterface {
 
   /**
    * The entity's unique machine name.
@@ -99,8 +99,6 @@ class PaymentMethod extends ConfigEntityBase implements PaymentMethodInterface {
 
   /**
    * {@inheritdoc}
-   *
-   * @see \Drupal\payment\PaymentMethodStorage
    */
   public function toArray() {
     $properties = parent::toArray();
