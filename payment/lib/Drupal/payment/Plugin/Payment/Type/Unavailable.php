@@ -9,6 +9,7 @@ namespace Drupal\payment\Plugin\Payment\Type;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\TranslationManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -39,11 +40,13 @@ class Unavailable extends PaymentTypeBase {
    *   The plugin implementation definition.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   The event dispatcher.
    * @param \Drupal\Core\StringTranslation\TranslationManager $translation_manager
    *   The translation manager.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler, TranslationManager $translation_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $module_handler);
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler, EventDispatcherInterface $event_dispatcher, TranslationManager $translation_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $module_handler, $event_dispatcher);
     $this->translationManager = $translation_manager;
   }
 
@@ -51,7 +54,7 @@ class Unavailable extends PaymentTypeBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('module_handler'), $container->get('string_translation'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('module_handler'), $container->get('event_dispatcher'), $container->get('string_translation'));
   }
 
   /**

@@ -1,4 +1,4 @@
 services:
   payment_reference.queue:
-    arguments: ['payment_reference', '@database', '@module_handler', '@plugin.manager.payment.status']
+    arguments: ['payment_reference', '@database', '@module_handler', '@event_dispatcher', '@plugin.manager.payment.status']
     class: Drupal\payment\Queue

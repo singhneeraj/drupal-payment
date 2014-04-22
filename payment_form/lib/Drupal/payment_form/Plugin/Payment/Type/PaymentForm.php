@@ -29,13 +29,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The event dispatcher.
-   *
-   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
-   */
-  protected $eventDispatcher;
-
-  /**
    * The field instance storage.
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
@@ -59,14 +52,14 @@ class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInter
    * @param array $plugin_definition
    *   The plugin implementation definition.
    * @param \Drupal\Core\HttpKernel $http_kernel
-   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   The event dispatcher.
    * @param \Drupal\Core\Entity\EntityStorageInterface $field_instance_config_storage
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, HttpKernel $http_kernel, EventDispatcherInterface $event_dispatcher, ModuleHandlerInterface $module_handler, EntityStorageInterface $field_instance_config_storage) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $module_handler);
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, HttpKernel $http_kernel, ModuleHandlerInterface $module_handler, EventDispatcherInterface $event_dispatcher, EntityStorageInterface $field_instance_config_storage) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $module_handler, $event_dispatcher);
     $this->httpKernel = $http_kernel;
-    $this->eventDispatcher = $event_dispatcher;
     $this->fieldInstanceConfigStorage = $field_instance_config_storage;
   }
 
@@ -79,8 +72,8 @@ class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInter
       $plugin_id,
       $plugin_definition,
       $container->get('http_kernel'),
-      $container->get('event_dispatcher'),
       $container->get('module_handler'),
+      $container->get('event_dispatcher'),
       $container->get('entity.manager')->getStorage('field_instance_config')
     );
   }

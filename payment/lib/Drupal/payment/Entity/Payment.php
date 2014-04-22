@@ -12,6 +12,8 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\FieldDefinition;
+use Drupal\payment\Event\PaymentEvents;
+use Drupal\payment\Event\PaymentStatusSet;
 use Drupal\payment\Payment as PaymentServiceWrapper;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface as PluginPaymentMethodInterface;
@@ -214,16 +216,21 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function setStatus(PluginPaymentStatusInterface $status, $notify = TRUE) {
-    $previousStatus = $this->getStatus();
+    $previous_status = $this->getStatus();
     $status->setPaymentId($this->id());
     // Prevent duplicate statuses.
     if (!$this->getStatus() || $this->getStatus()->getPluginId() != $status->getPluginId()) {
       $this->statuses[] = $status;
     }
     if ($notify) {
-      $handler = \Drupal::moduleHandler();
-      foreach ($handler->getImplementations('payment_status_set') as $moduleName) {
-        $handler->invoke($moduleName, 'payment_status_set', array($this, $previousStatus));
+      /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher */
+      $event_dispatcher = \Drupal::service('event_dispatcher');
+      $event = new PaymentStatusSet($this, $previous_status);
+      $event_dispatcher->dispatch(PaymentEvents::PAYMENT_STATUS_SET, $event);
+
+      $module_handler = \Drupal::moduleHandler();
+      foreach ($module_handler->getImplementations('payment_status_set') as $moduleName) {
+        $module_handler->invoke($moduleName, 'payment_status_set', array($this, $previous_status));
         // If a hook invocation has added another log item, a new loop with
         // invocations has already been executed and we don't need to continue
         // with this one.

@@ -89,7 +89,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->paymentType = new PaymentForm(array(), 'payment_form', array(), $http_kernel, $this->eventDispatcher, $this->moduleHandler, $field_instance_config_storage);
+    $this->paymentType = new PaymentForm(array(), 'payment_form', array(), $http_kernel, $this->moduleHandler, $this->eventDispatcher, $field_instance_config_storage);
 
     $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()

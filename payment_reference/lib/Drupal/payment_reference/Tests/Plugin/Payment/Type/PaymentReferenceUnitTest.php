@@ -17,6 +17,13 @@ use Drupal\Tests\UnitTestCase;
 class PaymentReferenceUnitTest extends UnitTestCase {
 
   /**
+   * The event dispatcher used for testing.
+   *
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $eventDispatcher;
+
+  /**
    * The field instance config used for testing.
    *
    * @var \Drupal\field\Entity\FieldInstanceConfigConfig|\PHPUnit_Framework_MockObject_MockObject
@@ -59,6 +66,8 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   protected function setUp() {
+    $this->eventDispatcher = $this->getMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
+
     $url_generator = $this->getMockBuilder('\Drupal\Core\Routing\UrlGenerator')
       ->disableOriginalConstructor()
       ->getMock();
@@ -90,7 +99,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->paymentType = new PaymentReference(array(), 'payment_reference', array(), $http_kernel, $request, $this->moduleHandler, $url_generator, $field_instance_config_storage);
+    $this->paymentType = new PaymentReference(array(), 'payment_reference', array(), $http_kernel, $request, $this->moduleHandler, $this->eventDispatcher, $url_generator, $field_instance_config_storage);
 
     $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()

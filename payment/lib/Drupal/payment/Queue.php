@@ -11,7 +11,10 @@ use Drupal\Component\Utility\Random;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\payment\Event\PaymentEvents;
+use Drupal\payment\Event\PaymentQueuePaymentIdsAlter;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * The payment queue.
@@ -24,6 +27,13 @@ class Queue implements QueueInterface {
    * @var \Drupal\Core\Database\Connection
    */
   protected $database;
+
+  /**
+   * The event dispatcher.
+   *
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   */
+  protected $eventDispatcher;
 
   /**
    * The time it takes for a claim to expire.
@@ -70,11 +80,14 @@ class Queue implements QueueInterface {
    *   A database connection.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface
    *   The module handler.
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   The event dispatcher.
    * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    *   The payment status plugin manager.
    */
-  public function __construct($queue_id, Connection $database, ModuleHandlerInterface $module_handler, PaymentStatusManagerInterface $payment_status_manager) {
+  public function __construct($queue_id, Connection $database, ModuleHandlerInterface $module_handler, EventDispatcherInterface $event_dispatcher, PaymentStatusManagerInterface $payment_status_manager) {
     $this->database = $database;
+    $this->eventDispatcher = $event_dispatcher;
     $this->moduleHandler = $module_handler;
     $this->paymentStatusManager = $payment_status_manager;
     $this->randomGenerator = new Random();
@@ -179,6 +192,23 @@ class Queue implements QueueInterface {
       ->condition('pr.queue_id', $this->queueId);
 
     $payment_ids = $query->execute()->fetchCol();
+
+    return $this->alterLoadedPaymentIds($category_id, $owner_id, $payment_ids);
+  }
+
+  /**
+   * Alters loaded payment IDs.
+   *
+   * @param string $category_id
+   * @param int $owner_id
+   * @param int[] $payment_ids
+   *
+   * @return int[] $payment_ids
+   */
+  protected function alterLoadedPaymentIds($category_id, $owner_id, array $payment_ids) {
+    $event = new PaymentQueuePaymentIdsAlter($category_id, $owner_id, $payment_ids);
+    $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_QUEUE_PAYMENT_IDS_ALTER, $event);
+    $payment_ids = $event->getPaymentIds();
     $this->moduleHandler->alter('payment_queue_payment_ids', $category_id, $owner_id, $payment_ids);
     // @todo Add a Rules event.
 

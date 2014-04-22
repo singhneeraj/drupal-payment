@@ -13,7 +13,11 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\Event\PaymentEvents;
+use Drupal\payment\Event\PaymentExecuteAccess;
+use Drupal\payment\Event\PaymentPreExecute;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * A base payment method plugin.
@@ -25,6 +29,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * - message_text_format: The ID of the text format to format message_text with.
  */
 abstract class PaymentMethodBase extends PluginBase implements AccessInterface, ContainerFactoryPluginInterface, PaymentMethodInterface {
+
+  /**
+   * The event dispatcher.
+   *
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   */
+  protected $eventDispatcher;
 
   /**
    * The module handler.
@@ -58,12 +69,15 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
    *   The plugin implementation definition.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   The event dispatcher.
    * @param \Drupal\Core\Utility\Token $token
    *   The token API.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler, Token $token) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler, EventDispatcherInterface $event_dispatcher, Token $token) {
     $configuration += $this->defaultConfiguration();
     parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->eventDispatcher = $event_dispatcher;
     $this->moduleHandler = $module_handler;
     $this->token = $token;
   }
@@ -72,7 +86,7 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('module_handler'), $container->get('token'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('module_handler'), $container->get('event_dispatcher'), $container->get('token'));
   }
 
   /**
@@ -209,10 +223,14 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
    * @return bool
    */
   protected function paymentExecuteAccessEvent(PaymentInterface $payment, AccountInterface $account) {
-    $access = $this->moduleHandler->invokeAll('payment_execute_access', array($payment, $this, $account));
+    $event = new PaymentExecuteAccess($payment, $this, $account);
+    $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_EXECUTE_ACCESS, $event);
 
+    $hook_access_results = $this->moduleHandler->invokeAll('payment_execute_access', array($payment, $this, $account));
+
+    $access_results = array_merge($event->getAccessResults(), $hook_access_results);
     // If there are no results, grant access.
-    return empty($access) || in_array(self::ALLOW, $access, TRUE) && !in_array(self::KILL, $access, TRUE);
+    return empty($access_results) || in_array(self::ALLOW, $access_results, TRUE) && !in_array(self::KILL, $access_results, TRUE);
   }
 
   /**
@@ -223,6 +241,8 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
    * @return bool
    */
   protected function paymentExecuteEvent(PaymentInterface $payment) {
+    $event = new PaymentPreExecute($payment);
+    $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_PRE_EXECUTE, $event);
     $this->moduleHandler->invokeAll('payment_pre_execute', array($payment));
     // @todo invoke Rules event.
   }

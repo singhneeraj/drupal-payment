@@ -8,12 +8,20 @@
 namespace Drupal\payment\Tests\Plugin\Payment\Method;
 
 use Drupal\Core\Access\AccessInterface;
+use Drupal\payment\Event\PaymentEvents;
 use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase
  */
 class PaymentMethodBaseUnitTest extends UnitTestCase {
+
+  /**
+   * The event dispatcher.
+   *
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $eventDispatcher;
 
   /**
    * The module handler used for testing.
@@ -60,6 +68,8 @@ class PaymentMethodBaseUnitTest extends UnitTestCase {
   public function setUp() {
     parent::setUp();
 
+    $this->eventDispatcher = $this->getMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
+
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
 
     $this->token = $this->getMockBuilder('\Drupal\Core\Utility\Token')
@@ -73,7 +83,7 @@ class PaymentMethodBaseUnitTest extends UnitTestCase {
     );
 
     $this->plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\PaymentMethodBase')
-      ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->token))
+      ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token))
       ->setMethods(array('currencies', 'checkMarkup', 't'))
       ->getMock();
     $this->plugin->expects($this->any())
@@ -142,6 +152,9 @@ class PaymentMethodBaseUnitTest extends UnitTestCase {
     $this->moduleHandler->expects($this->once())
       ->method('invokeAll')
       ->with('payment_pre_execute');
+    $this->eventDispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(PaymentEvents::PAYMENT_PRE_EXECUTE);
     $this->plugin->executePayment($payment);
   }
 
@@ -180,6 +193,9 @@ class PaymentMethodBaseUnitTest extends UnitTestCase {
     $this->moduleHandler->expects($this->at(1))
       ->method('invokeAll')
       ->will($this->returnValue(array()));
+    $this->eventDispatcher->expects($this->exactly(2))
+      ->method('dispatch')
+      ->with(PaymentEvents::PAYMENT_EXECUTE_ACCESS);
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
     $this->assertTrue($this->plugin->executePaymentAccess($payment, $account));
     $this->assertTrue($this->plugin->executePaymentAccess($payment, $account));

@@ -15,6 +15,13 @@ use Drupal\Tests\UnitTestCase;
 class BasicUnitTest extends UnitTestCase {
 
   /**
+   * The event dispatcher.
+   *
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $eventDispatcher;
+
+  /**
    * The module handler used for testing.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -68,6 +75,8 @@ class BasicUnitTest extends UnitTestCase {
   public function setUp() {
     parent::setUp();
 
+    $this->eventDispatcher = $this->getMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
+
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
 
     $this->token = $this->getMockBuilder('\Drupal\Core\Utility\Token')
@@ -77,7 +86,7 @@ class BasicUnitTest extends UnitTestCase {
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
     $this->plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\Basic')
-      ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->token, $this->paymentStatusManager))
+      ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager))
       ->setMethods(array('t'))
       ->getMock();
     $this->plugin->expects($this->any())
@@ -106,7 +115,7 @@ class BasicUnitTest extends UnitTestCase {
     $payment_status_plugin_id = $this->randomName();
     /** @var \Drupal\payment\Plugin\Payment\Method\Basic|\PHPUnit_Framework_MockObject_MockObject $payment_method_plugin */
     $payment_method_plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\Basic')
-      ->setConstructorArgs(array(array(), '', array(), $this->moduleHandler, $this->token, $this->paymentStatusManager))
+      ->setConstructorArgs(array(array(), '', array(), $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager))
       ->setMethods(array('executePaymentAccess', 'getStatus'))
       ->getMock();
     $payment_method_plugin->expects($this->once())

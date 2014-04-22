@@ -15,6 +15,13 @@ use Drupal\Tests\UnitTestCase;
 class UnavailableUnitTest extends UnitTestCase {
 
   /**
+   * The event dispatcher.
+   *
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $eventDispatcher;
+
+  /**
    * The module handler used for testing.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -50,6 +57,8 @@ class UnavailableUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   public function setUp() {
+    $this->eventDispatcher = $this->getMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
+
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
 
     $this->translationManager = $this->getMockBuilder('\Drupal\Core\StringTranslation\TranslationManager')
@@ -60,7 +69,7 @@ class UnavailableUnitTest extends UnitTestCase {
     $plugin_id = $this->randomName();
     $plugin_definition = array();
     $this->paymentType = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Type\Unavailable')
-      ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->moduleHandler, $this->translationManager))
+      ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->moduleHandler, $this->eventDispatcher, $this->translationManager))
       ->setMethods(NULL)
       ->getMock();
   }
