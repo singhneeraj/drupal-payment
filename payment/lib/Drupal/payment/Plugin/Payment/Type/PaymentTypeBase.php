@@ -108,16 +108,19 @@ abstract class PaymentTypeBase extends PluginBase implements ContainerFactoryPlu
 
   /**
    * {@inheritdoc}
-   *
-   * Child classes are required to override this method and explicitly resume
-   * the context workflow.
    */
   function resumeContext() {
     $event = new PaymentTypePreResumeContext($this->getPayment());
     $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_TYPE_PRE_RESUME_CONTEXT, $event);
     $this->moduleHandler->invokeAll('payment_type_pre_resume_context', array($this->getPayment()));
     // @todo Invoke Rules event.
+    $this->doResumeContext();
   }
+
+  /**
+   * Performs the actual context resumption.
+   */
+  abstract protected function doResumeContext();
 
   /**
    * {@inheritdoc

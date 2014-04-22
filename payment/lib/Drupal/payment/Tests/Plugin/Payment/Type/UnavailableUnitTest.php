@@ -79,6 +79,11 @@ class UnavailableUnitTest extends UnitTestCase {
    * @expectedException \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    */
   public function testResumeContext() {
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $this->paymentType->setPayment($payment);
+
     $this->paymentType->resumeContext();
   }
 

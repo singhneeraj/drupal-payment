@@ -106,7 +106,7 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
   /**
    * {@inheritdoc}
    */
-  public function executePayment(PaymentInterface $payment) {
+  protected function doExecutePayment(PaymentInterface $payment) {
     $payment->setStatus($this->paymentStatusManager->createInstance($this->getStatus()));
     $payment->save();
     $payment->getPaymentType()->resumeContext();

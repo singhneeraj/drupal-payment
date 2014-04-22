@@ -101,9 +101,7 @@ class PaymentReference extends PaymentTypeBase implements ContainerFactoryPlugin
   /**
    * {@inheritdoc}
    */
-  public function resumeContext() {
-    parent::resumeContext();
-
+  protected function doResumeContext() {
     $response = new RedirectResponse($this->urlGenerator->generateFromRoute('payment_reference.resume_context', array(
       'payment' => $this->getPayment()->id(),
     ), array(

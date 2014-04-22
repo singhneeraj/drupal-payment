@@ -158,15 +158,41 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
    * {@inheritdoc}
    */
   public function executePaymentAccess(PaymentInterface $payment, AccountInterface $account) {
-    return $this->pluginDefinition['active'] && $this->paymentExecuteAccessCurrency($payment, $account) && $this->paymentExecuteAccessEvent($payment, $account);
+    return $this->pluginDefinition['active']
+    && $this->executePaymentAccessCurrency($payment, $account)
+    && $this->executePaymentAccessEvent($payment, $account)
+    && $this->doExecutePaymentAccess($payment, $account);
+  }
+
+  /**
+   * Performs a payment method-specific access check for payment execution.
+   *
+   * @param \Drupal\payment\Entity\PaymentInterface $payment
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *
+   * @return bool
+   */
+  protected function doExecutePaymentAccess(PaymentInterface $payment, AccountInterface $account) {
+    return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
   public function executePayment(PaymentInterface $payment) {
-    $this->paymentExecuteEvent($payment);
+    $event = new PaymentPreExecute($payment);
+    $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_PRE_EXECUTE, $event);
+    $this->moduleHandler->invokeAll('payment_pre_execute', array($payment));
+    // @todo invoke Rules event.
+    $this->doExecutePayment($payment);
   }
+
+  /**
+   * Performs the actual payment execution.
+   *
+   * @param \Drupal\payment\Entity\PaymentInterface $payment
+   */
+  abstract protected function doExecutePayment(PaymentInterface $payment);
 
   /**
    * Checks a payment's currency against this plugin.
@@ -176,7 +202,7 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
    *
    * @return bool
    */
-  protected function paymentExecuteAccessCurrency(PaymentInterface $payment, AccountInterface $account) {
+  protected function executePaymentAccessCurrency(PaymentInterface $payment, AccountInterface $account) {
     $currencies = $this->getSupportedCurrencies();
     $payment_currency_code = $payment->getCurrencyCode();
     $payment_amount = $payment->getAmount();
@@ -222,7 +248,7 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
    *
    * @return bool
    */
-  protected function paymentExecuteAccessEvent(PaymentInterface $payment, AccountInterface $account) {
+  protected function executePaymentAccessEvent(PaymentInterface $payment, AccountInterface $account) {
     $event = new PaymentExecuteAccess($payment, $this, $account);
     $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_EXECUTE_ACCESS, $event);
 
@@ -231,20 +257,6 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
     $access_results = array_merge($event->getAccessResults(), $hook_access_results);
     // If there are no results, grant access.
     return empty($access_results) || in_array(self::ALLOW, $access_results, TRUE) && !in_array(self::KILL, $access_results, TRUE);
-  }
-
-  /**
-   * Invokes events for self::executePayment().
-   *
-   * @param \Drupal\payment\Entity\PaymentInterface $payment
-   *
-   * @return bool
-   */
-  protected function paymentExecuteEvent(PaymentInterface $payment) {
-    $event = new PaymentPreExecute($payment);
-    $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_PRE_EXECUTE, $event);
-    $this->moduleHandler->invokeAll('payment_pre_execute', array($payment));
-    // @todo invoke Rules event.
   }
 
   /**

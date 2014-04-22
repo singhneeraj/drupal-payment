@@ -60,7 +60,7 @@ class PaymentTypeBaseUnitTest extends UnitTestCase {
     $plugin_definition = array();
     $this->paymentType = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Type\PaymentTypeBase')
       ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->moduleHandler, $this->eventDispatcher))
-      ->setMethods(array('paymentDescription'))
+      ->setMethods(array('doResumeContext', 'paymentDescription'))
       ->getMock();
   }
 

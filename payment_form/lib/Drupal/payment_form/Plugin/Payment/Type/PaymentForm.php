@@ -90,8 +90,7 @@ class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInter
   /**
    * {@inheritdoc}
    */
-  public function resumeContext() {
-    parent::resumeContext();
+  protected function doResumeContext() {
     $response = new RedirectResponse($this->getDestinationUrl());
     $listener = function(FilterResponseEvent $event) use ($response) {
       $event->setResponse($response);

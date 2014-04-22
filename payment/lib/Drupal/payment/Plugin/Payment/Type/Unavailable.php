@@ -60,7 +60,7 @@ class Unavailable extends PaymentTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function resumeContext() {
+  protected function doResumeContext() {
     throw new NotFoundHttpException();
   }
 

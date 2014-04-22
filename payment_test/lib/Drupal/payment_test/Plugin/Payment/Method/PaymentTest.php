@@ -6,6 +6,7 @@
 
 namespace Drupal\payment_test\Plugin\Payment\Method;
 
+use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodBase;
 
 /**
@@ -23,5 +24,11 @@ class PaymentTest extends PaymentMethodBase {
    */
   protected function getSupportedCurrencies() {
     return array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function doExecutePayment(PaymentInterface $payment) {
   }
 }
