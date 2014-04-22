@@ -177,7 +177,7 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
    * @return bool
    */
   protected function paymentExecuteAccessCurrency(PaymentInterface $payment, AccountInterface $account) {
-    $currencies = $this->currencies();
+    $currencies = $this->getSupportedCurrencies();
     $payment_currency_code = $payment->getCurrencyCode();
     $payment_amount = $payment->getAmount();
     // If all currencies are allowed, grant access.
@@ -210,7 +210,7 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
    *     supported.
    *   Return TRUE to allow all currencies and amounts.
    */
-  abstract protected function currencies();
+  abstract protected function getSupportedCurrencies();
 
   /**
    * Invokes events for self::executePaymentAccess().

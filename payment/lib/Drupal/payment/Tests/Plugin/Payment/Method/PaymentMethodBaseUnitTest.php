@@ -84,7 +84,7 @@ class PaymentMethodBaseUnitTest extends UnitTestCase {
 
     $this->plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\PaymentMethodBase')
       ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token))
-      ->setMethods(array('currencies', 'checkMarkup', 't'))
+      ->setMethods(array('getSupportedCurrencies', 'checkMarkup', 't'))
       ->getMock();
     $this->plugin->expects($this->any())
       ->method('checkMarkup')
@@ -171,7 +171,7 @@ class PaymentMethodBaseUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
     $this->plugin->expects($this->any())
-      ->method('currencies')
+      ->method('getSupportedCurrencies')
       ->will($this->returnValue(array(
         $currency_code => array(
           'minimum' => $minimum_amount,

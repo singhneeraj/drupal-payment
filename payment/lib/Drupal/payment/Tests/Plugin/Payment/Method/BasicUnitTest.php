@@ -149,9 +149,9 @@ class BasicUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::currencies
+   * @covers ::getSupportedCurrencies
    */
-  public function testCurrencies() {
-    $this->assertSame(TRUE, $this->plugin->currencies());
+  public function testGetSupportedCurrencies() {
+    $this->assertSame(TRUE, $this->plugin->getSupportedCurrencies());
   }
 }

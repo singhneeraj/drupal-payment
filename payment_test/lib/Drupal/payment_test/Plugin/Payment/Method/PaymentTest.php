@@ -21,7 +21,7 @@ class PaymentTest extends PaymentMethodBase {
   /**
    * {@inheritdoc}
    */
-  protected function currencies() {
+  protected function getSupportedCurrencies() {
     return array();
   }
 }

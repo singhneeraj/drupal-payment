@@ -80,7 +80,7 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
   /**
    * {@inheritdoc}
    */
-  public function currencies() {
+  public function getSupportedCurrencies() {
     return TRUE;
   }
 

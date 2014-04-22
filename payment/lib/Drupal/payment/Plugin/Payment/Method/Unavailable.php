@@ -50,7 +50,7 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
-  protected function currencies() {
+  protected function getSupportedCurrencies() {
     return array();
   }
 
