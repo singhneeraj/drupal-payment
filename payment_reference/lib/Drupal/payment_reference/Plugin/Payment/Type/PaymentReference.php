@@ -16,6 +16,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * The payment reference field payment type.
@@ -102,15 +104,16 @@ class PaymentReference extends PaymentTypeBase implements ContainerFactoryPlugin
    * {@inheritdoc}
    */
   protected function doResumeContext() {
-    $response = new RedirectResponse($this->urlGenerator->generateFromRoute('payment_reference.resume_context', array(
+    $url = $this->urlGenerator->generateFromRoute('payment_reference.resume_context', array(
       'payment' => $this->getPayment()->id(),
     ), array(
       'absolute' => TRUE,
-    )));
-    $response->prepare($this->request)
-      ->send();
-    $this->httpKernel->terminate($this->request, $response);
-    exit;
+    ));
+    $response = new RedirectResponse($url);
+    $listener = function(FilterResponseEvent $event) use ($response) {
+      $event->setResponse($response);
+    };
+    $this->eventDispatcher->addListener(KernelEvents::RESPONSE, $listener, 999);
   }
 
   /**

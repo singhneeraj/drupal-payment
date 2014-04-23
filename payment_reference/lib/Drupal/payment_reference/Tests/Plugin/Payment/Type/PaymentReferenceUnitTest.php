@@ -10,9 +10,12 @@ namespace Drupal\payment_reference\Tests\Plugin\Payment\Type;
 
 use Drupal\payment_reference\Plugin\Payment\Type\PaymentReference;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Tests \Drupal\payment_reference\Plugin\Payment\Type\PaymentReference.
+ * @coversDefaultClass \Drupal\payment_reference\Plugin\Payment\Type\PaymentReference
  */
 class PaymentReferenceUnitTest extends UnitTestCase {
 
@@ -132,6 +135,83 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    */
   public function testPaymentDescription() {
     $this->assertSame($this->paymentType->paymentDescription(), $this->fieldInstanceConfig->label());
+  }
+
+  /**
+   * @covers ::doResumeContext
+   */
+  public function testResumeContext() {
+    $url = 'http://example.com';
+
+    $kernel = $this->getMock('\Symfony\Component\HttpKernel\HttpKernelInterface');
+    $request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $request_type = $this->randomName();
+    $response = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Response')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $event = new FilterResponseEvent($kernel, $request, $request_type, $response);
+
+    $this->eventDispatcher->expects($this->once())
+      ->method('addListener')
+      ->with(KernelEvents::RESPONSE, new PaymentReferenceUnitTestDoResumeContextCallableConstraint($event, $url), 999);
+
+
+    $this->paymentType->resumeContext();
+  }
+
+}
+
+/**
+ * Provides a constraint for the doResumeContext() callable.
+ */
+class PaymentReferenceUnitTestDoResumeContextCallableConstraint extends \PHPUnit_Framework_Constraint {
+
+  /**
+   * The event to listen to.
+   *
+   * @var \Symfony\Component\HttpKernel\Event\FilterResponseEvent
+   */
+  protected $event;
+
+  /**
+   * The redirect URL.
+   *
+   * @var string
+   */
+  protected $url;
+
+  /**
+   * Constructs a new class instance.
+   *
+   * @param \Symfony\Component\HttpKernel\Event\FilterResponseEvent $event
+   * @param string $url
+   */
+  public function __construct(FilterResponseEvent $event, $url) {
+    $this->event = $event;
+    $this->url = $url;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function matches($other) {
+    if (is_callable($other)) {
+      $other($this->event);
+      $response = $this->event->getResponse();
+      if ($response instanceof RedirectResponse) {
+        return $response->getTargetUrl() == $this->url;
+      }
+    }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function toString() {
+    return 'returns a RedirectResponse through a KernelEvents::RESPONSE event listener';
   }
 
 }
