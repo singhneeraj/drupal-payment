@@ -128,7 +128,7 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
         'title' => t('Edit configuration'),
         'route_name' => 'payment.payment_method_configuration.edit',
         'route_parameters' => array(
-          'payment_method' => $entity_id,
+          'payment_method_configuration' => $entity_id,
         ),
       );
     }
@@ -137,7 +137,7 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
         'title' => t('Delete configuration'),
         'route_name' => 'payment.payment_method_configuration.delete',
         'route_parameters' => array(
-          'payment_method' => $entity_id,
+          'payment_method_configuration' => $entity_id,
         ),
       );
     }
@@ -146,7 +146,7 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
         'title' => t('Enable configuration'),
         'route_name' => 'payment.payment_method_configuration.enable',
         'route_parameters' => array(
-          'payment_method' => $entity_id,
+          'payment_method_configuration' => $entity_id,
         ),
       );
     }
@@ -155,7 +155,7 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
         'title' => t('Disable configuration'),
         'route_name' => 'payment.payment_method_configuration.disable',
         'route_parameters' => array(
-          'payment_method' => $entity_id,
+          'payment_method_configuration' => $entity_id,
         ),
       );
     }

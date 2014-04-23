@@ -23,6 +23,8 @@ class PaymentMethodConfigurationForm extends EntityFormController {
     /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface $payment_method */
     $payment_method = $this->getEntity();
     $definition = Payment::methodConfigurationManager()->getDefinition($payment_method->bundle());
+    $payment_method_configuration_plugin = Payment::methodConfigurationManager()->createInstance($payment_method->bundle(), $payment_method->getPluginConfiguration());
+    $form_state['payment_method_configuration_plugin'] = $payment_method_configuration_plugin;
     $form['type'] = array(
       '#type' => 'item',
       '#title' => t('Type'),
@@ -66,7 +68,7 @@ class PaymentMethodConfigurationForm extends EntityFormController {
       '#autocomplete_route_name' => 'user.autocomplete',
       '#required' => TRUE,
     );
-    $form['plugin_form'] = Payment::methodConfigurationManager()->createInstance($payment_method->bundle(), $payment_method->getPluginConfiguration())->formElements($form, $form_state);
+    $form['plugin_form'] = $payment_method_configuration_plugin->formElements($form, $form_state);
 
     return parent::form($form, $form_state);
   }
@@ -92,10 +94,13 @@ class PaymentMethodConfigurationForm extends EntityFormController {
     parent::submit($form, $form_state);
     $values = $form_state['values'];
     /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface $payment_method */
-    $payment_method = $this->getEntity();
-    $payment_method->setLabel($values['label'])
+    $payment_method_configuration = $this->getEntity();
+    /** @var \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface $payment_method_configuration_plugin */
+    $payment_method_configuration_plugin = $form_state['payment_method_configuration_plugin'];
+    $payment_method_configuration->setLabel($values['label'])
       ->setStatus($values['status'])
-      ->setOwnerId(user_load_by_name($values['owner'])->id());
+      ->setOwnerId(user_load_by_name($values['owner'])->id())
+      ->setPluginConfiguration($payment_method_configuration_plugin->getConfiguration());
   }
 
   /**
