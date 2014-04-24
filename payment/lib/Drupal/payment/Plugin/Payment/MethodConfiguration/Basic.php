@@ -93,7 +93,7 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
    */
   public function formElements(array $form, array &$form_state) {
     $elements = parent::formElements($form, $form_state);
-    $elements['#element_validate'][] = array($this, 'formElementsValidate');
+    $elements['#element_validate'][] = array($this, 'formElementsValidateBasic');
 
     $elements['brand_label'] = array(
       '#default_value' => $this->getBrandLabel(),
@@ -115,7 +115,7 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
   /**
    * Implements form validate callback for self::formElements().
    */
-  public function formElementsValidate(array $element, array &$form_state, array $form) {
+  public function formElementsValidateBasic(array $element, array &$form_state, array $form) {
     $values = NestedArray::getValue($form_state['values'], $element['#parents']);
     $this->setStatus($values['status'])
       ->setBrandLabel($values['brand_label']);
