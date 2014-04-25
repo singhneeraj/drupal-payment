@@ -49,6 +49,13 @@ abstract class PaymentStatusBase extends PluginBase implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
+  public function calculateDependencies() {
+    return array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function defaultConfiguration() {
     return array(
       'created' => time(),

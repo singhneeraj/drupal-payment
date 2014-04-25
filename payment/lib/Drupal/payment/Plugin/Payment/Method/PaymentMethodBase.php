@@ -92,6 +92,13 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
   /**
    * {@inheritdoc}
    */
+  public function calculateDependencies() {
+    return array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function defaultConfiguration() {
     return array();
   }

@@ -51,6 +51,13 @@ abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItem
   /**
    * {@inheritdoc}
    */
+  public function calculateDependencies() {
+    return array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function defaultConfiguration() {
     return array(
       'amount' => 0,

@@ -58,6 +58,13 @@ abstract class PaymentMethodSelectorBase extends PluginBase implements Container
   /**
    * {@inheritdoc}
    */
+  public function calculateDependencies() {
+    return array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function defaultConfiguration() {
     return array(
       'allowed_payment_method_plugin_ids' => NULL,
