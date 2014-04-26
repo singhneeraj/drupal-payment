@@ -15,6 +15,10 @@ use Drupal\Component\Utility\NestedArray;
 abstract class PaymentMethodConfigurationBase extends PluginBase implements PaymentMethodConfigurationInterface {
 
   /**
+   * The module handler.
+   */
+
+  /**
    * Constructs a new class instance.
    *
    * @param array $configuration
@@ -124,11 +128,17 @@ abstract class PaymentMethodConfigurationBase extends PluginBase implements Paym
     $elements['#element_validate'] = array(array($this, 'formElementsValidate'));
     $elements['#tree'] = TRUE;
     $elements['message'] = array(
-      '#type' => 'text_format',
+      '#type' => 'textarea',
       '#title' => $this->t('Payment form message'),
       '#default_value' => $this->getMessageText(),
-      '#format' => $this->getMessageTextFormat(),
     );
+    // Do not use the module handler, as we only need check_markup() anyway,
+    if (function_exists('check_markup')) {
+      $elements['message'] = array(
+        '#type' => 'text_format',
+        '#format' => $this->getMessageTextFormat(),
+      );
+    }
 
     return $elements;
   }
@@ -138,7 +148,13 @@ abstract class PaymentMethodConfigurationBase extends PluginBase implements Paym
    */
   public function formElementsValidate(array $element, array &$form_state, array $form) {
     $values = NestedArray::getValue($form_state['values'], $element['#parents']);
-    $this->setMessageText($values['message']['value']);
-    $this->setMessageTextFormat($values['message']['format']);
+    // Do not use the module handler, as we only need check_markup() anyway,
+    if (function_exists('check_markup')) {
+      $this->setMessageText($values['message']['value']);
+      $this->setMessageTextFormat($values['message']['format']);
+    }
+    else {
+      $this->setMessageText($values['message']);
+    }
   }
 }

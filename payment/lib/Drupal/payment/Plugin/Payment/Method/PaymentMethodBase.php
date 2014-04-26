@@ -139,7 +139,8 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
    * {@inheritdoc}
    */
   public function formElements(array $form, array &$form_state, PaymentInterface $payment) {
-    $message = $this->checkMarkup($this->getMessageText(), $this->getMessageTextFormat());
+    // Do not use the module handler, as we only need check_markup() anyway,
+    $message = function_exists('check_markup') ? $this->checkMarkup($this->getMessageText(), $this->getMessageTextFormat()) : $this->getMessageText();
     $message = $this->token->replace($message, array(
       'payment' => $payment,
     ), array(
