@@ -10,8 +10,8 @@ namespace Drupal\payment\Controller;
 use Drupal\Core\Access\AccessInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
-use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentMethodConfigurationInterface;
@@ -34,18 +34,18 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
   protected $currentUser;
 
   /**
+   * The entity form builder.
+   *
+   * @var \Drupal\Core\Entity\EntityFormBuilderInterface
+   */
+  protected $entityFormBuilder;
+
+  /**
    * The entity manager.
    *
    * @var \Drupal\Core\Entity\EntityManagerInterface
    */
   protected $entityManager;
-
-  /**
-   * The form builder.
-   *
-   * @var \Drupal\Core\Form\FormBuilderInterface
-   */
-  protected $formBuilder;
 
   /**
    * The payment method configuration plugin manager.
@@ -74,13 +74,13 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface $payment_method_manager
    * @param \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager
-   * @param \Drupal\Core\Form\FormBuilderInterface  $form_builder
+   * @param \Drupal\Core\Entity\EntityFormBuilderInterface $entity_form_builder
    * @param \Drupal\Core\Routing\UrlGeneratorInterface $url_generator
    * @param \Drupal\Core\Session\AccountInterface $current_user
    */
-  public function __construct(EntityManagerInterface $entity_manager, PaymentMethodManagerInterface $payment_method_manager, PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager, FormBuilderInterface $form_builder, UrlGeneratorInterface $url_generator, AccountInterface $current_user) {
+  public function __construct(EntityManagerInterface $entity_manager, PaymentMethodManagerInterface $payment_method_manager, PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager, EntityFormBuilderInterface $entity_form_builder, UrlGeneratorInterface $url_generator, AccountInterface $current_user) {
     $this->entityManager = $entity_manager;
-    $this->formBuilder = $form_builder;
+    $this->entityFormBuilder = $entity_form_builder;
     $this->paymentMethodManager = $payment_method_manager;
     $this->paymentMethodConfigurationManager = $payment_method_configuration_manager;
     $this->urlGenerator = $url_generator;
@@ -91,7 +91,7 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('entity.manager'), $container->get('plugin.manager.payment.method'), $container->get('plugin.manager.payment.method_configuration'), $container->get('form_builder'), $container->get('url_generator'), $container->get('current_user'));
+    return new static($container->get('entity.manager'), $container->get('plugin.manager.payment.method'), $container->get('plugin.manager.payment.method_configuration'), $container->get('entity.form_builder'), $container->get('url_generator'), $container->get('current_user'));
   }
 
   /**
@@ -233,7 +233,7 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
       'pluginId' => $plugin_id,
     ));
 
-    return $this->formBuilder->getForm($this->entityManager->getFormController('payment_method_configuration', 'default')->setEntity($payment_method_configuration));
+    return $this->entityFormBuilder->getForm($payment_method_configuration, 'default');
   }
 
   /**
@@ -266,7 +266,7 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
         '!label' => $payment_method_configuration->label(),
       )));
 
-    return $this->formBuilder->getForm($this->entityManager->getFormController('payment_method_configuration', 'default')->setEntity($clone));
+    return $this->entityFormBuilder->getForm($clone, 'default');
   }
 
   /**

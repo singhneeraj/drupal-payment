@@ -7,14 +7,14 @@
 
 namespace Drupal\payment_reference\Entity;
 
-use Drupal\Core\Entity\EntityFormController;
+use Drupal\Core\Entity\EntityForm;
 use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides the payment form.
  */
-class PaymentFormController extends EntityFormController {
+class PaymentFormController extends EntityForm {
 
   /**
    * The payment method selector manager.

@@ -24,18 +24,18 @@ class PaymentMethodUnitTest extends UnitTestCase {
   protected $currentUser;
 
   /**
+   * The entity form builder.
+   *
+   * @var \Drupal\Core\Entity\EntityFormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $entityFormBuilder;
+
+  /**
    * The entity manager used for testing.
    *
    * @var \Drupal\Core\Entity\EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $entityManager;
-
-  /**
-   * The form builder used for testing.
-   *
-   * @var \Drupal\Core\Form\FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $formBuilder;
 
   /**
    * The payment method configuration plugin manager used for testing.
@@ -82,9 +82,9 @@ class PaymentMethodUnitTest extends UnitTestCase {
   protected function setUp() {
     $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
-    $this->entityManager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
+    $this->entityFormBuilder = $this->getMock('\Drupal\Core\Entity\EntityFormBuilderInterface');
 
-    $this->formBuilder = $this->getMock('\Drupal\Core\Form\FormBuilderInterface');
+    $this->entityManager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
 
     $this->paymentMethodConfigurationManager = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface');
 
@@ -96,7 +96,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
       ->will($this->returnValue('http://example.com'));
 
     $this->controller = $this->getMockBuilder('\Drupal\payment\Controller\PaymentMethod')
-      ->setConstructorArgs(array($this->entityManager, $this->paymentMethodManager, $this->paymentMethodConfigurationManager, $this->formBuilder, $this->urlGenerator, $this->currentUser))
+      ->setConstructorArgs(array($this->entityManager, $this->paymentMethodManager, $this->paymentMethodConfigurationManager, $this->entityFormBuilder, $this->urlGenerator, $this->currentUser))
       ->setMethods(array('drupalGetPath', 't'))
       ->getMock();
   }
@@ -207,31 +207,24 @@ class PaymentMethodUnitTest extends UnitTestCase {
   public function testAdd() {
     $plugin_id = $this->randomName();
 
-    $payment_method = $this->getMock('\Drupal\payment\Entity\PaymentMethodConfigurationInterface');
+    $payment_method_configuration = $this->getMock('\Drupal\payment\Entity\PaymentMethodConfigurationInterface');
 
     $storage_controller = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
     $storage_controller->expects($this->once())
       ->method('create')
-      ->will($this->returnValue($payment_method));
+      ->will($this->returnValue($payment_method_configuration));
 
-    $form_controller = $this->getMock('\Drupal\Core\Entity\EntityFormControllerInterface');
-    $form_controller->expects($this->once())
-      ->method('setEntity')
-      ->will($this->returnSelf());
+    $form = $this->getMock('\Drupal\Core\Entity\EntityFormInterface');
 
     $this->entityManager->expects($this->once())
       ->method('getStorage')
       ->with('payment_method_configuration')
       ->will($this->returnValue($storage_controller));
 
-    $this->entityManager->expects($this->once())
-      ->method('getFormController')
-      ->with('payment_method_configuration', 'default')
-      ->will($this->returnValue($form_controller));
-
-    $this->formBuilder->expects($this->once())
+    $this->entityFormBuilder->expects($this->once())
       ->method('getForm')
-      ->with($form_controller);
+      ->with($payment_method_configuration, 'default')
+      ->will($this->returnValue($form));
 
     $this->controller->add($plugin_id);
   }
@@ -275,19 +268,12 @@ class PaymentMethodUnitTest extends UnitTestCase {
       ->method('setLabel')
       ->will($this->returnSelf());
 
-    $form_controller = $this->getMock('\Drupal\Core\Entity\EntityFormControllerInterface');
-    $form_controller->expects($this->once())
-      ->method('setEntity')
-      ->will($this->returnSelf());
+    $form = $this->getMock('\Drupal\Core\Entity\EntityFormInterface');
 
-    $this->entityManager->expects($this->once())
-      ->method('getFormController')
-      ->with('payment_method_configuration', 'default')
-      ->will($this->returnValue($form_controller));
-
-    $this->formBuilder->expects($this->once())
+    $this->entityFormBuilder->expects($this->once())
       ->method('getForm')
-      ->with($form_controller);
+      ->with($payment_method, 'default')
+      ->will($this->returnValue($form));
 
     $this->controller->duplicate($payment_method);
   }

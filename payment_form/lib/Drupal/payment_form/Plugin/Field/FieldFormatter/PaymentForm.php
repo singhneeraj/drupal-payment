@@ -104,7 +104,7 @@ class PaymentForm extends FormatterBase implements ContainerFactoryPluginInterfa
     }
     $payment_type->setFieldInstanceConfigId($this->fieldDefinition->getName());
 
-    return $this->formBuilder->getForm($this->entityManager->getFormController('payment', 'payment_form')->setEntity($payment));
+    return $this->formBuilder->getForm($this->entityManager->getFormObject('payment', 'payment_form')->setEntity($payment));
   }
 
 }

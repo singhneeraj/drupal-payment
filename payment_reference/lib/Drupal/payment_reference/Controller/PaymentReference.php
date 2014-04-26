@@ -91,7 +91,7 @@ class PaymentReference extends ControllerBase implements ContainerInjectionInter
       $line_item = $this->paymentLineItemManager->createInstance($line_item_data['plugin_id'], $line_item_data['plugin_configuration']);
       $payment->setLineItem($line_item);
     }
-    $form = $this->entityManager()->getFormController('payment', 'payment_reference')->setEntity($payment);
+    $form = $this->entityManager()->getFormObject('payment', 'payment_reference')->setEntity($payment);
 
     return $this->formBuilder->getForm($form);
   }

@@ -116,7 +116,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->method('getPaymentType')
       ->will($this->returnValue($payment_type));
 
-    $form = $this->getMock('\Drupal\Core\Entity\EntityFormControllerInterface');
+    $form = $this->getMock('\Drupal\Core\Entity\EntityFormInterface');
     $form->expects($this->once())
       ->method('setEntity')
       ->with($payment)
@@ -136,7 +136,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->will($this->returnValue($storage));
 
     $this->entityManager->expects($this->once())
-      ->method('getFormController')
+      ->method('getFormObject')
       ->with('payment', 'payment_form')
       ->will($this->returnValue($form));
 

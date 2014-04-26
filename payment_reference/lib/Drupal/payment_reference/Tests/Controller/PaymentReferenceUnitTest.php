@@ -140,7 +140,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       ->getMock();
 
     $this->entityManager->expects($this->once())
-      ->method('getFormController')
+      ->method('getFormObject')
       ->will($this->returnValue($form));
 
     $payment_line_item = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface');

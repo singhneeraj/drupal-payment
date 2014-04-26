@@ -54,7 +54,7 @@ class PaymentStatus implements ContainerInjectionInterface {
   public function add() {
     $payment_status = $this->entityManager->getStorage('payment_status')->create(array());
 
-    return drupal_get_form($this->entityManager->getFormController('payment_status', 'default')->setEntity($payment_status));
+    return drupal_get_form($this->entityManager->getFormObject('payment_status', 'default')->setEntity($payment_status));
   }
 
   /**

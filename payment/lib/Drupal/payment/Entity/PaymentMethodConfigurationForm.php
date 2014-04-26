@@ -7,14 +7,14 @@
 
 namespace Drupal\payment\Entity;
 
-use Drupal\Core\Entity\EntityFormController;
+use Drupal\Core\Entity\EntityForm;
 use Drupal\payment\Payment;
 use Drupal\user\UserInterface;
 
 /**
  * Provides the payment method configuration form.
  */
-class PaymentMethodConfigurationForm extends EntityFormController {
+class PaymentMethodConfigurationForm extends EntityForm {
 
   /**
    * {@inheritdoc}
