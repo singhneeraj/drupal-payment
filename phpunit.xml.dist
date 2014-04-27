@@ -9,17 +9,20 @@
   </php>
   <testsuites>
     <testsuite name="Payment Unit Test Suite">
-      <directory>./payment/lib/Drupal/payment/Tests</directory>
-      <directory>./payment_form/lib/Drupal/payment_form/Tests</directory>
-      <directory>./payment_reference/lib/Drupal/payment_reference/Tests</directory>
+      <directory>./payment/tests</directory>
+      <directory>./payment_form/tests</directory>
+      <directory>./payment_reference/tests</directory>
     </testsuite>
   </testsuites>
   <!-- Filter for coverage reports. -->
   <filter>
     <blacklist>
-      <directory>./payment/lib/Drupal/payment/Tests</directory>
-      <directory>./payment_form/lib/Drupal/payment_form/Tests</directory>
-      <directory>./payment_reference/lib/Drupal/payment_reference/Tests</directory>
+      <directory>./payment/src/Tests</directory>
+      <directory>./payment/tests</directory>
+      <directory>./payment_form/src/Tests</directory>
+      <directory>./payment_form/tests/src</directory>
+      <directory>./payment_reference/src/Tests</directory>
+      <directory>./payment_reference/tests</directory>
       <directory>./payment_test</directory>
       <directory>./payment_reference_test</directory>
     </blacklist>

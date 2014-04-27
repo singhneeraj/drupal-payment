@@ -1,0 +1,106 @@
+<?php
+
+/**
+ * @file
+ * Contains \Drupal\payment\Tests\Controller\PaymentWebTest.
+ */
+
+namespace Drupal\payment\Tests\Controller;
+
+use Drupal\payment\Generate;
+use Drupal\payment\Payment;
+use Drupal\simpletest\WebTestBase ;
+
+/**
+ * Tests the payment UI.
+ */
+class PaymentWebTest extends WebTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static $modules = array('payment', 'payment_test');
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getInfo() {
+    return array(
+      'description' => '',
+      'name' => 'Payment UI',
+      'group' => 'Payment',
+    );
+  }
+
+  /**
+   * Tests the payment UI.
+   */
+  protected function testPaymentUi() {
+    $payment_method = Payment::methodManager()->createInstance('payment_test');
+    $payment = Generate::createPayment(2, $payment_method);
+    $payment->save();
+    $payment = entity_load_unchanged('payment', $payment->id());
+
+    // View the administrative listing.
+    $this->drupalLogin($this->drupalCreateUser(array('access administration pages')));
+    $this->drupalGet('admin');
+    $this->assertResponse('200');
+    $this->assertNoLinkByHref('admin/payment');
+    $this->drupalGet('admin/payment');
+    $this->assertResponse('403');
+    $this->drupalLogin($this->drupalCreateUser(array('access administration pages', 'payment.payment.view.any')));
+    $this->drupalGet('admin');
+    $this->clickLink(t('Payments'));
+    if ($this->assertResponse('200')) {
+      $this->assertTitle(t('Payments | Drupal'));
+      $this->assertText(t('Last updated'));
+      $this->assertText(t('Payment method'));
+      $this->assertText(t('EUR 24.20'));
+      $this->assertText($payment_method->getPluginLabel());
+    }
+    $this->drupalLogout();
+
+    // View the payment.
+    $path = 'payment/' . $payment->id();
+    $this->drupalGet($path);
+    $this->assertResponse('403');
+    $this->drupalLogin($this->drupalCreateUser(array('payment.payment.view.any')));
+    $this->drupalGet($path);
+    if ($this->assertResponse('200')) {
+      $this->assertText(t('Payment method'));
+      $this->assertText(t('Status'));
+    }
+
+    // Update the payment.
+    $path = 'payment/' . $payment->id() . '/edit';
+    $this->drupalGet($path);
+    $this->assertResponse('403');
+    $this->drupalLogin($this->drupalCreateUser(array('payment.payment.update.any')));
+    $this->drupalGet($path);
+    if ($this->assertResponse('200')) {
+      $this->assertFieldByXPath('//select[@name="status_plugin_id"]');
+      $this->drupalPostForm(NULL, array(
+        'status_plugin_id' => 'payment_cancelled',
+      ), t('Save'));
+    }
+    $this->assertUrl('payment/' . $payment->id());
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
+    $payment = entity_load_unchanged('payment', $payment->id());
+    $this->assertEqual($payment->getStatus()->getPluginId(), 'payment_cancelled');
+
+    // Delete a payment.
+    $path = 'payment/' . $payment->id() . '/delete';
+    $this->drupalGet($path);
+    $this->assertResponse('403');
+    $this->drupalLogin($this->drupalCreateUser(array('payment.payment.delete.any')));
+    $this->drupalGet($path);
+    if ($this->assertResponse('200')) {
+      $this->clickLink(t('Cancel'));
+      $this->assertUrl('payment/' . $payment->id());
+      $this->drupalGet($path);
+      $this->drupalPostForm(NULL, array(), t('Delete'));
+      $this->assertResponse('200');
+      $this->assertFalse((bool) \Drupal::entityManager()->getStorage('payment')->loadUnchanged($payment->id()));
+    }
+  }
+}
