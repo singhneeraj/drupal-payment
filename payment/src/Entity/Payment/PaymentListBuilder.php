@@ -48,15 +48,10 @@ class PaymentListBuilder extends EntityListBuilder {
 
     $row['data']['payment_method'] = $payment->getPaymentMethod() ? $payment->getPaymentMethod()->getPluginLabel() : t('Unavailable');
 
-    if ($payment->getOwner()) {
-      $owner = $payment->getOwner();
-      $url = $owner->urlInfo();
-      $owner_data = l($owner->label(), $url->getInternalPath(), $url->getOptions());
-    }
-    else {
-      $owner_data = t('Unavailable');
-    }
-    $row['data']['owner'] = $owner_data;
+    $row['data']['owner']['data'] = array(
+      '#theme' => 'username',
+      '#account' => $payment->getOwner(),
+    );
 
     $operations = $this->buildOperations($payment);
     $row['data']['operations']['data'] = $operations;
