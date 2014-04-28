@@ -17,8 +17,8 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *   controllers = {
  *     "access" = "\Drupal\Core\Entity\EntityAccessController",
  *     "form" = {
- *       "default" = "Drupal\payment\Entity\PaymentStatusFormController",
- *       "delete" = "Drupal\payment\Entity\PaymentStatusDeleteFormController"
+ *       "default" = "Drupal\payment\Entity\PaymentStatusForm",
+ *       "delete" = "Drupal\payment\Entity\PaymentStatusDeleteForm"
  *     },
  *     "storage" = "\Drupal\Core\Config\Entity\ConfigEntityStorage"
  *   },

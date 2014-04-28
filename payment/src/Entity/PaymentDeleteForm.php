@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Entity\PaymentDeleteFormController.
+ * Contains \Drupal\payment\Entity\PaymentDeleteForm.
  */
 
 namespace Drupal\payment\Entity;
@@ -12,7 +12,7 @@ use Drupal\Core\Entity\ContentEntityConfirmFormBase;
 /**
  * Provides the payment deletion form.
  */
-class PaymentDeleteFormController extends ContentEntityConfirmFormBase {
+class PaymentDeleteForm extends ContentEntityConfirmFormBase {
 
   /**
    * {@inheritdoc}

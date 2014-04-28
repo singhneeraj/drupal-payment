@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Definition of Drupal\payment\Entity\PaymentMethodConfigurationAccessController.
+ * Definition of Drupal\payment\Entity\PaymentMethodConfigurationAccess.
  */
 
 namespace Drupal\payment\Entity;
@@ -14,7 +14,7 @@ use Drupal\Core\Session\AccountInterface;
 /**
  * Checks access for payment method configurations.
  */
-class PaymentMethodConfigurationAccessController extends EntityAccessController {
+class PaymentMethodConfigurationAccess extends EntityAccessController {
 
   /**
    * {@inheritdoc}

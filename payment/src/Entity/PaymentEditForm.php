@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Entity\PaymentEditFormController.
+ * Contains \Drupal\payment\Entity\PaymentEditForm.
  */
 
 namespace Drupal\payment\Entity;
@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides the payment edit form.
  */
-class PaymentEditFormController extends EntityForm {
+class PaymentEditForm extends EntityForm {
 
   /**
    * The payment status plugin manager.

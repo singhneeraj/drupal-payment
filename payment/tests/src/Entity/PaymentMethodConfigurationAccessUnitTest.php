@@ -2,23 +2,23 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Tests\Entity\PaymentMethodConfigurationAccessControllerUnitTest.
+ * Contains \Drupal\payment\Tests\Entity\PaymentMethodConfigurationAccessUnitTest.
  */
 
 namespace Drupal\payment\Tests\Entity;
 
-use Drupal\payment\Entity\PaymentMethodConfigurationAccessController;
+use Drupal\payment\Entity\PaymentMethodConfigurationAccess;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * @coversDefaultClass \Drupal\payment\Entity\PaymentMethodConfigurationAccessController
+ * @coversDefaultClass \Drupal\payment\Entity\PaymentMethodConfigurationAccess
  */
-class PaymentMethodConfigurationAccessControllerUnitTest extends UnitTestCase {
+class PaymentMethodConfigurationAccessUnitTest extends UnitTestCase {
 
   /**
    * The access controller under test.
    *
-   * @var \Drupal\payment\Entity\PaymentMethodConfigurationAccessController
+   * @var \Drupal\payment\Entity\PaymentMethodConfigurationAccess
    */
   protected $accessController;
 
@@ -28,7 +28,7 @@ class PaymentMethodConfigurationAccessControllerUnitTest extends UnitTestCase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\PaymentMethodConfigurationAccessController unit test',
+      'name' => '\Drupal\payment\PaymentMethodConfigurationAccess unit test',
       'group' => 'Payment',
     );
   }
@@ -38,7 +38,7 @@ class PaymentMethodConfigurationAccessControllerUnitTest extends UnitTestCase {
    */
   public function setUp() {
     $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
-    $this->accessController = new PaymentMethodConfigurationAccessController($entity_type);
+    $this->accessController = new PaymentMethodConfigurationAccess($entity_type);
   }
 
   /**
@@ -218,7 +218,7 @@ class PaymentMethodConfigurationAccessControllerUnitTest extends UnitTestCase {
       ->method('hasPermission')
       ->will($this->returnValue(FALSE));
     $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
-    $access_controller = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfigurationAccessController')
+    $access_controller = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfigurationAccess')
       ->setConstructorArgs(array($entity_type))
       ->setMethods(array('createAccess'))
       ->getMock();

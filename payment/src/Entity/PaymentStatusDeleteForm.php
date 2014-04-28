@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Entity\PaymentStatusDeleteFormController.
+ * Contains \Drupal\payment\Entity\PaymentStatusDeleteForm.
  */
 
 namespace Drupal\payment\Entity;
@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides the payments status deletion form.
  */
-class PaymentStatusDeleteFormController extends ContentEntityConfirmFormBase {
+class PaymentStatusDeleteForm extends ContentEntityConfirmFormBase {
 
   /**
    * The URL generator.

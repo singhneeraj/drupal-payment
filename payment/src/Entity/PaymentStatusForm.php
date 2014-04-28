@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Entity\PaymentStatusFormController.
+ * Contains \Drupal\payment\Entity\PaymentStatusForm.
  */
 
 namespace Drupal\payment\Entity;
@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides the payment status form.
  */
-class PaymentStatusFormController extends EntityForm {
+class PaymentStatusForm extends EntityForm {
 
   /**
    * The payment status manager.

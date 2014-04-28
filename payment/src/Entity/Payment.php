@@ -29,8 +29,8 @@ use Drupal\user\UserInterface;
  *   controllers = {
  *     "access" = "Drupal\payment\Entity\PaymentAccessController",
  *     "form" = {
- *       "delete" = "Drupal\payment\Entity\PaymentDeleteFormController",
- *       "edit" = "Drupal\payment\Entity\PaymentEditFormController"
+ *       "delete" = "Drupal\payment\Entity\PaymentDeleteForm",
+ *       "edit" = "Drupal\payment\Entity\PaymentEditForm"
  *     },
  *     "list_builder" = "Drupal\payment\Entity\PaymentListBuilder",
  *     "view_builder" = "Drupal\payment\Entity\PaymentViewBuilder",
