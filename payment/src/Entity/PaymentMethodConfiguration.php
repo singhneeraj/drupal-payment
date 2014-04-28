@@ -17,12 +17,12 @@ use Drupal\user\UserInterface;
  * @ConfigEntityType(
  *   bundle_label = @Translation("Payment method type"),
  *   controllers = {
- *     "access" = "Drupal\payment\Entity\PaymentMethodConfigurationAccess",
+ *     "access" = "Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccess",
  *     "form" = {
- *       "default" = "Drupal\payment\Entity\PaymentMethodConfigurationForm",
- *       "delete" = "Drupal\payment\Entity\PaymentMethodConfigurationDeleteForm"
+ *       "default" = "Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm",
+ *       "delete" = "Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationDeleteForm"
  *     },
- *     "list_builder" = "Drupal\payment\Entity\PaymentMethodConfigurationListBuilder",
+ *     "list_builder" = "Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationListBuilder",
  *     "storage" = "\Drupal\Core\Config\Entity\ConfigEntityStorage",
  *   },
  *   entity_keys = {

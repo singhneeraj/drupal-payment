@@ -27,7 +27,7 @@ class PaymentFormWebTest extends WebTestBase {
   /**
    * The payment entity storage controller.
    *
-   * @var \Drupal\payment\Entity\PaymentStorage
+   * @var \Drupal\payment\Entity\Payment\PaymentStorage
    */
   protected $paymentStorage;
 

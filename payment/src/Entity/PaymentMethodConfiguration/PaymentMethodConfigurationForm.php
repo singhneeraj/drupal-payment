@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Entity\PaymentMethodConfigurationForm..
+ * Contains \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm..
  */
 
-namespace Drupal\payment\Entity;
+namespace Drupal\payment\Entity\PaymentMethodConfiguration;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\payment\Payment;

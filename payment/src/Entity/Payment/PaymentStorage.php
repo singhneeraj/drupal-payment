@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Entity\PaymentStorage.
+ * Contains \Drupal\payment\Entity\Payment\PaymentStorage.
  */
 
-namespace Drupal\payment\Entity;
+namespace Drupal\payment\Entity\Payment;
 
 use Drupal\Core\Entity\ContentEntityDatabaseStorage;
 use Drupal\Core\Entity\EntityInterface;

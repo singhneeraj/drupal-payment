@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Entity\PaymentEditForm.
+ * Contains \Drupal\payment\Entity\Payment\PaymentEditForm.
  */
 
-namespace Drupal\payment\Entity;
+namespace Drupal\payment\Entity\Payment;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;

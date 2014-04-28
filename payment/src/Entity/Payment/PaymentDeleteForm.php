@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Entity\PaymentDeleteForm.
+ * Contains \Drupal\payment\Entity\Payment\PaymentDeleteForm.
  */
 
-namespace Drupal\payment\Entity;
+namespace Drupal\payment\Entity\Payment;
 
 use Drupal\Core\Entity\ContentEntityConfirmFormBase;
 

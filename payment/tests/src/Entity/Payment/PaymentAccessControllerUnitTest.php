@@ -2,23 +2,23 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Tests\PaymentAccessControllerUnitTest.
+ * Contains \Drupal\payment\Tests\Payment\PaymentAccessUnitTest.
  */
 
-namespace Drupal\payment\Tests\Entity;
+namespace Drupal\payment\Tests\Entity\Payment;
 
-use Drupal\payment\Entity\PaymentAccessController;
+use Drupal\payment\Entity\Payment\PaymentAccess;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * @coversDefaultClass \Drupal\payment\Entity\PaymentAccessController
+ * @coversDefaultClass \Drupal\payment\Entity\Payment\PaymentAccess
  */
-class PaymentAccessControllerUnitTest extends UnitTestCase {
+class PaymentAccessUnitTest extends UnitTestCase {
 
   /**
    * The access controller under test.
    *
-   * @var \Drupal\payment\Entity\PaymentAccessController
+   * @var \Drupal\payment\Entity\Payment\PaymentAccess
    */
   protected $accessController;
 
@@ -28,7 +28,7 @@ class PaymentAccessControllerUnitTest extends UnitTestCase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Entity\PaymentAccessController unit test',
+      'name' => '\Drupal\payment\Entity\Payment\PaymentAccess unit test',
       'group' => 'Payment',
     );
   }
@@ -38,7 +38,7 @@ class PaymentAccessControllerUnitTest extends UnitTestCase {
    */
   public function setUp() {
     $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
-    $this->accessController = new PaymentAccessController($entity_type);
+    $this->accessController = new PaymentAccess($entity_type);
   }
 
   /**

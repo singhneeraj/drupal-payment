@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Entity\PaymentListBuilder.
+ * Contains \Drupal\payment\Entity\Payment\PaymentListBuilder.
  */
 
-namespace Drupal\payment\Entity;
+namespace Drupal\payment\Entity\Payment;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;

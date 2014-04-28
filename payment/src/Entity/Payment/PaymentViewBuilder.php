@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Entity\PaymentViewBuilder.
+ * Contains \Drupal\payment\Entity\Payment\PaymentViewBuilder.
  */
 
-namespace Drupal\payment\Entity;
+namespace Drupal\payment\Entity\Payment;
 
 use Drupal\Core\Entity\EntityViewBuilder;
 

@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Definition of Drupal\payment\Entity\PaymentAccessController.
+ * Definition of Drupal\payment\Entity\Payment\PaymentAccess.
  */
 
-namespace Drupal\payment\Entity;
+namespace Drupal\payment\Entity\Payment;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityAccessController;
@@ -14,7 +14,7 @@ use Drupal\Core\Session\AccountInterface;
 /**
  * Defines the default list controller for ConfigEntity objects.
  */
-class PaymentAccessController extends EntityAccessController {
+class PaymentAccess extends EntityAccessController {
 
   /**
    * {@inheritdoc}

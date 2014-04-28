@@ -27,14 +27,14 @@ use Drupal\user\UserInterface;
  *   base_table = "payment",
  *   bundle_label = @Translation("Payment type"),
  *   controllers = {
- *     "access" = "Drupal\payment\Entity\PaymentAccessController",
+ *     "access" = "Drupal\payment\Entity\Payment\PaymentAccess",
  *     "form" = {
- *       "delete" = "Drupal\payment\Entity\PaymentDeleteForm",
- *       "edit" = "Drupal\payment\Entity\PaymentEditForm"
+ *       "delete" = "Drupal\payment\Entity\Payment\PaymentDeleteForm",
+ *       "edit" = "Drupal\payment\Entity\Payment\PaymentEditForm"
  *     },
- *     "list_builder" = "Drupal\payment\Entity\PaymentListBuilder",
- *     "view_builder" = "Drupal\payment\Entity\PaymentViewBuilder",
- *     "storage" = "Drupal\payment\Entity\PaymentStorage",
+ *     "list_builder" = "Drupal\payment\Entity\Payment\PaymentListBuilder",
+ *     "view_builder" = "Drupal\payment\Entity\Payment\PaymentViewBuilder",
+ *     "storage" = "Drupal\payment\Entity\Payment\PaymentStorage",
  *   },
  *   entity_keys = {
  *     "bundle" = "bundle",
@@ -349,7 +349,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public static function postLoad(EntityStorageInterface $storage, array &$entities) {
-    /** @var \Drupal\payment\Entity\PaymentStorageInterface $storage */
+    /** @var \Drupal\payment\Entity\Payment\PaymentStorageInterface $storage */
     $storage->loadLineItems($entities);
     $storage->loadPaymentStatuses($entities);
   }
@@ -358,7 +358,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function postSave(EntityStorageInterface $storage, $update = TRUE) {
-    /** @var \Drupal\payment\Entity\PaymentStorageInterface $storage */
+    /** @var \Drupal\payment\Entity\Payment\PaymentStorageInterface $storage */
     $storage->saveLineItems(array(
       $this->id() => $this->getLineItems(),
     ));
@@ -371,7 +371,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public static function postDelete(EntityStorageInterface $storage, array $entities) {
-    /** @var \Drupal\payment\Entity\PaymentStorageInterface $storage */
+    /** @var \Drupal\payment\Entity\Payment\PaymentStorageInterface $storage */
     $storage->deleteLineItems(array_keys($entities));
     $storage->deletePaymentStatuses(array_keys($entities));
   }

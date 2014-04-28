@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Definition of Drupal\payment\Entity\PaymentMethodConfigurationAccess.
+ * Definition of Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccess.
  */
 
-namespace Drupal\payment\Entity;
+namespace Drupal\payment\Entity\PaymentMethodConfiguration;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityAccessController;

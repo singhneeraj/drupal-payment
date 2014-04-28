@@ -2,23 +2,23 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Tests\Entity\PaymentMethodConfigurationAccessUnitTest.
+ * Contains \Drupal\payment\Tests\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccessUnitTest.
  */
 
-namespace Drupal\payment\Tests\Entity;
+namespace Drupal\payment\Tests\Entity\PaymentMethodConfiguration;
 
-use Drupal\payment\Entity\PaymentMethodConfigurationAccess;
+use Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccess;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * @coversDefaultClass \Drupal\payment\Entity\PaymentMethodConfigurationAccess
+ * @coversDefaultClass \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccess
  */
 class PaymentMethodConfigurationAccessUnitTest extends UnitTestCase {
 
   /**
    * The access controller under test.
    *
-   * @var \Drupal\payment\Entity\PaymentMethodConfigurationAccess
+   * @var \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccess
    */
   protected $accessController;
 
@@ -28,7 +28,7 @@ class PaymentMethodConfigurationAccessUnitTest extends UnitTestCase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\PaymentMethodConfigurationAccess unit test',
+      'name' => '\Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccess unit test',
       'group' => 'Payment',
     );
   }
@@ -218,7 +218,7 @@ class PaymentMethodConfigurationAccessUnitTest extends UnitTestCase {
       ->method('hasPermission')
       ->will($this->returnValue(FALSE));
     $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
-    $access_controller = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfigurationAccess')
+    $access_controller = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccess')
       ->setConstructorArgs(array($entity_type))
       ->setMethods(array('createAccess'))
       ->getMock();

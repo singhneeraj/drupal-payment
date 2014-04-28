@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Entity\PaymentStatusDeleteForm.
+ * Contains \Drupal\payment\Entity\PaymentStatus\PaymentStatusDeleteForm.
  */
 
-namespace Drupal\payment\Entity;
+namespace Drupal\payment\Entity\PaymentStatus;
 
 use Drupal\Core\Entity\ContentEntityConfirmFormBase;
 use Drupal\Core\Routing\UrlGeneratorInterface;

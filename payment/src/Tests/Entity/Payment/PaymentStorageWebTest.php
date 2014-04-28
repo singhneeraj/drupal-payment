@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Tests\Entity\PaymentStorageWebTest.
+ * Contains \Drupal\payment\Tests\Entity\Payment\PaymentStorageWebTest.
  */
 
-namespace Drupal\payment\Tests\Entity;
+namespace Drupal\payment\Tests\Entity\Payment;
 
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Generate;
@@ -14,7 +14,7 @@ use Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface;
 use Drupal\simpletest\WebTestBase;
 
 /**
- * Tests \Drupal\payment\Entity\PaymentStorage.
+ * Tests \Drupal\payment\Entity\Payment\PaymentStorage.
  */
 class PaymentStorageWebTest extends WebTestBase {
 
@@ -29,7 +29,7 @@ class PaymentStorageWebTest extends WebTestBase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Entity\PaymentStorage web test',
+      'name' => '\Drupal\payment\Entity\Payment\PaymentStorage web test',
       'group' => 'Payment',
     );
   }

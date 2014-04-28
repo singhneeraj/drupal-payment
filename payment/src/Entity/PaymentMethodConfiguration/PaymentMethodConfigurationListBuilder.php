@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Definition of Drupal\payment\Entity\PaymentMethodConfigurationListBuilder.
+ * Definition of Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationListBuilder.
  */
 
-namespace Drupal\payment\Entity;
+namespace Drupal\payment\Entity\PaymentMethodConfiguration;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
