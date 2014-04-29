@@ -2,18 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Tests\Hook\FieldExtraFieldsUnitTest.
+ * Contains \Drupal\payment\Tests\Hook\EntityExtraFieldInfoUnitTest.
  */
 
 namespace Drupal\payment\Tests\Hook;
 
-use Drupal\payment\Hook\FieldExtraFields;
+use Drupal\payment\Hook\EntityExtraFieldInfo;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * @coversDefaultClass \Drupal\payment\Hook\FieldExtraFields
+ * @coversDefaultClass \Drupal\payment\Hook\EntityExtraFieldInfo
  */
-class FieldExtraFieldsUnitTest extends UnitTestCase {
+class EntityExtraFieldInfoUnitTest extends UnitTestCase {
 
   /**
    * The payment type manager used for testing.
@@ -25,7 +25,7 @@ class FieldExtraFieldsUnitTest extends UnitTestCase {
   /**
    * The service under test.
    *
-   * @var \Drupal\payment\Hook\FieldExtraFields.
+   * @var \Drupal\payment\Hook\EntityExtraFieldInfo
    */
   protected $service;
 
@@ -55,7 +55,7 @@ class FieldExtraFieldsUnitTest extends UnitTestCase {
 
     $this->translationManager = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
-    $this->service = new FieldExtraFields($this->translationManager, $this->paymentTypeManager);
+    $this->service = new EntityExtraFieldInfo($this->translationManager, $this->paymentTypeManager);
   }
 
   /**

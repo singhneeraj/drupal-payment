@@ -24,10 +24,10 @@ function payment_hook_info() {
 }
 
 /**
- * Implements hook_field_extra_fields().
+ * Implements hook_entity_extra_field_info().
  */
-function payment_field_extra_fields() {
-  return \Drupal::service('payment.hook.field_extra_fields')->invoke();
+function payment_entity_extra_field_info() {
+  return \Drupal::service('payment.hook.entity_extra_field_info')->invoke();
 }
 
 /**

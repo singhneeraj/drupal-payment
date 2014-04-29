@@ -7,37 +7,44 @@
 
 namespace Drupal\payment\Entity\Payment;
 
-use Drupal\Core\Entity\EntityForm;
+use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\currency\Entity\Currency;
+use Drupal\payment\Element\PaymentLineItemsInput;
+use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides the payment edit form.
  */
-class PaymentEditForm extends EntityForm {
+class PaymentEditForm extends ContentEntityForm {
 
   /**
-   * The payment status plugin manager.
+   * The payment line item plugin manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
+   * @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface
    */
-  protected $paymentStatusManager;
+  protected $paymentLineItemManager;
 
   /**
    * Constructs a new class instance.
    *
-   * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface The payment status
-   *   plugin manager.
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   *   The entity manager.
+   * @param \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface
+   *   The payment line item manager.
    */
-  function __construct(PaymentStatusManagerInterface $payment_status_manager) {
-    $this->paymentStatusManager = $payment_status_manager;
+  function __construct(EntityManagerInterface $entity_manager, PaymentLineItemManagerInterface $payment_line_item_manager) {
+    parent::__construct($entity_manager);
+    $this->paymentLineItemManager = $payment_line_item_manager;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('plugin.manager.payment.status'));
+    return new static($container->get('entity.manager'), $container->get('plugin.manager.payment.line_item'));
   }
 
   /**
@@ -46,12 +53,27 @@ class PaymentEditForm extends EntityForm {
   public function form(array $form, array &$form_state) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->getEntity();
-    $form['status_plugin_id'] = array(
-      '#default_value' => $payment->getStatus()->getPluginId(),
-      '#description' => t('Updating a payment status manually can disrupt automatic payment processing.'),
-      '#options' => $this->paymentStatusManager->options(),
-      '#title' => t('Status'),
+
+    $form['payment_currency_code'] = array(
       '#type' => 'select',
+      '#title' => $this->t('Currency'),
+      '#options' => $this->currencyOptions(),
+      '#default_value' => $payment->getCurrencyCode(),
+      '#required' => TRUE,
+    );
+    $line_items_data = array();
+    foreach ($payment->getLineItems() as $line_item) {
+      $line_items_data[] = array(
+        'plugin_id' => $line_item->getPluginId(),
+        'plugin_configuration' => $line_item->getConfiguration(),
+      );
+    }
+    $form['payment_line_items'] = array(
+      '#type' => 'payment_line_items_input',
+      '#title' => $this->t('Line items'),
+      '#default_value' => $line_items_data,
+      '#required' => TRUE,
+      '#currency_code' => '',
     );
 
     return parent::form($form, $form_state);
@@ -62,7 +84,16 @@ class PaymentEditForm extends EntityForm {
    */
   public function submit(array $form, array &$form_state) {
     parent::submit($form, $form_state);
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->getEntity();
+    $values = $form_state['values'];
+
+    $payment->setCurrencyCode($values['payment_currency_code']);
+    foreach (PaymentLineItemsInput::getLineItemsData($form['payment_line_items'], $form_state) as $line_item_data) {
+      $line_item = $this->paymentLineItemManager->createInstance($line_item_data['plugin_id'], $line_item_data['plugin_configuration']);
+      $payment->setLineItem($line_item);
+    }
+
     $payment->save();
     $form_state['redirect_route'] = array(
       'route_name' => 'payment.payment.view',
@@ -73,17 +104,11 @@ class PaymentEditForm extends EntityForm {
   }
 
   /**
-   * {@inheritdoc}
+   * Wraps \Drupal\currency\Entity\Currency::options().
+   *
+   * @todo Revisit this when https://drupal.org/node/2118295 is fixed.
    */
-  public function buildEntity(array $form, array &$form_state) {
-    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
-    $payment = $this->getEntity();
-    if ($form_state['values']['status_plugin_id'] != $payment->getStatus()->getPluginId()) {
-      $status = $this->paymentStatusManager
-        ->createInstance($form_state['values']['status_plugin_id']);
-      $payment->setStatus($status);
-    }
-
-    return $payment;
+  protected function currencyOptions() {
+    return Currency::options();
   }
 }

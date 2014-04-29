@@ -71,22 +71,25 @@ class PaymentWebTest extends WebTestBase {
       $this->assertText(t('Status'));
     }
 
-    // Update the payment.
+    // Edit the payment.
     $path = 'payment/' . $payment->id() . '/edit';
     $this->drupalGet($path);
     $this->assertResponse('403');
     $this->drupalLogin($this->drupalCreateUser(array('payment.payment.update.any')));
     $this->drupalGet($path);
     if ($this->assertResponse('200')) {
-      $this->assertFieldByXPath('//select[@name="status_plugin_id"]');
+      $this->assertFieldByXPath('//select[@name="payment_currency_code"]');
+      $this->assertFieldByXPath('//select[@name="payment_line_items[line_items][bar][plugin_form][amount][currency_code]"]');
       $this->drupalPostForm(NULL, array(
-        'status_plugin_id' => 'payment_cancelled',
+        'payment_currency_code' => 'XXX',
+        'payment_line_items[line_items][bar][plugin_form][amount][currency_code]' => 'XXX',
       ), t('Save'));
     }
     $this->assertUrl('payment/' . $payment->id());
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = entity_load_unchanged('payment', $payment->id());
-    $this->assertEqual($payment->getStatus()->getPluginId(), 'payment_cancelled');
+    $this->assertEqual($payment->getCurrencyCode(), 'XXX');
+    $this->assertEqual($payment->getLineItem('bar')->getCurrencyCode(), 'XXX');
 
     // Delete a payment.
     $path = 'payment/' . $payment->id() . '/delete';

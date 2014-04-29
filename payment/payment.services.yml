@@ -41,8 +41,8 @@ services:
   payment.hook.permission:
     class: Drupal\payment\Hook\Permission
     arguments: ['@string_translation', '@plugin.manager.payment.method_configuration']
-  payment.hook.field_extra_fields:
-    class: Drupal\payment\Hook\FieldExtraFields
+  payment.hook.entity_extra_field_info:
+    class: Drupal\payment\Hook\EntityExtraFieldInfo
     arguments: ['@string_translation', '@plugin.manager.payment.type']
   payment.hook.hook_info:
     class: Drupal\payment\Hook\HookInfo

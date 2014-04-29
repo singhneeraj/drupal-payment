@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Hook\FieldExtraFields.
+ * Contains \Drupal\payment\Hook\EntityExtraFieldInfo.
  */
 
 namespace Drupal\payment\Hook;
@@ -11,11 +11,11 @@ use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 
 /**
- * Implements hook_field_extra_fields().
+ * Implements hook_entity_extra_field_info().
  *
- * @see payment_field_extra_fields()
+ * @see payment_entity_extra_field_info()
  */
-class FieldExtraFields {
+class EntityExtraFieldInfo {
 
   /**
    * The payment type manager
@@ -50,17 +50,13 @@ class FieldExtraFields {
     foreach (array_keys($this->paymentTypeManager->getDefinitions()) as $plugin_id) {
       $fields['payment'][$plugin_id] = array(
         'form' => array(
+          'payment_currency_code' => array(
+            'label' => $this->t('Currency code'),
+            'weight' => 0,
+          ),
           'payment_line_items' => array(
             'label' => $this->t('Line items'),
-            'weight' => 0,
-          ),
-          'payment_method' => array(
-            'label' => $this->t('Payment method selection and configuration'),
-            'weight' => 0,
-          ),
-          'payment_status' => array(
-            'label' => $this->t('Status'),
-            'weight' => 0,
+            'weight' => 1,
           ),
         ),
         'display' => array(
