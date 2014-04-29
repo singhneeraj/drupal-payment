@@ -34,10 +34,6 @@ services:
   payment.hook.entity_crud:
     class: Drupal\payment\Hook\EntityCrud
     arguments: ['@plugin.manager.payment.method', '@plugin.manager.payment.status']
-  payment.hook.menu:
-    class: Drupal\payment\Hook\Menu
-  payment.hook.menu_link_defaults:
-    class: Drupal\payment\Hook\MenuLinkDefaults
   payment.hook.permission:
     class: Drupal\payment\Hook\Permission
     arguments: ['@string_translation', '@plugin.manager.payment.method_configuration']
