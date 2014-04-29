@@ -8,6 +8,11 @@ payment.payment.edit:
   route_name: payment.payment.edit
   title: 'Edit'
 
+payment.payment.update_status:
+  base_route: payment.payment.view
+  route_name: payment.payment.update_status
+  title: 'Update status'
+
 payment.payment_method.list:
   base_route: payment.payment_method.list
   route_name: payment.payment_method.list

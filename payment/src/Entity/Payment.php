@@ -30,7 +30,8 @@ use Drupal\user\UserInterface;
  *     "access" = "Drupal\payment\Entity\Payment\PaymentAccess",
  *     "form" = {
  *       "delete" = "Drupal\payment\Entity\Payment\PaymentDeleteForm",
- *       "edit" = "Drupal\payment\Entity\Payment\PaymentEditForm"
+ *       "edit" = "Drupal\payment\Entity\Payment\PaymentEditForm",
+ *       "update_status" = "Drupal\payment\Entity\Payment\PaymentStatusForm"
  *     },
  *     "list_builder" = "Drupal\payment\Entity\Payment\PaymentListBuilder",
  *     "view_builder" = "Drupal\payment\Entity\Payment\PaymentViewBuilder",
@@ -48,7 +49,8 @@ use Drupal\user\UserInterface;
  *     "admin-form" = "payment.payment_type",
  *     "canonical" = "payment.payment.view",
  *     "edit-form" = "payment.payment.edit",
- *     "delete-form" = "payment.payment.delete"
+ *     "delete-form" = "payment.payment.delete",
+ *     "update-status-form" = "payment.payment.update_status"
  *   }
  * )
  */

@@ -30,6 +30,16 @@ payment.payment.edit:
   options:
     _admin_route: TRUE
 
+payment.payment.update_status:
+  path: '/payment/{payment}/update-status'
+  defaults:
+    _entity_form: 'payment.update_status'
+    _title: Update payment status
+  requirements:
+    _entity_access: 'payment.update_status'
+  options:
+    _admin_route: TRUE
+
 payment.payment.delete:
   path: '/payment/{payment}/delete'
   defaults:

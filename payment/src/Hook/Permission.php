@@ -59,6 +59,12 @@ class Permission {
       'payment.payment.update.own' => array(
         'title' => $this->t('Update own payments'),
       ),
+      'payment.payment.update_status.any' => array(
+        'title' => $this->t("Update any payment's status"),
+      ),
+      'payment.payment.update_status.own' => array(
+        'title' => $this->t("Update own payments' statuses"),
+      ),
       'payment.payment.delete.any' => array(
         'title' => $this->t('Delete any payment'),
       ),
