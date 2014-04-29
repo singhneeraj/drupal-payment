@@ -18,8 +18,8 @@ class PaymentDeleteForm extends ContentEntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return t('Do you really want to delete %label?', array(
-      '%label' => $this->getEntity()->label(),
+    return t('Do you really want to delete payment #!payment_id?', array(
+      '!payment_id' => $this->getEntity()->id(),
     ));
   }
 
@@ -47,8 +47,8 @@ class PaymentDeleteForm extends ContentEntityConfirmFormBase {
    */
   public function submit(array $form, array &$form_state) {
     $this->getEntity()->delete();
-    drupal_set_message(t('%label has been deleted.', array(
-      '%label' => $this->getEntity()->label(),
+    drupal_set_message(t('Payment #!payment_id has been deleted.', array(
+      '!id' => $this->getEntity()->id(),
     )));
     $form_state['redirect_route'] = array(
       'route_name' => '<front>',

@@ -222,7 +222,7 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
   }
 
   /**
-   * Displays a payment method add form.
+   * Displays a payment method configuration add form.
    *
    * @param string $plugin_id
    *
@@ -234,6 +234,21 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
     ));
 
     return $this->entityFormBuilder->getForm($payment_method_configuration, 'default');
+  }
+
+  /**
+   * Returns the title for the payment method configuration add form.
+   *
+   * @param string $plugin_id
+   *
+   * @return string
+   */
+  public function addTitle($plugin_id) {
+    $plugin_definition = $this->paymentMethodConfigurationManager->getDefinition($plugin_id);
+
+    return $this->t('Add %label payment method configuration', array(
+      '%label' => $plugin_definition['label'],
+    ));
   }
 
   /**
@@ -249,6 +264,32 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
     $plugin_id = $request->attributes->get('plugin_id');
 
     return $this->entityManager->getAccessController('payment_method_configuration')->createAccess($plugin_id, $this->currentUser) ? self::ALLOW : self::DENY;
+  }
+
+  /**
+   * Returns the title for the payment method configuration edit form.
+   *
+   * @param \Drupal\payment\Entity\PaymentMethodConfigurationInterface $payment_method_configuration
+   *
+   * @return string
+   */
+  public function editTitle(PaymentMethodConfigurationInterface $payment_method_configuration) {
+    return $this->t('Edit %label', array(
+      '%label' => $payment_method_configuration->label(),
+    ));
+  }
+
+  /**
+   * Returns the title for the payment method configuration duplicate form.
+   *
+   * @param \Drupal\payment\Entity\PaymentMethodConfigurationInterface $payment_method_configuration
+   *
+   * @return string
+   */
+  public function duplicateTitle(PaymentMethodConfigurationInterface $payment_method_configuration) {
+    return $this->t('Duplicate %label', array(
+      '%label' => $payment_method_configuration->label(),
+    ));
   }
 
   /**

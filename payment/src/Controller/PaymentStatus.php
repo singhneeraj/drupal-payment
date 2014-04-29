@@ -7,15 +7,17 @@
 
 namespace Drupal\payment\Controller;
 
+use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\payment\Entity\PaymentStatusInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Returns responses for payment status routes.
  */
-class PaymentStatus implements ContainerInjectionInterface {
+class PaymentStatus extends ControllerBase implements ContainerInjectionInterface {
 
   /**
    * The entity manager.
@@ -55,6 +57,19 @@ class PaymentStatus implements ContainerInjectionInterface {
     $payment_status = $this->entityManager->getStorage('payment_status')->create(array());
 
     return drupal_get_form($this->entityManager->getFormObject('payment_status', 'default')->setEntity($payment_status));
+  }
+
+  /**
+   * Returns the title for the edit page.
+   *
+   * @param \Drupal\payment\Entity\PaymentStatusInterface $payment_status
+   *
+   * @return string
+   */
+  public function editTitle(PaymentStatusInterface $payment_status) {
+    return $this->t('Edit %label', array(
+      '%label' => $payment_status->label(),
+    ));
   }
 
   /**

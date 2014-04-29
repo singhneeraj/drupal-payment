@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Definition of Drupal\payment\Entity\PaymentMethodConfigurationInterface.
+ * Contains \Drupal\payment\Entity\PaymentMethodConfigurationInterface.
  */
 
 namespace Drupal\payment\Entity;
