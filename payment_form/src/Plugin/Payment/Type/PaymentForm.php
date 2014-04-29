@@ -104,7 +104,7 @@ class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInter
   public function paymentDescription($language_code = NULL) {
     $instance = $this->fieldInstanceConfigStorage->load($this->getFieldInstanceConfigId());
 
-    return $instance->label();
+    return $instance ? $instance->label() : $this->t('Unavailable');
   }
 
   /**

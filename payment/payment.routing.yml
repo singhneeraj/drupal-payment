@@ -36,6 +36,8 @@ payment.payment.delete:
     _entity_form: 'payment.delete'
   requirements:
     _entity_access: 'payment.delete'
+  options:
+    _admin_route: TRUE
 
 payment.payment_method.list:
   path: '/admin/config/services/payment/method'

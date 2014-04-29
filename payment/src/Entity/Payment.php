@@ -47,7 +47,8 @@ use Drupal\user\UserInterface;
  *   links = {
  *     "admin-form" = "payment.payment_type",
  *     "canonical" = "payment.payment.view",
- *     "edit-form" = "payment.payment.edit"
+ *     "edit-form" = "payment.payment.edit",
+ *     "delete-form" = "payment.payment.delete"
  *   }
  * )
  */
@@ -97,8 +98,8 @@ class Payment extends ContentEntityBase implements PaymentInterface {
     // plugin yet.
     if (!isset($values['type'])) {
       $this->type = PaymentServiceWrapper::typeManager()->createInstance($this->bundle());
-      $this->type->setPayment($this);
     }
+    $this->type->setPayment($this);
   }
 
   /**
