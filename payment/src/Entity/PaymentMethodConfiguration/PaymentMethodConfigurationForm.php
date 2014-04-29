@@ -51,7 +51,7 @@ class PaymentMethodConfigurationForm extends EntityForm {
         'source' => array('label'),
         'exists' => array($this, 'paymentMethodConfigurationIdExists'),
       ),
-      '#disabled' => (bool) $payment_method->id(),
+      '#disabled' => !$payment_method->isNew(),
     );
     $owner_label = '';
     if ($payment_method->getOwnerId()) {

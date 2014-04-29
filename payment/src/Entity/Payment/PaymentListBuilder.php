@@ -18,6 +18,16 @@ class PaymentListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
+  public function render() {
+    $build = parent::render();
+    $build['#empty'] = $this->t('There are no payments yet.');
+
+    return $build;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildHeader() {
     $row['updated'] = t('Last updated');
     $row['status'] = t('Status');

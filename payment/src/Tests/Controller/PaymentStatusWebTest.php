@@ -21,7 +21,7 @@ class PaymentStatusWebTest extends WebTestBase {
   public static $modules = array('payment');
 
   /**
-   * The payment status storage controller.
+   * The payment status storage.
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
@@ -47,24 +47,27 @@ class PaymentStatusWebTest extends WebTestBase {
   }
 
   /**
-   * Tests the different UI components.
-   */
-  protected function testUI() {
-    $this->doTestList();
-    $this->doTestAdd();
-    $this->doTestDelete();
-  }
-
-  /**
    * Tests listing.
    */
-  protected function doTestList() {
+  protected function testList() {
+    $payment_status_id = strtolower($this->randomName());
+    /** @var \Drupal\payment\Entity\PaymentStatusInterface $status */
+    $status = $this->paymentStatusStorage->create(array());
+    $status->setId($payment_status_id)
+      ->setLabel($this->randomName())
+      ->save();
+
     $path = 'admin/config/services/payment/status';
     $this->drupalGet($path);
     $this->assertResponse(403);
     $this->drupalLogin($this->drupalCreateUser(array('payment.payment_status.administer')));
     $this->drupalGet($path);
     $this->assertResponse(200);
+
+    // Assert that the "Add payment status" link is visible.
+    $this->assertLinkByHref('admin/config/services/payment/status/add');
+
+    // Assert that all plugins are visible.
     $manager = Payment::statusManager();
     foreach ($manager->getDefinitions() as $definition) {
       $this->assertText($definition['label']);
@@ -72,59 +75,88 @@ class PaymentStatusWebTest extends WebTestBase {
         $this->assertText($definition['description']);
       }
     }
+
+    // Assert that all config entity operations are visible.
+    $this->assertLinkByHref('admin/config/services/payment/status/edit/' . $payment_status_id);
+    $this->assertLinkByHref('admin/config/services/payment/status/delete/' . $payment_status_id);
   }
 
   /**
-   * Tests adding a payment status.
+   * Tests adding and editing a payment status.
    */
-  protected function doTestAdd() {
-    $this->drupalGet('admin/config/services/payment/status');
-    $this->assertResponse('200');
+  protected function testAdd() {
     $path = 'admin/config/services/payment/status/add';
-    if ($this->assertLinkByHref($path)) {
-      $this->clickLink(t('Add payment status'));
-      $id = strtolower($this->randomName());
-      $label = $this->randomString();
+    $this->drupalGet($path);
+    $this->assertResponse(403);
+    $this->drupalLogin($this->drupalCreateUser(array('payment.payment_status.administer')));
+    $this->drupalGet($path);
+    $this->assertResponse(200);
 
-      // Test a valid submission.
-      $parent_id = 'payment_success';
-      $description = $this->randomString();
-      $this->drupalPostForm($path, array(
-        'label' => $label,
-        'id' => $id,
-        'parent_id' => $parent_id,
-        'description' => $description,
-      ), t('Save'));
-      /** @var \Drupal\payment\Entity\PaymentStatusInterface $status */
-      $status = $this->paymentStatusStorage->loadUnchanged($id);
-      if ($this->assertTrue((bool) $status)) {
-        $this->assertEqual($status->id(), $id);
-        $this->assertEqual($status->label(), $label);
-        $this->assertEqual($status->getParentId(), $parent_id);
-        $this->assertEqual($status->getDescription(), $description);
-      }
-
-      // Test an invalid submission.
-      $this->drupalPostForm($path, array(
-        'label' => $label,
-        'id' => $id,
-      ), t('Save'));
-      $this->assertFieldByXPath('//input[@id="edit-id" and contains(@class, "error")]');
+    // Test a valid submission.
+    $payment_status_id = strtolower($this->randomName());
+    $label = $this->randomString();
+    $parent_id = 'payment_success';
+    $description = $this->randomString();
+    $this->drupalPostForm($path, array(
+      'label' => $label,
+      'id' => $payment_status_id,
+      'parent_id' => $parent_id,
+      'description' => $description,
+    ), t('Save'));
+    /** @var \Drupal\payment\Entity\PaymentStatusInterface $status */
+    $status = $this->paymentStatusStorage->loadUnchanged($payment_status_id);
+    if ($this->assertTrue((bool) $status)) {
+      $this->assertEqual($status->id(), $payment_status_id);
+      $this->assertEqual($status->label(), $label);
+      $this->assertEqual($status->getParentId(), $parent_id);
+      $this->assertEqual($status->getDescription(), $description);
     }
+
+    // Test editing a payment status.
+    $this->drupalGet('admin/config/services/payment/status/edit/' . $payment_status_id);
+    $this->assertLinkByHref('admin/config/services/payment/status/delete/' . $payment_status_id);
+    $label = $this->randomString();
+    $parent_id = 'payment_success';
+    $description = $this->randomString();
+    $this->drupalPostForm(NULL, array(
+      'label' => $label,
+      'parent_id' => $parent_id,
+      'description' => $description,
+    ), t('Save'));
+    /** @var \Drupal\payment\Entity\PaymentStatusInterface $status */
+    $status = $this->paymentStatusStorage->loadUnchanged($payment_status_id);
+    if ($this->assertTrue((bool) $status)) {
+      $this->assertEqual($status->id(), $payment_status_id);
+      $this->assertEqual($status->label(), $label);
+      $this->assertEqual($status->getParentId(), $parent_id);
+      $this->assertEqual($status->getDescription(), $description);
+    }
+
+    // Test an invalid submission.
+    $this->drupalPostForm($path, array(
+      'label' => $label,
+      'id' => $payment_status_id,
+    ), t('Save'));
+    $this->assertFieldByXPath('//input[@id="edit-id" and contains(@class, "error")]');
   }
 
   /**
    * Tests deleting a payment status.
    */
-  protected function doTestDelete() {
-    $id = strtolower($this->randomName());
+  protected function testDelete() {
+    $payment_status_id = strtolower($this->randomName());
     /** @var \Drupal\payment\Entity\PaymentStatusInterface $status */
     $status = $this->paymentStatusStorage->create(array());
-    $status->setId($id)
+    $status->setId($payment_status_id)
       ->save();
-    if ($this->assertTrue((bool) $this->paymentStatusStorage->loadUnchanged($id))) {
-      $status->delete();
-      $this->assertFalse((bool) $this->paymentStatusStorage->loadUnchanged($id));
-    }
+
+    $path = 'admin/config/services/payment/status/delete/' . $payment_status_id;
+    $this->drupalGet($path);
+    $this->assertResponse(403);
+    $this->drupalLogin($this->drupalCreateUser(array('payment.payment_status.administer')));
+    $this->drupalGet($path);
+    $this->assertResponse(200);
+    $this->drupalPostForm(NULL, array(), t('Delete'));
+    $this->assertNull($this->paymentStatusStorage->loadUnchanged($payment_status_id));
   }
 }

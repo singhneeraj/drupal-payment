@@ -20,6 +20,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *       "default" = "Drupal\payment\Entity\PaymentStatus\PaymentStatusForm",
  *       "delete" = "Drupal\payment\Entity\PaymentStatus\PaymentStatusDeleteForm"
  *     },
+ *     "list_builder" = "Drupal\payment\Entity\PaymentStatus\PaymentStatusListBuilder",
  *     "storage" = "\Drupal\Core\Config\Entity\ConfigEntityStorage"
  *   },
  *   entity_keys = {
@@ -33,7 +34,8 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *   links = {
  *     "canonical" = "payment.payment_status.edit",
  *     "create-form" = "payment.payment_status.add",
- *     "edit-form" = "payment.payment_status.edit"
+ *     "edit-form" = "payment.payment_status.edit",
+ *     "delete-form" = "payment.payment_status.delete"
  *   }
  * )
  */

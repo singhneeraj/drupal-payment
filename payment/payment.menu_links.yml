@@ -1,20 +1,25 @@
 payment.admin:
   title: Payment
+  description: Configure payment methods, types, and statuses.
   parent: system.admin_config_services
   route_name: payment.admin
 payment.payment.admin_list:
   title: Payments
+  description: Administer payments.
   parent: system.admin
   route_name: payment.payment.admin_list
 payment.payment_type.list:
   title: Payment types
+  description: Configure the different types of payments and their fields.
   parent: payment.admin
   route_name: payment.payment_type.list
 payment.payment_method.list:
   title: Payment methods
+  description: View the available payment methods, and configure custom ones.
   parent: payment.admin
   route_name: payment.payment_method.list
 payment.payment_status.list:
   title: Payment statuses
   parent: payment.admin
   route_name: payment.payment_status.list
+  description: View the available payment statuses, and configure custom ones.

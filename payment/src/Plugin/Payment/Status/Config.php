@@ -21,6 +21,9 @@ class Config extends PaymentStatusBase {
    * {@inheritdoc}
    */
   public static function getOperations($plugin_id) {
+    $entity_id = substr($plugin_id, 15);
+    $entity = \Drupal::entityManager()->getStorage('payment_status')->load($entity_id);
+    return \Drupal::entityManager()->getListBuilder('payment_status')->getOperations($entity);
     $operations = array();
     if (\Drupal::currentUser()->hasPermission('payment.payment_status.administer')) {
 
@@ -28,11 +31,17 @@ class Config extends PaymentStatusBase {
       $entity_id = substr($plugin_id, 15);
       $operations['update'] = array(
         'title' => t('Edit'),
-        'href' => 'admin/config/services/payment/status/edit/' . $entity_id,
+        'route_name' => 'payment.payment_status.edit',
+        'route_parameters' => array(
+          'payment_status' => $entity_id,
+        ),
       );
       $operations['delete'] = array(
         'title' => t('Delete'),
-        'href' => 'admin/config/services/payment/status/delete/' . $entity_id,
+        'route_name' => 'payment.payment_status.delete',
+        'route_parameters' => array(
+          'payment_status' => $entity_id,
+        ),
       );
     }
 

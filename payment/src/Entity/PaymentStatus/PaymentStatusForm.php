@@ -52,7 +52,7 @@ class PaymentStatusForm extends EntityForm {
     );
     $form['id'] = array(
       '#default_value' => $payment_status->id(),
-      '#disabled' => (bool) $payment_status->id(),
+      '#disabled' => !$payment_status->isNew(),
       '#machine_name' => array(
         'source' => array('label'),
         'exists' => array($this, 'PaymentStatusIdExists'),
@@ -107,32 +107,13 @@ class PaymentStatusForm extends EntityForm {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function delete(array $form, array &$form_state) {
-    $form_state['redirect'] = array('admin/config/services/payment/status/delete/' . $this->getEntity()->id());
-  }
-
-  /**
    * Checks if a payment method with a particular ID already exists.
    *
    * @param string $id
    *
    * @return bool
    */
-  function paymentStatusIdExists($id) {
+  public function paymentStatusIdExists($id) {
     return (bool) entity_load('payment_status', $id);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function actions(array $form, array &$form_state) {
-    $actions = parent::actions($form, $form_state);
-    if (!$this->getEntity()->id()) {
-      unset($actions['delete']);
-    }
-
-    return $actions;
   }
 }

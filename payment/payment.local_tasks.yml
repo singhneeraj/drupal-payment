@@ -20,7 +20,7 @@ payment.payment_method.list:
 
 payment.payment_method_configuration.list:
   base_route: payment.payment_method.list
-  route_name: payment.payment_method.list
+  route_name: payment.payment_method_configuration.list
   title: 'Configuration'
 
 payment.payment_type:

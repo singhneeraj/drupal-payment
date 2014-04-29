@@ -8,13 +8,14 @@
 namespace Drupal\payment\Entity\PaymentStatus;
 
 use Drupal\Core\Entity\ContentEntityConfirmFormBase;
+use Drupal\Core\Entity\EntityConfirmFormBase;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides the payments status deletion form.
  */
-class PaymentStatusDeleteForm extends ContentEntityConfirmFormBase {
+class PaymentStatusDeleteForm extends EntityConfirmFormBase {
 
   /**
    * The URL generator.
