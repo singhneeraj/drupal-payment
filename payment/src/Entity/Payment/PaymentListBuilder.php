@@ -22,8 +22,14 @@ class PaymentListBuilder extends EntityListBuilder {
     $row['updated'] = t('Last updated');
     $row['status'] = t('Status');
     $row['amount'] = t('Amount');
-    $row['payment_method'] = t('Payment method');
-    $row['owner'] = t('Payer');
+    $row['payment_method'] = array(
+      'data' => t('Payment method'),
+      'class' => array(RESPONSIVE_PRIORITY_LOW),
+    );
+    $row['owner'] = array(
+      'data' => t('Payer'),
+      'class' => array(RESPONSIVE_PRIORITY_MEDIUM),
+    );
     $row['operations'] = t('Operations');
 
     return $row;

@@ -22,8 +22,14 @@ class PaymentMethodConfigurationListBuilder extends ConfigEntityListBuilder {
   public function buildHeader() {
     $row['label'] = $this->t('Name');
     $row['plugin'] = $this->t('Type');
-    $row['owner'] = $this->t('Owner');
-    $row['status'] = $this->t('Status');
+    $row['owner'] = array(
+      'data' => t('Owner'),
+      'class' => array(RESPONSIVE_PRIORITY_LOW),
+    );
+    $row['status'] = array(
+      'data' => t('Status'),
+      'class' => array(RESPONSIVE_PRIORITY_MEDIUM),
+    );
     $row['operations'] = $this->t('Operations');
 
     return $row;
