@@ -11,6 +11,7 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -20,12 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class PaymentStatusManager extends DefaultPluginManager implements PaymentStatusManagerInterface {
 
-  /**
-   * The service container.
-   *
-   * @var \Symfony\Component\DependencyInjection\ContainerInterface
-   */
-  protected $container;
+  use OperationsProviderPluginManagerTrait;
 
   /**
    * Constructs a new class instance.
@@ -198,23 +194,6 @@ class PaymentStatusManager extends DefaultPluginManager implements PaymentStatus
    */
   public function isOrHasAncestor($plugin_id, $ancestor_plugin_id) {
     return $plugin_id == $ancestor_plugin_id|| $this->hasAncestor($plugin_id, $ancestor_plugin_id);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getOperationsProvider($plugin_id) {
-    $definition = $this->getDefinition($plugin_id);
-    if (isset($definition['operations_provider'])) {
-      $class = $definition['operations_provider'];
-      if (class_implements($class, '\Drupal\Core\DependencyInjection\ContainerInjectionInterface')) {
-        /** @var \Drupal\Core\DependencyInjection\ContainerInjectionInterface $class */
-        return $class::create($this->container);
-      }
-      else {
-        return new $class();
-      }
-    }
   }
 
 }

@@ -28,18 +28,6 @@ class PaymentTest extends PaymentTypeBase {
   /**
    * {@inheritdoc
    */
-  public static function getOperations($plugin_id) {
-    return array(
-      'foo_bar' => array(
-        'title' => t('FooBar'),
-        'href' => '<front>',
-      ),
-    );
-  }
-
-  /**
-   * {@inheritdoc
-   */
   public function doResumeContext() {
   }
 }

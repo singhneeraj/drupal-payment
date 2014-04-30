@@ -101,9 +101,8 @@ class PaymentType extends ControllerBase implements ContainerInjectionInterface 
     $definitions = $this->paymentTypeManager->getDefinitions();
     unset($definitions['payment_unavailable']);
     foreach ($definitions as $plugin_id => $definition) {
-      /** @var \Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface $class */
-      $class = $definition['class'];
-      $operations = $class::getOperations($plugin_id);
+      $operations_provider = $this->paymentTypeManager->getOperationsProvider($plugin_id);
+      $operations = $operations_provider ? $operations_provider->getOperations($plugin_id) : array();
 
       // Add the payment type's global configuration operation.
       if (isset($definition['configuration_form'])) {

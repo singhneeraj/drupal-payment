@@ -26,4 +26,14 @@ interface PaymentTypeManagerInterface extends PluginManagerInterface {
    */
   public function createInstance($plugin_id, array $configuration = array());
 
+  /**
+   * Gets the payment status' operations provider.
+   *
+   * @param string $plugin_id
+   *
+   * @return \Drupal\payment\Plugin\Payment\Status\PaymentStatusOperationsProviderInterface|null
+   *   The operations provider or NULL if none is available..
+   */
+  public function getOperationsProvider($plugin_id);
+
 }

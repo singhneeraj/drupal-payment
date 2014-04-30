@@ -128,11 +128,4 @@ abstract class PaymentTypeBase extends PluginBase implements ContainerFactoryPlu
    * Performs the actual context resumption.
    */
   abstract protected function doResumeContext();
-
-  /**
-   * {@inheritdoc
-   */
-  public static function getOperations($plugin_id) {
-    return array();
-  }
 }

@@ -2,12 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Plugin\Payment\Status\PaymentStatusOperationsProviderInterface.
+ * Contains \Drupal\payment\Plugin\Payment\OperationsProviderInterface.
  */
 
-namespace Drupal\payment\Plugin\Payment\Status;
+namespace Drupal\payment\Plugin\Payment;
 
-interface PaymentStatusOperationsProviderInterface {
+interface OperationsProviderInterface {
 
   /**
    * Gets payment status operations

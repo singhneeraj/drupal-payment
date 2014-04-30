@@ -77,11 +77,5 @@ class PaymentTypeWebTest extends WebTestBase {
       $this->assertResponse('200');
       $this->assertTitle($text . ' | Drupal');
     }
-
-    // Test a type-specific operation.
-    $this->drupalLogin($admin_payment_type);
-    $this->drupalGet($path);
-    $this->assertResponse('200');
-    $this->assertLink('FooBar');
   }
 }

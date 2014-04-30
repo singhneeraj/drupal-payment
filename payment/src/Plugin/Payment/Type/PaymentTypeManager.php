@@ -11,6 +11,7 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait;
 
 /**
  * Manages discovery and instantiation of payment type plugins.
@@ -18,6 +19,8 @@ use Drupal\Core\Plugin\DefaultPluginManager;
  * @see \Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface
  */
 class PaymentTypeManager extends DefaultPluginManager implements PaymentTypeManagerInterface {
+
+  use OperationsProviderPluginManagerTrait;
 
   /**
    * Constructs a new class instance.
