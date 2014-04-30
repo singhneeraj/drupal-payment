@@ -110,22 +110,6 @@ interface PaymentStatusInterface extends PluginInspectionInterface, Configurable
   function isOrHasAncestor($plugin_id);
 
   /**
-   * Provides an array of information to build a list of operation links.
-   *
-   * @param string $plugin_id
-   *   The ID of the plugin for which to get the operations.
-   *
-   * @return array
-   *   An associative array of operation link data for this list, keyed by
-   *   operation name, containing the following key-value pairs:
-   *   - title: The localized title of the operation.
-   *   - href: The path for the operation.
-   *   - options: An array of URL options for the path.
-   *   - weight: The weight of this operation.
-   */
-  public static function getOperations($plugin_id);
-
-  /**
    * Gets this payment status's human-readable label.
    *
    * @return string

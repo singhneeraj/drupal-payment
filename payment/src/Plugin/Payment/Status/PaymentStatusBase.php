@@ -6,7 +6,7 @@
 
 namespace Drupal\payment\Plugin\Payment\Status;
 
-use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -159,13 +159,6 @@ abstract class PaymentStatusBase extends PluginBase implements ContainerFactoryP
    */
   function isOrHasAncestor($plugin_id) {
     return $this->paymentStatusManager->isOrHasAncestor($this->getPluginId(), $plugin_id);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getOperations($plugin_id) {
-    return array();
   }
 
   /**

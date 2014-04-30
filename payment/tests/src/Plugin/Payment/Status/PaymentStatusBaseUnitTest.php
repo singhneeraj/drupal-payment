@@ -162,11 +162,4 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
       ->will($this->returnValue($expected));
     $this->assertSame($expected, $this->status->isOrHasAncestor($this->pluginId));
   }
-
-  /**
-   * @covers ::getOperations
-   */
-  public function testGetOperations() {
-    $this->assertSame(array(), $this->status->getOperations($this->pluginId));
-  }
 }

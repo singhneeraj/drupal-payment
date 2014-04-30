@@ -26,7 +26,7 @@ services:
       - { name: plugin_manager_cache_clear}
   plugin.manager.payment.status:
     class: Drupal\payment\Plugin\Payment\Status\PaymentStatusManager
-    arguments: ['@container.namespaces', '@cache.default', '@language_manager', '@module_handler']
+    arguments: ['@container.namespaces', '@cache.default', '@language_manager', '@module_handler', '@service_container']
     tags:
       - { name: plugin_manager_cache_clear}
   payment.hook.element_info:

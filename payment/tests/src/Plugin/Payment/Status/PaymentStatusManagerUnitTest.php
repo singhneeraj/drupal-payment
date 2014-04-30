@@ -8,8 +8,10 @@
 namespace Drupal\payment\Tests\Plugin\Payment\Status;
 
 use Drupal\Component\Plugin\Exception\PluginException;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManager;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Zend\Stdlib\ArrayObject;
 
 /**
@@ -23,6 +25,13 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
    * @var \Drupal\Core\Cache\CacheBackendInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $cache;
+
+  /**
+   * The service container.
+   *
+   * @var \Symfony\Component\DependencyInjection\ContainerInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $container;
 
   /**
    * The plugin discovery used for testing.
@@ -72,8 +81,12 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   public function setUp() {
+    $this->container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+
     $this->discovery = $this->getMock('\Drupal\Component\Plugin\Discovery\DiscoveryInterface');
 
     $this->factory = $this->getMock('\Drupal\Component\Plugin\Factory\FactoryInterface');
@@ -81,9 +94,7 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
     $language = (object) array(
       'id' => $this->randomName(),
     );
-    $this->languageManager = $this->getMockBuilder('\Drupal\Core\Language\LanguageManager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->languageManager = $this->getMock('\Drupal\Core\Language\LanguageManagerInterface');
     $this->languageManager->expects($this->once())
       ->method('getCurrentLanguage')
       ->will($this->returnValue($language));
@@ -94,7 +105,7 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
 
     $namespaces = new ArrayObject();
 
-    $this->paymentStatusManager = new PaymentStatusManager($namespaces, $this->cache, $this->languageManager, $this->moduleHandler);
+    $this->paymentStatusManager = new PaymentStatusManager($namespaces, $this->cache, $this->languageManager, $this->moduleHandler, $this->container);
     $property = new \ReflectionProperty($this->paymentStatusManager, 'discovery');
     $property->setAccessible(TRUE);
     $property->setValue($this->paymentStatusManager, $this->discovery);
@@ -312,4 +323,67 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
     $this->assertTrue($this->paymentStatusManager->isOrHasAncestor('baz', 'foo'));
     $this->assertTrue($this->paymentStatusManager->isOrHasAncestor('baz', 'baz'));
   }
+
+  /**
+   * @covers ::getOperationsProvider
+   * @depends testGetDefinitions
+   */
+  public function testGetOperationsProvider() {
+    $definitions = array(
+      'foo' => array(
+        'id' => 'foo',
+        'operations_provider' => '\Drupal\payment\Tests\Plugin\Payment\Status\PaymentStatusManagerUnitTestOperationsProvider',
+      ),
+      'bar' => array(
+        'id' => 'bar',
+        'operations_provider' => '\Drupal\payment\Tests\Plugin\Payment\Status\PaymentStatusManagerUnitTestOperationsProviderWithContainerInjection',
+      ),
+    );
+    $this->discovery->expects($this->once())
+      ->method('getDefinitions')
+      ->will($this->returnValue($definitions));
+
+    $service = $this->randomName();
+    $this->container->expects($this->any())
+      ->method('get')
+      ->with('foo')
+      ->will($this->returnValue($service));
+
+    $this->assertInstanceOf($definitions['foo']['operations_provider'], $this->paymentStatusManager->getOperationsProvider('foo'));
+    /** @var \Drupal\payment\Tests\Plugin\Payment\Status\PaymentStatusManagerUnitTestOperationsProviderWithContainerInjection $bar_operations_provider */
+    $bar_operations_provider = $this->paymentStatusManager->getOperationsProvider('bar');
+    $this->assertInstanceOf($definitions['bar']['operations_provider'], $bar_operations_provider);
+    $this->assertSame($service, $bar_operations_provider->dependency);
+  }
+}
+
+class PaymentStatusManagerUnitTestOperationsProvider {
+
+}
+
+class PaymentStatusManagerUnitTestOperationsProviderWithContainerInjection implements ContainerInjectionInterface {
+
+  /**
+   * A dummy dependency.
+   *
+   * @var mixed
+   */
+  public $dependency;
+
+  /**
+   * Constructs a new class instance.
+   *
+   * @param mixed $dependency
+   */
+  public function __construct($dependency) {
+    $this->dependency = $dependency;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static($container->get('foo'));
+  }
+
 }

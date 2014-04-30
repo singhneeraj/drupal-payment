@@ -38,6 +38,18 @@ class PaymentStatus extends Plugin {
   public $label;
 
   /**
+   * The name of the class that provides plugin operations.
+   *
+   * The class must implement
+   * \Drupal\payment\Plugin\Payment\Status\PaymentStatusOperationsProviderInterface
+   * and may implement
+   * \Drupal\Core\DependencyInjection\ContainerInjectionInterface.
+   *
+   * @var string
+   */
+  public $operations_provider;
+
+  /**
    * The plugin ID of the parent status.
    *
    * @var string

@@ -100,8 +100,7 @@ class PaymentStatus extends ControllerBase implements ContainerInjectionInterfac
     $rows = array();
     foreach ($hierarchy as $plugin_id => $children) {
       $definition = $this->paymentStatusManager->getDefinition($plugin_id);
-      /** @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface $class */
-      $class = $definition['class'];
+      $operations_provider = $this->paymentStatusManager->getOperationsProvider($plugin_id);
       $indentation = array(
         '#theme' => 'indentation',
         '#size' => $depth,
@@ -115,7 +114,7 @@ class PaymentStatus extends ControllerBase implements ContainerInjectionInterfac
         ),
         'operations' => array(
           '#type' => 'operations',
-          '#links' => $class::getOperations($plugin_id),
+          '#links' => $operations_provider ? $operations_provider->getOperations($plugin_id) : array(),
         ),
       );
       $rows = array_merge($rows, $this->listingLevel($children, $depth + 1));
