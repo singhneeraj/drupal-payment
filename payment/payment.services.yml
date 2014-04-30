@@ -1,7 +1,7 @@
 services:
   plugin.manager.payment.type:
     class: Drupal\payment\Plugin\Payment\Type\PaymentTypeManager
-    arguments: ['@container.namespaces', '@cache.default', '@language_manager', '@module_handler']
+    arguments: ['@container.namespaces', '@cache.default', '@language_manager', '@module_handler', '@service_container']
     tags:
       - { name: plugin_manager_cache_clear}
   plugin.manager.payment.line_item:
