@@ -51,19 +51,19 @@ class PaymentStatusForm extends EntityForm {
    *   The current user.
    * @param \Drupal\Core\Routing\UrlGeneratorInterface $url_generator
    *   The URL generator.
-   * @param \Drupal\Core\StringTranslation\TranslationInterface $translation_manager
-   *    The translation manager.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *    The string translator.
    * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface $payment_status_manager
    *   The payment status plugin manager.
    * @param \Drupal\Core\Datetime\DrupalDateTime $default_datetime
    *   The default datetime of the new status.
    */
-  function __construct(ModuleHandlerInterface $module_handler, AccountInterface $current_user, UrlGeneratorInterface $url_generator, TranslationInterface $translation_manager, PaymentStatusManagerInterface $payment_status_manager, DrupalDateTime $default_datetime) {
+  function __construct(ModuleHandlerInterface $module_handler, AccountInterface $current_user, UrlGeneratorInterface $url_generator, TranslationInterface $string_translation, PaymentStatusManagerInterface $payment_status_manager, DrupalDateTime $default_datetime) {
     $this->currentUser = $current_user;
     $this->defaultDateTime = $default_datetime;
     $this->moduleHandler = $module_handler;
     $this->paymentStatusManager = $payment_status_manager;
-    $this->translationManager = $translation_manager;
+    $this->stringTranslation = $string_translation;
     $this->urlGenerator = $url_generator;
   }
 
