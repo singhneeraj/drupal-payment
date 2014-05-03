@@ -165,5 +165,6 @@ payment.payment_type:
   path: '/admin/config/services/payment/type/{bundle}'
   defaults:
     _content: '\Drupal\payment\Controller\PaymentType::configure'
+    _title_callback: '\Drupal\payment\Controller\PaymentType::configureTitle'
   requirements:
     _permission: 'payment.payment_type.administer'

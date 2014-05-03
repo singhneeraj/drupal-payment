@@ -94,7 +94,7 @@ class PaymentFormConfigurationForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, array &$form_state) {
-    $config = $this->configFactory->get('payment_form.payment_type');
+    $config = $this->configFactory()->get('payment_form.payment_type');
     $config->set('payment_method_selector_id', $form_state['values']['payment_method_selector_id']);
     $config->set('limit_allowed_payment_methods', empty($form_state['values']['allowed_payment_method_ids']));
     $config->set('allowed_payment_method_ids', $form_state['values']['allowed_payment_method_ids']);

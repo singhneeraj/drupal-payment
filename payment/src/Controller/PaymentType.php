@@ -105,15 +105,13 @@ class PaymentType extends ControllerBase implements ContainerInjectionInterface 
       $operations = $operations_provider ? $operations_provider->getOperations($plugin_id) : array();
 
       // Add the payment type's global configuration operation.
-      if (isset($definition['configuration_form'])) {
-        $operations['configure'] = array(
-          'route_name' => 'payment.payment_type',
-          'route_parameters' => array(
-            'bundle' => $plugin_id,
-          ),
-          'title' => $this->t('Configure'),
-        );
-      }
+      $operations['configure'] = array(
+        'route_name' => 'payment.payment_type',
+        'route_parameters' => array(
+          'bundle' => $plugin_id,
+        ),
+        'title' => $this->t('Configure'),
+      );
 
       // Add Field UI operations.
       if ($this->moduleHandler->moduleExists('field_ui')) {
@@ -184,4 +182,19 @@ class PaymentType extends ControllerBase implements ContainerInjectionInterface 
       return $this->t('This payment type has no configuration.');
     }
   }
+
+  /**
+   * Gets the title of the payment type configuration page.
+   *
+   * @param string $bundle
+   *   The payment type's plugin ID.
+   *
+   * @return string
+   */
+  public function configureTitle($bundle) {
+    $definition = $this->paymentTypeManager->getDefinition($bundle);
+
+    return $definition['label'];
+  }
+
 }
