@@ -15,23 +15,24 @@ use Drupal\Core\Entity\EntityViewBuilder;
 class PaymentViewBuilder extends EntityViewBuilder {
 
   /**
-   * Overrides Drupal\Core\Entity\EntityRenderController::buildContent().
+   * {@inheritdoc}
    */
-  public function buildContent(array $entities, array $displays, $view_mode, $langcode = NULL) {
+  public function buildComponents(array &$build, array $entities, array $displays, $view_mode, $langcode = NULL) {
     /** @var \Drupal\payment\Entity\PaymentInterface[] $entities */
-    parent::buildContent($entities, $displays, $view_mode, $langcode);
 
-    foreach ($entities as $payment) {
-      $payment->content['method'] = array(
-        '#markup' => $payment->getPaymentMethod() ? $payment->getPaymentMethod()->getPluginLabel() : t('Unavailable'),
-        '#title' => t('Payment method'),
+    parent::buildComponents($build, $entities, $displays, $view_mode, $langcode);
+
+    foreach ($entities as $i => $payment) {
+      $build[$i]['method'] = array(
+        '#markup' => $payment->getPaymentMethod() ? $payment->getPaymentMethod()->getPluginLabel() : $this->t('Unavailable'),
+        '#title' => $this->t('Payment method'),
         '#type' => 'item',
       );
-      $payment->content['line_items'] = array(
+      $build[$i]['line_items'] = array(
         '#payment' => $payment,
         '#type' => 'payment_line_items_display',
       );
-      $payment->content['statuses'] = array(
+      $build[$i]['statuses'] = array(
         '#statuses' => $payment->getStatuses(),
         '#type' => 'payment_statuses_display',
       );
