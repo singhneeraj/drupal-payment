@@ -53,7 +53,7 @@ class BasicDerivative extends DerivativeBase implements ContainerDerivativeInter
    * {@inheritdoc}
    */
   public function getDerivativeDefinitions($base_plugin_definition) {
-    /** @var \Drupal\payment\Entity\PaymentMethodInterface[] $payment_methods */
+    /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface[] $payment_methods */
     $payment_methods = $this->paymentMethodStorage->loadMultiple();
     foreach ($payment_methods as $payment_method) {
       if ($payment_method->getPluginId() == 'payment_basic') {
