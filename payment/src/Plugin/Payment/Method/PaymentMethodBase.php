@@ -274,10 +274,4 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
     return $this->pluginDefinition['label'];
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public static function getOperations($plugin_id) {
-    return array();
-  }
 }

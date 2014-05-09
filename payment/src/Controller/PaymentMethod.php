@@ -135,8 +135,7 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
   public function listPlugins() {
     $rows = array();
     foreach ($this->paymentMethodManager->getDefinitions() as $plugin_id => $definition) {
-      /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface $class */
-      $class = $definition['class'];
+      $operations_provider = $this->paymentMethodManager->getOperationsProvider($plugin_id);
       $row = array(
         'label' => array(
           '#markup' => $definition['label'],
@@ -146,7 +145,7 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
         ),
         'operations' => array(
           '#type' => 'operations',
-          '#links' => $class::getOperations($plugin_id),
+          '#links' => $operations_provider ? $operations_provider->getOperations($plugin_id) : array(),
         ),
       );
       if (!$definition['active']) {

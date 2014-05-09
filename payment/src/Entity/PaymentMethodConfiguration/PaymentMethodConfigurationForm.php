@@ -93,7 +93,7 @@ class PaymentMethodConfigurationForm extends EntityForm {
   public function submit(array $form, array &$form_state) {
     parent::submit($form, $form_state);
     $values = $form_state['values'];
-    /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface $payment_method */
+    /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface $payment_method_configuration */
     $payment_method_configuration = $this->getEntity();
     /** @var \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface $payment_method_configuration_plugin */
     $payment_method_configuration_plugin = $form_state['payment_method_configuration_plugin'];

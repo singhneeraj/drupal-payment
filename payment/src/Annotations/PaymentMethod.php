@@ -40,4 +40,15 @@ class PaymentMethod extends Plugin {
    * @var string
    */
   public $label;
+
+  /**
+   * The name of the class that provides plugin operations.
+   *
+   * The class must implement
+   * \Drupal\payment\Plugin\Payment\OperationsProviderInterface and may
+   * implement \Drupal\Core\DependencyInjection\ContainerInjectionInterface.
+   *
+   * @var string
+   */
+  public $operations_provider;
 }

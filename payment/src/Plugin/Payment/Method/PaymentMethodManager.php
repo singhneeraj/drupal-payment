@@ -11,6 +11,8 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Manages discovery and instantiation of payment method plugins.
@@ -18,6 +20,8 @@ use Drupal\Core\Plugin\DefaultPluginManager;
  * @see \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
  */
 class PaymentMethodManager extends DefaultPluginManager implements PaymentMethodManagerInterface {
+
+  use OperationsProviderPluginManagerTrait;
 
   /**
    * Constructs a new class instance.
@@ -31,11 +35,14 @@ class PaymentMethodManager extends DefaultPluginManager implements PaymentMethod
    *   The language manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler to invoke the alter hook with.
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The service container.
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, LanguageManager $language_manager, ModuleHandlerInterface $module_handler) {
+  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, LanguageManager $language_manager, ModuleHandlerInterface $module_handler, ContainerInterface $container) {
     parent::__construct('Plugin/Payment/Method', $namespaces, $module_handler, '\Drupal\payment\Annotations\PaymentMethod');
     $this->alterInfo('payment_method');
     $this->setCacheBackend($cache_backend, $language_manager, 'payment_method');
+    $this->container = $container;
   }
 
   /**
