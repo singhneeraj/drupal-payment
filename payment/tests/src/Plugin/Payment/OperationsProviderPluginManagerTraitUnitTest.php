@@ -47,8 +47,6 @@ class OperationsProviderPluginManagerTraitUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
