@@ -10,7 +10,6 @@ namespace Drupal\payment\Tests\Plugin\Payment;
 use Drupal\payment\Plugin\Payment\Method\BasicOperationsProvider;
 use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait;
 use Drupal\Tests\UnitTestCase;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\BasicOperationsProvider
@@ -34,7 +33,7 @@ class BasicOperationsProviderUnitTest extends UnitTestCase {
   /**
    * The provider under test
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodConfigurationOperationsProvider|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\Method\BasicOperationsProvider
    */
   protected $provider;
 
@@ -58,7 +57,7 @@ class BasicOperationsProviderUnitTest extends UnitTestCase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\Method\PaymentMethodConfigurationOperationsProvider unit test',
+      'name' => '\Drupal\payment\Plugin\Payment\Method\BasicOperationsProvider unit test',
       'group' => 'Payment',
     );
   }
