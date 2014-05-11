@@ -7,33 +7,10 @@
 
 namespace Drupal\payment\Tests\Plugin\Payment\Method;
 
-use Drupal\Tests\UnitTestCase;
-
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\Basic
  */
-class BasicUnitTest extends UnitTestCase {
-
-  /**
-   * The event dispatcher.
-   *
-   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $eventDispatcher;
-
-  /**
-   * The module handler used for testing.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $moduleHandler;
-
-  /**
-   * The token API used for testing.
-   *
-   * @var \Drupal\Core\Utility\Token|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $token;
+class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
 
   /**
    * The payment method plugin under test.
@@ -41,15 +18,6 @@ class BasicUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Plugin\Payment\Method\Basic|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $plugin;
-
-  /**
-   * The definition of the payment method plugin under test.
-   *
-   * @var array
-   */
-  protected $pluginDefinition = array(
-    'status' => 'payment_expired',
-  );
 
   /**
    * The payment status manager used for testing.
@@ -75,13 +43,9 @@ class BasicUnitTest extends UnitTestCase {
   public function setUp() {
     parent::setUp();
 
-    $this->eventDispatcher = $this->getMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
-
-    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
-
-    $this->token = $this->getMockBuilder('\Drupal\Core\Utility\Token')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->pluginDefinition += array(
+      'status' => 'payment_expired',
+    );
 
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
