@@ -7,14 +7,9 @@
 
 namespace Drupal\payment_form\Plugin\Field\FieldFormatter;
 
-use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
-use Drupal\Core\Form\FormBuilderInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Drupal\payment\Payment;
 
 /**
  * A payment form formatter.
@@ -27,84 +22,66 @@ use Symfony\Component\HttpFoundation\Request;
  *   }
  * )
  */
-class PaymentForm extends FormatterBase implements ContainerFactoryPluginInterface {
-
-  /**
-   * The entity manager.
-   *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
-   */
-  protected $entityManager;
-
-  /**
-   * The form builder.
-   *
-   * @var \Drupal\Core\Form\FormBuilderInterface
-   */
-  protected $formBuilder;
-
-  /**
-   * The payment line item manager.
-   *
-   * @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface
-   */
-  protected $paymentLineItemManager;
-
-  /**
-   * The request.
-   *
-   * @var \Symfony\Component\HttpFoundation\Request
-   */
-  protected $request;
-
-  /**
-   * Constructs a new class instance.
-   *
-   * @param array $configuration
-   * @param array $plugin_id
-   * @param array $plugin_definition
-   * @param \Symfony\Component\HttpFoundation\Request $request
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
-   * @param \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface $payment_line_item_manager
-   */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, Request $request, EntityManagerInterface $entity_manager, FormBuilderInterface $form_builder, PaymentLineItemManagerInterface $payment_line_item_manager) {
-    parent::__construct($plugin_id, $plugin_definition, $configuration['field_definition'], $configuration['settings'], $configuration['label'], $configuration['view_mode']);
-    $this->entityManager = $entity_manager;
-    $this->formBuilder = $form_builder;
-    $this->paymentLineItemManager = $payment_line_item_manager;
-    $this->request = $request;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('request'), $container->get('entity.manager'), $container->get('form_builder'), $container->get('plugin.manager.payment.line_item'));
-  }
+class PaymentForm extends FormatterBase {
 
   /**
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items) {
-    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
-    $payment = $this->entityManager->getStorage('payment')->create(array(
-      'bundle' => 'payment_form',
-    ));
-    $payment->setCurrencyCode($this->fieldDefinition->getSetting('currency_code'));
-    /** @var \Drupal\payment_form\Plugin\Payment\Type\PaymentForm $payment_type */
-    $payment_type = $payment->getPaymentType();
-    $payment_type->setDestinationUrl($this->request->getUri());
+    $line_items_data = array();
     foreach ($items as $item) {
       /** @var \Drupal\payment_form\Plugin\Field\FieldType\PaymentForm $item */
       $plugin_id = $item->get('plugin_id')->getValue();
       if ($plugin_id) {
-        $payment->setLineItem($this->paymentLineItemManager->createInstance($plugin_id, $item->get('plugin_configuration')->getValue()));
+        $line_items_data[] = array(
+          'plugin_id' => $plugin_id,
+          'plugin_configuration' => $item->get('plugin_configuration')->getValue(),
+        );
       }
     }
-    $payment_type->setFieldInstanceConfigId($this->fieldDefinition->getName());
 
-    return $this->formBuilder->getForm($this->entityManager->getFormObject('payment', 'payment_form')->setEntity($payment));
+    $callback = __CLASS__ . '::viewElementsPostRenderCache';
+    $context = array(
+      'currency_code' => $this->fieldDefinition->getSetting('currency_code'),
+      'field_definition_name' => $this->fieldDefinition->getName(),
+      'line_items_data' => serialize($line_items_data),
+      'token' => drupal_render_cache_generate_token(),
+    );
+
+    return array(array(
+      '#type' => 'markup',
+      '#post_render_cache' => array(
+        $callback => array($context),
+      ),
+      '#markup' => drupal_render_cache_generate_placeholder($callback, $context, $context['token']),
+    ));
   }
 
+  /**
+   * Implements #post_render_cache.
+   */
+  public static function viewElementsPostRenderCache(array $element, array $context) {
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
+    $payment = \Drupal::entityManager()->getStorage('payment')->create(array(
+      'bundle' => 'payment_form',
+    ));
+    $payment->setCurrencyCode($context['currency_code']);
+    /** @var \Drupal\payment_form\Plugin\Payment\Type\PaymentForm $payment_type */
+    $payment_type = $payment->getPaymentType();
+    $payment_type->setDestinationUrl(\Drupal::request()->getUri());
+    $line_items_data = unserialize($context['line_items_data']);
+    foreach ($line_items_data as $line_item_data) {
+      $payment->setLineItem(Payment::lineItemManager()->createInstance($line_item_data['plugin_id'], $line_item_data['plugin_configuration']));
+    }
+    $payment_type->setFieldInstanceConfigId($context['field_definition_name']);
+
+    /** @var \Drupal\Core\Entity\EntityFormBuilderInterface $entity_form_builder */
+    $entity_form_builder = \Drupal::service('entity.form_builder');
+    $placeholder = drupal_render_cache_generate_placeholder(__METHOD__, $context, $context['token']);
+
+    $build = $entity_form_builder->getForm($payment, 'payment_form');
+    $element['#markup'] = str_replace($placeholder, drupal_render($build), $element['#markup']);
+
+    return $element;
+  }
 }

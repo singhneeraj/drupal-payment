@@ -6,13 +6,14 @@
  * \Drupal\payment_form\Tests\Plugin\Field\FieldFormatter\PaymentFormUnitTest.
  */
 
-namespace Drupal\payment_form\Tests\Plugin\Field\FieldFormatter;
+namespace Drupal\payment_form\Tests\Plugin\Field\FieldFormatter {
 
-use Drupal\payment_form\Plugin\Field\FieldFormatter\PaymentForm;
+  use Drupal\Core\DependencyInjection\Container;
+  use Drupal\payment_form\Plugin\Field\FieldFormatter\PaymentForm;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment_form\Plugin\Field\FieldFormatter\PaymentForm.
+ * @coversDefaultClass \Drupal\payment_form\Plugin\Field\FieldFormatter\PaymentForm
  */
 class PaymentFormUnitTest extends UnitTestCase {
 
@@ -38,11 +39,11 @@ class PaymentFormUnitTest extends UnitTestCase {
   protected $fieldFormatter;
 
   /**
-   * The form builder used for testing.
+   * The entity form builder used for testing.
    *
-   * @var \Drupal\Core\Form\FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\Entity\EntityFormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $formBuilder;
+  protected $entityFormBuilder;
 
   /**
    * The payment line item manager used for testing.
@@ -71,11 +72,13 @@ class PaymentFormUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   protected function setUp() {
-    $this->entityManager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
+    $this->entityFormBuilder = $this->getMock('\Drupal\Core\Entity\EntityFormBuilderInterface');
 
-    $this->formBuilder = $this->getMock('\Drupal\Core\Form\FormBuilderInterface');
+    $this->entityManager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
 
     $this->paymentLineItemManager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface')
       ->disableOriginalConstructor()
@@ -87,68 +90,15 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $configuration = array(
-      'field_definition' => $this->fieldDefinition,
-      'label' => $this->randomName(),
-      'settings' => array(),
-      'view_mode' => $this->randomName(),
-    );
-    $this->fieldFormatter = new PaymentForm($configuration, 'payment_form', array(), $this->request, $this->entityManager, $this->formBuilder, $this->paymentLineItemManager);
+    $this->fieldFormatter = new PaymentForm('payment_form', array(), $this->fieldDefinition, array(), $this->randomName(), $this->randomName());
   }
 
   /**
-   * Tests viewElements().
+   * @covers ::viewElements
    */
   public function testViewElements() {
-    $payment_type = $this->getMockBuilder('\Drupal\payment_form\Plugin\Payment\Type\PaymentForm')
-      ->disableOriginalConstructor()
-      ->getMock();
-    $payment_type->expects($this->once())
-      ->method('setFieldInstanceConfigId');
-
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
-    $payment->expects($this->once())
-      ->method('setCurrencyCode')
-      ->will($this->returnSelf());
-    $payment->expects($this->once())
-      ->method('getPaymentType')
-      ->will($this->returnValue($payment_type));
-
-    $form = $this->getMock('\Drupal\Core\Entity\EntityFormInterface');
-    $form->expects($this->once())
-      ->method('setEntity')
-      ->with($payment)
-      ->will($this->returnSelf());
-
-    $storage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
-    $storage->expects($this->once())
-      ->method('create')
-      ->with(array(
-        'bundle' => 'payment_form',
-      ))
-      ->will($this->returnValue($payment));
-
-    $this->entityManager->expects($this->once())
-      ->method('getStorage')
-      ->with('payment')
-      ->will($this->returnValue($storage));
-
-    $this->entityManager->expects($this->once())
-      ->method('getFormObject')
-      ->with('payment', 'payment_form')
-      ->will($this->returnValue($form));
-
     $plugin_id = $this->randomName();
     $plugin_configuration = array();
-
-    $payment_line_item = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface');
-
-    $this->paymentLineItemManager->expects($this->once())
-      ->method('createInstance')
-      ->with($plugin_id, $plugin_configuration)
-      ->will($this->returnValue($payment_line_item));
 
     $plugin_id_property = $this->getMock('\Drupal\Core\TypedData\TypedDataInterface');
     $plugin_id_property->expects($this->once())
@@ -184,13 +134,113 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->will($this->returnValue($field_id));
 
     // Create a dummy render array.
-    $built_form = array($this->randomName());
-    $this->formBuilder->expects($this->once())
-      ->method('getForm')
-      ->with($form)
-      ->will($this->returnValue($built_form));
+    $built_form = array(array(
+      '#type' => 'markup',
+      '#post_render_cache' => array(
+        'Drupal\payment_form\Plugin\Field\FieldFormatter\PaymentForm::viewElementsPostRenderCache' => array(
+          array(
+            'currency_code' => NULL,
+            'field_definition_name' => $field_id,
+            'line_items_data' => 'a:1:{s:8:"' . $plugin_id . '";a:0:{}}',
+            'token' => NULL,
+          ),
+        ),
+      ),
+      '#markup' => NULL,
+    ));
 
     $this->assertSame($built_form, $this->fieldFormatter->viewElements($items));
   }
+
+  /**
+   * @covers ::viewElementsPostRenderCache
+   */
+  public function testViewElementsPostRenderCache() {
+    $payment_type = $this->getMockBuilder('\Drupal\payment_form\Plugin\Payment\Type\PaymentForm')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $payment_type->expects($this->once())
+      ->method('setFieldInstanceConfigId');
+
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $payment->expects($this->once())
+      ->method('setCurrencyCode')
+      ->will($this->returnSelf());
+    $payment->expects($this->once())
+      ->method('getPaymentType')
+      ->will($this->returnValue($payment_type));
+
+    $storage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
+    $storage->expects($this->once())
+      ->method('create')
+      ->with(array(
+        'bundle' => 'payment_form',
+      ))
+      ->will($this->returnValue($payment));
+
+    $this->entityManager->expects($this->once())
+      ->method('getStorage')
+      ->with('payment')
+      ->will($this->returnValue($storage));
+
+    $plugin_id = $this->randomName();
+    $plugin_configuration = array();
+
+    $payment_line_item = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface');
+
+    $this->paymentLineItemManager->expects($this->once())
+      ->method('createInstance')
+      ->with($plugin_id, $plugin_configuration)
+      ->will($this->returnValue($payment_line_item));
+
+    $this->entityFormBuilder->expects($this->once())
+      ->method('getForm')
+      ->with($payment, 'payment_form');
+
+    $container = new Container();
+    $container->set('entity.form_builder', $this->entityFormBuilder);
+    $container->set('entity.manager', $this->entityManager);
+    $container->set('plugin.manager.payment.line_item', $this->paymentLineItemManager);
+    $container->set('request', $this->request);
+    \Drupal::setContainer($container);
+
+    $line_items_data = array(array(
+      'plugin_id' => $plugin_id,
+      'plugin_configuration' => $plugin_configuration,
+    ));
+
+    $element = array(
+      '#markup' => $this->randomName(),
+    );
+    $context = array(
+      'currency_code' => $this->randomName(),
+      'destination_url' => $this->randomName(),
+      'field_definition_name' => $this->randomName(),
+      'line_items_data' => serialize($line_items_data),
+      'token' => $this->randomName(),
+    );
+
+    $method = new \ReflectionMethod($this->fieldFormatter, 'viewElementsPostRenderCache');
+    $method->setAccessible(TRUE);
+    $this->assertSame($element, $method->invoke($this->fieldFormatter, $element, $context));
+  }
+
+}
+
+}
+
+namespace {
+
+if (!function_exists('drupal_render')) {
+  function drupal_render() {}
+}
+if (!function_exists('drupal_render_cache_generate_token')) {
+  function drupal_render_cache_generate_token() {}
+}
+if (!function_exists('drupal_render_cache_generate_placeholder')) {
+  function drupal_render_cache_generate_placeholder() {}
+}
 
 }
