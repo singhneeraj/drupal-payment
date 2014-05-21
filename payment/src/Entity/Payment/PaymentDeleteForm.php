@@ -8,6 +8,7 @@
 namespace Drupal\payment\Entity\Payment;
 
 use Drupal\Core\Entity\ContentEntityConfirmFormBase;
+use Drupal\Core\Url;
 
 /**
  * Provides the payment deletion form.
@@ -27,12 +28,9 @@ class PaymentDeleteForm extends ContentEntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelRoute() {
-    return array(
-      'route_name' => 'payment.payment.view',
-      'route_parameters' => array(
-        'payment' => $this->getEntity()->id(),
-      ),
-    );
+    return new Url('payment.payment.view', array(
+      'payment' => $this->getEntity()->id(),
+    ));
   }
 
   /**

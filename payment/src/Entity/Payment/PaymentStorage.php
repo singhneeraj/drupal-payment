@@ -8,7 +8,7 @@
 namespace Drupal\payment\Entity\Payment;
 
 use Drupal\Core\Entity\ContentEntityDatabaseStorage;
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\payment\Payment as PaymentServiceWrapper;
 
 /**
@@ -53,7 +53,7 @@ class PaymentStorage extends ContentEntityDatabaseStorage implements PaymentStor
   /**
    * {@inheritdoc}
    */
-  protected function mapToStorageRecord(EntityInterface $entity, $table_key = 'data_table') {
+  protected function mapToStorageRecord(ContentEntityInterface $entity, $table_key = 'base_table') {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $entity;
 

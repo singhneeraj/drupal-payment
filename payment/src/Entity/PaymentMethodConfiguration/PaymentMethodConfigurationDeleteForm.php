@@ -8,6 +8,7 @@
 namespace Drupal\payment\Entity\PaymentMethodConfiguration;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;
+use Drupal\Core\Url;
 
 /**
  * Provides the payment method configuration deletion form.
@@ -27,9 +28,7 @@ class PaymentMethodConfigurationDeleteForm extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelRoute() {
-    return array(
-      'route_name' => 'payment.payment_method_configuration.list',
-    );
+    return new Url('payment.payment_method_configuration.list');
   }
 
   /**
