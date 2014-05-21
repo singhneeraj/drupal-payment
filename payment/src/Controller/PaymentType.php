@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -70,12 +71,14 @@ class PaymentType extends ControllerBase implements ContainerInjectionInterface 
    *   The payment type plugin manager.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    */
-  public function __construct(ModuleHandlerInterface $module_handler, EntityManagerInterface $entity_manager, FormBuilderInterface $form_builder, PaymentTypeManagerInterface $payment_type_manager, AccountInterface $current_user) {
+  public function __construct(ModuleHandlerInterface $module_handler, EntityManagerInterface $entity_manager, FormBuilderInterface $form_builder, PaymentTypeManagerInterface $payment_type_manager, AccountInterface $current_user, TranslationInterface $string_translation) {
     $this->moduleHandler = $module_handler;
     $this->entityManager = $entity_manager;
     $this->formBuilder = $form_builder;
     $this->paymentTypeManager = $payment_type_manager;
+    $this->stringTranslation = $string_translation;
     $this->currentUser = $current_user;
   }
 
@@ -83,7 +86,7 @@ class PaymentType extends ControllerBase implements ContainerInjectionInterface 
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('module_handler'), $container->get('entity.manager'), $container->get('form_builder'), $container->get('plugin.manager.payment.type'), $container->get('current_user'));
+    return new static($container->get('module_handler'), $container->get('entity.manager'), $container->get('form_builder'), $container->get('plugin.manager.payment.type'), $container->get('current_user'), $container->get('string_translation'));
   }
 
   /**
@@ -171,7 +174,7 @@ class PaymentType extends ControllerBase implements ContainerInjectionInterface 
    * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    */
   public function configure($bundle) {
-    $definition = $this->paymentTypeManager->getDefinition($bundle);
+    $definition = $this->paymentTypeManager->getDefinition($bundle, FALSE);
     if (is_null($definition)) {
       throw new NotFoundHttpException();
     }

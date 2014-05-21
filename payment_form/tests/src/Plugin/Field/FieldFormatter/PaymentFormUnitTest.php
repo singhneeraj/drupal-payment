@@ -141,7 +141,7 @@ class PaymentFormUnitTest extends UnitTestCase {
           array(
             'currency_code' => NULL,
             'field_definition_name' => $field_id,
-            'line_items_data' => 'a:1:{s:8:"' . $plugin_id . '";a:0:{}}',
+            'line_items_data' => 'a:1:{i:0;a:2:{s:9:"plugin_id";s:8:"' . $plugin_id . '";s:20:"plugin_configuration";a:0:{}}}',
             'token' => NULL,
           ),
         ),

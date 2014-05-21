@@ -71,6 +71,8 @@ class QueueUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   function setUp() {
     parent::setUp();
