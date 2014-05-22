@@ -103,9 +103,9 @@ class PaymentSelectUnitTest extends UnitTestCase {
 
     $created_instance = new \stdClass();
     $this->paymentMethodManager->expects($this->once())
-      ->method('getDefinition')
+      ->method('hasDefinition')
       ->with($plugin_id)
-      ->will($this->returnValue(array('foo')));
+      ->will($this->returnValue(TRUE));
     $this->paymentMethodManager->expects($this->once())
       ->method('createInstance')
       ->with($plugin_id)
