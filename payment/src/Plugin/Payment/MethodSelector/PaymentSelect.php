@@ -40,7 +40,7 @@ class PaymentSelect extends PaymentMethodSelectorBase {
    */
   public function getPaymentMethodFromFormElements(array $form, array &$form_state) {
     $method_data = $this->getPaymentMethodData($form, $form_state);
-    if ($this->paymentMethodManager->getDefinition($method_data['plugin_id'])) {
+    if ($this->paymentMethodManager->hasDefinition($method_data['plugin_id'])) {
       return $this->paymentMethodManager->createInstance($method_data['plugin_id'], $method_data['plugin_configuration']);
     }
     return NULL;

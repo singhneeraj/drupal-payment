@@ -1,5 +1,5 @@
 id: payment.payment_reference_field_instance
-uuid: e54e5e54-1832-46be-9a3b-6ba355ba86de
+name: payment_reference_field_instance
 status: true
 langcode: en
 name: payment_reference_field_instance

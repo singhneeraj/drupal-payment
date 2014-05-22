@@ -1,5 +1,5 @@
 id: payment.payment_form_field_instance
-uuid: f9aa0b68-63bb-4ebb-8800-b581f75e13b5
+name: payment_form_field_instance
 status: true
 langcode: en
 name: payment_form_field_instance

@@ -1,8 +1,7 @@
 id: payment.payment_reference.payment_reference_field_instance
-uuid: e0fd1fa3-c22b-45cc-a142-c7615611e5b1
 status: true
 langcode: en
-field_uuid: e54e5e54-1832-46be-9a3b-6ba355ba86de
+field_name: payment_reference_field_instance
 entity_type: payment
 bundle: payment_reference
 label: 'Payment reference field instance'
