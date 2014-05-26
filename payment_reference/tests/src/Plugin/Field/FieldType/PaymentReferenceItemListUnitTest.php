@@ -11,7 +11,7 @@ namespace Drupal\payment_reference\Tests\Plugin\Field\FieldType;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment_reference\Plugin\Field\FieldType\PaymentReferenceItemList.
+ * @coversDefaultClass \Drupal\payment_reference\Plugin\Field\FieldType\PaymentReferenceItemList
  */
 class PaymentReferenceItemListUnitTest extends UnitTestCase {
 
@@ -44,7 +44,7 @@ class PaymentReferenceItemListUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests defaultValuesForm().
+   * @covers ::defaultValuesForm
    */
   public function testDefaultValuesForm() {
     $form = array();
@@ -54,7 +54,7 @@ class PaymentReferenceItemListUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests defaultValuesFormValidate().
+   * @covers ::defaultValuesFormValidate
    */
   public function testDefaultValuesFormValidate() {
     $element = array();
@@ -65,7 +65,7 @@ class PaymentReferenceItemListUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests defaultValuesFormSubmit().
+   * @covers ::defaultValuesFormSubmit
    */
   public function testDefaultValuesFormSubmit() {
     $element = array();

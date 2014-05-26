@@ -11,7 +11,7 @@ namespace Drupal\payment_form\Tests\Plugin\Field\FieldType;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment_form\Plugin\Field\FieldType\PaymentForm.
+ * @coversDefaultClass \Drupal\payment_form\Plugin\Field\FieldType\PaymentForm
  */
 class PaymentFormUnitTest extends UnitTestCase {
 
@@ -44,7 +44,7 @@ class PaymentFormUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests instanceSettingsForm().
+   * @covers ::instanceSettingsForm
    */
   public function testInstanceSettingsForm() {
     $this->fieldType->expects($this->once())
@@ -56,7 +56,7 @@ class PaymentFormUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests schema().
+   * @covers ::schema
    */
   public function testSchema() {
     $field = $this->getMock('\Drupal\field\FieldConfigInterface');
@@ -67,7 +67,7 @@ class PaymentFormUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getPropertyDefinitions().
+   * @covers ::getPropertyDefinitions
    */
   public function testGetPropertyDefinitions() {
     $definitions = $this->fieldType->getPropertyDefinitions();

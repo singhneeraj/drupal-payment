@@ -111,7 +111,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getFieldInstanceConfigId().
+   * @covers ::getFieldInstanceConfigId
    */
   public function testGetFieldInstanceConfigId() {
     $this->payment->expects($this->once())
@@ -120,7 +120,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests setFieldInstanceConfigId().
+   * @covers ::setFieldInstanceConfigId
    */
   public function testSetFieldInstanceConfigId() {
     $map = array(array('payment_reference_field_instance', $this->paymentType));
@@ -131,7 +131,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests paymentDescription().
+   * @covers ::paymentDescription
    */
   public function testPaymentDescription() {
     $this->assertSame($this->paymentType->paymentDescription(), $this->fieldInstanceConfig->label());

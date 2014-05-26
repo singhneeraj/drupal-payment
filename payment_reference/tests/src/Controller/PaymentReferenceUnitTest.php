@@ -11,7 +11,7 @@ use Drupal\Core\Access\AccessInterface;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment_reference\Controller\PaymentReference.
+ * @coversDefaultClass \Drupal\payment_reference\Controller\PaymentReference
  */
 class PaymentReferenceUnitTest extends UnitTestCase {
 
@@ -105,7 +105,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests pay().
+   * @covers ::pay
    */
   public function testPay() {
     $payment_type = $this->getMockBuilder('\Drupal\payment_reference\Plugin\Payment\Type\PaymentReference')
@@ -168,7 +168,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests payAccess().
+   * @covers ::payAccess
    */
   public function testPayAccess() {
     $user_id = mt_rand();
@@ -236,7 +236,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests payLabel().
+   * @covers ::payLabel
    */
   public function testPayLabel() {
     $label = $this->randomName();
@@ -249,7 +249,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests resumeContext().
+   * @covers ::resumeContext
    */
   public function testResumeContext() {
     $this->controller = $this->getMockBuilder('\Drupal\payment_reference\Controller\PaymentReference')
@@ -277,7 +277,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests resumeContextLabel().
+   * @covers ::resumeContextLabel
    */
   public function testResumeContextLabel() {
     $field_instance_config_label = $this->randomName();

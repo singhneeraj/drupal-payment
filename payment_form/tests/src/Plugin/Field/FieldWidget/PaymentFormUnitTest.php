@@ -11,7 +11,7 @@ namespace Drupal\payment_form\Tests\Plugin\Field\FieldWidget;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment_form\Plugin\Field\FieldWidget\PaymentForm.
+ * @coversDefaultClass \Drupal\payment_form\Plugin\Field\FieldWidget\PaymentForm
  */
 class PaymentFormUnitTest extends UnitTestCase {
 
@@ -48,7 +48,7 @@ class PaymentFormUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests settingsSummary().
+   * @covers ::settingsSummary
    */
   public function testSettingsSummary() {
     $this->fieldWidget->expects($this->once())
@@ -58,7 +58,7 @@ class PaymentFormUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests formElement().
+   * @covers ::formElement
    */
   public function testFormElement() {
     $items = $this->getMockBuilder('Drupal\Core\Field\FieldItemList')
@@ -73,7 +73,7 @@ class PaymentFormUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests formElementProcess().
+   * @covers ::formElementProcess
    */
   public function testFormElementProcess() {
     $iterator = new \ArrayIterator(array(

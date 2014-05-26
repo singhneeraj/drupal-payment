@@ -12,7 +12,7 @@ use Drupal\payment_reference\Entity\PaymentFormController;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment_reference\Entity\PaymentFormController.
+ * @coversDefaultClass \Drupal\payment_reference\Entity\PaymentFormController
  */
 class PaymentFormControllerUnitTest extends UnitTestCase {
 
@@ -100,7 +100,7 @@ class PaymentFormControllerUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests form().
+   * @covers ::form
    */
   public function testForm() {
     $this->paymentMethodSelector->expects($this->once())
@@ -133,7 +133,7 @@ class PaymentFormControllerUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests buildEntity().
+   * @covers ::buildEntity
    */
   public function testBuildEntity() {
     $form = array();

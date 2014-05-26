@@ -12,7 +12,7 @@ use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\Container;
 
 /**
- * Tests \Drupal\payment_reference\PaymentReference.
+ * @coversDefaultClass \Drupal\payment_reference\PaymentReference
  */
 class PaymentReferenceUnitTest extends UnitTestCase {
 
@@ -28,7 +28,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests lineItemManager().
+   * @covers ::lineItemManager
    */
   public function testLineItemManager() {
     $container = new Container();

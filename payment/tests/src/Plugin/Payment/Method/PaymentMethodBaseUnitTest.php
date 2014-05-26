@@ -52,7 +52,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
   }
 
   /**
-   * Tests defaultConfiguration().
+   * @covers ::defaultConfiguration
    */
   public function testDefaultConfiguration() {
     $this->assertInternalType('array', $this->plugin->defaultConfiguration());

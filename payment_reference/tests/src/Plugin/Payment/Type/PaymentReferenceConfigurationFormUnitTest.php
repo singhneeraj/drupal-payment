@@ -11,7 +11,7 @@ namespace Drupal\payment_reference\Tests\Plugin\Payment\Type;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment_reference\Plugin\Payment\Type\PaymentReferenceConfigurationForm.
+ * @coversDefaultClass \Drupal\payment_reference\Plugin\Payment\Type\PaymentReferenceConfigurationForm
  */
 class PaymentReferenceConfigurationFormUnitTest extends UnitTestCase {
 
@@ -75,14 +75,14 @@ class PaymentReferenceConfigurationFormUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests getFormId().
+   * @covers ::getFormId
    */
   public function testGetFormId() {
     $this->assertInternalType('string', $this->form->getFormId());
   }
 
   /**
-   * Tests buildForm().
+   * @covers ::buildForm
    */
   public function testBuildForm() {
     $config = $this->getMockBuilder('\Drupal\Core\Config\Config')

@@ -11,7 +11,7 @@ namespace Drupal\payment_reference\Tests\Plugin\Field\FieldWidget;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment_reference\Plugin\Field\FieldWidget\PaymentReference.
+ * @coversDefaultClass \Drupal\payment_reference\Plugin\Field\FieldWidget\PaymentReference
  */
 class PaymentReferenceUnitTest extends UnitTestCase {
 
@@ -62,7 +62,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests formElement().
+   * @covers ::formElement
    */
   public function testFormElement() {
     $this->fieldInstanceConfig->expects($this->once())

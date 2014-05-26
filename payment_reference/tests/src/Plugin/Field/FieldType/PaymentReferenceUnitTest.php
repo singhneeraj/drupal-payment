@@ -11,7 +11,7 @@ namespace Drupal\payment_reference\Tests\Plugin\Field\FieldType;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests \Drupal\payment_reference\Plugin\Field\FieldType\PaymentReference.
+ * @coversDefaultClass \Drupal\payment_reference\Plugin\Field\FieldType\PaymentReference
  */
 class PaymentReferenceUnitTest extends UnitTestCase {
 
@@ -68,7 +68,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests instanceSettingsForm().
+   * @covers ::instanceSettingsForm
    */
   public function testInstanceSettingsForm() {
     $form = array();
@@ -80,7 +80,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests settingsForm().
+   * @covers ::settingsForm
    */
   public function testSettingsForm() {
     $form = array();
@@ -90,7 +90,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests preSave().
+   * @covers ::preSave
    */
   public function testPreSave() {
     $payment_id = mt_rand();
