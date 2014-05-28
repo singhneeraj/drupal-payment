@@ -8,11 +8,11 @@ namespace Drupal\payment\Plugin\Payment\Status;
 
 use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Manages discovery and instantiation of payment status plugins.
@@ -35,14 +35,14 @@ class PaymentStatusManager extends DefaultPluginManager implements PaymentStatus
    *   The language manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler to invoke the alter hook with.
-   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
-   *   The service container.
+   * @param \Drupal\Core\DependencyInjection\ClassResolverInterface $class_resolver
+   *   The class_resolver.
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, LanguageManagerInterface $language_manager, ModuleHandlerInterface $module_handler, ContainerInterface $container) {
+  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, LanguageManagerInterface $language_manager, ModuleHandlerInterface $module_handler, ClassResolverInterface $class_resolver) {
     parent::__construct('Plugin/Payment/Status', $namespaces, $module_handler, '\Drupal\payment\Annotations\PaymentStatus');
     $this->alterInfo('payment_status');
     $this->setCacheBackend($cache_backend, $language_manager, 'payment_status');
-    $this->container = $container;
+    $this->classResolver = $class_resolver;
   }
 
   /**

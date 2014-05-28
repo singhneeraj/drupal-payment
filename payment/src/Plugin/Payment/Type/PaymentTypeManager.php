@@ -8,11 +8,11 @@ namespace Drupal\payment\Plugin\Payment\Type;
 
 use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Manages discovery and instantiation of payment type plugins.
@@ -35,14 +35,14 @@ class PaymentTypeManager extends DefaultPluginManager implements PaymentTypeMana
    *   The language manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler to invoke the alter hook with.
-   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
-   *   The service container.
+   * @param \Drupal\Core\DependencyInjection\ClassResolverInterface $class_resolver
+   *   The class_resolver.
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, LanguageManager $language_manager, ModuleHandlerInterface $module_handler, ContainerInterface $container) {
+  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, LanguageManager $language_manager, ModuleHandlerInterface $module_handler, ClassResolverInterface $class_resolver) {
     parent::__construct('Plugin/Payment/Type', $namespaces, $module_handler, '\Drupal\payment\Annotations\PaymentType');
     $this->alterInfo('payment_type');
     $this->setCacheBackend($cache_backend, $language_manager, 'payment_type');
-    $this->container = $container;
+    $this->classResolver = $class_resolver;
   }
 
   /**

@@ -7,13 +7,9 @@
 
 namespace Drupal\payment\Tests\Plugin\Payment;
 
-use Drupal\Component\Plugin\Exception\PluginException;
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait;
-use Drupal\payment\Plugin\Payment\Status\PaymentStatusManager;
 use Drupal\Tests\UnitTestCase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Zend\Stdlib\ArrayObject;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait
@@ -21,11 +17,11 @@ use Zend\Stdlib\ArrayObject;
 class OperationsProviderPluginManagerTraitUnitTest extends UnitTestCase {
 
   /**
-   * The service container.
+   * The class resolver.
    *
-   * @var \Symfony\Component\DependencyInjection\ContainerInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\DependencyInjection\ClassResolverInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $container;
+  protected $classResolver;
 
   /**
    * The trait under test.
@@ -49,7 +45,7 @@ class OperationsProviderPluginManagerTraitUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   public function setUp() {
-    $this->container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $this->classResolver = $this->getMock('\Drupal\Core\DependencyInjection\ClassResolverInterface');
   }
 
   /**
@@ -61,25 +57,18 @@ class OperationsProviderPluginManagerTraitUnitTest extends UnitTestCase {
         'id' => 'foo',
         'operations_provider' => '\Drupal\payment\Tests\Plugin\Payment\OperationsProviderPluginManagerTraitUnitTestOperationsProvider',
       ),
-      'bar' => array(
-        'id' => 'bar',
-        'operations_provider' => '\Drupal\payment\Tests\Plugin\Payment\OperationsProviderPluginManagerTraitUnitTestOperationsProviderWithContainerInjection',
-      ),
     );
 
-    $this->trait = new OperationsProviderPluginManagerTraitUnitTestPluginManager($this->container, $plugin_definitions);
+    $operations_provider = new \stdClass();
 
-    $service = $this->randomName();
-    $this->container->expects($this->any())
-      ->method('get')
-      ->with('foo')
-      ->will($this->returnValue($service));
+    $this->trait = new OperationsProviderPluginManagerTraitUnitTestPluginManager($this->classResolver, $plugin_definitions);
 
-    $this->assertInstanceOf($plugin_definitions['foo']['operations_provider'], $this->trait->getOperationsProvider('foo'));
-    /** @var \Drupal\payment\Tests\Plugin\Payment\OperationsProviderPluginManagerTraitUnitTestOperationsProviderWithContainerInjection $bar_operations_provider */
-    $bar_operations_provider = $this->trait->getOperationsProvider('bar');
-    $this->assertInstanceOf($plugin_definitions['bar']['operations_provider'], $bar_operations_provider);
-    $this->assertSame($service, $bar_operations_provider->dependency);
+    $this->classResolver->expects($this->any())
+      ->method('getInstanceFromDefinition')
+      ->with($plugin_definitions['foo']['operations_provider'])
+      ->will($this->returnValue($operations_provider));
+
+    $this->assertSame($operations_provider, $this->trait->getOperationsProvider('foo'));
   }
 
 }
@@ -98,8 +87,8 @@ class OperationsProviderPluginManagerTraitUnitTestPluginManager {
   /**
    * Creates a new class instance.
    */
-  public function __construct(ContainerInterface $container, array $plugin_definitions) {
-    $this->container = $container;
+  public function __construct(ClassResolverInterface $class_resolver, array $plugin_definitions) {
+    $this->classResolver = $class_resolver;
     $this->pluginDefinitions = $plugin_definitions;
   }
 
@@ -109,35 +98,4 @@ class OperationsProviderPluginManagerTraitUnitTestPluginManager {
   protected function getDefinition($plugin_id) {
     return $this->pluginDefinitions[$plugin_id];
   }
-}
-
-class OperationsProviderPluginManagerTraitUnitTestOperationsProvider {
-
-}
-
-class OperationsProviderPluginManagerTraitUnitTestOperationsProviderWithContainerInjection implements ContainerInjectionInterface {
-
-  /**
-   * A dummy dependency.
-   *
-   * @var mixed
-   */
-  public $dependency;
-
-  /**
-   * Constructs a new class instance.
-   *
-   * @param mixed $dependency
-   */
-  public function __construct($dependency) {
-    $this->dependency = $dependency;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static($container->get('foo'));
-  }
-
 }

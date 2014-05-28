@@ -21,11 +21,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 trait OperationsProviderPluginManagerTrait {
 
   /**
-   * The service container.
+   * The class resolver.
    *
-   * @var \Symfony\Component\DependencyInjection\ContainerInterface
+   * @var \Drupal\Core\DependencyInjection\ClassResolverInterface
    */
-  protected $container;
+  protected $classResolver;
 
   /**
    * {@inheritdoc}
@@ -34,14 +34,7 @@ trait OperationsProviderPluginManagerTrait {
     /** @var \Drupal\Component\Plugin\PluginManagerInterface|\Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait $this */
     $definition = $this->getDefinition($plugin_id);
     if (isset($definition['operations_provider'])) {
-      $class = $definition['operations_provider'];
-      if (class_implements($class, '\Drupal\Core\DependencyInjection\ContainerInjectionInterface')) {
-        /** @var \Drupal\Core\DependencyInjection\ContainerInjectionInterface $class */
-        return $class::create($this->container);
-      }
-      else {
-        return new $class();
-      }
+      return $this->classResolver->getInstanceFromDefinition($definition['operations_provider']);
     }
   }
 

@@ -28,9 +28,9 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::lineItemManager
+   * @covers ::queue
    */
-  public function testLineItemManager() {
+  public function testQueue() {
     $container = new Container();
     $queue = $this->getMock('\Drupal\payment\QueueInterface');
     $container->set('payment_reference.queue', $queue);

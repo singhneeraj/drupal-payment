@@ -25,11 +25,11 @@ class PaymentMethodManagerUnitTest extends UnitTestCase {
   public $cache;
 
   /**
-   * The service container.
+   * The class resolver.
    *
-   * @var \Symfony\Component\DependencyInjection\ContainerInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\DependencyInjection\ClassResolverInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $container;
+  protected $classResolver;
 
   /**
    * The plugin discovery used for testing.
@@ -83,7 +83,7 @@ class PaymentMethodManagerUnitTest extends UnitTestCase {
    * @covers ::__construct
    */
   public function setUp() {
-    $this->container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $this->classResolver = $this->getMock('\Drupal\Core\DependencyInjection\ClassResolverInterface');
 
     $this->discovery = $this->getMock('\Drupal\Component\Plugin\Discovery\DiscoveryInterface');
 
@@ -105,7 +105,7 @@ class PaymentMethodManagerUnitTest extends UnitTestCase {
 
     $namespaces = new ArrayObject();
 
-    $this->paymentMethodManager = new PaymentMethodManager($namespaces, $this->cache, $this->languageManager, $this->moduleHandler, $this->container);
+    $this->paymentMethodManager = new PaymentMethodManager($namespaces, $this->cache, $this->languageManager, $this->moduleHandler, $this->classResolver);
     $property = new \ReflectionProperty($this->paymentMethodManager, 'discovery');
     $property->setAccessible(TRUE);
     $property->setValue($this->paymentMethodManager, $this->discovery);

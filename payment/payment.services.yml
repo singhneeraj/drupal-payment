@@ -1,7 +1,7 @@
 services:
   plugin.manager.payment.type:
     class: Drupal\payment\Plugin\Payment\Type\PaymentTypeManager
-    arguments: ['@container.namespaces', '@cache.discovery', '@language_manager', '@module_handler', '@service_container']
+    arguments: ['@container.namespaces', '@cache.discovery', '@language_manager', '@module_handler', '@class_resolver']
     tags:
       - { name: plugin_manager_cache_clear}
   plugin.manager.payment.line_item:
@@ -11,7 +11,7 @@ services:
       - { name: plugin_manager_cache_clear}
   plugin.manager.payment.method:
     class: Drupal\payment\Plugin\Payment\Method\PaymentMethodManager
-    arguments: ['@container.namespaces', '@cache.discovery', '@language_manager', '@module_handler', '@service_container']
+    arguments: ['@container.namespaces', '@cache.discovery', '@language_manager', '@module_handler', '@class_resolver']
     tags:
       - { name: plugin_manager_cache_clear}
   plugin.manager.payment.method_configuration:
@@ -26,7 +26,7 @@ services:
       - { name: plugin_manager_cache_clear}
   plugin.manager.payment.status:
     class: Drupal\payment\Plugin\Payment\Status\PaymentStatusManager
-    arguments: ['@container.namespaces', '@cache.discovery', '@language_manager', '@module_handler', '@service_container']
+    arguments: ['@container.namespaces', '@cache.discovery', '@language_manager', '@module_handler', '@class_resolver']
     tags:
       - { name: plugin_manager_cache_clear}
   payment.hook.element_info:
