@@ -52,7 +52,7 @@ class QueueUnitTest extends UnitTestCase {
   protected $queue;
 
   /**
-   * The unique ID of the queue (instance).|\PHPUnit_Framework_MockObject_MockObject
+   * The unique ID of the queue (instance).
    *
    * @var string
    */
@@ -112,6 +112,30 @@ class QueueUnitTest extends UnitTestCase {
     $method = new \ReflectionMethod($this->queue, 'alterLoadedPaymentIds');
     $method->setAccessible(TRUE);
     $method->invoke($this->queue, $category_id, $owner_id, $payment_ids);
+  }
+
+  /**
+   * @covers ::claimPayment
+   */
+  public function testClaimPayment() {
+    $payment_id = mt_rand();
+    $acquisition_code = $this->randomName();
+
+    /** @var \Drupal\payment\Queue|\PHPUnit_Framework_MockObject_MockObject $queue */
+    $queue = $this->getMockBuilder('\Drupal\payment\Queue')
+      ->setConstructorArgs(array($this->queueId, $this->database, $this->moduleHandler, $this->eventDispatcher, $this->paymentStatusManager))
+      ->setMethods(array('tryClaimPaymentOnce'))
+      ->getMock();
+    $queue->expects($this->at(0))
+      ->method('tryClaimPaymentOnce')
+      ->with($payment_id)
+      ->will($this->returnValue(FALSE));
+    $queue->expects($this->at(1))
+      ->method('tryClaimPaymentOnce')
+      ->with($payment_id)
+      ->will($this->returnValue($acquisition_code));
+
+    $this->assertSame($acquisition_code, $queue->claimPayment($payment_id));
   }
 
 }

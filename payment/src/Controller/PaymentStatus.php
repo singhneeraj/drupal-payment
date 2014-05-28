@@ -9,7 +9,9 @@ namespace Drupal\payment\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityFormBuilderInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Entity\PaymentStatusInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -20,13 +22,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class PaymentStatus extends ControllerBase implements ContainerInjectionInterface {
 
   /**
-   * The entity manager.
-   *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
-   */
-  protected $entityManager;
-
-  /**
    * The payment status plugin manager.
    *
    * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
@@ -34,18 +29,39 @@ class PaymentStatus extends ControllerBase implements ContainerInjectionInterfac
   protected $paymentStatusManager;
 
   /**
-   * Constructs a new class instance.
+   * The payment status storage.
+   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  public function __construct(EntityManagerInterface $entity_manager, PaymentStatusManagerInterface $payment_status_manager) {
-    $this->entityManager = $entity_manager;
+  protected $paymentStatusStorage;
+
+  /**
+   * Constructs a new class instance.
+   *
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translator.
+   * @param \Drupal\Core\Entity\EntityFormBuilderInterface $entity_form_builder
+   *   The entity form builder.
+   * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface $payment_status_manager
+   *   The payment status manager.
+   * @param \Drupal\Core\Entity\EntityStorageInterface $payment_status_storage
+   *   The payment status storage.
+   */
+  public function __construct(TranslationInterface $string_translation, EntityFormBuilderInterface $entity_form_builder, PaymentStatusManagerInterface $payment_status_manager, EntityStorageInterface $payment_status_storage) {
+    $this->entityFormBuilder = $entity_form_builder;
     $this->paymentStatusManager = $payment_status_manager;
+    $this->paymentStatusStorage = $payment_status_storage;
+    $this->stringTranslation = $string_translation;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('entity.manager'), $container->get('plugin.manager.payment.status'));
+    /** @var \Drupal\Core\Entity\EntityManagerInterface $entity_manager */
+    $entity_manager = $container->get('entity.manager');
+
+    return new static($container->get('string_translation'), $container->get('entity.form_builder'), $container->get('plugin.manager.payment.status'), $entity_manager->getStorage('payment_status'));
   }
 
   /**
@@ -54,9 +70,9 @@ class PaymentStatus extends ControllerBase implements ContainerInjectionInterfac
    * @return array
    */
   public function add() {
-    $payment_status = $this->entityManager->getStorage('payment_status')->create(array());
+    $payment_status = $this->paymentStatusStorage->create();
 
-    return drupal_get_form($this->entityManager->getFormObject('payment_status', 'default')->setEntity($payment_status));
+    return $this->entityFormBuilder->getForm($payment_status);
   }
 
   /**
@@ -79,7 +95,7 @@ class PaymentStatus extends ControllerBase implements ContainerInjectionInterfac
    */
   public function listing() {
     return array(
-      '#header' => array(t('Title'), t('Description'), t('Operations')),
+      '#header' => array($this->t('Title'), $this->t('Description'), $this->t('Operations')),
       '#type' => 'table',
     ) + $this->listingLevel($this->paymentStatusManager->hierarchy(), 0);
   }
@@ -122,4 +138,5 @@ class PaymentStatus extends ControllerBase implements ContainerInjectionInterfac
 
     return $rows;
   }
+
 }

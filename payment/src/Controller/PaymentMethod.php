@@ -14,6 +14,7 @@ use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Entity\PaymentMethodConfigurationInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface;
@@ -71,6 +72,8 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
   /**
    * Constructs a new class instance.
    *
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translator.
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface $payment_method_manager
    * @param \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager
@@ -78,20 +81,21 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
    * @param \Drupal\Core\Routing\UrlGeneratorInterface $url_generator
    * @param \Drupal\Core\Session\AccountInterface $current_user
    */
-  public function __construct(EntityManagerInterface $entity_manager, PaymentMethodManagerInterface $payment_method_manager, PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager, EntityFormBuilderInterface $entity_form_builder, UrlGeneratorInterface $url_generator, AccountInterface $current_user) {
+  public function __construct(TranslationInterface $string_translation, EntityManagerInterface $entity_manager, PaymentMethodManagerInterface $payment_method_manager, PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager, EntityFormBuilderInterface $entity_form_builder, UrlGeneratorInterface $url_generator, AccountInterface $current_user) {
+    $this->currentUser = $current_user;
     $this->entityManager = $entity_manager;
     $this->entityFormBuilder = $entity_form_builder;
     $this->paymentMethodManager = $payment_method_manager;
     $this->paymentMethodConfigurationManager = $payment_method_configuration_manager;
+    $this->stringTranslation = $string_translation;
     $this->urlGenerator = $url_generator;
-    $this->currentUser = $current_user;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('entity.manager'), $container->get('plugin.manager.payment.method'), $container->get('plugin.manager.payment.method_configuration'), $container->get('entity.form_builder'), $container->get('url_generator'), $container->get('current_user'));
+    return new static($container->get('string_translation'), $container->get('entity.manager'), $container->get('plugin.manager.payment.method'), $container->get('plugin.manager.payment.method_configuration'), $container->get('entity.form_builder'), $container->get('url_generator'), $container->get('current_user'));
   }
 
   /**
@@ -157,7 +161,7 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
     return array(
       '#attached' => array(
         'css' => array(
-          $this->drupalGetPath('module', 'payment') . '/css/payment.css',
+          __DIR__ . '/../../css/payment.css',
         ),
       ),
       '#attributes' => array(
@@ -309,10 +313,4 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
     return $this->entityFormBuilder->getForm($clone, 'default');
   }
 
-  /**
-   * Wraps drupal_get_path().
-   */
-  protected function drupalGetPath($type, $name) {
-    return drupal_get_path($type, $name);
-  }
 }

@@ -7,25 +7,32 @@
 
 namespace Drupal\payment\Controller;
 
-use Drupal\Core\Access\AccessInterface;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Entity\EntityFormBuilderInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
-use Drupal\Core\Routing\UrlGeneratorInterface;
-use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Entity\PaymentMethodConfigurationInterface;
-use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
-use Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Returns responses for payment routes.
  */
 class Payment extends ControllerBase {
+
+  /**
+   * Constructs a new class instance.
+   *
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translator.
+   */
+  public function __construct(TranslationInterface $string_translation) {
+    $this->stringTranslation = $string_translation;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static($container->get('string_translation'));
+  }
 
   /**
    * Returns the title for the payment view page.

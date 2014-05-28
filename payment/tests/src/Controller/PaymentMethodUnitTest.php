@@ -8,13 +8,22 @@
 namespace Drupal\payment\Tests\Controller;
 
 use Drupal\Core\Access\AccessInterface;
+use Drupal\payment\Controller\PaymentMethod;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @coversDefaultClass \Drupal\payment\Controller\PaymentMethod
  */
 class PaymentMethodUnitTest extends UnitTestCase {
+
+  /**
+   * The class under test.
+   *
+   * @var \Drupal\payment\Controller\PaymentMethod
+   */
+  protected $controller;
 
   /**
    * The current user used for testing.
@@ -52,11 +61,11 @@ class PaymentMethodUnitTest extends UnitTestCase {
   protected $paymentMethodManager;
 
   /**
-   * The class under test.
+   * The string translator.
    *
-   * @var \Drupal\payment\Controller\PaymentMethod|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $controller;
+  protected $stringTranslation;
 
   /**
    * The URL generator used for testing.
@@ -78,6 +87,8 @@ class PaymentMethodUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   protected function setUp() {
     $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
@@ -88,17 +99,38 @@ class PaymentMethodUnitTest extends UnitTestCase {
 
     $this->paymentMethodConfigurationManager = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface');
 
-    $this->paymentMethodManager= $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface');
+    $this->paymentMethodManager = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface');
+
+    $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
     $this->urlGenerator = $this->getMock('\Drupal\Core\Routing\UrlGeneratorInterface');
     $this->urlGenerator->expects($this->any())
       ->method('generateFromRoute')
       ->will($this->returnValue('http://example.com'));
 
-    $this->controller = $this->getMockBuilder('\Drupal\payment\Controller\PaymentMethod')
-      ->setConstructorArgs(array($this->entityManager, $this->paymentMethodManager, $this->paymentMethodConfigurationManager, $this->entityFormBuilder, $this->urlGenerator, $this->currentUser))
-      ->setMethods(array('drupalGetPath', 't'))
-      ->getMock();
+    $this->controller = new PaymentMethod($this->stringTranslation, $this->entityManager, $this->paymentMethodManager, $this->paymentMethodConfigurationManager, $this->entityFormBuilder, $this->urlGenerator, $this->currentUser);
+  }
+
+  /**
+   * @covers ::create
+   */
+  function testCreate() {
+    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $map = array(
+      array('current_user', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->currentUser),
+      array('entity.form_builder', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityFormBuilder),
+      array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager),
+      array('plugin.manager.payment.method', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodManager),
+      array('plugin.manager.payment.method_configuration', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodConfigurationManager),
+      array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
+      array('url_generator', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->urlGenerator),
+    );
+    $container->expects($this->any())
+      ->method('get')
+      ->will($this->returnValueMap($map));
+
+    $form = PaymentMethod::create($container);
+    $this->assertInstanceOf('\Drupal\payment\Controller\PaymentMethod', $form);
   }
 
   /**
@@ -286,7 +318,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
     $definitions = array(
       $plugin_id => array(
         'active' => TRUE,
-        'class' => '\Drupal\payment\Tests\Controller\PaymentMethodUnitTestDummyPaymentMethodPlugin',
+        'class' => $this->getMockClass('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface'),
         'label' => $this->randomName(),
       ),
     );
@@ -297,18 +329,80 @@ class PaymentMethodUnitTest extends UnitTestCase {
 
     $build = $this->controller->listPlugins();
     $this->assertInternalType('array', $build);
+    $this->assertFileExists($build['#attached']['css'][0]);
   }
-}
-
-/**
- * Fakes a payment method plugin.
- */
-class PaymentMethodUnitTestDummyPaymentMethodPlugin {
 
   /**
-   * Fakes \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface::getOperations().
+   * @covers ::addTitle
    */
-  public static function getOperations($plugin_id) {
-    return array();
+  public function testAddTitle() {
+    $label = $this->randomName();
+    $plugin_id = $this->randomName();
+    $string = 'Add %label payment method configuration';
+
+    $this->paymentMethodConfigurationManager->expects($this->once())
+      ->method('getDefinition')
+      ->with($plugin_id)
+      ->will($this->returnValue(array(
+        'label' => $label,
+      )));
+
+    $this->stringTranslation->expects($this->any())
+      ->method('translate')
+      ->with($string, array(
+        '%label' => $label,
+      ))
+      ->will($this->returnArgument(0));
+
+    $this->assertSame($string, $this->controller->addTitle($plugin_id));
   }
+
+  /**
+   * @covers ::editTitle
+   */
+  public function testEditTitle() {
+    $label = $this->randomName();
+    $string = 'Edit %label';
+
+    $payment_method_configuration = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $payment_method_configuration->expects($this->once())
+      ->method('label')
+      ->will($this->returnValue($label));
+
+    $this->stringTranslation->expects($this->any())
+      ->method('translate')
+      ->with($string, array(
+        '%label' => $label,
+      ))
+      ->will($this->returnArgument(0));
+
+    $this->assertSame($string, $this->controller->editTitle($payment_method_configuration));
+  }
+
+  /**
+   * @covers ::duplicateTitle
+   */
+  public function testDuplicateTitle() {
+    $label = $this->randomName();
+    $string = 'Duplicate %label';
+
+    $payment_method_configuration = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $payment_method_configuration->expects($this->once())
+      ->method('label')
+      ->will($this->returnValue($label));
+
+    $this->stringTranslation->expects($this->any())
+      ->method('translate')
+      ->with($string, array(
+        '%label' => $label,
+      ))
+      ->will($this->returnArgument(0));
+
+    $this->assertSame($string, $this->controller->duplicateTitle($payment_method_configuration));
+  }
+
 }
