@@ -18,9 +18,8 @@ class PaymentStatusListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function render() {
-    // The actual field instance config overview is rendered by
-    // \Drupal\field_ui\FieldOverview, so we should not use this class to build
-    // lists.
-    throw new \Exception('This class is only used for operations and not for building lists.');
+    // Payment statuses are displayed by a custom controller. This list builder
+    // is used solely for entity operations.
+    throw new \Exception('This class is only used for entity operations and not for building lists.');
   }
 }

@@ -8,11 +8,15 @@
 namespace Drupal\payment\Entity\PaymentStatus;
 
 use Drupal\Core\Entity\EntityForm;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Url;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides the payment status form.
+ * Provides the payment status add/edit form.
  */
 class PaymentStatusForm extends EntityForm {
 
@@ -24,17 +28,29 @@ class PaymentStatusForm extends EntityForm {
   protected $paymentStatusManager;
 
   /**
+   * The payment status storage.
+   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface
+   */
+  protected $paymentStatusStorage;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(PaymentStatusManagerInterface $payment_status_manager) {
+  public function __construct(TranslationInterface $string_translation, EntityStorageInterface $payment_status_storage, PaymentStatusManagerInterface $payment_status_manager) {
     $this->paymentStatusManager = $payment_status_manager;
+    $this->paymentStatusStorage = $payment_status_storage;
+    $this->stringTranslation = $string_translation;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('plugin.manager.payment.status'));
+    /** @var \Drupal\Core\Entity\EntityManagerInterface $entity_manager */
+    $entity_manager = $container->get('entity.manager');
+
+    return new static($container->get('string_translation'), $entity_manager->getStorage('payment_status'), $container->get('plugin.manager.payment.status'));
   }
 
   /**
@@ -45,7 +61,7 @@ class PaymentStatusForm extends EntityForm {
     $payment_status = $this->getEntity();
     $form['label'] = array(
       '#type' => 'textfield',
-      '#title' => t('Label'),
+      '#title' => $this->t('Label'),
       '#default_value' => $payment_status->label(),
       '#maxlength' => 255,
       '#required' => TRUE,
@@ -65,12 +81,12 @@ class PaymentStatusForm extends EntityForm {
       '#default_value' => $payment_status->getParentId(),
       '#empty_value' => '',
       '#options' => $this->paymentStatusManager->options(),
-      '#title' => t('Parent status'),
+      '#title' => $this->t('Parent status'),
       '#type' => 'select',
     );
     $form['description'] = array(
       '#type' => 'textarea',
-      '#title' => t('Description'),
+      '#title' => $this->t('Description'),
       '#default_value' => $payment_status->getDescription(),
       '#maxlength' => 255,
     );
@@ -81,15 +97,14 @@ class PaymentStatusForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function submit(array $form, array &$form_state) {
-    parent::submit($form, $form_state);
+  protected function copyFormValuesToEntity(EntityInterface $payment_status, array $form, array &$form_state) {
+    /** @var \Drupal\payment\Entity\PaymentStatusInterface $payment_status */
+    parent::copyFormValuesToEntity($payment_status, $form, $form_state);
     $values = $form_state['values'];
-    /** @var \Drupal\payment\Entity\PaymentStatusInterface $status */
-    $status = $this->getEntity();
-    $status->setId($values['id'])
-      ->setLabel($values['label'])
-      ->setParentId($values['parent_id'])
-      ->setDescription($values['description']);
+    $payment_status->setId($values['id']);
+    $payment_status->setLabel($values['label']);
+    $payment_status->setParentId($values['parent_id']);
+    $payment_status->setDescription($values['description']);
   }
 
   /**
@@ -98,22 +113,20 @@ class PaymentStatusForm extends EntityForm {
   public function save(array $form, array &$form_state) {
     $payment_status = $this->getEntity();
     $payment_status->save();
-    drupal_set_message(t('@label has been saved.', array(
+    drupal_set_message($this->t('@label has been saved.', array(
       '@label' => $payment_status->label()
     )));
-    $form_state['redirect_route'] = array(
-      'route_name' => 'payment.payment_status.list',
-    );
+    $form_state['redirect_route'] = new Url('payment.payment_status.list');
   }
 
   /**
-   * Checks if a payment method with a particular ID already exists.
+   * Checks if a payment status with a particular ID already exists.
    *
    * @param string $id
    *
    * @return bool
    */
   public function paymentStatusIdExists($id) {
-    return (bool) entity_load('payment_status', $id);
+    return (bool) $this->paymentStatusStorage->load($id);
   }
 }

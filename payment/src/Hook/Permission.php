@@ -8,6 +8,7 @@
 namespace Drupal\payment\Hook;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 
 /**
@@ -17,6 +18,8 @@ use Drupal\Core\StringTranslation\TranslationInterface;
  */
 class Permission {
 
+  use StringTranslationTrait;
+
   /**
    * The payment method configuration configuration manager.
    *
@@ -25,21 +28,14 @@ class Permission {
   protected $paymentMethodConfigurationManager;
 
   /**
-   * The translation manager service.
-   *
-   * @var \Drupal\Core\StringTranslation\TranslationInterface
-   */
-  protected $translationManager;
-
-  /**
    * Constructs a new class instance.
    *
-   * @param \Drupal\Core\StringTranslation\TranslationInterface $translation_manager
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    * @param \Drupal\Component\Plugin\PluginManagerInterface $payment_method_configuration_manager
    */
-  public function __construct(TranslationInterface $translation_manager, PluginManagerInterface $payment_method_configuration_manager) {
+  public function __construct(TranslationInterface $string_translation, PluginManagerInterface $payment_method_configuration_manager) {
     $this->paymentMethodConfigurationManager = $payment_method_configuration_manager;
-    $this->translationManager = $translation_manager;
+    $this->stringTranslation = $string_translation;
   }
 
   /**
@@ -108,15 +104,6 @@ class Permission {
     }
 
     return $permissions;
-  }
-
-  /**
-   * Translates a string to the current language or to a given language.
-   *
-   * See the t() documentation for details.
-   */
-  protected function t($string, array $args = array(), array $options = array()) {
-    return $this->translationManager->translate($string, $args, $options);
   }
 
 }

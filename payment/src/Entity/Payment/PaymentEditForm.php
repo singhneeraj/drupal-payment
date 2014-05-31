@@ -8,7 +8,10 @@
 namespace Drupal\payment\Entity\Payment;
 
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Url;
 use Drupal\currency\Entity\Currency;
 use Drupal\payment\Element\PaymentLineItemsInput;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface;
@@ -32,19 +35,22 @@ class PaymentEditForm extends ContentEntityForm {
    *
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    *   The entity manager.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translator.
    * @param \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface
    *   The payment line item manager.
    */
-  function __construct(EntityManagerInterface $entity_manager, PaymentLineItemManagerInterface $payment_line_item_manager) {
+  function __construct(EntityManagerInterface $entity_manager, TranslationInterface $string_translation, PaymentLineItemManagerInterface $payment_line_item_manager) {
     parent::__construct($entity_manager);
     $this->paymentLineItemManager = $payment_line_item_manager;
+    $this->stringTranslation = $string_translation;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('entity.manager'), $container->get('plugin.manager.payment.line_item'));
+    return new static($container->get('entity.manager'), $container->get('string_translation'), $container->get('plugin.manager.payment.line_item'));
   }
 
   /**
@@ -82,25 +88,29 @@ class PaymentEditForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function submit(array $form, array &$form_state) {
-    parent::submit($form, $form_state);
+  protected function copyFormValuesToEntity(EntityInterface $payment, array $form, array &$form_state) {
+    parent::copyFormValuesToEntity($payment, $form, $form_state);
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
-    $payment = $this->getEntity();
     $values = $form_state['values'];
-
     $payment->setCurrencyCode($values['payment_currency_code']);
     foreach (PaymentLineItemsInput::getLineItemsData($form['payment_line_items'], $form_state) as $line_item_data) {
       $line_item = $this->paymentLineItemManager->createInstance($line_item_data['plugin_id'], $line_item_data['plugin_configuration']);
       $payment->setLineItem($line_item);
     }
+  }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function save(array $form, array &$form_state) {
+    parent::save($form, $form_state);
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
+    $payment = $this->getEntity();
     $payment->save();
-    $form_state['redirect_route'] = array(
-      'route_name' => 'payment.payment.view',
-      'route_parameters' => array(
-        'payment' => $payment->id(),
-      ),
-    );
+
+    $form_state['redirect_route'] = new Url('payment.payment.view', array(
+      'payment' => $payment->id(),
+    ));
   }
 
   /**

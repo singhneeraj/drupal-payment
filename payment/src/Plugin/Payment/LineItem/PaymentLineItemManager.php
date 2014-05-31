@@ -8,7 +8,7 @@ namespace Drupal\payment\Plugin\Payment\LineItem;
 
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Language\LanguageManager;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**
@@ -22,16 +22,15 @@ class PaymentLineItemManager extends DefaultPluginManager implements PaymentLine
    * Constructs a new class instance.
    *
    * @param \Traversable $namespaces
-   *   An object that implements \Traversable which contains the root paths
-   *   keyed by the corresponding namespace to look for plugin implementations.
+   *   The namespaces in which to look for plugins.
    * @param \Drupal\Core\Cache\CacheBackendInterface $cache_backend
-   *   Cache backend instance to use.
-   * @param \Drupal\Core\Language\LanguageManager $language_manager
+   *   The cache backend.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   The module handler to invoke the alter hook with.
+   *   The module handler.
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, LanguageManager $language_manager, ModuleHandlerInterface $module_handler) {
+  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, LanguageManagerInterface $language_manager, ModuleHandlerInterface $module_handler) {
     parent::__construct('Plugin/Payment/LineItem', $namespaces, $module_handler, '\Drupal\payment\Annotations\PaymentLineItem');
     $this->alterInfo('payment_line_item');
     $this->setCacheBackend($cache_backend, $language_manager, 'payment_line_item');
@@ -50,13 +49,4 @@ class PaymentLineItemManager extends DefaultPluginManager implements PaymentLine
     return $options;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getPluginClass($plugin_id) {
-    /** @var \Drupal\Core\Plugin\Factory\ContainerFactory $factory */
-    $factory = $this->factory;
-
-    return $factory::getPluginClass($plugin_id, $this->getDefinition($plugin_id));
-  }
 }

@@ -8,6 +8,7 @@
 namespace Drupal\payment\Hook;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 
 /**
@@ -17,6 +18,8 @@ use Drupal\Core\StringTranslation\TranslationInterface;
  */
 class EntityExtraFieldInfo {
 
+  use StringTranslationTrait;
+
   /**
    * The payment type manager
    *
@@ -25,21 +28,14 @@ class EntityExtraFieldInfo {
   protected $paymentTypeManager;
 
   /**
-   * The translation manager service.
-   *
-   * @var \Drupal\Core\StringTranslation\TranslationInterface
-   */
-  protected $translationManager;
-
-  /**
    * Constructs a new class instance.
    *
-   * @param \Drupal\Core\StringTranslation\TranslationInterface $translation_manager
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    * @param \Drupal\Component\Plugin\PluginManagerInterface $payment_type_manager
    */
-  public function __construct(TranslationInterface $translation_manager, PluginManagerInterface $payment_type_manager) {
+  public function __construct(TranslationInterface $string_translation, PluginManagerInterface $payment_type_manager) {
     $this->paymentTypeManager = $payment_type_manager;
-    $this->translationManager = $translation_manager;
+    $this->stringTranslation = $string_translation;
   }
 
   /**
@@ -81,15 +77,6 @@ class EntityExtraFieldInfo {
     }
   
     return $fields;
-  }
-
-  /**
-   * Translates a string to the current language or to a given language.
-   *
-   * See the t() documentation for details.
-   */
-  protected function t($string, array $args = array(), array $options = array()) {
-    return $this->translationManager->translate($string, $args, $options);
   }
 
 }

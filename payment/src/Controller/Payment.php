@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Controller\PaymentMethod.
+ * Contains \Drupal\payment\Controller\Payment.
  */
 
 namespace Drupal\payment\Controller;
@@ -59,4 +59,5 @@ class Payment extends ControllerBase {
       '!payment_id' => $payment->id(),
     ));
   }
+
 }

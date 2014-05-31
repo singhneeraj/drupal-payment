@@ -5,13 +5,11 @@
  * Contains \Drupal\payment\Tests\Controller\PaymentStatusUnitTest.
  */
 
-namespace Drupal\payment\Tests\Controller;
+namespace Drupal\payment\Tests\Controller {
 
-use Drupal\Core\Access\AccessInterface;
 use Drupal\payment\Controller\PaymentStatus;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @coversDefaultClass \Drupal\payment\Controller\PaymentStatus
@@ -150,6 +148,106 @@ class PaymentStatusUnitTest extends UnitTestCase {
       ->will($this->returnValue($form));
 
     $this->assertSame($form, $this->controller->add());
+  }
+
+  /**
+   * @covers ::listing
+   * @covers ::listingLevel
+   */
+  function testListing() {
+    $plugin_id_a = $this->randomName();
+    $plugin_id_b = $this->randomName();
+
+    $definitions = array(
+      $plugin_id_a => array(
+        'label' => $this->randomName(),
+        'description' => $this->randomName(),
+      ),
+      $plugin_id_b => array(
+        'label' => $this->randomName(),
+        'description' => $this->randomName(),
+      ),
+    );
+
+    $operations_a = array(
+      'title' => $this->randomName(),
+    );
+
+    $operations_provider_a = $this->getMock('\Drupal\payment\Plugin\Payment\OperationsProviderInterface');
+    $operations_provider_a->expects($this->once())
+      ->method('getOperations')
+      ->with($plugin_id_a)
+      ->will($this->returnValue($operations_a));
+
+    $map = array(
+      array($plugin_id_a, TRUE, $definitions[$plugin_id_a]),
+      array($plugin_id_b, TRUE, $definitions[$plugin_id_b]),
+    );
+    $this->paymentStatusManager->expects($this->exactly(2))
+      ->method('getDefinition')
+      ->will($this->returnValueMap($map));
+    $map = array(
+      array($plugin_id_a, $operations_provider_a),
+      array($plugin_id_b, NULL),
+    );
+    $this->paymentStatusManager->expects($this->exactly(2))
+      ->method('getOperationsProvider')
+      ->will($this->returnValueMap($map));
+
+    $hierarchy = array(
+      $plugin_id_a => array(
+        $plugin_id_b => array(),
+      ),
+    );
+
+    $this->paymentStatusManager->expects($this->once())
+      ->method('hierarchy')
+      ->will($this->returnValue($hierarchy));
+
+    $this->stringTranslation->expects($this->any())
+      ->method('translate')
+      ->will($this->returnArgument(0));
+
+    $build = $this->controller->listing();
+    $expected = array(
+      '#header' => array('Title', 'Description', 'Operations'),
+      '#type' => 'table',
+      $plugin_id_a => array(
+        'label' => array(
+          '#markup' => $definitions[$plugin_id_a]['label'],
+        ),
+        'description' => array(
+          '#markup' => $definitions[$plugin_id_a]['description'],
+        ),
+        'operations' => array(
+          '#type' => 'operations',
+          '#links' => $operations_a,
+        ),
+      ),
+      $plugin_id_b => array(
+        'label' => array(
+          '#markup' => $definitions[$plugin_id_b]['label'],
+        ),
+        'description' => array(
+          '#markup' => $definitions[$plugin_id_b]['description'],
+        ),
+        'operations' => array(
+          '#type' => 'operations',
+          '#links' => array(),
+        ),
+      ),
+    );
+    $this->assertSame($expected, $build);
+  }
+
+}
+
+}
+
+namespace {
+
+  if (!function_exists('drupal_render')) {
+    function drupal_render() {}
   }
 
 }

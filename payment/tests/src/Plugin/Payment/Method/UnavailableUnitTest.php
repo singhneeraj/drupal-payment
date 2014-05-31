@@ -37,6 +37,13 @@ class UnavailableUnitTest extends UnitTestCase {
   protected $plugin;
 
   /**
+   * The plugin definition.
+   *
+   * @var array
+   */
+  protected $pluginDefinition;
+
+  /**
    * The payment status manager used for testing.
    *
    * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -68,7 +75,11 @@ class UnavailableUnitTest extends UnitTestCase {
 
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
-    $this->plugin = new Unavailable(array(), '', array(), $this->moduleHandler, $this->token, $this->paymentStatusManager);
+    $this->pluginDefinition = array(
+      'label' => $this->randomName(),
+    );
+
+    $this->plugin = new Unavailable(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->token, $this->paymentStatusManager);
   }
 
   /**
@@ -76,6 +87,51 @@ class UnavailableUnitTest extends UnitTestCase {
    */
   public function testDefaultConfiguration() {
     $this->assertSame(array(), $this->plugin->defaultConfiguration());
+  }
+
+  /**
+   * @covers ::getOperations
+   */
+  public function testGetOperations() {
+    $this->assertSame(array(), $this->plugin->getOperations($this->randomName()));
+  }
+
+  /**
+   * @covers ::getPluginLabel
+   */
+  public function testGetPluginLabel() {
+    $this->assertSame($this->pluginDefinition['label'], $this->plugin->getPluginLabel());
+  }
+
+  /**
+   * @covers ::calculateDependencies
+   */
+  public function testCalculateDependencies() {
+    $this->assertSame(array(), $this->plugin->calculateDependencies());
+  }
+
+  /**
+   * @covers ::getConfiguration
+   */
+  public function testGetConfiguration() {
+    $this->assertSame(array(), $this->plugin->getConfiguration());
+  }
+
+  /**
+   * @covers ::setConfiguration
+   */
+  public function testSetConfiguration() {
+    $this->assertSame($this->plugin, $this->plugin->setConfiguration(array()));
+  }
+
+  /**
+   * @covers ::getSupportedCurrencies
+   */
+  public function testGetSupportedCurrencies() {
+    $method = new \ReflectionMethod($this->plugin, 'getSupportedCurrencies');
+    $method->setAccessible(TRUE);
+
+    $this->assertSame(array(), $method->invoke($this->plugin));
   }
 
   /**

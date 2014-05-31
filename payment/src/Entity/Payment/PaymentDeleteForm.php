@@ -8,7 +8,10 @@
 namespace Drupal\payment\Entity\Payment;
 
 use Drupal\Core\Entity\ContentEntityConfirmFormBase;
+use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides the payment deletion form.
@@ -16,10 +19,30 @@ use Drupal\Core\Url;
 class PaymentDeleteForm extends ContentEntityConfirmFormBase {
 
   /**
+   * Constructs a new class instance.
+   *
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   *   The entity manager.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translator.
+   */
+  public function __construct(EntityManagerInterface $entity_manager, TranslationInterface $string_translation) {
+    parent::__construct($entity_manager);
+    $this->stringTranslation = $string_translation;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static($container->get('entity.manager'), $container->get('string_translation'));
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return t('Do you really want to delete payment #!payment_id?', array(
+    return $this->t('Do you really want to delete payment #!payment_id?', array(
       '!payment_id' => $this->getEntity()->id(),
     ));
   }
@@ -37,7 +60,7 @@ class PaymentDeleteForm extends ContentEntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getConfirmText() {
-    return t('Delete');
+    return $this->t('Delete');
   }
 
   /**
@@ -45,11 +68,9 @@ class PaymentDeleteForm extends ContentEntityConfirmFormBase {
    */
   public function submit(array $form, array &$form_state) {
     $this->getEntity()->delete();
-    drupal_set_message(t('Payment #!payment_id has been deleted.', array(
+    drupal_set_message($this->t('Payment #!payment_id has been deleted.', array(
       '!id' => $this->getEntity()->id(),
     )));
-    $form_state['redirect_route'] = array(
-      'route_name' => '<front>',
-    );
+    $form_state['redirect_route'] = new Url('<front>');
   }
 }

@@ -30,11 +30,11 @@ class EntityExtraFieldInfoUnitTest extends UnitTestCase {
   protected $service;
 
   /**
-   * The translation manager service used for testing.
+   * The string translator.
    *
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $translationManager;
+  protected $stringTranslation;
 
   /**
    * {@inheritdoc}
@@ -49,13 +49,15 @@ class EntityExtraFieldInfoUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   public function setUp() {
     $this->paymentTypeManager = $this->getMock('\Drupal\Component\Plugin\PluginManagerInterface');
 
-    $this->translationManager = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
+    $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
-    $this->service = new EntityExtraFieldInfo($this->translationManager, $this->paymentTypeManager);
+    $this->service = new EntityExtraFieldInfo($this->stringTranslation, $this->paymentTypeManager);
   }
 
   /**

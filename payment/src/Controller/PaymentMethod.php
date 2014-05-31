@@ -9,7 +9,6 @@ namespace Drupal\payment\Controller;
 
 use Drupal\Core\Access\AccessInterface;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
@@ -25,28 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Returns responses for payment method routes.
  */
-class PaymentMethod extends ControllerBase implements AccessInterface, ContainerInjectionInterface {
-
-  /**
-   * The current user;
-   *
-   * @var \Drupal\Core\Session\AccountInterface
-   */
-  protected $currentUser;
-
-  /**
-   * The entity form builder.
-   *
-   * @var \Drupal\Core\Entity\EntityFormBuilderInterface
-   */
-  protected $entityFormBuilder;
-
-  /**
-   * The entity manager.
-   *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
-   */
-  protected $entityManager;
+class PaymentMethod extends ControllerBase implements AccessInterface {
 
   /**
    * The payment method configuration plugin manager.
@@ -61,13 +39,6 @@ class PaymentMethod extends ControllerBase implements AccessInterface, Container
    * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface
    */
   protected $paymentMethodManager;
-
-  /**
-   * The URL generator.
-   *
-   * @var \Drupal\Core\Routing\UrlGeneratorInterface
-   */
-  protected $urlGenerator;
 
   /**
    * Constructs a new class instance.

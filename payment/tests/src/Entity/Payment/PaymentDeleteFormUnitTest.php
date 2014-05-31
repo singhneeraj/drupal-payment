@@ -1,0 +1,166 @@
+<?php
+
+/**
+ * @file
+ * Contains \Drupal\payment\Tests\Entity\Payment\PaymentDeleteFormUnitTest.
+ */
+
+namespace Drupal\payment\Tests\Entity\Payment {
+
+use Drupal\payment\Entity\Payment\PaymentDeleteForm;
+use Drupal\Tests\UnitTestCase;
+  use Symfony\Component\DependencyInjection\ContainerInterface;
+
+  /**
+ * @coversDefaultClass \Drupal\payment\Entity\Payment\PaymentDeleteForm
+ */
+class PaymentDeleteFormUnitTest extends UnitTestCase {
+
+  /**
+   * The entity manager.
+   *
+   * @var \Drupal\Core\Entity\EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $entityManager;
+
+  /**
+   * The payment.
+   *
+   * @var \Drupal\payment\Entity\PaymentInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $payment;
+
+  /**
+   * The string translation service.
+   *
+   * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $stringTranslation;
+
+  /**
+   * The form under test.
+   *
+   * @var \Drupal\payment\Entity\Payment\PaymentDeleteForm
+   */
+  protected $form;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getInfo() {
+    return array(
+      'description' => '',
+      'name' => '\Drupal\payment\Entity\Payment\PaymentDeleteForm unit test',
+      'group' => 'Payment',
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @covers ::__construct
+   */
+  public function setUp() {
+    $this->entityManager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
+
+    $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
+    $this->stringTranslation->expects($this->any())
+      ->method('translate')
+      ->will($this->returnArgument(0));
+
+    $this->form = new PaymentDeleteForm($this->entityManager, $this->stringTranslation);
+    $this->form->setEntity($this->payment);
+  }
+
+  /**
+   * @covers ::create
+   */
+  function testCreate() {
+    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $map = array(
+      array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager),
+      array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
+    );
+    $container->expects($this->any())
+      ->method('get')
+      ->will($this->returnValueMap($map));
+
+    $form = PaymentDeleteForm::create($container);
+    $this->assertInstanceOf('\Drupal\payment\Entity\Payment\PaymentDeleteForm', $form);
+  }
+
+  /**
+   * @covers ::getQuestion
+   */
+  function testGetQuestion() {
+    $id = mt_rand();
+    $string = 'Do you really want to delete payment #!payment_id?';
+
+    $this->payment->expects($this->once())
+      ->method('id')
+      ->will($this->returnValue($id));
+
+    $this->stringTranslation->expects($this->once())
+      ->method('translate')
+      ->with($string, array(
+        '!payment_id' => $id,
+      ));
+
+    $this->assertSame($string, $this->form->getQuestion());
+  }
+
+  /**
+   * @covers ::getConfirmText
+   */
+  function testGetConfirmText() {
+    $string = 'Delete';
+
+    $this->stringTranslation->expects($this->once())
+      ->method('translate')
+      ->with($string);
+
+    $this->assertSame($string, $this->form->getConfirmText());
+  }
+
+  /**
+   * @covers ::getCancelRoute
+   */
+  function testGetCancelRoute() {
+    $url = $this->form->getCancelRoute();
+    $this->assertInstanceOf('\Drupal\Core\Url', $url);
+    $this->assertSame('payment.payment.view', $url->getRouteName());
+  }
+
+  /**
+   * @covers ::submit
+   */
+  function testSubmit() {
+    $this->payment->expects($this->once())
+      ->method('delete');
+
+    $form = array();
+    $form_state = array();
+
+    $this->form->submit($form, $form_state);
+    $this->assertArrayHasKey('redirect_route', $form_state);
+    /** @var \Drupal\Core\Url $url */
+    $url = $form_state['redirect_route'];
+    $this->assertInstanceOf('\Drupal\Core\Url', $url);
+    $this->assertSame('<front>', $url->getRouteName());
+  }
+
+}
+
+}
+
+namespace {
+
+if (!function_exists('drupal_set_message')) {
+  function drupal_set_message() {}
+}
+
+}

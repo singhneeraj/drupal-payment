@@ -8,7 +8,9 @@
 namespace Drupal\payment\Plugin\Action;
 
 use Drupal\Core\Action\ConfigurableActionBase;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Entity\PaymentInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Sets a status on a payment.
@@ -20,6 +22,30 @@ use Drupal\payment\Entity\PaymentInterface;
  * )
  */
 class UnsetLineItem extends ConfigurableActionBase {
+
+  /**
+   * Constructs a new class instance.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param array $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translator.
+   */
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, TranslationInterface $string_translation) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->stringTranslation = $string_translation;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'));
+  }
 
   /**
    * {@inheritdoc}

@@ -8,7 +8,7 @@
 namespace Drupal\payment\Entity\PaymentStatus;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;
-use Drupal\Core\Routing\UrlGeneratorInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -18,34 +18,27 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class PaymentStatusDeleteForm extends EntityConfirmFormBase {
 
   /**
-   * The URL generator.
-   *
-   * @var \Drupal\Core\Routing\UrlGeneratorInterface
-   */
-  protected $urlGenerator;
-
-  /**
    * Constructs a new class instance.
    *
-   * @param \Drupal\Core\Routing\UrlGeneratorInterface $url_generator
-   *   The URL generator.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translator.
    */
-  public function __construct(UrlGeneratorInterface $url_generator) {
-    $this->urlGenerator = $url_generator;
+  public function __construct(TranslationInterface $string_translation) {
+    $this->stringTranslation = $string_translation;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('url_generator'));
+    return new static($container->get('string_translation'));
   }
 
   /**
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return t('Do you really want to delete %label?', array(
+    return $this->t('Do you really want to delete %label?', array(
       '%label' => $this->getEntity()->label(),
     ));
   }
@@ -61,7 +54,7 @@ class PaymentStatusDeleteForm extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getConfirmText() {
-    return t('Delete');
+    return $this->t('Delete');
   }
 
   /**
@@ -69,11 +62,9 @@ class PaymentStatusDeleteForm extends EntityConfirmFormBase {
    */
   public function submit(array $form, array &$form_state) {
     $this->getEntity()->delete();
-    drupal_set_message(t('%label has been deleted.', array(
+    drupal_set_message($this->t('%label has been deleted.', array(
       '%label' => $this->getEntity()->label(),
     )));
-    $form_state['redirect_route'] = array(
-      'route_name' => 'payment.payment_status.list',
-    );
+    $form_state['redirect_route'] = new Url('payment.payment_status.list');
   }
 }

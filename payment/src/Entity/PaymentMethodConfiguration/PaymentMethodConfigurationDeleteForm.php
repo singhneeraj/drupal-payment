@@ -8,7 +8,9 @@
 namespace Drupal\payment\Entity\PaymentMethodConfiguration;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides the payment method configuration deletion form.
@@ -16,10 +18,27 @@ use Drupal\Core\Url;
 class PaymentMethodConfigurationDeleteForm extends EntityConfirmFormBase {
 
   /**
+   * Constructs a new class instance.
+   *
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translator.
+   */
+  public function __construct(TranslationInterface $string_translation) {
+    $this->stringTranslation = $string_translation;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static($container->get('string_translation'));
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return t('Do you really want to delete %label?', array(
+    return $this->t('Do you really want to delete %label?', array(
       '%label' => $this->getEntity()->label(),
     ));
   }
@@ -34,19 +53,20 @@ class PaymentMethodConfigurationDeleteForm extends EntityConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
-    return 'payment_method_configuration_delete';
+  public function submit(array $form, array &$form_state) {
+    $payment_method = $this->getEntity();
+    $payment_method->delete();
+    drupal_set_message($this->t('%label has been deleted.', array(
+      '%label' => $payment_method->label(),
+    )));
+    $form_state['redirect_route'] = $this->getCancelRoute();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submit(array $form, array &$form_state) {
-    $payment_method = $this->getEntity();
-    $payment_method->delete();
-    drupal_set_message(t('%label has been deleted.', array(
-      '%label' => $payment_method->label(),
-    )));
-    $form_state['redirect_route'] = $this->getCancelRoute();
+  public function getConfirmText() {
+    return $this->t('Delete');
   }
+
 }

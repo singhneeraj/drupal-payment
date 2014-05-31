@@ -45,15 +45,15 @@ class PaymentForm extends FormatterBase {
       'currency_code' => $this->fieldDefinition->getSetting('currency_code'),
       'field_definition_name' => $this->fieldDefinition->getName(),
       'line_items_data' => serialize($line_items_data),
-      'token' => drupal_render_cache_generate_token(),
     );
+    $placeholder = drupal_render_cache_generate_placeholder($callback, $context);
 
     return array(array(
       '#type' => 'markup',
       '#post_render_cache' => array(
         $callback => array($context),
       ),
-      '#markup' => drupal_render_cache_generate_placeholder($callback, $context, $context['token']),
+      '#markup' => $placeholder,
     ));
   }
 

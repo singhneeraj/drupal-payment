@@ -142,7 +142,6 @@ class PaymentFormUnitTest extends UnitTestCase {
             'currency_code' => NULL,
             'field_definition_name' => $field_id,
             'line_items_data' => 'a:1:{i:0;a:2:{s:9:"plugin_id";s:8:"' . $plugin_id . '";s:20:"plugin_configuration";a:0:{}}}',
-            'token' => NULL,
           ),
         ),
       ),
@@ -235,9 +234,6 @@ namespace {
 
 if (!function_exists('drupal_render')) {
   function drupal_render() {}
-}
-if (!function_exists('drupal_render_cache_generate_token')) {
-  function drupal_render_cache_generate_token() {}
 }
 if (!function_exists('drupal_render_cache_generate_placeholder')) {
   function drupal_render_cache_generate_placeholder() {}

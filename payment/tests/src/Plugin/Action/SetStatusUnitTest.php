@@ -7,7 +7,9 @@
 
 namespace Drupal\payment\Tests\Plugin\Action;
 
+use Drupal\payment\Plugin\Action\SetStatus;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Action\SetStatus
@@ -17,7 +19,7 @@ class SetStatusUnitTest extends UnitTestCase {
   /**
    * The action under test.
    *
-   * @var \Drupal\payment\Plugin\Action\SetStatus|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Action\SetStatus
    */
   protected $action;
 
@@ -27,6 +29,13 @@ class SetStatusUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentStatusManager;
+
+  /**
+   * The string translator.
+   *
+   * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $stringTranslation;
 
   /**
    * {@inheritdoc}
@@ -41,17 +50,38 @@ class SetStatusUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   public function setUp() {
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
+    $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
+
     $configuration = array();
     $plugin_definition = array();
     $plugin_id = $this->randomName();
-    $this->action = $this->getMockBuilder('\Drupal\payment\Plugin\Action\SetStatus')
-      ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->paymentStatusManager))
-      ->setMethods(array('t'))
-      ->getMock();
+    $this->action = new SetStatus($configuration, $plugin_id, $plugin_definition, $this->stringTranslation, $this->paymentStatusManager);
+  }
+
+  /**
+   * @covers ::create
+   */
+  function testCreate() {
+    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $map = array(
+      array('plugin.manager.payment.status', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentStatusManager),
+      array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
+    );
+    $container->expects($this->any())
+      ->method('get')
+      ->will($this->returnValueMap($map));
+
+    $configuration = array();
+    $plugin_definition = array();
+    $plugin_id = $this->randomName();
+    $form = SetStatus::create($container, $configuration, $plugin_id, $plugin_definition);
+    $this->assertInstanceOf('\Drupal\payment\Plugin\Action\SetStatus', $form);
   }
 
   /**

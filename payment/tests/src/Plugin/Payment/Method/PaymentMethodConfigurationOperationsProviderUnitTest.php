@@ -9,6 +9,7 @@ namespace Drupal\payment\Tests\Plugin\Payment;
 
 use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -81,6 +82,36 @@ class PaymentMethodConfigurationOperationsProviderUnitTest extends UnitTestCase 
     $this->provider = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\PaymentMethodConfigurationOperationsProvider')
       ->setConstructorArgs(array($this->request, $this->stringTranslation, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationListBuilder))
       ->getMockForAbstractClass();
+  }
+
+  /**
+   * @covers ::create
+   */
+  function testCreate() {
+    $entity_manager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
+    $entity_manager->expects($this->once())
+      ->method('getListBuilder')
+      ->with('payment_method_configuration')
+      ->will($this->returnValue($this->paymentMethodConfigurationListBuilder));
+    $entity_manager->expects($this->once())
+      ->method('getStorage')
+      ->with('payment_method_configuration')
+      ->will($this->returnValue($this->paymentMethodConfigurationStorage));
+
+    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $map = array(
+      array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $entity_manager),
+      array('request', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->request),
+      array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
+    );
+    $container->expects($this->any())
+      ->method('get')
+      ->will($this->returnValueMap($map));
+
+    /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodConfigurationOperationsProvider $class_name */
+    $class_name = get_class($this->provider);
+    $provider = $class_name::create($container);
+    $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\Method\PaymentMethodConfigurationOperationsProvider', $provider);
   }
 
   /**

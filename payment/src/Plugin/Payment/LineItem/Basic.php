@@ -10,7 +10,7 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\StringTranslation\TranslationManager;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\currency\MathInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -39,13 +39,6 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
   protected $formBuilder;
 
   /**
-   * The translation manager.
-   *
-   * @var \Drupal\Core\StringTranslation\TranslationManager
-   */
-  protected $translationManager;
-
-  /**
    * Constructs a new class instance.
    *
    * @param array $configuration
@@ -56,18 +49,18 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
    *   The plugin implementation definition.
    * @param \Drupal\currency\MathInterface $math
    *   The math service.
-   * @param \Drupal\Core\StringTranslation\TranslationManager $translation_manager
+   * @param \Drupal\Core\StringTranslation\TranslationInterface  $string_translation
    *   The translation manager.
    * @param \Drupal\Core\Database\Connection $database
    *   The database connection.
    * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
    *   The form builder.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, MathInterface $math, TranslationManager $translation_manager, Connection $database, FormBuilderInterface $form_builder) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, MathInterface $math, TranslationInterface $string_translation, Connection $database, FormBuilderInterface $form_builder) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $math);
-    $this->translationManager = $translation_manager;
     $this->database = $database;
     $this->formBuilder = $form_builder;
+    $this->stringTranslation = $string_translation;
   }
 
   /**
@@ -144,7 +137,7 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
   public function formElements(array $form, array &$form_state) {
     $elements = array(
       '#attached' => array(
-        'css' => array($this->drupalGetPath('module', 'payment') . '/css/payment.css'),
+        'css' => array(__DIR__ . '/../../../../css/payment.css'),
       ),
       '#input' => TRUE,
       '#tree' => TRUE,
@@ -206,10 +199,4 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
     );
   }
 
-  /**
-   * Wraps drupal_get_path().
-   */
-  protected function drupalGetPath($type, $name) {
-    return drupal_get_path($type, $name);
-  }
 }

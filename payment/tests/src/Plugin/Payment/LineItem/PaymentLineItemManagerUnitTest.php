@@ -11,7 +11,7 @@ use Drupal\Tests\UnitTestCase;
 use Zend\Stdlib\ArrayObject;
 
 /**
- * @coversDefaultClass \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManager
  */
 class PaymentLineItemManagerUnitTest extends UnitTestCase {
 
@@ -70,6 +70,8 @@ class PaymentLineItemManagerUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   public function setUp() {
     $this->discovery = $this->getMock('\Drupal\Component\Plugin\Discovery\DiscoveryInterface');

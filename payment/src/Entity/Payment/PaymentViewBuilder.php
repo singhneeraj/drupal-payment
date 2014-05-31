@@ -10,7 +10,7 @@ namespace Drupal\payment\Entity\Payment;
 use Drupal\Core\Entity\EntityViewBuilder;
 
 /**
- * Render controller for payments.
+ * Builds payment views.
  */
 class PaymentViewBuilder extends EntityViewBuilder {
 
@@ -18,6 +18,9 @@ class PaymentViewBuilder extends EntityViewBuilder {
    * {@inheritdoc}
    */
   public function buildComponents(array &$build, array $entities, array $displays, $view_mode, $langcode = NULL) {
+    // @todo Extend \Drupal\Core\Entity\EntityViewBuilder with a
+    //   doBuildComponents() method, so we can easily test this method without
+    //   having to mock the parent's dependencies.
     /** @var \Drupal\payment\Entity\PaymentInterface[] $entities */
 
     parent::buildComponents($build, $entities, $displays, $view_mode, $langcode);

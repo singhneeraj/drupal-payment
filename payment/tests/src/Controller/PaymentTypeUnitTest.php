@@ -9,6 +9,7 @@ namespace Drupal\payment\Tests\Controller;
 
 use Drupal\payment\Controller\PaymentType;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Controller\PaymentType
@@ -28,13 +29,6 @@ class PaymentTypeUnitTest extends UnitTestCase {
    * @var \Drupal\Core\Session\AccountInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $currentUser;
-
-  /**
-   * The entity manager used for testing.
-   *
-   * @var \Drupal\Core\Entity\EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $entityManager;
 
   /**
    * The form builder used for testing.
@@ -83,8 +77,6 @@ class PaymentTypeUnitTest extends UnitTestCase {
   protected function setUp() {
     $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
-    $this->entityManager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
-
     $this->formBuilder = $this->getMock('\Drupal\Core\Form\FormBuilderInterface');
 
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
@@ -96,7 +88,27 @@ class PaymentTypeUnitTest extends UnitTestCase {
       ->method('translate')
       ->will($this->returnArgument(0));
 
-    $this->controller = new PaymentType($this->moduleHandler, $this->entityManager, $this->formBuilder, $this->paymentTypeManager, $this->currentUser, $this->stringTranslation);
+    $this->controller = new PaymentType($this->moduleHandler, $this->formBuilder, $this->paymentTypeManager, $this->currentUser, $this->stringTranslation);
+  }
+
+  /**
+   * @covers ::create
+   */
+  function testCreate() {
+    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $map = array(
+      array('current_user', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->currentUser),
+      array('form_builder', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->formBuilder),
+      array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
+      array('plugin.manager.payment.type', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentTypeManager),
+      array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
+    );
+    $container->expects($this->any())
+      ->method('get')
+      ->will($this->returnValueMap($map));
+
+    $form = PaymentType::create($container);
+    $this->assertInstanceOf('\Drupal\payment\Controller\PaymentType', $form);
   }
 
   /**
@@ -112,10 +124,13 @@ class PaymentTypeUnitTest extends UnitTestCase {
     $bundle_no_exists = $this->randomName();
     $bundle_no_exists_definition = NULL;
 
+    $form_build = array(
+      '#type' => $this->randomName(),
+    );
     $this->formBuilder->expects($this->once())
       ->method('getForm')
       ->with($bundle_exists_definition['configuration_form'])
-      ->will($this->returnValue(array()));
+      ->will($this->returnValue($form_build));
 
     $map = array(
       array($bundle_exists, FALSE, $bundle_exists_definition),
@@ -128,15 +143,177 @@ class PaymentTypeUnitTest extends UnitTestCase {
 
     // Test with a bundle of a plugin with a form.
     $build = $this->controller->configure($bundle_exists);
-//    $this->assertInternalType('array', $build);
+    $this->assertSame($form_build, $build);
 
     // Test with a bundle of a plugin without a form.
-//    $build = $this->controller->configure($bundle_exists_no_form);
-//    $this->assertInternalType('string', $build);
+    $build = $this->controller->configure($bundle_exists_no_form);
+    $this->assertInternalType('string', $build);
 
     // Test with a non-existing bundle.
-//    $this->setExpectedException('\Symfony\Component\HttpKernel\Exception\NotFoundHttpException');
-//    $this->controller->configure($bundle_no_exists);
+    $this->setExpectedException('\Symfony\Component\HttpKernel\Exception\NotFoundHttpException');
+    $this->controller->configure($bundle_no_exists);
+  }
+
+  /**
+   * @covers ::configureTitle
+   */
+  public function testConfigureTitle() {
+    $plugin_id = $this->randomName();
+    $label = $this->randomName();
+    $definition = array(
+      'label' => $label,
+    );
+
+    $this->paymentTypeManager->expects($this->once())
+      ->method('getDefinition')
+      ->with($plugin_id)
+      ->will($this->returnValue($definition));
+
+    $this->assertSame($label, $this->controller->configureTitle($plugin_id));
+  }
+
+  /**
+   * @covers ::listing
+   */
+  public function testListing() {
+    $definitions = array(
+      'foo' => array(
+        'label' => $this->randomName(),
+        'description' => $this->randomName(),
+      ),
+      'bar' => array(
+        'label' => $this->randomName(),
+      ),
+      'payment_unavailable' => array(),
+    );
+
+    $operations_foo = array(
+      'baz' => array(
+        'title' => $this->randomName(),
+      ),
+    );
+
+    $operations_provider_foo = $this->getMock('\Drupal\payment\Plugin\Payment\OperationsProviderInterface');
+    $operations_provider_foo->expects($this->once())
+      ->method('getOperations')
+      ->with('foo')
+      ->will($this->returnValue($operations_foo));
+
+    $this->paymentTypeManager->expects($this->once())
+      ->method('getDefinitions')
+      ->will($this->returnValue($definitions));
+
+    $map = array(
+      array('foo', $operations_provider_foo),
+      array('bar', NULL),
+    );
+    $this->paymentTypeManager->expects($this->exactly(2))
+      ->method('getOperationsProvider')
+      ->will($this->returnValueMap($map));
+
+    $this->moduleHandler->expects($this->any())
+      ->method('moduleExists')
+      ->with('field_ui')
+      ->will($this->returnValue(TRUE));
+
+    $map = array(
+      array('administer payment fields', TRUE),
+      array('administer payment form display', TRUE),
+      array('administer payment display', TRUE),
+    );
+    $this->currentUser->expects($this->atLeastOnce())
+      ->method('hasPermission')
+      ->will($this->returnValueMap($map));
+
+    $build = $this->controller->listing();
+    $expected_build = array(
+      '#empty' => 'There are no available payment types.',
+      '#header' => array('Type', 'Description', 'Operations'),
+      '#type' => 'table',
+      'foo' => array(
+        'label' => array(
+          '#markup' => $definitions['foo']['label'],
+        ),
+        'description' => array(
+          '#markup' => $definitions['foo']['description'],
+        ),
+        'operations' => array(
+          '#links' => $operations_foo + array(
+            'configure' => array(
+              'route_name' => 'payment.payment_type',
+              'route_parameters' => array(
+                'bundle' => 'foo',
+              ),
+              'title' => 'Configure',
+            ),
+            'manage-fields' => array(
+              'title' => 'Manage fields',
+              'route_name' => 'field_ui.overview_payment',
+              'route_parameters' => array(
+                'bundle' => 'foo',
+              ),
+            ),
+            'manage-form-display' => array(
+              'title' => 'Manage form display',
+              'route_name' => 'field_ui.form_display_overview_payment',
+              'route_parameters' => array(
+                'bundle' => 'foo',
+              ),
+            ),
+            'manage-display' => array(
+              'title' => 'Manage display',
+              'route_name' => 'field_ui.display_overview_payment',
+              'route_parameters' => array(
+                'bundle' => 'foo',
+              ),
+            ),
+          ),
+          '#type' => 'operations',
+        ),
+      ),
+      'bar' => array(
+        'label' => array(
+          '#markup' => $definitions['bar']['label'],
+        ),
+        'description' => array(
+          '#markup' => NULL,
+        ),
+        'operations' => array(
+          '#links' => array(
+            'configure' => array(
+              'route_name' => 'payment.payment_type',
+              'route_parameters' => array(
+                'bundle' => 'bar',
+              ),
+              'title' => 'Configure',
+            ),
+            'manage-fields' => array(
+              'title' => 'Manage fields',
+              'route_name' => 'field_ui.overview_payment',
+              'route_parameters' => array(
+                'bundle' => 'bar',
+              ),
+            ),
+            'manage-form-display' => array(
+              'title' => 'Manage form display',
+              'route_name' => 'field_ui.form_display_overview_payment',
+              'route_parameters' => array(
+                'bundle' => 'bar',
+              ),
+            ),
+            'manage-display' => array(
+              'title' => 'Manage display',
+              'route_name' => 'field_ui.display_overview_payment',
+              'route_parameters' => array(
+                'bundle' => 'bar',
+              ),
+            ),
+          ),
+          '#type' => 'operations',
+        ),
+      ),
+    );
+    $this->assertSame($expected_build, $build);
   }
 
 }

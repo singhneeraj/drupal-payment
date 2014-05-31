@@ -8,6 +8,7 @@
 namespace Drupal\payment\Tests\Hook;
 
 use Drupal\Core\Render\Element;
+use Drupal\payment\Hook\ElementInfo;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -37,9 +38,7 @@ class ElementInfoUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   public function setUp() {
-    $this->service = $this->getMockBuilder('\Drupal\payment\Hook\ElementInfo')
-      ->setMethods(array('drupalGetPath'))
-      ->getMock();
+    $this->service = new ElementInfo();
   }
 
   /**
@@ -52,5 +51,6 @@ class ElementInfoUnitTest extends UnitTestCase {
       $this->assertInternalType('array', $element);
       $this->assertSame(0, count(Element::children($element)));
     }
+    $this->assertFileExists($elements['payment_line_items_input']['#attached']['css'][0]);
   }
 }

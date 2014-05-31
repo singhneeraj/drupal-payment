@@ -8,8 +8,6 @@
 namespace Drupal\payment\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -21,35 +19,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * Returns responses for payment type routes.
  */
-class PaymentType extends ControllerBase implements ContainerInjectionInterface {
-
-  /**
-   * The current user.
-   *
-   * @var \Drupal\Core\Session\AccountInterface
-   */
-  protected $currentUser;
-
-  /**
-   * The entity manager.
-   *
-   * @var \Drupal\Core\Entity\EntityManager
-   */
-  protected $entityManager;
-
-  /**
-   * The form builder.
-   *
-   * @var \Drupal\Core\Form\FormBuilderInterface
-   */
-  protected $formBuilder;
-
-  /**
-   * The module handler.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
-   */
-  protected $moduleHandler;
+class PaymentType extends ControllerBase {
 
   /**
    * The payment type plugin manager.
@@ -63,8 +33,6 @@ class PaymentType extends ControllerBase implements ContainerInjectionInterface 
    *
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
    * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
    *   The form builder.
    * @param \Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface $payment_type_manager
@@ -73,9 +41,8 @@ class PaymentType extends ControllerBase implements ContainerInjectionInterface 
    *   The current user.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    */
-  public function __construct(ModuleHandlerInterface $module_handler, EntityManagerInterface $entity_manager, FormBuilderInterface $form_builder, PaymentTypeManagerInterface $payment_type_manager, AccountInterface $current_user, TranslationInterface $string_translation) {
+  public function __construct(ModuleHandlerInterface $module_handler, FormBuilderInterface $form_builder, PaymentTypeManagerInterface $payment_type_manager, AccountInterface $current_user, TranslationInterface $string_translation) {
     $this->moduleHandler = $module_handler;
-    $this->entityManager = $entity_manager;
     $this->formBuilder = $form_builder;
     $this->paymentTypeManager = $payment_type_manager;
     $this->stringTranslation = $string_translation;
@@ -86,7 +53,7 @@ class PaymentType extends ControllerBase implements ContainerInjectionInterface 
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('module_handler'), $container->get('entity.manager'), $container->get('form_builder'), $container->get('plugin.manager.payment.type'), $container->get('current_user'), $container->get('string_translation'));
+    return new static($container->get('module_handler'), $container->get('form_builder'), $container->get('plugin.manager.payment.type'), $container->get('current_user'), $container->get('string_translation'));
   }
 
   /**
@@ -97,8 +64,8 @@ class PaymentType extends ControllerBase implements ContainerInjectionInterface 
    */
   public function listing() {
     $table = array(
-      '#empty' => t('There are no available payment types.'),
-      '#header' => array(t('Type'), t('Description'), t('Operations')),
+      '#empty' => $this->t('There are no available payment types.'),
+      '#header' => array($this->t('Type'), $this->t('Description'), $this->t('Operations')),
       '#type' => 'table',
     );
     $definitions = $this->paymentTypeManager->getDefinitions();
@@ -120,7 +87,7 @@ class PaymentType extends ControllerBase implements ContainerInjectionInterface 
       if ($this->moduleHandler->moduleExists('field_ui')) {
         if ($this->currentUser->hasPermission('administer payment fields')) {
           $operations['manage-fields'] = array(
-            'title' => t('Manage fields'),
+            'title' => $this->t('Manage fields'),
             'route_name' => 'field_ui.overview_payment',
             'route_parameters' => array(
               'bundle' => $plugin_id,
@@ -129,7 +96,7 @@ class PaymentType extends ControllerBase implements ContainerInjectionInterface 
         }
         if ($this->currentUser->hasPermission('administer payment form display')) {
           $operations['manage-form-display'] = array(
-            'title' => t('Manage form display'),
+            'title' => $this->t('Manage form display'),
             'route_name' => 'field_ui.form_display_overview_payment',
             'route_parameters' => array(
               'bundle' => $plugin_id,
@@ -138,7 +105,7 @@ class PaymentType extends ControllerBase implements ContainerInjectionInterface 
         }
         if ($this->currentUser->hasPermission('administer payment display')) {
           $operations['manage-display'] = array(
-            'title' => t('Manage display'),
+            'title' => $this->t('Manage display'),
             'route_name' => 'field_ui.display_overview_payment',
             'route_parameters' => array(
               'bundle' => $plugin_id,

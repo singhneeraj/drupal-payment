@@ -9,6 +9,7 @@ namespace Drupal\payment\Tests\Plugin\Payment\Method;
 
 use Drupal\payment\Plugin\Payment\Method\BasicDerivative;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\BasicDerivative
@@ -30,11 +31,11 @@ class BasicDerivativeUnitTest extends UnitTestCase {
   protected $paymentMethodConfigurationManager;
 
   /**
-   * The payment status storage controller used for testing.
+   * The payment method configuration storage.
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $paymentMethodStorage;
+  protected $paymentMethodConfigurationStorage;
 
   /**
    * {@inheritdoc}
@@ -49,13 +50,38 @@ class BasicDerivativeUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   public function setUp() {
     $this->paymentMethodConfigurationManager = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface');
 
-    $this->paymentMethodStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
+    $this->paymentMethodConfigurationStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
 
-    $this->deriver = new BasicDerivative($this->paymentMethodStorage, $this->paymentMethodConfigurationManager);
+    $this->deriver = new BasicDerivative($this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationManager);
+  }
+
+  /**
+   * @covers ::create
+   */
+  function testCreate() {
+    $entity_manager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
+    $entity_manager->expects($this->once())
+      ->method('getStorage')
+      ->with('payment_method_configuration')
+      ->will($this->returnValue($this->paymentMethodConfigurationStorage));
+
+    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $map = array(
+      array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $entity_manager),
+      array('plugin.manager.payment.method_configuration', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodConfigurationManager),
+    );
+    $container->expects($this->any())
+      ->method('get')
+      ->will($this->returnValueMap($map));
+
+    $form = BasicDerivative::create($container, array(), '', array());
+    $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\Method\BasicDerivative', $form);
   }
 
   /**
@@ -115,7 +141,7 @@ class BasicDerivativeUnitTest extends UnitTestCase {
       ->method('getPluginId')
       ->will($this->returnValue($this->randomName()));
 
-    $this->paymentMethodStorage->expects($this->once())
+    $this->paymentMethodConfigurationStorage->expects($this->once())
       ->method('loadMultiple')
       ->will($this->returnValue(array($payment_method_enabled_basic, $payment_method_enabled_no_basic, $payment_method_disabled_basic)));
 

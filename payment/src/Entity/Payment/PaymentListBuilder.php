@@ -7,13 +7,78 @@
 
 namespace Drupal\payment\Entity\Payment;
 
+use Drupal\Core\Datetime\Date;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Lists payment entities.
  */
 class PaymentListBuilder extends EntityListBuilder {
+
+  /**
+   * The currency storage.
+   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface
+   */
+  protected $currencyStorage;
+
+  /**
+   * The date formatter.
+   *
+   * @var \Drupal\Core\Datetime\Date
+   */
+  protected $date;
+
+  /**
+   * The request.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request
+   */
+  protected $request;
+
+  /**
+   * Constructs a new class instance.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type definition.
+   * @param \Drupal\Core\Entity\EntityStorageInterface $payment_storage
+   *   The payment storage.
+   * @param \Drupal\Core\StringTranslation\Translationinterface $string_translation
+   *   The string translator.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The request.
+   * @param \Drupal\Core\DateTime\Date $date
+   *   The date formatter.
+   * @param \Drupal\Core\Entity\EntityStorageInterface $currency_storage
+   *   The currency storage.
+   */
+  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $payment_storage, TranslationInterface $string_translation, ModuleHandlerInterface $module_handler, Request $request, Date $date, EntityStorageInterface $currency_storage) {
+    parent::__construct($entity_type, $payment_storage);
+    $this->currencyStorage = $currency_storage;
+    $this->date = $date;
+    $this->moduleHandler = $module_handler;
+    $this->request = $request;
+    $this->stringTranslation = $string_translation;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+    /** @var \Drupal\Core\Entity\EntityManagerInterface $entity_manager */
+    $entity_manager = $container->get('entity.manager');
+
+    return new static($entity_type, $entity_manager->getStorage('payment'), $container->get('string_translation'), $container->get('module_handler'), $container->get('request'), $container->get('date'), $entity_manager->getStorage('currency'));
+  }
 
   /**
    * {@inheritdoc}
@@ -29,45 +94,45 @@ class PaymentListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $row['updated'] = t('Last updated');
-    $row['status'] = t('Status');
-    $row['amount'] = t('Amount');
+    $row['updated'] = $this->t('Last updated');
+    $row['status'] = $this->t('Status');
+    $row['amount'] =$this-> t('Amount');
     $row['payment_method'] = array(
-      'data' => t('Payment method'),
+      'data' => $this->t('Payment method'),
       'class' => array(RESPONSIVE_PRIORITY_LOW),
     );
     $row['owner'] = array(
-      'data' => t('Payer'),
+      'data' => $this->t('Payer'),
       'class' => array(RESPONSIVE_PRIORITY_MEDIUM),
     );
-    $row['operations'] = t('Operations');
+    $row['operations'] = $this->t('Operations');
 
     return $row;
   }
 
   /**
-   * {@inheritdoc}
+   * {@inheritdnoc}
    */
   public function buildRow(EntityInterface $payment) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
-    $row['data']['updated'] = format_date($payment->getChangedTime());
+    $row['data']['updated'] = $this->date->format($payment->getChangedTime());
 
     $status_definition = $payment->getStatus()->getPluginDefinition();
     $row['data']['status'] = $status_definition['label'];
 
     /** @var \Drupal\currency\Entity\CurrencyInterface $currency */
-    $currency = entity_load('currency', $payment->getCurrencyCode());
+    $currency = $this->currencyStorage->load($payment->getCurrencyCode());
     if (!$currency) {
-      $currency = entity_load('currency', 'XXX');
+      $currency = $this->currencyStorage->load('XXX');
     }
     $row['data']['amount'] = $currency->formatAmount($payment->getAmount());
 
-    $row['data']['payment_method'] = $payment->getPaymentMethod() ? $payment->getPaymentMethod()->getPluginLabel() : t('Unavailable');
+    $row['data']['payment_method'] = $payment->getPaymentMethod() ? $payment->getPaymentMethod()->getPluginLabel() : $this->t('Unavailable');
 
-    $row['data']['owner']['data'] = array(
-      '#theme' => 'username',
-      '#account' => $payment->getOwner(),
-    );
+      $row['data']['owner']['data'] = array(
+        '#theme' => 'username',
+        '#account' => $payment->getOwner(),
+      );
 
     $operations = $this->buildOperations($payment);
     $row['data']['operations']['data'] = $operations;
@@ -78,7 +143,7 @@ class PaymentListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultOperations(EntityInterface $entity) {
+  protected function getDefaultOperations(EntityInterface $entity) {
     $operations = parent::getDefaultOperations($entity);
 
     if ($entity->access('view')) {
@@ -93,7 +158,9 @@ class PaymentListBuilder extends EntityListBuilder {
           'class' => array('use-ajax'),
           'data-accepts' => 'application/vnd.drupal-modal',
         ),
-        'query' => drupal_get_destination(),
+        'query' => array(
+          'destination' => $this->request->attributes->get('_system_path'),
+        ),
       ) + $entity->urlInfo('update-status-form')->toArray();
     }
 

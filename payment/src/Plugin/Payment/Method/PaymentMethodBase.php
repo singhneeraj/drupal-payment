@@ -140,7 +140,7 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
    */
   public function formElements(array $form, array &$form_state, PaymentInterface $payment) {
     // Do not use the module handler, as we only need check_markup() anyway,
-    $message = function_exists('check_markup') ? $this->checkMarkup($this->getMessageText(), $this->getMessageTextFormat()) : $this->getMessageText();
+    $message = function_exists('check_markup') ? check_markup($this->getMessageText(), $this->getMessageTextFormat()) : $this->getMessageText();
     $message = $this->token->replace($message, array(
       'payment' => $payment,
     ), array(
@@ -153,13 +153,6 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
     );
 
     return $elements;
-  }
-
-  /**
-   * Wraps check_markup().
-   */
-  protected function checkMarkup($text, $format_id = NULL, $langcode = '', $cache = FALSE, $filter_types_to_skip = array()) {
-    return check_markup($text, $format_id, $langcode, $cache, $filter_types_to_skip);
   }
 
   /**

@@ -5,12 +5,15 @@
  * Contains \Drupal\payment\Tests\Plugin\Payment\Method\PaymentMethodBaseUnitTest.
  */
 
-namespace Drupal\payment\Tests\Plugin\Payment\Method;
+namespace Drupal\payment\Tests\Plugin\Payment\Method {
 
 use Drupal\Core\Access\AccessInterface;
 use Drupal\payment\Event\PaymentEvents;
+  use Drupal\payment\Event\PaymentExecuteAccess;
+  use Symfony\Component\DependencyInjection\ContainerInterface;
+  use Symfony\Component\EventDispatcher\Event;
 
-/**
+  /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase
  */
 class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
@@ -35,27 +38,71 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   public function setUp() {
     parent::setUp();
 
+    $this->pluginDefinition['label'] = $this->randomName();
+
     $this->plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\PaymentMethodBase')
       ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token))
-      ->setMethods(array('getSupportedCurrencies', 'doExecutePayment', 'checkMarkup', 't'))
+      ->setMethods(array('getSupportedCurrencies', 'doExecutePayment', 'checkMarkup'))
       ->getMock();
     $this->plugin->expects($this->any())
       ->method('checkMarkup')
       ->will($this->returnArgument(0));
-    $this->plugin->expects($this->any())
-      ->method('t')
-      ->will($this->returnArgument(0));
+  }
+
+  /**
+   * @covers ::create
+   */
+  function testCreate() {
+    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $map = array(
+      array('event_dispatcher', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->eventDispatcher),
+      array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
+      array('token', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->token),
+    );
+    $container->expects($this->any())
+      ->method('get')
+      ->will($this->returnValueMap($map));
+
+    /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase $class_name */
+    $class_name = get_class($this->plugin);
+    $form = $class_name::create($container, array(), '', $this->pluginDefinition);
+    $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\Method\PaymentMethodBase', $form);
   }
 
   /**
    * @covers ::defaultConfiguration
    */
   public function testDefaultConfiguration() {
-    $this->assertInternalType('array', $this->plugin->defaultConfiguration());
+    $this->assertSame(array(), $this->plugin->defaultConfiguration());
+  }
+
+  /**
+   * @covers ::calculateDependencies
+   */
+  public function testCalculateDependencies() {
+    $this->assertSame(array(), $this->plugin->calculateDependencies());
+  }
+
+  /**
+   * @covers ::doExecutePaymentAccess
+   */
+  public function testDoExecutePaymentAccess() {
+    $method = new \ReflectionMethod($this->plugin, 'doExecutePaymentAccess');
+    $method->setAccessible(TRUE);
+
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
+    $this->assertTrue($method->invoke($this->plugin, $payment, $account));
   }
 
   /**
@@ -117,44 +164,185 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
 
   /**
    * @covers ::executePaymentAccess
+   *
+   * @dataProvider providerTestExecutePaymentAccess
    */
-  public function testExecutePaymentAccess() {
-    $currency_code = 'EUR';
-    $valid_amount = 12.34;
-    $minimum_amount = 10;
-    $maximum_amount = 20;
-
+  public function testExecutePaymentAccess($expected, $active, $currency_supported, $events, $do) {
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
-    $this->plugin->expects($this->any())
-      ->method('getSupportedCurrencies')
-      ->will($this->returnValue(array(
-        $currency_code => array(
-          'minimum' => $minimum_amount,
-          'maximum' => $maximum_amount,
-        ),
-      )));
 
-    // Test granted access.
-    // @todo Check how to test denial of access reliably.
-    $payment->expects($this->exactly(2))
-      ->method('getCurrencyCode')
-      ->will($this->returnValue($currency_code));
-    $payment->expects($this->exactly(2))
-      ->method('getAmount')
-      ->will($this->returnValue($valid_amount));
-    $this->moduleHandler->expects($this->at(0))
-      ->method('invokeAll')
-      ->will($this->returnValue(array(AccessInterface::ALLOW, AccessInterface::DENY)));
-    $this->moduleHandler->expects($this->at(1))
-      ->method('invokeAll')
-      ->will($this->returnValue(array()));
-    $this->eventDispatcher->expects($this->exactly(2))
-      ->method('dispatch')
-      ->with(PaymentEvents::PAYMENT_EXECUTE_ACCESS);
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
-    $this->assertTrue($this->plugin->executePaymentAccess($payment, $account));
-    $this->assertTrue($this->plugin->executePaymentAccess($payment, $account));
+
+    $this->pluginDefinition['active'] = $active;
+    /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase|\PHPUnit_Framework_MockObject_MockObject $payment_method */
+    $payment_method = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\PaymentMethodBase')
+      ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token))
+      ->setMethods(array('executePaymentAccessCurrency', 'executePaymentAccessEvent', 'doExecutePaymentAccess'))
+      ->getMockForAbstractClass();
+    $payment_method->expects($this->any())
+      ->method('executePaymentAccessCurrency')
+      ->with($payment, $account)
+      ->will($this->returnValue($currency_supported));
+    $payment_method->expects($this->any())
+      ->method('executePaymentAccessEvent')
+      ->with($payment, $account)
+      ->will($this->returnValue($events));
+    $payment_method->expects($this->any())
+      ->method('doExecutePaymentAccess')
+      ->with($payment, $account)
+      ->will($this->returnValue($do));
+
+    $this->assertSame($expected, $payment_method->executePaymentAccess($payment, $account));
   }
+
+  /**
+   * Provides data to self::testExecutePaymentAccess().
+   */
+  public function providerTestExecutePaymentAccess() {
+    return array(
+      array(TRUE, TRUE, TRUE, TRUE, TRUE),
+      array(FALSE, FALSE, TRUE, TRUE, TRUE),
+      array(FALSE, TRUE, FALSE, TRUE, TRUE),
+      array(FALSE, TRUE, TRUE, FALSE, TRUE),
+      array(FALSE, TRUE, TRUE, TRUE, FALSE),
+    );
+  }
+
+  /**
+   * @covers ::executePaymentAccessEvent
+   *
+   * @dataProvider providerTestExecutePaymentAccessEvent
+   */
+  public function testExecutePaymentAccessEvent($expected, $event_results, $hook_results) {
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
+    $this->eventDispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(PaymentEvents::PAYMENT_EXECUTE_ACCESS, $this->isInstanceOf('\Drupal\payment\Event\PaymentExecuteAccess'))
+      ->will($this->returnCallback(function($type, PaymentExecuteAccess $event) use ($event_results) {
+        foreach ($event_results as $event_result) {
+          $event->setAccessResult($event_result);
+        }
+      }));
+
+    $this->moduleHandler->expects($this->once())
+      ->method('invokeAll')
+      ->with('payment_execute_access', array($payment, $this->plugin, $account))
+      ->will($this->returnValue($hook_results));
+
+    $method = new \ReflectionMethod($this->plugin, 'executePaymentAccessEvent');
+    $method->setAccessible(TRUE);
+
+    $this->assertSame($expected, $method->invoke($this->plugin, $payment, $account));
+  }
+
+  /**
+   * Provides data to self::testExecutePaymentAccessEvent().
+   */
+  public function providerTestExecutePaymentAccessEvent() {
+    return array(
+      // No access results.
+      array(TRUE, array(), array()),
+      // Some access results, all positive.
+      array(TRUE, array(AccessInterface::ALLOW), array()),
+      array(TRUE, array(), array(AccessInterface::ALLOW)),
+      // Both ALLOW and DENY, but no KILL, so access is granted.
+      array(TRUE, array(AccessInterface::ALLOW), array(AccessInterface::DENY)),
+      array(TRUE, array(AccessInterface::DENY), array(AccessInterface::ALLOW)),
+      // Various combinations of access denied.
+      array(FALSE, array(AccessInterface::DENY), array()),
+      array(FALSE, array(), array(AccessInterface::DENY)),
+      array(FALSE, array(AccessInterface::KILL), array()),
+      array(FALSE, array(), array(AccessInterface::KILL)),
+      array(FALSE, array(AccessInterface::KILL), array(AccessInterface::ALLOW)),
+      array(FALSE, array(AccessInterface::ALLOW), array(AccessInterface::KILL)),
+    );
+  }
+
+  /**
+   * @covers ::executePaymentAccessCurrency
+   *
+   * @dataProvider providerTestExecutePaymentAccessCurrency
+   */
+  public function testExecutePaymentAccessCurrency($expected, $supported_currencies, $payment_currency_code, $payment_amount) {
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $payment->expects($this->atLeastOnce())
+      ->method('getAmount')
+      ->will($this->returnValue($payment_amount));
+    $payment->expects($this->atLeastOnce())
+      ->method('getCurrencyCode')
+      ->will($this->returnValue($payment_currency_code));
+
+    $this->plugin->expects($this->atLeastOnce())
+      ->method('getSupportedCurrencies')
+      ->will($this->returnValue($supported_currencies));
+
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
+    $method = new \ReflectionMethod($this->plugin, 'executePaymentAccessCurrency');
+    $method->setAccessible(TRUE);
+
+    $this->assertSame($expected, $method->invoke($this->plugin, $payment, $account));
+  }
+
+  /**
+   * Provides data to self::testExecutePaymentAccessCurrency().
+   */
+  public function providerTestExecutePaymentAccessCurrency() {
+    return array(
+      // All currencies are allowed.
+      array(TRUE, TRUE, $this->randomName(), mt_rand()),
+      // The payment currency is allowed. No amount limitations.
+      array(TRUE, array(
+        'ABC' => array(),
+      ), 'ABC', mt_rand()),
+      // The payment currency is allowed with amount limitations.
+      array(TRUE, array(
+        'ABC' => array(
+          'minimum' => 1,
+          'maximum' => 3,
+        ),
+      ), 'ABC', 2),
+      // The payment currency is not allowed.
+      array(FALSE, array(
+        'ABC' => array(),
+      ), 'XXX', mt_rand()),
+      // The payment currency is not allowed because of amount limitations.
+      array(FALSE, array(
+        'ABC' => array(
+          'minimum' => 2,
+        ),
+      ), 'ABC', 1),
+      array(FALSE, array(
+        'ABC' => array(
+          'maximum' => 1,
+        ),
+      ), 'ABC', 2),
+    );
+  }
+
+  /**
+   * @covers ::getPluginLabel
+   */
+  public function testGetPluginLabel() {
+    $this->assertSame($this->pluginDefinition['label'], $this->plugin->getPluginLabel());
+  }
+
+}
+
+}
+
+namespace {
+
+if (!function_exists('check_markup')) {
+  function check_markup(){}
+}
+
 }

@@ -28,17 +28,17 @@ class BasicDerivative extends DerivativeBase implements ContainerDerivativeInter
   protected $paymentMethodConfigurationManager;
 
   /**
-   * The payment method storage controller.
+   * The payment method configuration storage.
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  protected $paymentMethodStorage;
+  protected $paymentMethodConfigurationStorage;
 
   /**
    * Constructs a new class instance.
    */
-  public function __construct(EntityStorageInterface $payment_method_storage, PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager) {
-    $this->paymentMethodStorage = $payment_method_storage;
+  public function __construct(EntityStorageInterface $payment_method_configuration_storage, PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager) {
+    $this->paymentMethodConfigurationStorage = $payment_method_configuration_storage;
     $this->paymentMethodConfigurationManager = $payment_method_configuration_manager;
   }
 
@@ -46,7 +46,10 @@ class BasicDerivative extends DerivativeBase implements ContainerDerivativeInter
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, $base_plugin_id) {
-    return new static($container->get('entity.manager')->getStorage('payment_method_configuration'), $container->get('plugin.manager.payment.method_configuration'));
+    /** @var \Drupal\Core\Entity\EntityManagerInterface $entity_manager */
+    $entity_manager = $container->get('entity.manager');
+
+    return new static($entity_manager->getStorage('payment_method_configuration'), $container->get('plugin.manager.payment.method_configuration'));
   }
 
   /**
@@ -54,7 +57,7 @@ class BasicDerivative extends DerivativeBase implements ContainerDerivativeInter
    */
   public function getDerivativeDefinitions($base_plugin_definition) {
     /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface[] $payment_methods */
-    $payment_methods = $this->paymentMethodStorage->loadMultiple();
+    $payment_methods = $this->paymentMethodConfigurationStorage->loadMultiple();
     foreach ($payment_methods as $payment_method) {
       if ($payment_method->getPluginId() == 'payment_basic') {
         /** @var \Drupal\payment\Plugin\Payment\MethodConfiguration\Basic $configuration_plugin */

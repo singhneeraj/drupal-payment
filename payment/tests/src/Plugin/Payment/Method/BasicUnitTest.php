@@ -7,6 +7,9 @@
 
 namespace Drupal\payment\Tests\Plugin\Payment\Method;
 
+use Drupal\payment\Plugin\Payment\Method\Basic;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\Basic
  */
@@ -15,9 +18,9 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
   /**
    * The payment method plugin under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\Basic|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\Method\Basic
    */
-  protected $plugin;
+  protected $paymentMethod;
 
   /**
    * The payment status manager used for testing.
@@ -39,58 +42,64 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   public function setUp() {
     parent::setUp();
 
     $this->pluginDefinition += array(
-      'status' => 'payment_expired',
+      'entity_id' => $this->randomName(),
+      'status' => $this->randomName(),
     );
 
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
-    $this->plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\Basic')
-      ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager))
-      ->setMethods(array('t'))
-      ->getMock();
-    $this->plugin->expects($this->any())
-      ->method('t')
-      ->will($this->returnArgument(0));
+    $this->paymentMethod = new Basic(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager);
+  }
+
+  /**
+   * @covers ::create
+   */
+  function testCreate() {
+    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $map = array(
+      array('event_dispatcher', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->eventDispatcher),
+      array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
+      array('plugin.manager.payment.status', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentStatusManager),
+      array('token', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->token),
+    );
+    $container->expects($this->any())
+      ->method('get')
+      ->will($this->returnValueMap($map));
+
+    $form = Basic::create($container, array(), '', $this->pluginDefinition);
+    $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\Method\Basic', $form);
   }
 
   /**
    * @covers ::defaultConfiguration
    */
   public function testDefaultConfiguration() {
-    $this->assertInternalType('array', $this->plugin->defaultConfiguration());
+    $this->assertInternalType('array', $this->paymentMethod->defaultConfiguration());
   }
 
   /**
    * @covers ::getStatus
    */
   public function testGetStatus() {
-    $this->assertSame($this->pluginDefinition['status'], $this->plugin->getStatus());
+    $this->assertSame($this->pluginDefinition['status'], $this->paymentMethod->getStatus());
   }
 
   /**
-   * @covers ::executePayment
+   * @covers ::doExecutePayment
    */
-  public function testExecutePayment() {
-    $payment_status_plugin_id = $this->randomName();
-    /** @var \Drupal\payment\Plugin\Payment\Method\Basic|\PHPUnit_Framework_MockObject_MockObject $payment_method_plugin */
-    $payment_method_plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\Basic')
-      ->setConstructorArgs(array(array(), '', array(), $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager))
-      ->setMethods(array('executePaymentAccess', 'getStatus'))
-      ->getMock();
-    $payment_method_plugin->expects($this->once())
-      ->method('getStatus')
-      ->will($this->returnValue($payment_status_plugin_id));
-
+  public function testDoExecutePayment() {
     $payment_status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
 
     $this->paymentStatusManager->expects($this->once())
       ->method('createInstance')
-      ->with($payment_status_plugin_id)
+      ->with($this->pluginDefinition['status'])
       ->will($this->returnValue($payment_status));
 
     $payment_type = $this->getMock('\Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface');
@@ -109,13 +118,24 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
       ->method('setStatus')
       ->with($payment_status);
 
-    $payment_method_plugin->executePayment($payment);
+    $method = new \ReflectionMethod($this->paymentMethod, 'doExecutePayment');
+    $method->setAccessible(TRUE);
+
+    $method->invoke($this->paymentMethod, $payment);
   }
 
   /**
    * @covers ::getSupportedCurrencies
    */
   public function testGetSupportedCurrencies() {
-    $this->assertSame(TRUE, $this->plugin->getSupportedCurrencies());
+    $this->assertTrue($this->paymentMethod->getSupportedCurrencies());
   }
+
+  /**
+   * @covers ::getEntityId
+   */
+  public function testGetEntityId() {
+    $this->assertSame($this->pluginDefinition['entity_id'], $this->paymentMethod->getEntityId());
+  }
+
 }

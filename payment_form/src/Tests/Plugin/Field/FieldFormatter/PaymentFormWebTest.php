@@ -18,9 +18,9 @@ use Drupal\simpletest\WebTestBase;
 class PaymentFormWebTest extends WebTestBase {
 
   /**
-   * The payment method used for testing.
+   * The payment method configuration used for testing.
    *
-   * @var \Drupal\payment\Entity\PaymentMethod
+   * @var \Drupal\payment\Entity\PaymentMethodConfiguration
    */
   protected $paymentMethod;
 

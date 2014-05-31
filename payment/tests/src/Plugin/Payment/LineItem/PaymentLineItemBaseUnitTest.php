@@ -8,6 +8,7 @@
 namespace Drupal\payment\Tests\Plugin\Payment\LineItem;
 
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase
@@ -41,6 +42,8 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   public function setUp() {
     $this->math = $this->getMock('\Drupal\currency\MathInterface');
@@ -52,6 +55,25 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
       ->setMethods(array('formElements', 'getAmount', 'getConfigurationFromFormValues', 'getCurrencyCode', 'getDescription'))
       ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->math))
       ->getMock();
+  }
+
+  /**
+   * @covers ::create
+   */
+  public function testCreate() {
+    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $map = array(
+      array('currency.math', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->math),
+    );
+    $container->expects($this->any())
+      ->method('get')
+      ->will($this->returnValueMap($map));
+
+    /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase $class_name */
+    $class_name = get_class($this->lineItem);
+
+    $line_item = $class_name::create($container, array(), $this->randomName(), array());
+    $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase', $line_item);
   }
 
   /**
@@ -127,4 +149,27 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
     $this->assertSame(spl_object_hash($this->lineItem), spl_object_hash($this->lineItem->setPaymentId($payment_id)));
     $this->assertSame($payment_id, $this->lineItem->getPaymentId());
   }
+
+  /**
+   * @covers ::calculateDependencies
+   */
+  public function testCalculateDependencies() {
+    $this->assertSame(array(), $this->lineItem->calculateDependencies());
+  }
+
+  /**
+   * @covers ::defaultConfiguration
+   */
+  public function testDefaultConfiguration() {
+    $default_configuration = array(
+      'amount' => 0,
+      'currency_code' => '',
+      'name' => NULL,
+      'payment_id' => NULL,
+      'quantity' => 1,
+    );
+
+    $this->assertSame($default_configuration, $this->lineItem->defaultConfiguration());
+  }
+
 }

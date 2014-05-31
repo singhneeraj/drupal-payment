@@ -8,7 +8,6 @@
 namespace Drupal\payment\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -19,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Returns responses for payment status routes.
  */
-class PaymentStatus extends ControllerBase implements ContainerInjectionInterface {
+class PaymentStatus extends ControllerBase {
 
   /**
    * The payment status plugin manager.

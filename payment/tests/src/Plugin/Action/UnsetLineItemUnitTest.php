@@ -7,7 +7,9 @@
 
 namespace Drupal\payment\Tests\Plugin\Action;
 
+use Drupal\payment\Plugin\Action\UnsetLineItem;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Action\UnsetLineItem
@@ -17,9 +19,16 @@ class UnsetLineItemUnitTest extends UnitTestCase {
   /**
    * The action under test.
    *
-   * @var \Drupal\payment\Plugin\Action\UnsetLineItem|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Action\UnsetLineItem
    */
   protected $action;
+
+  /**
+   * The string translator.
+   *
+   * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $stringTranslation;
 
   /**
    * {@inheritdoc}
@@ -34,15 +43,35 @@ class UnsetLineItemUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   public function setUp() {
+    $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
+
     $configuration = array();
     $plugin_definition = array();
     $plugin_id = $this->randomName();
-    $this->action = $this->getMockBuilder('\Drupal\payment\Plugin\Action\UnsetLineItem')
-      ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition))
-      ->setMethods(array('t'))
-      ->getMock();
+    $this->action = new UnsetLineItem($configuration, $plugin_id, $plugin_definition, $this->stringTranslation);
+  }
+
+  /**
+   * @covers ::create
+   */
+  function testCreate() {
+    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $map = array(
+      array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
+    );
+    $container->expects($this->any())
+      ->method('get')
+      ->will($this->returnValueMap($map));
+
+    $configuration = array();
+    $plugin_definition = array();
+    $plugin_id = $this->randomName();
+    $form = UnsetLineItem::create($container, $configuration, $plugin_id, $plugin_definition);
+    $this->assertInstanceOf('\Drupal\payment\Plugin\Action\UnsetLineItem', $form);
   }
 
   /**

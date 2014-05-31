@@ -34,13 +34,4 @@ interface PaymentLineItemManagerInterface extends PluginManagerInterface {
    */
   public function options();
 
-  /**
-   * Returns the class name for a plugin ID.
-   *
-   * @param string $plugin_id
-   *
-   * @return string
-   */
-  public function getPluginClass($plugin_id);
-
 }

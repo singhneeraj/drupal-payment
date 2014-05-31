@@ -17,7 +17,7 @@ use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides the payment edit form.
+ * Provides the payment status update form.
  */
 class PaymentStatusForm extends EntityForm {
 

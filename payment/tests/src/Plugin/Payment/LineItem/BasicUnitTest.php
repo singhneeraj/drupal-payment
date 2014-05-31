@@ -6,7 +6,9 @@
 
 namespace Drupal\payment\Tests\Plugin\Payment\LineItem;
 
+use Drupal\payment\Plugin\Payment\LineItem\Basic;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\LineItem\Basic
@@ -30,7 +32,7 @@ class BasicUnitTest extends UnitTestCase {
   /**
    * The line item under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\LineItem\Basic|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\LineItem\Basic
    */
   protected $lineItem;
 
@@ -42,11 +44,11 @@ class BasicUnitTest extends UnitTestCase {
   protected $math;
 
   /**
-   * The translation manager.
+   * The string translator.
    *
-   * @var \Drupal\Core\StringTranslation\TranslationManager|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $translationManager;
+  protected $stringTranslation;
 
   /**
    * {@inheritdoc}
@@ -71,18 +73,34 @@ class BasicUnitTest extends UnitTestCase {
 
     $this->math = $this->getMock('\Drupal\currency\MathInterface');
 
-    $this->translationManager = $this->getMockBuilder('\Drupal\Core\StringTranslation\TranslationManager')
-      ->disableOriginalConstructor()
-      ->setMethods(array('translate'))
-      ->getMock();
+    $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
     $configuration = array();
     $plugin_id = $this->randomName();
     $plugin_definition = array();
-    $this->lineItem = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\Basic')
-      ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->math, $this->translationManager, $this->database, $this->formBuilder))
-      ->setMethods(array('drupalGetPath', 't'))
-      ->getMock();
+    $this->lineItem = new Basic($configuration, $plugin_id, $plugin_definition, $this->math, $this->stringTranslation, $this->database, $this->formBuilder);
+  }
+
+  /**
+   * @covers ::create
+   */
+  function testCreate() {
+    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $map = array(
+      array('currency.math', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->math),
+      array('database', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->database),
+      array('form_builder', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->formBuilder),
+      array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
+    );
+    $container->expects($this->any())
+      ->method('get')
+      ->will($this->returnValueMap($map));
+
+    $configuration = array();
+    $plugin_definition = array();
+    $plugin_id = $this->randomName();
+    $form = Basic::create($container, $configuration, $plugin_id, $plugin_definition);
+    $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\LineItem\Basic', $form);
   }
 
   /**
@@ -119,15 +137,10 @@ class BasicUnitTest extends UnitTestCase {
    * @covers ::formElements
    */
   public function testFormElements() {
-    $this->lineItem->expects($this->once())
-      ->method('drupalGetPath')
-      ->will($this->returnValue($this->randomName()));
-    $this->translationManager->expects($this->any())
-      ->method('translate')
-      ->will($this->returnArgument(0));
     $form = array();
     $form_state = array();
     $form_elements = $this->lineItem->formElements($form, $form_state);
     $this->assertInternalType('array', $form_elements);
+    $this->assertFileExists($form_elements['#attached']['css'][0]);
   }
 }
