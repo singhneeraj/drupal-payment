@@ -218,9 +218,9 @@ class PaymentStorageUnitTest extends UnitTestCase {
     $this->assertSame($first_payment_status_id, $record->first_payment_status_id);
     $this->assertSame($last_payment_status_id, $record->last_payment_status_id);
     $this->assertSame($payment_method_id, $record->payment_method_id);
-    $this->assertSame($payment_method_configuration, $record->payment_method_configuration);
+    $this->assertSame(serialize($payment_method_configuration), $record->payment_method_configuration);
     $this->assertSame($payment_type_id, $record->payment_type_id);
-    $this->assertSame($payment_type_configuration, $record->payment_type_configuration);
+    $this->assertSame(serialize($payment_type_configuration), $record->payment_type_configuration);
   }
 
 }
