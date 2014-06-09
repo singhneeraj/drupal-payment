@@ -93,6 +93,7 @@ class PaymentFormWebTest extends WebTestBase {
     // Create an entity.
     $this->user = entity_create('user', array(
       'name' => $this->randomString(),
+      'status' => TRUE,
     ));
     foreach (Generate::createPaymentLineItems() as $i => $line_item) {
       $this->user->{$field_name}[$i]->get('plugin_id')->setValue($line_item->getPluginId());
