@@ -7,7 +7,7 @@ payment.admin:
     _permission: 'access administration pages'
 
 payment.payment.admin_list:
-  path: '/admin/payment'
+  path: '/admin/content/payment'
   defaults:
     _entity_list: payment
     _title: 'Payments'

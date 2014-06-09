@@ -43,13 +43,13 @@ class PaymentWebTest extends WebTestBase {
 
     // View the administrative listing.
     $this->drupalLogin($this->drupalCreateUser(array('access administration pages')));
-    $this->drupalGet('admin');
+    $this->drupalGet('admin/content');
     $this->assertResponse('200');
-    $this->assertNoLinkByHref('admin/payment');
-    $this->drupalGet('admin/payment');
+    $this->assertNoLinkByHref('admin/content/payment');
+    $this->drupalGet('admin/content/payment');
     $this->assertResponse('403');
     $this->drupalLogin($this->drupalCreateUser(array('access administration pages', 'payment.payment.view.any')));
-    $this->drupalGet('admin');
+    $this->drupalGet('admin/content');
     $this->clickLink(t('Payments'));
     if ($this->assertResponse('200')) {
       $this->assertTitle(t('Payments | Drupal'));

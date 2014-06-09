@@ -6,7 +6,7 @@ payment.admin:
 payment.payment.admin_list:
   title: Payments
   description: Administer payments.
-  parent: system.admin
+  parent: system.admin_content
   route_name: payment.payment.admin_list
 payment.payment_type.list:
   title: Payment types
