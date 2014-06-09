@@ -98,8 +98,6 @@ class PaymentMethodConfigurationForm extends EntityForm {
     /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface $payment_method_configuration */
     $payment_method_configuration = $this->getEntity();
     $definition = $this->paymentMethodConfigurationManager->getDefinition($payment_method_configuration->getPluginId());
-    $payment_method_configuration_plugin = $this->paymentMethodConfigurationManager->createInstance($payment_method_configuration->getPluginId(), $payment_method_configuration->getPluginConfiguration());
-    $form_state['payment_method_configuration_plugin'] = $payment_method_configuration_plugin;
     $form['type'] = array(
       '#type' => 'item',
       '#title' => $this->t('Type'),
@@ -143,7 +141,14 @@ class PaymentMethodConfigurationForm extends EntityForm {
       '#autocomplete_route_name' => 'user.autocomplete',
       '#required' => TRUE,
     );
-    $form['plugin_form'] = $payment_method_configuration_plugin->formElements($form, $form_state);
+    if (isset($form_state['storage']['payment_method_configuration'])) {
+      $payment_method_configuration_plugin = $form_state['storage']['payment_method_configuration'];
+    }
+    else {
+      $payment_method_configuration_plugin = $this->paymentMethodConfigurationManager->createInstance($payment_method_configuration->getPluginId(), $payment_method_configuration->getPluginConfiguration());
+      $form_state['storage']['payment_method_configuration'] = $payment_method_configuration_plugin;
+    }
+    $form['plugin_form'] = $payment_method_configuration_plugin->buildConfigurationForm(array(), $form_state);
 
     return parent::form($form, $form_state);
   }
@@ -162,6 +167,19 @@ class PaymentMethodConfigurationForm extends EntityForm {
         '%name' => $values['owner'],
       )));
     }
+    /** @var \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface $payment_method_configuration */
+    $payment_method_configuration = $form_state['storage']['payment_method_configuration'];
+    $payment_method_configuration->validateConfigurationForm($form['plugin_form'], $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submit(array $form, array &$form_state) {
+    /** @var \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface $payment_method_configuration */
+    $payment_method_configuration = $form_state['storage']['payment_method_configuration'];
+    $payment_method_configuration->submitConfigurationForm($form['plugin_form'], $form_state);
+    parent::submit($form, $form_state);
   }
 
   /**
@@ -177,7 +195,7 @@ class PaymentMethodConfigurationForm extends EntityForm {
     /** @var \Drupal\user\UserInterface $owner */
     $owner = reset($users);
     /** @var \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface $payment_method_configuration_plugin */
-    $payment_method_configuration_plugin = $form_state['payment_method_configuration_plugin'];
+    $payment_method_configuration_plugin = $form_state['storage']['payment_method_configuration'];
     $payment_method_configuration->setLabel($values['label']);
     $payment_method_configuration->setStatus($values['status']);
     $payment_method_configuration->setOwnerId($owner->id());

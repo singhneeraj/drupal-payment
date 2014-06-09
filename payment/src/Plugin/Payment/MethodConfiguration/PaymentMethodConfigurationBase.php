@@ -6,8 +6,11 @@
 
 namespace Drupal\payment\Plugin\Payment\MethodConfiguration;
 
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\StringTranslation\TranslationInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a base payment method configuration plugin.
@@ -16,7 +19,10 @@ abstract class PaymentMethodConfigurationBase extends PluginBase implements Paym
 
   /**
    * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
+  protected $moduleHandler;
 
   /**
    * Constructs a new class instance.
@@ -24,10 +30,23 @@ abstract class PaymentMethodConfigurationBase extends PluginBase implements Paym
    * @param array $configuration
    * @param string $plugin_id
    * @param array $plugin_definition
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translator.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, TranslationInterface $string_translation, ModuleHandlerInterface $module_handler) {
     $configuration += $this->defaultConfiguration();
     parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->moduleHandler = $module_handler;
+    $this->stringTranslation = $string_translation;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'), $container->get('module_handler'));
   }
 
   /**
@@ -123,38 +142,39 @@ abstract class PaymentMethodConfigurationBase extends PluginBase implements Paym
   /**
    * {@inheritdoc}
    */
-  public function formElements(array $form, array &$form_state) {
+  public function buildConfigurationForm(array $form, array &$form_state) {
     // @todo Add a token overview, possibly when Token.module has been ported.
-    $elements['#element_validate'] = array(array($this, 'formElementsValidate'));
-    $elements['#tree'] = TRUE;
     $elements['message'] = array(
+      '#tree' => TRUE,
       '#type' => 'textarea',
       '#title' => $this->t('Payment form message'),
       '#default_value' => $this->getMessageText(),
     );
-    // Do not use the module handler, as we only need check_markup() anyway,
-    if (function_exists('check_markup')) {
-      $elements['message'] = array(
-        '#type' => 'text_format',
-        '#format' => $this->getMessageTextFormat(),
-      );
+    if ($this->moduleHandler->moduleExists('filter')) {
+      $elements['message']['#type'] = 'text_format';
+      $elements['message']['#format'] = $this->getMessageTextFormat();
     }
 
     return $elements;
   }
 
   /**
-   * Implements form validate callback for self::formElements().
+   * {@inheritdoc}
    */
-  public function formElementsValidate(array $element, array &$form_state, array $form) {
-    $values = NestedArray::getValue($form_state['values'], $element['#parents']);
-    // Do not use the module handler, as we only need check_markup() anyway,
-    if (function_exists('check_markup')) {
-      $this->setMessageText($values['message']['value']);
-      $this->setMessageTextFormat($values['message']['format']);
+  public function validateConfigurationForm(array &$form, array &$form_state) {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitConfigurationForm(array &$form, array &$form_state) {
+    $message = NestedArray::getValue($form_state['values'], $form['message']['#parents']);
+    if ($this->moduleHandler->moduleExists('filter')) {
+      $this->setMessageText($message['value']);
+      $this->setMessageTextFormat($message['format']);
     }
     else {
-      $this->setMessageText($values['message']);
+      $this->setMessageText($message);
     }
   }
 }

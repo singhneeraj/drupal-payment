@@ -8,11 +8,12 @@ namespace Drupal\payment\Plugin\Payment\MethodConfiguration;
 
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
+use Drupal\Core\Plugin\PluginFormInterface;
 
 /**
  * A payment method configuration plugin.
  */
-interface PaymentMethodConfigurationInterface extends PluginInspectionInterface, ConfigurablePluginInterface {
+interface PaymentMethodConfigurationInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface {
 
   /**
    * Gets the plugin label.
@@ -28,17 +29,4 @@ interface PaymentMethodConfigurationInterface extends PluginInspectionInterface,
    */
   public function getPluginDescription();
 
-  /**
-   * Returns the form elements to configure payment methods.
-   *
-   * Existing configuration can be set and retrieved through
-   * self::setConfiguration() and self::getConfiguration().
-   *
-   * @param array $form
-   * @param array $form_state
-   *
-   * @return array
-   *   A render array.
-   */
-  public function formElements(array $form, array &$form_state);
 }

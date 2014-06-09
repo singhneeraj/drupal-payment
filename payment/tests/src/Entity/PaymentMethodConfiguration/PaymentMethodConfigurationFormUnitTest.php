@@ -169,11 +169,18 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
       ->method('label')
       ->will($this->returnValue($owner_label));
 
-    $form_state = array();
-
     $payment_method_configuration_plugin = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface');
+
+    $form = array(
+      'plugin_form' => array(),
+    );
+    $form_state = array(
+      'foo' => $this->randomName(),
+    );
+
     $payment_method_configuration_plugin->expects($this->once())
-      ->method('formElements')
+      ->method('buildConfigurationForm')
+      ->with(array(), $this->isType('array'))
       ->will($this->returnValue($payment_method_configuration_plugin_form));
 
     $this->paymentMethodConfigurationManager->expects($this->once())
@@ -211,7 +218,7 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
       ->with($payment_method_configuration_plugin_id, $payment_method_configuration_plugin_configuration)
       ->will($this->returnValue($payment_method_configuration_plugin));
 
-    $build = $this->form->form(array(), $form_state);
+    $build = $this->form->form($form, $form_state);
     unset($build['#process']);
     unset($build['langcode']);
     $expected_build = array(
@@ -253,7 +260,7 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
       ),
       'plugin_form' => $payment_method_configuration_plugin_form,
     );
-    $this->assertSame($expected_build, $build);
+    $this->assertEquals($expected_build, $build);
   }
 
   /**
@@ -304,7 +311,9 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
 
     $form = array();
     $form_state = array(
-      'payment_method_configuration_plugin' => $plugin,
+      'storage' => array(
+        'payment_method_configuration' => $plugin,
+      ),
       'values' => array(
         'label' => $label,
         'owner' => $owner_label,
@@ -357,13 +366,27 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
     $this->formBuilder->expects($this->never())
       ->method('setError');
 
+    $payment_method_configuration_plugin = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface');
+
+    $form = array(
+      'plugin_form' => array(
+        '#type' => $this->randomName(),
+      ),
+    );
     $form_state = array(
+      'storage' => array(
+        'payment_method_configuration' => $payment_method_configuration_plugin,
+      ),
       'values' => array(
         'owner' => $owner_label,
       ),
     );
 
-    $this->form->validate(array(), $form_state);
+    $payment_method_configuration_plugin->expects($this->once())
+      ->method('validateConfigurationForm')
+      ->with($form['plugin_form'], $form_state);
+
+    $this->form->validate($form, $form_state);
   }
 
   /**
@@ -379,16 +402,28 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
       ))
       ->will($this->returnValue(NULL));
 
+    $payment_method_configuration_plugin = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface');
+
     $form = array(
       'owner' => array(
         '#type' => $this->randomName(),
       ),
+      'plugin_form' => array(
+        '#type' => $this->randomName(),
+      ),
     );
     $form_state = array(
+      'storage' => array(
+        'payment_method_configuration' => $payment_method_configuration_plugin,
+      ),
       'values' => array(
         'owner' => $owner_label,
       ),
     );
+
+    $payment_method_configuration_plugin->expects($this->once())
+      ->method('validateConfigurationForm')
+      ->with($form['plugin_form'], $form_state);
 
     $this->formBuilder->expects($this->once())
       ->method('setError')
@@ -421,6 +456,37 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
     $this->assertSame('payment.payment_method_configuration.list', $url->getRouteName());
   }
 
+  /**
+   * @covers ::submit
+   */
+  public function testSubmit() {
+    /** @var \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm|\PHPUnit_Framework_MockObject_MockObject $form_object */
+    $form_object = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm')
+      ->setConstructorArgs(array($this->stringTranslation, $this->formBuilder, $this->currentUser, $this->userStorage, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationManager))
+      ->setMethods(array('copyFormValuesToEntity'))
+      ->getMock();
+    $form_object->setEntity($this->paymentMethodConfiguration);
+
+    $payment_method_configuration_plugin = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface');
+
+    $form = array(
+      'plugin_form' => array(
+        '#type' => $this->randomName(),
+      ),
+    );
+    $form_state = array(
+      'storage' => array(
+        'payment_method_configuration' => $payment_method_configuration_plugin,
+      ),
+    );
+
+    $payment_method_configuration_plugin->expects($this->once())
+      ->method('submitConfigurationForm')
+      ->with($form['plugin_form'], $this->isType('array'));
+
+    $form_object->submit($form, $form_state);
+  }
+
 }
 
 }
@@ -432,6 +498,9 @@ if (!function_exists('drupal_set_message')) {
 }
 if (!function_exists('form_execute_handlers')) {
   function form_execute_handlers() {}
+}
+if (!function_exists('form_state_values_clean')) {
+  function form_state_values_clean() {}
 }
 
 }

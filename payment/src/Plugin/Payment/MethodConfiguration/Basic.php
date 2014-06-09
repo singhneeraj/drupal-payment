@@ -7,7 +7,9 @@
 namespace Drupal\payment\Plugin\Payment\MethodConfiguration;
 
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -38,12 +40,16 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translator.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    *   The payment status manager.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, PaymentStatusManagerInterface $payment_status_manager) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, TranslationInterface $string_translation, ModuleHandlerInterface $module_handler, PaymentStatusManagerInterface $payment_status_manager) {
     $configuration += $this->defaultConfiguration();
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $string_translation, $module_handler);
     $this->paymentStatusManager = $payment_status_manager;
   }
 
@@ -51,7 +57,7 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('plugin.manager.payment.status'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'), $container->get('module_handler'), $container->get('plugin.manager.payment.status'));
   }
 
   /**
@@ -91,10 +97,8 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
   /**
    * {@inheritdoc}
    */
-  public function formElements(array $form, array &$form_state) {
-    $elements = parent::formElements($form, $form_state);
-    $elements['#element_validate'][] = array($this, 'formElementsValidateBasic');
-
+  public function buildConfigurationForm(array $form, array &$form_state) {
+    $elements = parent::buildConfigurationForm($form, $form_state);
     $elements['brand_label'] = array(
       '#default_value' => $this->getBrandLabel(),
       '#description' => $this->t('The label that payers will see when choosing a payment method. Defaults to the payment method label.'),
@@ -113,10 +117,13 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
   }
 
   /**
-   * Implements form validate callback for self::formElements().
+   * {@inheritdoc}
    */
-  public function formElementsValidateBasic(array $element, array &$form_state, array $form) {
-    $values = NestedArray::getValue($form_state['values'], $element['#parents']);
+  public function submitConfigurationForm(array &$form, array &$form_state) {
+    parent::submitConfigurationForm($form, $form_state);
+    $parents = $form['status']['#parents'];
+    array_pop($parents);
+    $values = NestedArray::getValue($form_state['values'], $parents);
     $this->setStatus($values['status'])
       ->setBrandLabel($values['brand_label']);
   }
