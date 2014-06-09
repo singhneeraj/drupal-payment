@@ -29,6 +29,6 @@ class PaymentTest extends PaymentMethodBase {
   /**
    * {@inheritdoc}
    */
-  protected function doExecutePayment(PaymentInterface $payment) {
+  protected function doExecutePayment() {
   }
 }

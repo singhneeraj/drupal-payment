@@ -9,9 +9,8 @@ namespace Drupal\payment\Tests\Plugin\Payment\Method {
 
 use Drupal\Core\Access\AccessInterface;
 use Drupal\payment\Event\PaymentEvents;
-  use Drupal\payment\Event\PaymentExecuteAccess;
-  use Symfony\Component\DependencyInjection\ContainerInterface;
-  use Symfony\Component\EventDispatcher\Event;
+use Drupal\payment\Event\PaymentExecuteAccess;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
   /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase
@@ -102,7 +101,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
 
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
-    $this->assertTrue($method->invoke($this->plugin, $payment, $account));
+    $this->assertTrue($method->invoke($this->plugin, $account));
   }
 
   /**
@@ -115,6 +114,18 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     );
     $this->assertNull($this->plugin->setConfiguration($configuration));
     $this->assertSame($configuration, $this->plugin->getConfiguration());
+  }
+
+  /**
+   * @covers ::setPayment
+   * @covers ::getPayment
+   */
+  public function testGetPayment() {
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $this->assertSame($this->plugin, $this->plugin->setPayment($payment));
+    $this->assertSame($payment, $this->plugin->getPayment());
   }
 
   /**
@@ -132,15 +143,15 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
   }
 
   /**
-   * @covers ::formElements
+   * @covers ::buildConfigurationForm
    */
-  public function testFormElements() {
+  public function testBuildConfigurationForm() {
     $form = array();
     $form_state = array();
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
-    $elements = $this->plugin->formElements($form, $form_state, $payment);
+    $elements = $this->plugin->buildConfigurationForm($form, $form_state, $payment);
     $this->assertInternalType('array', $elements);
     $this->assertArrayHasKey('message', $elements);
     $this->assertInternalType('array', $elements['message']);
@@ -159,7 +170,10 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $this->eventDispatcher->expects($this->once())
       ->method('dispatch')
       ->with(PaymentEvents::PAYMENT_PRE_EXECUTE);
-    $this->plugin->executePayment($payment);
+
+    $this->plugin->setPayment($payment);
+
+    $this->plugin->executePayment();
   }
 
   /**
@@ -182,18 +196,19 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
       ->getMockForAbstractClass();
     $payment_method->expects($this->any())
       ->method('executePaymentAccessCurrency')
-      ->with($payment, $account)
+      ->with($account)
       ->will($this->returnValue($currency_supported));
     $payment_method->expects($this->any())
       ->method('executePaymentAccessEvent')
-      ->with($payment, $account)
+      ->with($account)
       ->will($this->returnValue($events));
     $payment_method->expects($this->any())
       ->method('doExecutePaymentAccess')
-      ->with($payment, $account)
+      ->with($account)
       ->will($this->returnValue($do));
+    $payment_method->setPayment($payment);
 
-    $this->assertSame($expected, $payment_method->executePaymentAccess($payment, $account));
+    $this->assertSame($expected, $payment_method->executePaymentAccess($account));
   }
 
   /**
@@ -219,6 +234,8 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
       ->disableOriginalConstructor()
       ->getMock();
 
+    $this->plugin->setPayment($payment);
+
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
     $this->eventDispatcher->expects($this->once())
@@ -238,7 +255,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $method = new \ReflectionMethod($this->plugin, 'executePaymentAccessEvent');
     $method->setAccessible(TRUE);
 
-    $this->assertSame($expected, $method->invoke($this->plugin, $payment, $account));
+    $this->assertSame($expected, $method->invoke($this->plugin, $account));
   }
 
   /**
@@ -280,6 +297,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
       ->method('getCurrencyCode')
       ->will($this->returnValue($payment_currency_code));
 
+    $this->plugin->setPayment($payment);
     $this->plugin->expects($this->atLeastOnce())
       ->method('getSupportedCurrencies')
       ->will($this->returnValue($supported_currencies));
@@ -289,7 +307,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $method = new \ReflectionMethod($this->plugin, 'executePaymentAccessCurrency');
     $method->setAccessible(TRUE);
 
-    $this->assertSame($expected, $method->invoke($this->plugin, $payment, $account));
+    $this->assertSame($expected, $method->invoke($this->plugin, $account));
   }
 
   /**

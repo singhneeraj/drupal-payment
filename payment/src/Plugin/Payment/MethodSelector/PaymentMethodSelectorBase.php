@@ -26,11 +26,25 @@ abstract class PaymentMethodSelectorBase extends PluginBase implements Container
   protected $currentUser;
 
   /**
+   * The payment a payment method is selected for.
+   *
+   * @var \Drupal\payment\Entity\PaymentInterface
+   */
+  protected $payment;
+
+  /**
    * The payment method manager.
    *
    * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface
    */
   protected $paymentMethodManager;
+
+  /**
+   * The selected payment method.
+   *
+   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
+   */
+  protected $selectedPaymentMethod;
 
   /**
    * Constructs a new class instance.
@@ -68,6 +82,7 @@ abstract class PaymentMethodSelectorBase extends PluginBase implements Container
   public function defaultConfiguration() {
     return array(
       'allowed_payment_method_plugin_ids' => NULL,
+      'required' => FALSE,
     );
   }
 
@@ -90,7 +105,7 @@ abstract class PaymentMethodSelectorBase extends PluginBase implements Container
   /**
    * {@inheritdoc}
    */
-  public function setAllowedPaymentMethods(array $payment_method_plugin_ids) {
+  public function setAllowedPaymentMethods($payment_method_plugin_ids) {
     $this->configuration['allowed_payment_method_plugin_ids'] = $payment_method_plugin_ids;
 
     return $this;
@@ -100,7 +115,7 @@ abstract class PaymentMethodSelectorBase extends PluginBase implements Container
    * {@inheritdoc}
    */
   public function resetAllowedPaymentMethods() {
-    $this->configuration['allowed_payment_method_plugin_ids'] = NULL;
+    $this->configuration['allowed_payment_method_plugin_ids'] = TRUE;
 
     return $this;
   }
@@ -113,19 +128,34 @@ abstract class PaymentMethodSelectorBase extends PluginBase implements Container
   }
 
   /**
-   * Returns all available payment methods for a Payment.
-   *
-   * @param \Drupal\payment\Entity\PaymentInterface $payment
+   * {@inheritdoc}
+   */
+  public function setRequired($required = TRUE) {
+    $this->configuration['required'] = $required;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isRequired() {
+    return $this->configuration['required'];
+  }
+
+  /**
+   * Returns all available payment methods.
    *
    * @return \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface[]
    *    An array of payment method plugin instances, keyed by plugin ID.
    */
-  protected function getAvailablePaymentMethods(PaymentInterface $payment) {
+  protected function getAvailablePaymentMethods() {
     $payment_methods = array();
     foreach (array_keys($this->paymentMethodManager->getDefinitions()) as $plugin_id) {
       if (is_null($this->getAllowedPaymentMethods()) || in_array($plugin_id, $this->getAllowedPaymentMethods())) {
         $payment_method = $this->paymentMethodManager->createInstance($plugin_id);
-        if ($payment_method->executePaymentAccess($payment, $this->currentUser)) {
+        $payment_method->setPayment($this->getPayment());
+        if ($payment_method->executePaymentAccess($this->currentUser)) {
           $payment_methods[$payment_method->getPluginId()] = $payment_method;
         }
       }
@@ -133,4 +163,40 @@ abstract class PaymentMethodSelectorBase extends PluginBase implements Container
 
     return $payment_methods;
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPayment() {
+    return $this->payment;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setPayment(PaymentInterface $payment) {
+    $this->payment = $payment;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPaymentMethod() {
+    return $this->selectedPaymentMethod;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateConfigurationForm(array &$form, array &$form_state) {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitConfigurationForm(array &$form, array &$form_state) {
+  }
+
 }

@@ -48,6 +48,8 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   public function setUp() {
     $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
@@ -59,7 +61,7 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
     $plugin_definition = array();
     $this->paymentMethodSelectorPlugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorBase')
       ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->currentUser, $this->paymentMethodManager))
-      ->setMethods(array('getPaymentMethodFromFormElements', 'formElements'))
+      ->setMethods(array('buildConfigurationForm'))
       ->getMock();
   }
 
@@ -74,6 +76,31 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
   }
 
   /**
+   * @covers ::calculateDependencies
+   */
+  public function testCalculateDependencies() {
+    $this->assertSame(array(), $this->paymentMethodSelectorPlugin->calculateDependencies());
+  }
+
+  /**
+   * @covers ::validateConfigurationForm
+   */
+  public function testValidateConfigurationForm() {
+    $form = array();
+    $form_state = array();
+    $this->paymentMethodSelectorPlugin->validateConfigurationForm($form, $form_state);
+  }
+
+  /**
+   * @covers ::submitConfigurationForm
+   */
+  public function testSubmitConfigurationForm() {
+    $form = array();
+    $form_state = array();
+    $this->paymentMethodSelectorPlugin->submitConfigurationForm($form, $form_state);
+  }
+
+  /**
    * @covers ::setConfiguration
    * @covers ::getConfiguration
    */
@@ -81,6 +108,30 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
     $configuration = array($this->randomName());
     $this->assertSame(spl_object_hash($this->paymentMethodSelectorPlugin), spl_object_hash($this->paymentMethodSelectorPlugin->setConfiguration($configuration)));
     $this->assertSame($configuration, $this->paymentMethodSelectorPlugin->getConfiguration());
+  }
+
+  /**
+   * @covers ::setPayment
+   * @covers ::getPayment
+   */
+  public function testGetPayment() {
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $this->assertSame($this->paymentMethodSelectorPlugin, $this->paymentMethodSelectorPlugin->setPayment($payment));
+    $this->assertSame($payment, $this->paymentMethodSelectorPlugin->getPayment());
+  }
+
+  /**
+   * @covers ::setRequired
+   * @covers ::isRequired
+   */
+  public function testGetRequired() {
+    $this->assertFalse($this->paymentMethodSelectorPlugin->isRequired());
+    $this->assertSame($this->paymentMethodSelectorPlugin, $this->paymentMethodSelectorPlugin->setRequired());
+    $this->assertTrue($this->paymentMethodSelectorPlugin->isRequired());
+    $this->paymentMethodSelectorPlugin->setRequired(FALSE);
+    $this->assertFalse($this->paymentMethodSelectorPlugin->isRequired());
   }
 
   /**
@@ -93,7 +144,7 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
     $this->assertSame(spl_object_hash($this->paymentMethodSelectorPlugin), spl_object_hash($this->paymentMethodSelectorPlugin->setAllowedPaymentMethods($ids)));
     $this->assertSame($ids, $this->paymentMethodSelectorPlugin->getAllowedPaymentMethods());
     $this->assertSame(spl_object_hash($this->paymentMethodSelectorPlugin), spl_object_hash($this->paymentMethodSelectorPlugin->resetAllowedPaymentMethods()));
-    $this->assertSame(NULL, $this->paymentMethodSelectorPlugin->getAllowedPaymentMethods());
+    $this->assertSame(TRUE, $this->paymentMethodSelectorPlugin->getAllowedPaymentMethods());
   }
 
   /**
@@ -107,23 +158,26 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
 
     $plugin_id_access = $this->randomName();
     $plugin_access = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
-    $plugin_access->expects($this->any())
+    $plugin_access->expects($this->atLeastOnce())
+      ->method('setPayment')
+      ->with($payment);
+    $plugin_access->expects($this->atLeastOnce())
       ->method('executePaymentAccess')
-      ->with($payment, $this->currentUser)
+      ->with($this->currentUser)
       ->will($this->returnValue(TRUE));
-    $plugin_access->expects($this->any())
+    $plugin_access->expects($this->atLeastOnce())
       ->method('getPluginId')
       ->will($this->returnValue($plugin_id_access));
 
     $plugin_id_no_access = $this->randomName();
     $plugin_no_access = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
-    $plugin_no_access->expects($this->any())
+    $plugin_access->expects($this->atLeastOnce())
+      ->method('setPayment')
+      ->with($payment);
+    $plugin_no_access->expects($this->atLeastOnce())
       ->method('executePaymentAccess')
-      ->with($payment, $this->currentUser)
+      ->with($this->currentUser)
       ->will($this->returnValue(FALSE));
-    $plugin_no_access->expects($this->any())
-      ->method('getPluginId')
-      ->will($this->returnValue($plugin_id_no_access));
 
     $definitions = array(
       $plugin_id_access => array(),
@@ -140,6 +194,8 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
       ->method('createInstance')
       ->will($this->returnValueMap($return_value_map));
 
+    $this->paymentMethodSelectorPlugin->setPayment($payment);
+
     $method = new \ReflectionMethod($this->paymentMethodSelectorPlugin, 'getAvailablePaymentMethods');
     $method->setAccessible(TRUE);
 
@@ -151,7 +207,7 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
 
     // Test with only the unavailable method allowed.
     $this->paymentMethodSelectorPlugin->setAllowedPaymentMethods(array($plugin_id_no_access));
-    $allowed_payment_methods = $method->invoke($this->paymentMethodSelectorPlugin, $payment);
+    $allowed_payment_methods = $method->invoke($this->paymentMethodSelectorPlugin);
     $this->assertInternalType('array', $allowed_payment_methods);
     $this->assertCount(0, $allowed_payment_methods);
   }

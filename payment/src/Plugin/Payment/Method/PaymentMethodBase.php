@@ -45,11 +45,11 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
   protected $moduleHandler;
 
   /**
-   * The payment method entity this plugin belongs to.
+   * The payment this payment method is for.
    *
-   * @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface
+   * @var \Drupal\payment\Entity\PaymentInterface
    */
-  protected $paymentMethod;
+  protected $payment;
 
   /**
    * The token API.
@@ -138,11 +138,27 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
   /**
    * {@inheritdoc}
    */
-  public function formElements(array $form, array &$form_state, PaymentInterface $payment) {
+  public function getPayment() {
+    return $this->payment;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setPayment(PaymentInterface $payment) {
+    $this->payment = $payment;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildConfigurationForm(array $form, array &$form_state) {
     // Do not use the module handler, as we only need check_markup() anyway,
     $message = function_exists('check_markup') ? check_markup($this->getMessageText(), $this->getMessageTextFormat()) : $this->getMessageText();
     $message = $this->token->replace($message, array(
-      'payment' => $payment,
+      'payment' => $this->getPayment(),
     ), array(
       'clear' => TRUE,
     ));
@@ -158,55 +174,77 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
   /**
    * {@inheritdoc}
    */
-  public function executePaymentAccess(PaymentInterface $payment, AccountInterface $account) {
+  public function validateConfigurationForm(array &$form, array &$form_state) {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitConfigurationForm(array &$form, array &$form_state) {
+  }
+
+  /**
+   * Wraps check_markup().
+   */
+  protected function checkMarkup($text, $format_id = NULL, $langcode = '', $cache = FALSE, $filter_types_to_skip = array()) {
+    return check_markup($text, $format_id, $langcode, $cache, $filter_types_to_skip);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function executePaymentAccess(AccountInterface $account) {
+    if (!$this->getPayment()) {
+      throw new \LogicException('Trying to check access for a non-existing payment. A payment must be set trough self::setPayment() first.');
+    }
+
     return $this->pluginDefinition['active']
-    && $this->executePaymentAccessCurrency($payment, $account)
-    && $this->executePaymentAccessEvent($payment, $account)
-    && $this->doExecutePaymentAccess($payment, $account);
+    && $this->executePaymentAccessCurrency($account)
+    && $this->executePaymentAccessEvent($account)
+    && $this->doExecutePaymentAccess($account);
   }
 
   /**
    * Performs a payment method-specific access check for payment execution.
    *
-   * @param \Drupal\payment\Entity\PaymentInterface $payment
    * @param \Drupal\Core\Session\AccountInterface $account
    *
    * @return bool
    */
-  protected function doExecutePaymentAccess(PaymentInterface $payment, AccountInterface $account) {
+  protected function doExecutePaymentAccess(AccountInterface $account) {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function executePayment(PaymentInterface $payment) {
-    $event = new PaymentPreExecute($payment);
+  public function executePayment() {
+    if (!$this->getPayment()) {
+      throw new \LogicException('Trying to execute a non-existing payment. A payment must be set trough self::setPayment() first.');
+    }
+    $event = new PaymentPreExecute($this->getPayment());
     $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_PRE_EXECUTE, $event);
-    $this->moduleHandler->invokeAll('payment_pre_execute', array($payment));
+    $this->moduleHandler->invokeAll('payment_pre_execute', array($this->getPayment()));
     // @todo invoke Rules event.
-    $this->doExecutePayment($payment);
+    $this->doExecutePayment();
   }
 
   /**
    * Performs the actual payment execution.
-   *
-   * @param \Drupal\payment\Entity\PaymentInterface $payment
    */
-  abstract protected function doExecutePayment(PaymentInterface $payment);
+  abstract protected function doExecutePayment();
 
   /**
    * Checks a payment's currency against this plugin.
    *
-   * @param \Drupal\payment\Entity\PaymentInterface $payment
    * @param \Drupal\Core\Session\AccountInterface $account
    *
    * @return bool
    */
-  protected function executePaymentAccessCurrency(PaymentInterface $payment, AccountInterface $account) {
+  protected function executePaymentAccessCurrency(AccountInterface $account) {
     $currencies = $this->getSupportedCurrencies();
-    $payment_currency_code = $payment->getCurrencyCode();
-    $payment_amount = $payment->getAmount();
+    $payment_currency_code = $this->getPayment()->getCurrencyCode();
+    $payment_amount = $this->getPayment()->getAmount();
     // If all currencies are allowed, grant access.
     if ($currencies === TRUE) {
       return TRUE;
@@ -244,16 +282,15 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
    *
    * @todo Invoke Rules event.
    *
-   * @param \Drupal\payment\Entity\PaymentInterface $payment
    * @param \Drupal\Core\Session\AccountInterface $account
    *
    * @return bool
    */
-  protected function executePaymentAccessEvent(PaymentInterface $payment, AccountInterface $account) {
-    $event = new PaymentExecuteAccess($payment, $this, $account);
+  protected function executePaymentAccessEvent(AccountInterface $account) {
+    $event = new PaymentExecuteAccess($this->getPayment(), $this, $account);
     $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_EXECUTE_ACCESS, $event);
 
-    $hook_access_results = $this->moduleHandler->invokeAll('payment_execute_access', array($payment, $this, $account));
+    $hook_access_results = $this->moduleHandler->invokeAll('payment_execute_access', array($this->getPayment(), $this, $account));
 
     $access_results = array_merge($event->getAccessResults(), $hook_access_results);
     // If there are no results, grant access.

@@ -16,20 +16,6 @@ use Drupal\Tests\UnitTestCase;
 class UnavailableUnitTest extends UnitTestCase {
 
   /**
-   * The module handler used for testing.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $moduleHandler;
-
-  /**
-   * The token API used for testing.
-   *
-   * @var \Drupal\Core\Utility\Token|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $token;
-
-  /**
    * The payment method plugin under test.
    *
    * @var \Drupal\payment\Plugin\Payment\Method\Unavailable
@@ -90,13 +76,6 @@ class UnavailableUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::getOperations
-   */
-  public function testGetOperations() {
-    $this->assertSame(array(), $this->plugin->getOperations($this->randomName()));
-  }
-
-  /**
    * @covers ::getPluginLabel
    */
   public function testGetPluginLabel() {
@@ -135,15 +114,15 @@ class UnavailableUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::formElements
+   * @covers ::buildConfigurationForm
    */
-  public function testFormElements() {
+  public function testBuildConfigurationForm() {
     $form = array();
     $form_state = array();
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
-    $elements = $this->plugin->formElements($form, $form_state, $payment);
+    $elements = $this->plugin->buildConfigurationForm($form, $form_state, $payment);
     $this->assertInternalType('array', $elements);
     $this->assertEmpty($elements);
   }
@@ -158,7 +137,9 @@ class UnavailableUnitTest extends UnitTestCase {
 
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
-    $this->assertFalse($this->plugin->executePaymentAccess($payment, $account));
+    $this->plugin->setPayment($payment);
+
+    $this->assertFalse($this->plugin->executePaymentAccess($account));
   }
 
   /**

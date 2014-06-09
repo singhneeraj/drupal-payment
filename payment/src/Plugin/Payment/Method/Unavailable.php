@@ -27,6 +27,13 @@ use Drupal\payment\Entity\PaymentInterface;
 class Unavailable extends PluginBase implements PaymentMethodInterface {
 
   /**
+   * The payment this payment method is for.
+   *
+   * @var \Drupal\payment\Entity\PaymentInterface
+   */
+  protected $payment;
+
+  /**
    * {@inheritdoc}
    */
   public function calculateDependencies() {
@@ -64,22 +71,37 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
-  public function executePaymentAccess(PaymentInterface $payment, AccountInterface $account) {
+  public function executePaymentAccess(AccountInterface $account) {
     return FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function executePayment(PaymentInterface $payment) {
+  public function executePayment() {
     throw new \RuntimeException('This plugin cannot execute payments.');
   }
 
   /**
-   * {@inheritdoc}
+   * Gets the payment this payment method is for.
+   *
+   * @return \Drupal\payment\Entity\PaymentInterface
    */
-  public function formElements(array $form, array &$form_state, PaymentInterface $payment) {
-    return array();
+  public function getPayment() {
+    return $this->payment;
+  }
+
+  /**
+   * Gets the payment this payment method is for.
+   *
+   * @param \Drupal\payment\Entity\PaymentInterface $payment
+   *
+   * @return $this
+   */
+  public function setPayment(PaymentInterface $payment) {
+    $this->payment = $payment;
+
+    return $this;
   }
 
   /**
@@ -92,7 +114,20 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getOperations($plugin_id) {
+  public function buildConfigurationForm(array $form, array &$form_state) {
     return array();
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateConfigurationForm(array &$form, array &$form_state) {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitConfigurationForm(array &$form, array &$form_state) {
+  }
+
 }

@@ -104,7 +104,7 @@ class PaymentFormControllerUnitTest extends UnitTestCase {
    */
   public function testForm() {
     $this->paymentMethodSelector->expects($this->once())
-      ->method('formElements')
+      ->method('buildConfigurationForm')
       ->will($this->returnValue(array()));
 
     $this->paymentMethodSelectorManager->expects($this->once())

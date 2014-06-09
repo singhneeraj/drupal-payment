@@ -46,21 +46,43 @@ class PaymentFormController extends EntityForm {
    */
   public function form(array $form, array &$form_state) {
     $payment = $this->getEntity();
+
     $form['line_items'] = array(
       '#payment' => $payment,
       '#type' => 'payment_line_items_display',
     );
-    $config = $this->config('payment_reference.payment_type');
-    $payment_method_selector_id = $config->get('payment_selector_id');
-    $limit_allowed_payment_methods = $config->get('limit_allowed_payment_methods');
-    $allowed_payment_method_ids = $config->get('allowed_payment_method_ids');
-    $payment_method_selector = $this->paymentMethodSelectorManager->createInstance($payment_method_selector_id);
-    if ($limit_allowed_payment_methods) {
-      $payment_method_selector->setAllowedPaymentMethods($allowed_payment_method_ids);
+
+    if (isset($form_state['storage']['payment_method_selector'])) {
+      $payment_method_selector = $form_state['storage']['payment_method_selector'];
     }
-    $form['payment_method'] = $payment_method_selector->formElements(array(), $form_state, $payment);
+    else {
+      $config = $this->config('payment_reference.payment_type');
+      $payment_method_selector_id = $config->get('payment_selector_id');
+      $limit_allowed_payment_methods = $config->get('limit_allowed_payment_methods');
+      $allowed_payment_method_ids = $config->get('allowed_payment_method_ids');
+      $payment_method_selector = $this->paymentMethodSelectorManager->createInstance($payment_method_selector_id);
+      if ($limit_allowed_payment_methods) {
+        $payment_method_selector->setAllowedPaymentMethods($allowed_payment_method_ids);
+      }
+      $payment_method_selector->setPayment($payment);
+      $payment_method_selector->setRequired();
+      $form_state['storage']['payment_method_selector'] = $payment_method_selector;
+    }
+
+    $form['payment_method'] = $payment_method_selector->buildConfigurationForm(array(), $form_state, $payment);
 
     return parent::form($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validate(array $form, array &$form_state) {
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
+    $payment = $this->getEntity();
+    /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface $payment_method_selector */
+    $payment_method_selector = $form_state['storage']['payment_method_selector'];
+    $payment_method_selector->validateConfigurationForm($form['payment_method'], $form_state);
   }
 
   /**
@@ -69,8 +91,10 @@ class PaymentFormController extends EntityForm {
   public function submit(array $form, array &$form_state) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->getEntity();
-    $payment_method = $this->paymentMethodSelectorManager->createInstance('payment_select')->getPaymentMethodFromFormElements($form['payment_method'], $form_state);
-    $payment->setPaymentMethod($payment_method);
+    /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface $payment_method_selector */
+    $payment_method_selector = $form_state['storage']['payment_method_selector'];
+    $payment_method_selector->submitConfigurationForm($form['payment_method'], $form_state);
+    $payment->setPaymentMethod($payment_method_selector->getPaymentMethod());
     $payment->save();
     $payment->execute();
   }

@@ -98,7 +98,9 @@ class PaymentFormUnitTest extends UnitTestCase {
    */
   public function testViewElements() {
     $plugin_id = $this->randomName();
-    $plugin_configuration = array();
+    $plugin_configuration = array(
+      $this->randomName() => $this->randomName(),
+    );
 
     $plugin_id_property = $this->getMock('\Drupal\Core\TypedData\TypedDataInterface');
     $plugin_id_property->expects($this->once())
@@ -134,6 +136,10 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->will($this->returnValue($field_id));
 
     // Create a dummy render array.
+    $line_items_data = array(array(
+      'plugin_id' => $plugin_id,
+      'plugin_configuration' => $plugin_configuration,
+    ));
     $built_form = array(array(
       '#type' => 'markup',
       '#post_render_cache' => array(
@@ -141,7 +147,7 @@ class PaymentFormUnitTest extends UnitTestCase {
           array(
             'currency_code' => NULL,
             'field_definition_name' => $field_id,
-            'line_items_data' => 'a:1:{i:0;a:2:{s:9:"plugin_id";s:8:"' . $plugin_id . '";s:20:"plugin_configuration";a:0:{}}}',
+            'line_items_data' => serialize($line_items_data),
           ),
         ),
       ),

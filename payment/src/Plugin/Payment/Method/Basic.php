@@ -9,7 +9,6 @@ namespace Drupal\payment\Plugin\Payment\Method;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Utility\Token;
-use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -107,10 +106,10 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
   /**
    * {@inheritdoc}
    */
-  protected function doExecutePayment(PaymentInterface $payment) {
-    $payment->setStatus($this->paymentStatusManager->createInstance($this->getStatus()));
-    $payment->save();
-    $payment->getPaymentType()->resumeContext();
+  protected function doExecutePayment() {
+    $this->getPayment()->setStatus($this->paymentStatusManager->createInstance($this->getStatus()));
+    $this->getPayment()->save();
+    $this->getPayment()->getPaymentType()->resumeContext();
   }
 
 }

@@ -8,50 +8,48 @@ namespace Drupal\payment\Plugin\Payment\Method;
 
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
+use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
 
 /**
- * A payment method plugin (the logic behind a payment method entity).
+ * Defines a payment method.
  *
- * @see \Drupal\payment\Entity\PaymentMethod
+ * PluginFormInterface is used to configure the plugin for a payment. The form
+ * is embedded in another form, so self::submitForm() must only save form
+ * values to $this and not redirect the page, for instance.
  */
-interface PaymentMethodInterface extends PluginInspectionInterface, ConfigurablePluginInterface {
+interface PaymentMethodInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface {
 
   /**
-   * Returns the form elements to configure payments.
+   * Checks if the payment can be executed.
    *
-   * $form_state['payment'] contains the payment that is added or edited. All
-   * payment-specific information should be added to it during element
-   * validation. The payment will be saved automatically.
-   *
-   * @param array $form
-   * @param array $form_state
-   * @param \Drupal\payment\Entity\PaymentInterface $payment
-   *
-   * @return array
-   *   A render array.
-   */
-  public function formElements(array $form, array &$form_state, PaymentInterface $payment);
-
-  /**
-   * Checks if a payment can be executed.
-   *
-   * @see \Drupal\payment\Annotations\PaymentMethod
-   *
-   * @param \Drupal\payment\Entity\PaymentInterface $payment
    * @param \Drupal\Core\Session\AccountInterface $account
    *
    * @return bool
    */
-  public function executePaymentAccess(PaymentInterface $payment, AccountInterface $account);
+  public function executePaymentAccess(AccountInterface $account);
 
   /**
-   * Executes a payment.
+   * Executes the payment.
+   */
+  public function executePayment();
+
+  /**
+   * Gets the payment this payment method is for.
+   *
+   * @return \Drupal\payment\Entity\PaymentInterface
+   */
+  public function getPayment();
+
+  /**
+   * Gets the payment this payment method is for.
    *
    * @param \Drupal\payment\Entity\PaymentInterface $payment
+   *
+   * @return $this
    */
-  public function executePayment(PaymentInterface $payment);
+  public function setPayment(PaymentInterface $payment);
 
   /**
    * Gets the plugin label.

@@ -7,7 +7,10 @@
 namespace Drupal\payment\Plugin\Payment\MethodSelector;
 
 use Drupal\Component\Utility\NestedArray;
-use Drupal\payment\Entity\PaymentInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a payment selector using a <select> element.
@@ -20,210 +23,252 @@ use Drupal\payment\Entity\PaymentInterface;
 class PaymentSelect extends PaymentMethodSelectorBase {
 
   /**
-   * {@inheritdoc}
-   */
-  public function formElements(array $form, array &$form_state, PaymentInterface $payment) {
-    $elements = array(
-      '#input' => TRUE,
-      '#payment' => $payment,
-      '#process' => array(array($this, 'process')),
-      '#tree' => TRUE,
-      // Use a dummy #type, because the form builder expects it.
-      '#type' => FALSE,
-    );
-
-    return $elements;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getPaymentMethodFromFormElements(array $form, array &$form_state) {
-    $method_data = $this->getPaymentMethodData($form, $form_state);
-    if ($this->paymentMethodManager->hasDefinition($method_data['plugin_id'])) {
-      return $this->paymentMethodManager->createInstance($method_data['plugin_id'], $method_data['plugin_configuration']);
-    }
-    return NULL;
-  }
-
-  /**
-   * Implements form #process callback.
+   * The previously selected payment methods.
    *
-   * @see self::formElements()
+   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface[]
    */
-  public function process(array $element, array &$form_state, array $form) {
-    // Unset the payment entity, so it does not end up in the cache.
-    $payment = $element['#payment'];
-    unset($element['#payment']);
+  protected $selectedPaymentMethods = array();
 
-    $this->initialize($element, $form_state, $payment);
-    $selected_payment_method = $this->getPaymentMethodFromFormElements($element, $form_state);
-    $available_payment_methods = $this->getAvailablePaymentMethods($payment);
+  /**
+   * Constructs a new class instance.
+   *
+   * @param array $configuration
+   * @param string $plugin_id
+   * @param array $plugin_definition
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface $payment_method_manager
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   */
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, AccountInterface $current_user, PaymentMethodManagerInterface $payment_method_manager, TranslationInterface $string_translation) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $current_user, $payment_method_manager);
+    $this->stringTranslation = $string_translation;
+  }
 
-    // There are no available payment methods.
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('current_user'), $container->get('plugin.manager.payment.method'), $container->get('string_translation'));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildConfigurationForm(array $form, array &$form_state) {
+    $available_payment_methods = $this->getAvailablePaymentMethods();
     if (count($available_payment_methods) == 0) {
-      $element['payment_method_label'] = array(
-        '#type' => 'item',
-        '#title' => isset($element['#title']) ? $element['#title'] : NULL,
-        '#markup' => t('There are no available payment methods.'),
-      );
+      $callback_method = 'buildNoAvailablePaymentMethods';
+    }
+    elseif (count($available_payment_methods) == 1) {
+      $callback_method = 'buildOneAvailablePaymentMethod';
     }
     else {
-      // There is one available payment method.
-      if (count($available_payment_methods) == 1) {
-        // Use the only available payment method if no other was configured
-        // before, or the configured payment method is not available.
-        if (is_null($selected_payment_method) || $selected_payment_method->getPluginId() != reset($available_payment_methods)->getPluginId()) {
-          $selected_payment_method = reset($available_payment_methods);
-          $this->setPaymentMethodData($element, $form_state, $selected_payment_method->getPluginId(), $selected_payment_method->getConfiguration());
-        }
-
-        $element['payment_method_plugin_id'] = array(
-          '#type' => 'value',
-          '#value' => $selected_payment_method->getPluginId(),
-        );
-        if (isset($element['#title'])) {
-          $element['payment_method_label'] = array(
-            '#type' => 'item',
-            '#title' => $element['#title'],
-            '#markup' => $selected_payment_method->getPluginId(),
-          );
-        }
-      }
-      // There are multiple available payment methods.
-      else {
-        $payment_method_options = array();
-        foreach ($available_payment_methods as $plugin_id => $payment_method) {
-          $payment_method_options[$plugin_id] = $payment_method->getPluginLabel();
-        }
-        $element['select']['payment_method_plugin_id'] = array(
-          '#ajax' => array(
-            'effect' => 'fade',
-            'event' => 'change',
-            'trigger_as' => array(
-              'name' => $element['#name'] . '[select][change]',
-            ),
-            'wrapper' => $this->getElementId($element, $form_state),
-          ),
-          '#default_value' => is_null($selected_payment_method) ? NULL : $selected_payment_method->getPluginId(),
-          '#empty_value' => 'select',
-          '#options' => $payment_method_options ,
-          '#required' => $element['#required'],
-          '#title' => isset($element['#title']) ? $element['#title'] : NULL,
-          '#type' => 'select',
-        );
-        $element['select']['change'] = array(
-          '#ajax' => array(
-            'callback' => array($this, 'ajaxSubmit'),
-          ),
-          '#attributes' => array(
-            'class' => array('js-hide')
-          ),
-          '#limit_validation_errors' => array(array_merge($element['#parents'], array('select', 'payment_method_plugin_id'))),
-          '#name' => $element['#name'] . '[select][change]',
-          '#submit' => array(array($this, 'submit')),
-          '#type' => 'submit',
-          '#value' => t('Choose payment method'),
-        );
-      }
-      $element['payment_method_form'] = array(
-        '#id' => $this->getElementId($element, $form_state),
-        '#type' => 'container',
-      );
-
-      $element['payment_method_form'] = is_null($selected_payment_method) ? array() : $selected_payment_method->formElements($form, $form_state, $payment);
+      $callback_method = 'buildMultipleAvailablePaymentMethods';
     }
 
-    // The element itself has no input, but only its children, so mark it not
-    // required to prevent validation errors.
-    $element['#required'] = FALSE;
+    $form['container'] = array(
+      '#available_payment_methods' => $available_payment_methods,
+      // The element does not actually have input, but we need the #name
+      // property to be populated by form API.
+      '#input' => TRUE,
+      '#process' => array(array($this, $callback_method)),
+      '#tree' => TRUE,
+      '#type' => 'container',
+    );
 
-    return $element;
+    return $form;
   }
 
   /**
-   * Implements form #submit callback.
+   * {@inheritdoc}
    */
-  public function submit(array &$form, array &$form_state) {
-    $parents = array_slice($form_state['triggering_element']['#parents'], 0, -2);
-    $payment_method_plugin_id = NestedArray::getValue($form_state['values'], array_merge($parents, array('select', 'payment_method_plugin_id')));
-    $root_element = NestedArray::getValue($form, $parents);
-    $payment_method_data = $this->getPaymentMethodData($root_element, $form_state);
-    if ($payment_method_data['plugin_id'] != $payment_method_plugin_id) {
-      $this->setPaymentMethodData($root_element, $form_state, $payment_method_plugin_id);
+  public function validateConfigurationForm(array &$form, array &$form_state) {
+    $payment_method_id = NestedArray::getValue($form_state['values'], array_merge($form['container']['#parents'], array('select', 'payment_method_id')));
+    // If a (different) payment method was chosen, rebuild the form.
+    if (!$this->getPaymentMethod() && $payment_method_id || $this->getPaymentMethod() && $payment_method_id != $this->getPaymentMethod()->getPluginId()) {
+      $form_state['rebuild'] = TRUE;
+      // Keep track of all previously selected payment methods so their
+      // configuration does not get lost.
+      if (!isset($this->selectedPaymentMethods[$payment_method_id])) {
+        $this->selectedPaymentMethods[$payment_method_id] = $this->paymentMethodManager->createInstance($payment_method_id);
+        $this->selectedPaymentMethods[$payment_method_id]->setPayment($this->getPayment());
+      }
+      $this->selectedPaymentMethod = $this->selectedPaymentMethods[$payment_method_id];
     }
+    // If no (different) payment method was chosen, delegate validation to the
+    // payment method.
+    elseif ($this->getPaymentMethod()) {
+      $this->getPaymentMethod()->validateConfigurationForm($form['container']['payment_method_form'], $form_state);
+    }
+  }
 
-    $form_state['rebuild'] = TRUE;
+  /**
+   * {@inheritdoc}
+   */
+  public function submitConfigurationForm(array &$form, array &$form_state) {
+    if ($this->getPaymentMethod()) {
+      $this->getPaymentMethod()->submitConfigurationForm($form['container']['payment_method_form'], $form_state);
+    }
   }
 
   /**
    * Implements form AJAX callback.
    */
-  public function ajaxSubmit(array &$form, array &$form_state) {
-    $parents = array_slice($form_state['triggering_element']['#parents'], 0, -2);
-    $root_element = NestedArray::getValue($form, $parents);
+  public function ajaxSubmitConfigurationForm(array &$form, array &$form_state) {
+    $form_parents = array_slice($form_state['triggering_element']['#array_parents'], 0, -2);
+    $root_element = NestedArray::getValue($form, $form_parents);
 
     return $root_element['payment_method_form'];
   }
 
   /**
-   * Stores the payment method data in the form's state.
-   *
-   * @param array $element
-   * @param array $form_state
-   * @param string $payment_method_plugin_id
-   * @param array $payment_method_plugin_configuration
+   * Implements form API's #submit.
    */
-  protected function setPaymentMethodData(array $element, array &$form_state, $payment_method_plugin_id, array $payment_method_plugin_configuration = array()) {
-    $form_state[$this->getPluginId()][$element['#name']]['payment_method_data'] = array(
-      'plugin_configuration' => $payment_method_plugin_configuration,
-      'plugin_id' => $payment_method_plugin_id,
-    );
+  public function rebuildForm(array $form, array &$form_state) {
+    $form_state['rebuild'] = TRUE;
   }
 
   /**
-   * Retrieves the payment method data from the form's state.
+   * Builds the payment method configuration form elements.
    *
-   * @param array $element
    * @param array $form_state
    *
    * @return array
-   *   Keys are:
-   *   - plugin_id: The payment method plugin's ID.
-   *   - plugin_configuration: An array with tThe payment method plugin's
-   *     configuration.
    */
-  protected function getPaymentMethodData(array $element, array &$form_state) {
-    return $form_state[$this->getPluginId()][$element['#name']]['payment_method_data'];
+  protected function buildPaymentMethodForm(array &$form_state) {
+    $element = array(
+      '#id' => $this->getElementId($form_state),
+      '#type' => 'container',
+    );
+    if ($this->getPaymentMethod()) {
+      $element += $this->getPaymentMethod()->buildConfigurationForm(array(), $form_state);
+    }
+
+    return $element;
+  }
+
+  /**
+   * Implements a form #process callback.
+   *
+   * Builds the form elements for when there are no available payment methods.
+   *
+   */
+  public function buildNoAvailablePaymentMethods(array $element, array &$form_state, array $form) {
+    $element['select'] = array(
+      '#tree' => TRUE,
+    );
+    $element['select']['payment_method_id'] = array(
+      '#type' => 'value',
+      '#value' => NULL,
+    );
+    $element['select']['message'] = array(
+      '#markup' => $this->t('There are no available payment methods.'),
+    );
+
+    return $element;
+  }
+
+  /**
+   * Implements a form #process callback.
+   *
+   * Builds the form elements for one payment method.
+   */
+  public function buildOneAvailablePaymentMethod(array $element, array &$form_state, array $form) {
+    $payment_method = reset($element['#available_payment_methods']);
+
+    // Use the only available payment method if no other was configured
+    // before, or the configured payment method is not available.
+    if (is_null($this->getPaymentMethod()) || $this->getPaymentMethod()->getPluginId() != $payment_method->getPluginId()) {
+      $this->selectedPaymentMethod = $payment_method;
+    }
+
+    $element['select']['payment_method_id'] = array(
+      '#type' => 'value',
+      '#value' => $this->getPaymentMethod()->getPluginId(),
+    );
+    $element['payment_method_form'] = $this->buildPaymentMethodForm($form_state);
+
+    return $element;
+  }
+
+  /**
+   * Implements a form #process callback.
+   *
+   * Builds the form elements for multiple payment methods.
+   */
+  public function buildMultipleAvailablePaymentMethods(array $element, array &$form_state, array $form) {
+    $payment_methods = $element['#available_payment_methods'];
+
+    $element['select'] = $this->buildSelector($element, $form_state, $payment_methods);
+    $element['payment_method_form'] = $this->buildPaymentMethodForm($form_state);
+
+    return $element;
+  }
+
+  /**
+   * Builds the form elements for the actual payment method selector.
+   *
+   * @param array $root_element
+   *   The plugin's root element.
+   * @param array $form_state
+   *   The form's state.
+   * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface[] $payment_methods
+   *   The available payment methods.
+   *
+   * @return array
+   *   The selector's form elements.
+   */
+  protected function buildSelector(array $root_element, array &$form_state, array $payment_methods) {
+    $payment_method_options = array();
+    foreach ($payment_methods as $payment_method) {
+      $payment_method_options[$payment_method->getPluginId()] = $payment_method->getPluginLabel();
+    }
+    $element['payment_method_id'] = array(
+      '#ajax' => array(
+        'effect' => 'fade',
+        'event' => 'change',
+        'trigger_as' => array(
+          'name' => $root_element['#name'] . '[select][change]',
+        ),
+        'wrapper' => $this->getElementId($form_state),
+      ),
+      '#default_value' => is_null($this->getPaymentMethod()) ? NULL : $this->getPaymentMethod()->getPluginId(),
+      '#empty_value' => 'select',
+      '#options' => $payment_method_options ,
+      '#required' => $this->isRequired(),
+      '#title' => $this->t('Payment method'),
+      '#type' => 'select',
+    );
+    $element['change'] = array(
+      '#ajax' => array(
+        'callback' => array($this, 'ajaxSubmitConfigurationForm'),
+      ),
+      '#attributes' => array(
+        'class' => array('js-hide')
+      ),
+      '#limit_validation_errors' => array(array_merge($root_element['#parents'], array('select', 'payment_method_id'))),
+      '#name' => $root_element['#name'] . '[select][change]',
+      '#submit' => array(array($this, 'rebuildForm')),
+      '#type' => 'submit',
+      '#value' => $this->t('Choose payment method'),
+    );
+
+    return $element;
   }
 
   /**
    * Retrieves the element's ID from the form's state.
    *
-   * @param array $element
    * @param array $form_state
    *
    * @return string
    */
-  protected function getElementId(array $element, array &$form_state) {
-    return $form_state[$this->getPluginId()][$element['#name']]['element_id'];
+  protected function getElementId(array &$form_state) {
+    if (!(isset($form_state[$this->getPluginId()]) && array_key_exists(spl_object_hash($this), $form_state[$this->getPluginId()]))) {
+      $form_state[$this->getPluginId()][spl_object_hash($this)]['element_id'] = drupal_html_id($this->getPluginId());
+    }
+
+    return $form_state[$this->getPluginId()][spl_object_hash($this)]['element_id'];
   }
 
-  /**
-   * Check if the form's state has been initialized for an element.
-   *
-   * @param array $element
-   * @param array $form_state
-   * @param \Drupal\payment\Entity\PaymentInterface $payment
-   *
-   * @return bool
-   */
-  protected function initialize(array $element, array &$form_state, PaymentInterface $payment) {
-    if (!(isset($form_state[$this->getPluginId()]) && array_key_exists($element['#name'], $form_state[$this->getPluginId()]))) {
-      $plugin_configuration = $payment->getPaymentMethod() ? $payment->getPaymentMethod()->getConfiguration() : array();
-      $plugin_id = $payment->getPaymentMethod() ? $payment->getPaymentMethod()->getPluginId() : NULL;
-      $this->setPaymentMethodData($element, $form_state, $plugin_id, $plugin_configuration);
-      $form_state[$this->getPluginId()][$element['#name']]['element_id'] = isset($element['#id']) ? $element['#id'] : drupal_html_id($this->getPluginId());
-    }
-  }
 }

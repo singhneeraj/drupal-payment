@@ -118,6 +118,8 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
       ->method('setStatus')
       ->with($payment_status);
 
+    $this->paymentMethod->setPayment($payment);
+
     $method = new \ReflectionMethod($this->paymentMethod, 'doExecutePayment');
     $method->setAccessible(TRUE);
 

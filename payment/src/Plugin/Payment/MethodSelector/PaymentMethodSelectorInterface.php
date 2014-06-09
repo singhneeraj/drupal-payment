@@ -8,59 +8,75 @@ namespace Drupal\payment\Plugin\Payment\MethodSelector;
 
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
+use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\payment\Entity\PaymentInterface;
 
 /**
  * Provides a plugin to select and configure a payment method for a payment.
  */
-interface PaymentMethodSelectorInterface extends PluginInspectionInterface, ConfigurablePluginInterface {
+interface PaymentMethodSelectorInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface {
 
   /**
-   * Returns the form elements for selecting a payment method.
+   * Sets whether a payment method must be selected.
    *
-   * @param array $form
-   * @param array $form_state
-   * @param \Drupal\payment\Entity\PaymentInterface $payment
+   * @param bool $required
    *
-   * @return array
-   *   A render array.
+   * @return $this
    */
-  public function formElements(array $form, array &$form_state, PaymentInterface $payment);
+  public function setRequired($required = TRUE);
 
   /**
-   * Gets the selected payment method plugin.
+   * Returns whether a payment method must be selected.
    *
-   * @param array $form
-   *   The form elements as built by self::formElements().
-   * @param array $form_state
-   *   The form's global state.
-   *
-   * @return \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface|null
+   * @return bool
    */
-  public function getPaymentMethodFromFormElements(array $form, array &$form_state);
+  public function isRequired();
 
   /**
    * Sets which payment method plugins are allowed to be selected.
    *
-   * @param array
-   *   An array of payment method plugin IDs.
+   * @param array|true
+   *   An array of payment method plugin IDs or TRUE to allow all.
    *
-   * @return static
+   * @return $this
    */
-  public function setAllowedPaymentMethods(array $payment_method_plugin_ids);
+  public function setAllowedPaymentMethods($payment_method_plugin_ids);
 
   /**
    * Resets which payment method plugins are allowed to be selected.
    *
-   * @return static
+   * @return $this
    */
   public function resetAllowedPaymentMethods();
 
   /**
    * Returns the IDs of allowed payment method plugins.
    *
-   * @return array|null
-   *   An array of payment method plugin IDs or NULL to allow all.
+   * @return array|TRUE
+   *   An array of payment method plugin IDs or TRUE to allow all.
    */
   public function getAllowedPaymentMethods();
+
+  /**
+   * Gets the payment this payment method is for.
+   *
+   * @return \Drupal\payment\Entity\PaymentInterface
+   */
+  public function getPayment();
+
+  /**
+   * Gets the payment this payment method is for.
+   *
+   * @param \Drupal\payment\Entity\PaymentInterface $payment
+   *
+   * @return $this
+   */
+  public function setPayment(PaymentInterface $payment);
+
+  /**
+   * Gets the selected payment method.
+   *
+   * @return \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
+   */
+  public function getPaymentMethod();
 }
