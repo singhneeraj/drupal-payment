@@ -79,6 +79,8 @@ class PaymentTypeManagerUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   public function setUp() {
     $this->classResolver = $this->getMock('\Drupal\Core\DependencyInjection\ClassResolverInterface');

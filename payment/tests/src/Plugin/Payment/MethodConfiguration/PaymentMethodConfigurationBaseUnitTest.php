@@ -97,6 +97,33 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
   }
 
   /**
+   * @covers ::calculateDependencies
+   */
+  public function testCalculateDependencies() {
+    $this->assertSame(array(), $this->paymentMethodConfiguration->calculateDependencies());
+  }
+
+  /**
+   * @covers ::getMessageText
+   * @covers ::setMessageText
+   */
+  public function testGetMessageText() {
+    $message_text = $this->randomName();
+    $this->assertSame($this->paymentMethodConfiguration, $this->paymentMethodConfiguration->setMessageText($message_text));
+    $this->assertSame($message_text, $this->paymentMethodConfiguration->getMessageText());
+  }
+
+  /**
+   * @covers ::getMessageTextFormat
+   * @covers ::setMessageTextFormat
+   */
+  public function testGetMessageTextFormat() {
+    $message_text_format = $this->randomName();
+    $this->assertSame($this->paymentMethodConfiguration, $this->paymentMethodConfiguration->setMessageTextFormat($message_text_format));
+    $this->assertSame($message_text_format, $this->paymentMethodConfiguration->getMessageTextFormat());
+  }
+
+  /**
    * @covers ::buildConfigurationForm
    */
   public function testBuildConfigurationFormWithoutFilter() {

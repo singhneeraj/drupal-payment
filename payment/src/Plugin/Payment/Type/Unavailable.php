@@ -7,7 +7,7 @@
 namespace Drupal\payment\Plugin\Payment\Type;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\StringTranslation\TranslationManager;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -23,13 +23,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class Unavailable extends PaymentTypeBase {
 
   /**
-   * The translation manager.
-   *
-   * @var \Drupal\Core\StringTranslation\TranslationManager
-   */
-  protected $translationManager;
-
-  /**
    * Constructs a new class instance.
    *
    * @param array $configuration
@@ -42,12 +35,12 @@ class Unavailable extends PaymentTypeBase {
    *   The module handler.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher.
-   * @param \Drupal\Core\StringTranslation\TranslationManager $translation_manager
-   *   The translation manager.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translator.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler, EventDispatcherInterface $event_dispatcher, TranslationManager $translation_manager) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler, EventDispatcherInterface $event_dispatcher, TranslationInterface $string_translation) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $module_handler, $event_dispatcher);
-    $this->translationManager = $translation_manager;
+    $this->stringTranslation = $string_translation;
   }
 
   /**
@@ -73,12 +66,4 @@ class Unavailable extends PaymentTypeBase {
     ));
   }
 
-  /**
-   * Translates a string to the current language or to a given language.
-   *
-   * This is a wrapper so POTX can use it to extract translatable strings.
-   */
-  protected function t($string, array $args = array(), array $options = array()) {
-    return $this->translationManager->translate($string, $args, $options);
-  }
 }

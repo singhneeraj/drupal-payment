@@ -109,7 +109,7 @@ class BasicUnitTest extends UnitTestCase {
    */
   public function testGetStatus() {
     $status = $this->randomName();
-    $this->assertSame(spl_object_hash($this->paymentMethodConfiguration), spl_object_hash($this->paymentMethodConfiguration->setStatus($status)));
+    $this->assertSame($this->paymentMethodConfiguration, $this->paymentMethodConfiguration->setStatus($status));
     $this->assertSame($status, $this->paymentMethodConfiguration->getStatus());
   }
 
@@ -167,7 +167,7 @@ class BasicUnitTest extends UnitTestCase {
    */
   public function testGetBrandLabel() {
     $label = $this->randomName();
-    $this->assertSame(spl_object_hash($this->paymentMethodConfiguration), spl_object_hash($this->paymentMethodConfiguration->setBrandLabel($label)));
+    $this->assertSame($this->paymentMethodConfiguration, $this->paymentMethodConfiguration->setBrandLabel($label));
     $this->assertSame($label, $this->paymentMethodConfiguration->getBrandLabel());
   }
 }

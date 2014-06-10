@@ -95,7 +95,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
    */
   public function testGetQuantity() {
     $quantity = 7;
-    $this->assertSame(spl_object_hash($this->lineItem), spl_object_hash($this->lineItem->setQuantity($quantity)));
+    $this->assertSame($this->lineItem, $this->lineItem->setQuantity($quantity));
     $this->assertSame($quantity, $this->lineItem->getQuantity());
   }
 
@@ -136,7 +136,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
    */
   public function testGetName() {
     $name = $this->randomName();
-    $this->assertSame(spl_object_hash($this->lineItem), spl_object_hash($this->lineItem->setName($name)));
+    $this->assertSame($this->lineItem, $this->lineItem->setName($name));
     $this->assertSame($name, $this->lineItem->getName());
   }
 
@@ -146,7 +146,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
    */
   public function testGetPaymentId() {
     $payment_id = mt_rand();
-    $this->assertSame(spl_object_hash($this->lineItem), spl_object_hash($this->lineItem->setPaymentId($payment_id)));
+    $this->assertSame($this->lineItem, $this->lineItem->setPaymentId($payment_id));
     $this->assertSame($payment_id, $this->lineItem->getPaymentId());
   }
 

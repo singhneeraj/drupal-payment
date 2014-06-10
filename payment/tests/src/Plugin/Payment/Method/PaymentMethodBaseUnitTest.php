@@ -158,6 +158,24 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
   }
 
   /**
+   * @covers ::validateConfigurationForm
+   */
+  public function testValidateConfigurationForm() {
+    $form = array();
+    $form_state = array();
+    $this->plugin->validateConfigurationForm($form, $form_state);
+  }
+
+  /**
+   * @covers ::submitConfigurationForm
+   */
+  public function testSubmitConfigurationForm() {
+    $form = array();
+    $form_state = array();
+    $this->plugin->submitConfigurationForm($form, $form_state);
+  }
+
+  /**
    * @covers ::executePayment
    */
   public function testExecutePayment() {

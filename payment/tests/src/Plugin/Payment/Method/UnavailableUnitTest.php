@@ -114,6 +114,19 @@ class UnavailableUnitTest extends UnitTestCase {
   }
 
   /**
+   * @covers ::setPayment
+   * @covers ::getPayment
+   */
+  public function testGetPayment() {
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $this->assertSame($this->plugin, $this->plugin->setPayment($payment));
+    $this->assertSame($payment, $this->plugin->getPayment());
+  }
+
+  /**
    * @covers ::buildConfigurationForm
    */
   public function testBuildConfigurationForm() {
@@ -125,6 +138,24 @@ class UnavailableUnitTest extends UnitTestCase {
     $elements = $this->plugin->buildConfigurationForm($form, $form_state, $payment);
     $this->assertInternalType('array', $elements);
     $this->assertEmpty($elements);
+  }
+
+  /**
+   * @covers ::validateConfigurationForm
+   */
+  public function testValidateConfigurationForm() {
+    $form = array();
+    $form_state = array();
+    $this->plugin->validateConfigurationForm($form, $form_state);
+  }
+
+  /**
+   * @covers ::submitConfigurationForm
+   */
+  public function testSubmitConfigurationForm() {
+    $form = array();
+    $form_state = array();
+    $this->plugin->submitConfigurationForm($form, $form_state);
   }
 
   /**

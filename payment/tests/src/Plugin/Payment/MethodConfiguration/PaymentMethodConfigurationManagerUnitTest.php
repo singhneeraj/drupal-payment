@@ -9,7 +9,9 @@ namespace Drupal\payment\Tests\Plugin\Payment\MethodConfiguration;
 
 use Drupal\Component\Plugin\Exception\PluginException;
 
+use Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManager;
 use Drupal\Tests\UnitTestCase;
+use Zend\Stdlib\ArrayObject;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManager
@@ -17,16 +19,44 @@ use Drupal\Tests\UnitTestCase;
 class PaymentMethodConfigurationManagerUnitTest extends UnitTestCase {
 
   /**
+   * The cache backend used for testing.
+   *
+   * @var \Drupal\Core\Cache\CacheBackendInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $cache;
+
+  /**
+   * The plugin discovery used for testing.
+   *
+   * @var \Drupal\Component\Plugin\Discovery\DiscoveryInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $discovery;
+
+  /**
    * The plugin factory used for testing.
    *
-   * @var \Drupal\Component\Plugin\Factory\FactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Component\Plugin\Factory\DefaultFactory|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $factory;
 
   /**
+   * The plugin factory used for testing.
+   *
+   * @var \Drupal\Core\Language\LanguageManager|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $languageManager;
+
+  /**
+   * The module handler used for testing.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $moduleHandler;
+
+  /**
    * The plugin manager under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManager|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManager
    */
   protected $manager;
 
@@ -43,17 +73,39 @@ class PaymentMethodConfigurationManagerUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   public function setUp() {
-    $this->factory = $this->getMock('\Drupal\Component\Plugin\Factory\FactoryInterface');
+    $this->discovery = $this->getMock('\Drupal\Component\Plugin\Discovery\DiscoveryInterface');
 
-    $this->manager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManager')
+    $this->factory = $this->getMockBuilder('\Drupal\Component\Plugin\Factory\FactoryInterface')
       ->disableOriginalConstructor()
-      ->setMethods(NULL)
       ->getMock();
-    $property = new \ReflectionProperty($this->manager, 'factory');
-    $property->setAccessible(TRUE);
-    $property->setValue($this->manager, $this->factory);
+
+    $language = (object) array(
+      'id' => $this->randomName(),
+    );
+    $this->languageManager = $this->getMockBuilder('\Drupal\Core\Language\LanguageManager')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $this->languageManager->expects($this->any())
+      ->method('getCurrentLanguage')
+      ->will($this->returnValue($language));
+
+    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
+
+    $this->cache = $this->getMock('\Drupal\Core\Cache\CacheBackendInterface');
+
+    $namespaces = new ArrayObject();
+
+    $this->manager = new PaymentMethodConfigurationManager($namespaces, $this->cache, $this->languageManager, $this->moduleHandler);
+    $discovery_property = new \ReflectionProperty($this->manager, 'discovery');
+    $discovery_property->setAccessible(TRUE);
+    $discovery_property->setValue($this->manager, $this->discovery);
+    $factory_property = new \ReflectionProperty($this->manager, 'factory');
+    $factory_property->setAccessible(TRUE);
+    $factory_property->setValue($this->manager, $this->factory);
   }
 
   /**

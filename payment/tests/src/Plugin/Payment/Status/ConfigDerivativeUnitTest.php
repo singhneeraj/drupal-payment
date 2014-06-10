@@ -9,6 +9,7 @@ namespace Drupal\payment\Tests\Plugin\Payment\Status;
 
 use Drupal\payment\Plugin\Payment\Status\ConfigDerivative;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Status\ConfigDerivative
@@ -42,11 +43,38 @@ class ConfigDerivativeUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   public function setUp() {
     $this->paymentStatusStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
 
     $this->deriver = new ConfigDerivative($this->paymentStatusStorage);
+  }
+
+  /**
+   * @covers ::create
+   */
+  function testCreate() {
+    $entity_manager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
+    $entity_manager->expects($this->once())
+      ->method('getStorage')
+      ->with('payment_status')
+      ->will($this->returnValue($this->paymentStatusStorage));
+
+    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $map = array(
+      array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $entity_manager),
+    );
+    $container->expects($this->any())
+      ->method('get')
+      ->will($this->returnValueMap($map));
+
+    $configuration = array();
+    $plugin_definition = array();
+    $plugin_id = $this->randomName();
+    $form = ConfigDerivative::create($container, $configuration, $plugin_id, $plugin_definition);
+    $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\Status\ConfigDerivative', $form);
   }
 
   /**

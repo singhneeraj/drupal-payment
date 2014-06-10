@@ -63,6 +63,8 @@ class BasicUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   public function setUp() {
     $this->database = $this->getMockBuilder('\Drupal\Core\Database\Connection')
@@ -104,12 +106,27 @@ class BasicUnitTest extends UnitTestCase {
   }
 
   /**
+   * @covers ::defaultConfiguration
+   */
+  public function testDefaultConfiguration() {
+    $configuration = array(
+      'amount' => 0,
+      'currency_code' => '',
+      'name' => NULL,
+      'payment_id' => NULL,
+      'quantity' => 1,
+      'description' => NULL,
+    );
+    $this->assertSame($configuration, $this->lineItem->defaultConfiguration());
+  }
+
+  /**
    * @covers ::setAmount
    * @covers ::getAmount
    */
   public function testGetAmount() {
     $amount = mt_rand();
-    $this->assertSame(spl_object_hash($this->lineItem), spl_object_hash($this->lineItem->setAmount($amount)));
+    $this->assertSame($this->lineItem, $this->lineItem->setAmount($amount));
     $this->assertSame($amount, $this->lineItem->getAmount());
   }
 
@@ -119,7 +136,7 @@ class BasicUnitTest extends UnitTestCase {
    */
   public function testGetCurrencyCode() {
     $currency_code = $this->randomName();
-    $this->assertSame(spl_object_hash($this->lineItem), spl_object_hash($this->lineItem->setCurrencyCode($currency_code)));
+    $this->assertSame($this->lineItem, $this->lineItem->setCurrencyCode($currency_code));
     $this->assertSame($currency_code, $this->lineItem->getCurrencyCode());
   }
 
@@ -129,7 +146,7 @@ class BasicUnitTest extends UnitTestCase {
    */
   public function testGetDescription() {
     $description = $this->randomName();
-    $this->assertSame(spl_object_hash($this->lineItem), spl_object_hash($this->lineItem->setDescription($description)));
+    $this->assertSame($this->lineItem, $this->lineItem->setDescription($description));
     $this->assertSame($description, $this->lineItem->getDescription());
   }
 

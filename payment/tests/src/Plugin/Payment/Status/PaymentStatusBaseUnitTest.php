@@ -8,6 +8,7 @@
 namespace Drupal\payment\Tests\Plugin\Payment\Status;
 
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Status\PaymentStatusBase
@@ -48,6 +49,8 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   public function setup() {
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
@@ -57,8 +60,33 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
     $plugin_definition = array();
     $this->status = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Status\PaymentStatusBase')
       ->setConstructorArgs(array($configuration, $this->pluginId, $plugin_definition, $this->paymentStatusManager))
-      ->setMethods(NULL)
-      ->getMock();
+      ->getMockForAbstractClass();
+  }
+
+  /**
+   * @covers ::create
+   */
+  public function testCreate() {
+    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $map = array(
+      array('plugin.manager.payment.status', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentStatusManager),
+    );
+    $container->expects($this->any())
+      ->method('get')
+      ->will($this->returnValueMap($map));
+
+    /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase $class_name */
+    $class_name = get_class($this->status);
+
+    $line_item = $class_name::create($container, array(), $this->randomName(), array());
+    $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\Status\PaymentStatusBase', $line_item);
+  }
+
+  /**
+   * @covers ::calculateDependencies
+   */
+  public function testCalculateDependencies() {
+    $this->assertSame(array(), $this->status->calculateDependencies());
   }
 
   /**
@@ -79,7 +107,7 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
    */
   public function testGetCreated() {
     $created = mt_rand();
-    $this->assertSame(spl_object_hash($this->status), spl_object_hash($this->status->setCreated($created)));
+    $this->assertSame($this->status, $this->status->setCreated($created));
     $this->assertSame($created, $this->status->getCreated());
   }
 
@@ -89,7 +117,7 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
    */
   public function testGetPaymentId() {
     $created = mt_rand();
-    $this->assertSame(spl_object_hash($this->status), spl_object_hash($this->status->setPaymentId($created)));
+    $this->assertSame($this->status, $this->status->setPaymentId($created));
     $this->assertSame($created, $this->status->getPaymentId());
   }
 
@@ -99,7 +127,7 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
    */
   public function testGetId() {
     $created = mt_rand();
-    $this->assertSame(spl_object_hash($this->status), spl_object_hash($this->status->setId($created)));
+    $this->assertSame($this->status, $this->status->setId($created));
     $this->assertSame($created, $this->status->getId());
   }
 

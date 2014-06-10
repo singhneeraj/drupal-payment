@@ -106,7 +106,7 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
    */
   public function testGetConfiguration() {
     $configuration = array($this->randomName());
-    $this->assertSame(spl_object_hash($this->paymentMethodSelectorPlugin), spl_object_hash($this->paymentMethodSelectorPlugin->setConfiguration($configuration)));
+    $this->assertSame($this->paymentMethodSelectorPlugin, $this->paymentMethodSelectorPlugin->setConfiguration($configuration));
     $this->assertSame($configuration, $this->paymentMethodSelectorPlugin->getConfiguration());
   }
 
@@ -141,9 +141,9 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
    */
   public function testGetAllowedPaymentMethods() {
     $ids = array($this->randomName(), $this->randomName());
-    $this->assertSame(spl_object_hash($this->paymentMethodSelectorPlugin), spl_object_hash($this->paymentMethodSelectorPlugin->setAllowedPaymentMethods($ids)));
+    $this->assertSame($this->paymentMethodSelectorPlugin, $this->paymentMethodSelectorPlugin->setAllowedPaymentMethods($ids));
     $this->assertSame($ids, $this->paymentMethodSelectorPlugin->getAllowedPaymentMethods());
-    $this->assertSame(spl_object_hash($this->paymentMethodSelectorPlugin), spl_object_hash($this->paymentMethodSelectorPlugin->resetAllowedPaymentMethods()));
+    $this->assertSame($this->paymentMethodSelectorPlugin, $this->paymentMethodSelectorPlugin->resetAllowedPaymentMethods());
     $this->assertSame(TRUE, $this->paymentMethodSelectorPlugin->getAllowedPaymentMethods());
   }
 
