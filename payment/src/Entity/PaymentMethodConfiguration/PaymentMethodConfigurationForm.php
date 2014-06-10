@@ -148,7 +148,9 @@ class PaymentMethodConfigurationForm extends EntityForm {
       $payment_method_configuration_plugin = $this->paymentMethodConfigurationManager->createInstance($payment_method_configuration->getPluginId(), $payment_method_configuration->getPluginConfiguration());
       $form_state['storage']['payment_method_configuration'] = $payment_method_configuration_plugin;
     }
-    $form['plugin_form'] = $payment_method_configuration_plugin->buildConfigurationForm(array(), $form_state);
+    $form['plugin_form'] = array(
+        '#tree' => TRUE,
+      ) + $payment_method_configuration_plugin->buildConfigurationForm(array(), $form_state);
 
     return parent::form($form, $form_state);
   }
