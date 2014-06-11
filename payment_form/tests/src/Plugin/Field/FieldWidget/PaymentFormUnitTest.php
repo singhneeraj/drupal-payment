@@ -8,7 +8,9 @@
 
 namespace Drupal\payment_form\Tests\Plugin\Field\FieldWidget;
 
+use Drupal\payment_form\Plugin\Field\FieldWidget\PaymentForm;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment_form\Plugin\Field\FieldWidget\PaymentForm
@@ -18,12 +20,21 @@ class PaymentFormUnitTest extends UnitTestCase {
   /**
    * The field widget under test.
    *
-   * @var \Drupal\payment_form\Plugin\Field\FieldWidget\PaymentForm|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment_form\Plugin\Field\FieldWidget\PaymentForm
    */
   protected $fieldWidget;
 
   /**
+   * The string translator.
+   *
+   * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $stringTranslation;
+
+  /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   public static function getInfo() {
     return array(
@@ -35,26 +46,79 @@ class PaymentFormUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   protected function setUp() {
     $plugin_id = $this->randomName();
     $plugin_definition = array();
     $field_definition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
     $settings = array();
-    $this->fieldWidget = $this->getMockBuilder('\Drupal\payment_form\Plugin\Field\FieldWidget\PaymentForm')
-      ->setConstructorArgs(array($plugin_id, $plugin_definition, $field_definition, $settings))
-      ->setMethods(array('formatPlural', 'getSetting'))
-      ->getMock();
+
+    $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
+
+    $this->fieldWidget = new PaymentForm($plugin_id, $plugin_definition, $field_definition, $settings, $this->stringTranslation);
+  }
+
+  /**
+   * @covers ::create
+   */
+  function testCreate() {
+    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $map = array(
+      array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
+    );
+    $container->expects($this->any())
+      ->method('get')
+      ->will($this->returnValueMap($map));
+
+    $field_definition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
+    $configuration = array(
+      'field_definition' => $field_definition,
+      'settings' => array(),
+    );
+    $plugin_definition = array();
+    $plugin_id = $this->randomName();
+    $form = PaymentForm::create($container, $configuration, $plugin_id, $plugin_definition);
+    $this->assertInstanceOf('\Drupal\payment_form\Plugin\Field\FieldWidget\PaymentForm', $form);
   }
 
   /**
    * @covers ::settingsSummary
    */
-  public function testSettingsSummary() {
-    $this->fieldWidget->expects($this->once())
-      ->method('getSetting')
-      ->with('line_items');
-    $this->assertInternalType('array', $this->fieldWidget->settingsSummary());
+  public function testSettingsSummaryWithOneLineItem() {
+    $line_items_data = array(
+      array(
+        'plugin_id' => $this->randomName(),
+        'plugin_configuration' => array(),
+      ),
+    );
+    $this->fieldWidget->setSetting('line_items', $line_items_data);
+    $this->stringTranslation->expects($this->any())
+      ->method('formatPlural')
+      ->with(1);
+    $this->fieldWidget->settingsSummary();
+  }
+
+  /**
+   * @covers ::settingsSummary
+   */
+  public function testSettingsSummaryWithMultipleLineItems() {
+    $line_items_data = array(
+      array(
+        'plugin_id' => $this->randomName(),
+        'plugin_configuration' => array(),
+      ),
+      array(
+        'plugin_id' => $this->randomName(),
+        'plugin_configuration' => array(),
+      )
+    );
+    $this->fieldWidget->setSetting('line_items', $line_items_data);
+    $this->stringTranslation->expects($this->any())
+      ->method('formatPlural')
+      ->with(2);
+    $this->fieldWidget->settingsSummary();
   }
 
   /**

@@ -12,8 +12,8 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Element\PaymentLineItemsInput;
-use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -28,7 +28,33 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   multiple_values = "true"
  * )
  */
-class PaymentForm extends WidgetBase {
+class PaymentForm extends WidgetBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * Constructs a new class instance.
+   *
+   * @param array $plugin_id
+   *   The plugin_id for the widget.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
+   *   The definition of the field to which the widget is associated.
+   * @param array $settings
+   *   The widget settings.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translator.
+   */
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, TranslationInterface $string_translation) {
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings);
+    $this->stringTranslation = $string_translation;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static($plugin_id, $plugin_definition, $configuration['field_definition'], $configuration['settings'], $container->get('string_translation'));
+  }
 
   /**
    * {@inheritdoc}
@@ -82,13 +108,4 @@ class PaymentForm extends WidgetBase {
     return PaymentLineItemsInput::getLineItemsData($element, $form_state);
   }
 
-  /**
-   * Wraps format_plural().
-   *
-   * @todo This probably makes strings untranslatable, as POTX does not see any
-   *   strings being passed through format_plural().
-   */
-  protected function formatPlural($count, $singular, $plural, array $args = array(), array $options = array()) {
-    return format_plural($count, $singular, $plural, $args, $options);
-  }
 }

@@ -258,7 +258,9 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
         '#autocomplete_route_name' => 'user.autocomplete',
         '#required' => TRUE,
       ),
-      'plugin_form' => $payment_method_configuration_plugin_form,
+      'plugin_form' => array(
+          '#tree' => TRUE,
+        ) + $payment_method_configuration_plugin_form,
     );
     $this->assertEquals($expected_build, $build);
   }

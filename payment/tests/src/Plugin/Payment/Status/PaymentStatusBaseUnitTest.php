@@ -90,6 +90,18 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
   }
 
   /**
+   * @covers ::defaultConfiguration
+   */
+  public function testDefaultConfiguration() {
+    $expected_configuration = array(
+      'created' => time(),
+      'id' => 0,
+      'paymentId' => 0,
+    );
+    $this->assertSame($expected_configuration, $this->status->defaultConfiguration());
+  }
+
+  /**
    * @covers ::setConfiguration
    * @covers ::getConfiguration
    */
