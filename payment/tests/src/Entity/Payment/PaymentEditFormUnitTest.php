@@ -45,13 +45,6 @@ class PaymentEditFormUnitTest extends UnitTestCase {
   protected $payment;
 
   /**
-   * The payment line item plugin manager.
-   *
-   * @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $paymentLineItemManager;
-
-  /**
    * The string translation service.
    *
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -83,14 +76,12 @@ class PaymentEditFormUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->paymentLineItemManager = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface');
-
     $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
     $this->stringTranslation->expects($this->any())
       ->method('translate')
       ->will($this->returnArgument(0));
 
-    $this->form = new PaymentEditForm($this->entityManager, $this->stringTranslation, $this->paymentLineItemManager);
+    $this->form = new PaymentEditForm($this->entityManager, $this->stringTranslation);
     $this->form->setEntity($this->payment);
   }
 
@@ -101,7 +92,6 @@ class PaymentEditFormUnitTest extends UnitTestCase {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
       array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager),
-      array('plugin.manager.payment.line_item', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentLineItemManager),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
     $container->expects($this->any())
@@ -155,15 +145,6 @@ class PaymentEditFormUnitTest extends UnitTestCase {
     $line_item_0 = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface');
     $line_item_1 = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface');
 
-
-    $map = array(
-      array($line_items_data[0]['plugin_id'], $line_items_data[0]['plugin_configuration'], $line_item_0),
-      array($line_items_data[1]['plugin_id'], $line_items_data[1]['plugin_configuration'], $line_item_1),
-    );
-    $this->paymentLineItemManager->expects($this->exactly(2))
-      ->method('createInstance')
-      ->will($this->returnValueMap($map));
-
     $this->payment->expects($this->exactly(2))
       ->method('setLineItem')
       ->with($this->isInstanceOf('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface'));
@@ -182,7 +163,7 @@ class PaymentEditFormUnitTest extends UnitTestCase {
 
     /** @var \Drupal\payment\Entity\Payment\PaymentEditForm|\PHPUnit_Framework_MockObject_MockObject $form */
     $form = $this->getMockBuilder('\Drupal\payment\Entity\Payment\PaymentEditForm')
-      ->setConstructorArgs(array($this->entityManager, $this->stringTranslation, $this->paymentLineItemManager))
+      ->setConstructorArgs(array($this->entityManager, $this->stringTranslation))
       ->setMethods(array('currencyOptions'))
       ->getMock();
     $form->setFormDisplay($this->formDisplay, $form_state);
@@ -248,16 +229,7 @@ class PaymentEditFormUnitTest extends UnitTestCase {
       'payment_line_items' => array(
         '#type' => 'payment_line_items_input',
         '#title' => 'Line items',
-        '#default_value' => array(
-          array(
-            'plugin_id' => $line_item_id_a,
-            'plugin_configuration' => $line_item_configuration_a,
-          ),
-          array(
-            'plugin_id' => $line_item_id_b,
-            'plugin_configuration' => $line_item_configuration_b,
-          ),
-        ),
+        '#default_value' => array($line_item_a, $line_item_b),
         '#required' => TRUE,
         '#currency_code' => '',
       ),
@@ -273,7 +245,7 @@ class PaymentEditFormUnitTest extends UnitTestCase {
 
     /** @var \Drupal\payment\Entity\Payment\PaymentEditForm|\PHPUnit_Framework_MockObject_MockObject $form */
     $form = $this->getMockBuilder('\Drupal\payment\Entity\Payment\PaymentEditForm')
-      ->setConstructorArgs(array($this->entityManager, $this->stringTranslation, $this->paymentLineItemManager))
+      ->setConstructorArgs(array($this->entityManager, $this->stringTranslation))
       ->setMethods(array('copyFormValuesToEntity'))
       ->getMock();
     $form->setFormDisplay($this->formDisplay, $form_state);

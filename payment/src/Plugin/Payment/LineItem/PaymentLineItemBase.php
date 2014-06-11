@@ -136,4 +136,24 @@ abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItem
   public function getQuantity() {
     return $this->configuration['quantity'];
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildConfigurationForm(array $form, array &$form_state) {
+    return array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateConfigurationForm(array &$form, array &$form_state) {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitConfigurationForm(array &$form, array &$form_state) {
+  }
+
 }

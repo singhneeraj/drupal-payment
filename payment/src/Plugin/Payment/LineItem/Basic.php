@@ -134,7 +134,7 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    */
-  public function formElements(array $form, array &$form_state) {
+  public function buildConfigurationForm(array $form, array &$form_state) {
     $elements = array(
       '#attached' => array(
         'css' => array(__DIR__ . '/../../../../css/payment.css'),
@@ -186,17 +186,15 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    */
-  public static function getConfigurationFromFormValues(array $form, array &$form_state) {
+  public function submitConfigurationForm(array &$form, array &$form_state) {
     $values = NestedArray::getValue($form_state['values'], $form['#parents']);
 
-    return array(
-      'amount' => $values['amount']['amount'],
-      'currency_code' => $values['amount']['currency_code'],
-      'description' => $values['description'],
-      'name' => $values['name'],
-      'payment_id' => $values['payment_id'],
-      'quantity' => $values['quantity'],
-    );
+    $this->setAmount($values['amount']['amount']);
+    $this->setCurrencyCode($values['amount']['currency_code']);
+    $this->setDescription($values['description']);
+    $this->setName($values['name']);
+    $this->setPaymentId($values['payment_id']);
+    $this->setQuantity($values['quantity']);
   }
 
 }

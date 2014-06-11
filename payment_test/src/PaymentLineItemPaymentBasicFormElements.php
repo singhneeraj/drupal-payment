@@ -32,9 +32,14 @@ class PaymentLineItemPaymentBasicFormElements implements ContainerInjectionInter
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
-    $manager = Payment::lineItemManager();
-    $line_item = $manager->createInstance('payment_basic');
-    $form['line_item'] = $line_item->formElements($form, $form_state);
+    if (isset($form_state['storage']['payment_line_item'])) {
+      $line_item = $form_state['storage']['payment_line_item'];
+    }
+    else {
+      $line_item = Payment::lineItemManager()->createInstance('payment_basic');
+      $form_state['storage']['payment_line_item'] = $line_item;
+    }
+    $form['line_item'] = $line_item->buildConfigurationForm(array(), $form_state);
     $form['submit'] = array(
       '#type' => 'submit',
       '#value' => t('Submit'),
@@ -47,12 +52,18 @@ class PaymentLineItemPaymentBasicFormElements implements ContainerInjectionInter
    * {@inheritdoc}
    */
   public function validateForm(array &$form, array &$form_state) {
+    /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface $line_item */
+    $line_item = $form_state['storage']['payment_line_item'];
+    $line_item->validateConfigurationForm($form['line_item'], $form_state);
   }
 
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, array &$form_state) {
+    /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface $line_item */
+    $line_item = $form_state['storage']['payment_line_item'];
+    $line_item->submitConfigurationForm($form['line_item'], $form_state);
     $form_state['redirect_route'] = array(
       'route_name' => 'user.page',
     );

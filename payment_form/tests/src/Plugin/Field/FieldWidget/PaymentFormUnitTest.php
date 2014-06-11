@@ -25,6 +25,13 @@ class PaymentFormUnitTest extends UnitTestCase {
   protected $fieldWidget;
 
   /**
+   * The payment line item manager.
+   *
+   * @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $paymentLineItemManager;
+
+  /**
    * The string translator.
    *
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -55,9 +62,11 @@ class PaymentFormUnitTest extends UnitTestCase {
     $field_definition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
     $settings = array();
 
+    $this->paymentLineItemManager = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface');
+
     $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
-    $this->fieldWidget = new PaymentForm($plugin_id, $plugin_definition, $field_definition, $settings, $this->stringTranslation);
+    $this->fieldWidget = new PaymentForm($plugin_id, $plugin_definition, $field_definition, $settings, $this->stringTranslation, $this->paymentLineItemManager);
   }
 
   /**
@@ -66,6 +75,7 @@ class PaymentFormUnitTest extends UnitTestCase {
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
+      array('plugin.manager.payment.line_item', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentLineItemManager),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
     $container->expects($this->any())

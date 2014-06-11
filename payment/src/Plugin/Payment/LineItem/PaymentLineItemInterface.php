@@ -8,11 +8,12 @@ namespace Drupal\payment\Plugin\Payment\LineItem;
 
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
+use Drupal\Core\Plugin\PluginFormInterface;
 
 /**
  * A payment line item.
  */
-interface PaymentLineItemInterface extends PluginInspectionInterface, ConfigurablePluginInterface {
+interface PaymentLineItemInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface {
 
   /**
    * Sets the ID of the payment the line item belongs to.
@@ -90,28 +91,4 @@ interface PaymentLineItemInterface extends PluginInspectionInterface, Configurab
    */
   public function getQuantity();
 
-  /**
-   * Builds the form elements for this line item.
-   *
-   * @param array $form
-   * @param array $form_state
-   *
-   * @return array
-   *   A render array.
-   */
-  public function formElements(array $form, array &$form_state);
-
-  /**
-   * Gets the plugin configuration from submitted form values.
-   *
-   * @param array $form
-   *   The form elements as provided by self::formElements().
-   * @param array $form_state
-   *   The form's global state.
-   *
-   * @return array
-   *   The exact same array as self::getConfiguration(), but with values from
-   *   $form_state.
-   */
-  public static function getConfigurationFromFormValues(array $form, array &$form_state);
 }

@@ -151,13 +151,54 @@ class BasicUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::formElements
+   * @covers ::buildConfigurationForm
    */
-  public function testFormElements() {
+  public function testBuildConfigurationForm() {
     $form = array();
     $form_state = array();
-    $form_elements = $this->lineItem->formElements($form, $form_state);
+    $form_elements = $this->lineItem->buildConfigurationForm($form, $form_state);
     $this->assertInternalType('array', $form_elements);
     $this->assertFileExists($form_elements['#attached']['css'][0]);
   }
+
+  /**
+   * @covers ::submitConfigurationForm
+   */
+  public function testSubmitConfigurationForm() {
+    $amount = mt_rand();
+    $currency_code = $this->randomName(3);
+    $description = $this->randomName();
+    $name = $this->randomName();
+    $payment_id = mt_rand();
+    $quantity = mt_rand();
+
+    $form = array(
+      '#parents' => array('foo', 'bar'),
+    );
+    $form_state = array(
+      'values' => array(
+        'foo' => array(
+          'bar' => array(
+            'amount' => array(
+              'amount' => $amount,
+              'currency_code' => $currency_code,
+            ),
+            'description' => $description,
+            'name' => $name,
+            'payment_id' => $payment_id,
+            'quantity' => $quantity,
+          ),
+        ),
+      ),
+    );
+    $this->lineItem->submitConfigurationForm($form, $form_state);
+
+    $this->assertSame($amount, $this->lineItem->getAmount());
+    $this->assertSame($currency_code, $this->lineItem->getCurrencyCode());
+    $this->assertSame($description, $this->lineItem->getDescription());
+    $this->assertSame($name, $this->lineItem->getName());
+    $this->assertSame($payment_id, $this->lineItem->getPaymentId());
+    $this->assertSame($quantity, $this->lineItem->getQuantity());
+  }
+
 }

@@ -47,9 +47,9 @@ class BasicWebTest extends WebTestBase {
   }
 
   /**
-   * Tests formElements().
+   * Tests the configuration form.
    */
-  protected function testFormElements() {
+  protected function testConfigurationForm() {
     $line_item_data = array(
       'line_item[amount][amount]' => '123.45',
       'line_item[quantity]' => '3',

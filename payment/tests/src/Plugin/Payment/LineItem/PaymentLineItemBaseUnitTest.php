@@ -52,9 +52,8 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
     $plugin_id = $this->randomName();
     $plugin_definition = array();
     $this->lineItem = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase')
-      ->setMethods(array('formElements', 'getAmount', 'getConfigurationFromFormValues', 'getCurrencyCode', 'getDescription'))
       ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->math))
-      ->getMock();
+      ->getMockForAbstractClass();
   }
 
   /**
@@ -170,6 +169,33 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
     );
 
     $this->assertSame($default_configuration, $this->lineItem->defaultConfiguration());
+  }
+
+  /**
+   * @covers ::buildConfigurationForm
+   */
+  public function testBuildConfigurationForm() {
+    $form = array();
+    $form_state = array();
+    $this->assertSame(array(), $this->lineItem->buildConfigurationForm($form, $form_state));
+  }
+
+  /**
+   * @covers ::validateConfigurationForm
+   */
+  public function testValidateConfigurationForm() {
+    $form = array();
+    $form_state = array();
+    $this->lineItem->validateConfigurationForm($form, $form_state);
+  }
+
+  /**
+   * @covers ::submitConfigurationForm
+   */
+  public function testSubmitConfigurationForm() {
+    $form = array();
+    $form_state = array();
+    $this->lineItem->submitConfigurationForm($form, $form_state);
   }
 
 }

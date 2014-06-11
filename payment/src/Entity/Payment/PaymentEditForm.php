@@ -14,8 +14,6 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\currency\Entity\Currency;
 use Drupal\payment\Element\PaymentLineItemsInput;
-use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface;
-use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -37,12 +35,9 @@ class PaymentEditForm extends ContentEntityForm {
    *   The entity manager.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translator.
-   * @param \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface
-   *   The payment line item manager.
    */
-  function __construct(EntityManagerInterface $entity_manager, TranslationInterface $string_translation, PaymentLineItemManagerInterface $payment_line_item_manager) {
+  function __construct(EntityManagerInterface $entity_manager, TranslationInterface $string_translation) {
     parent::__construct($entity_manager);
-    $this->paymentLineItemManager = $payment_line_item_manager;
     $this->stringTranslation = $string_translation;
   }
 
@@ -50,7 +45,7 @@ class PaymentEditForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('entity.manager'), $container->get('string_translation'), $container->get('plugin.manager.payment.line_item'));
+    return new static($container->get('entity.manager'), $container->get('string_translation'));
   }
 
   /**
@@ -67,17 +62,10 @@ class PaymentEditForm extends ContentEntityForm {
       '#default_value' => $payment->getCurrencyCode(),
       '#required' => TRUE,
     );
-    $line_items_data = array();
-    foreach ($payment->getLineItems() as $line_item) {
-      $line_items_data[] = array(
-        'plugin_id' => $line_item->getPluginId(),
-        'plugin_configuration' => $line_item->getConfiguration(),
-      );
-    }
     $form['payment_line_items'] = array(
       '#type' => 'payment_line_items_input',
       '#title' => $this->t('Line items'),
-      '#default_value' => $line_items_data,
+      '#default_value' => $payment->getLineItems(),
       '#required' => TRUE,
       '#currency_code' => '',
     );
@@ -93,8 +81,7 @@ class PaymentEditForm extends ContentEntityForm {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $values = $form_state['values'];
     $payment->setCurrencyCode($values['payment_currency_code']);
-    foreach (PaymentLineItemsInput::getLineItemsData($form['payment_line_items'], $form_state) as $line_item_data) {
-      $line_item = $this->paymentLineItemManager->createInstance($line_item_data['plugin_id'], $line_item_data['plugin_configuration']);
+    foreach (PaymentLineItemsInput::getLineItems($form['payment_line_items'], $form_state) as $line_item) {
       $payment->setLineItem($line_item);
     }
   }

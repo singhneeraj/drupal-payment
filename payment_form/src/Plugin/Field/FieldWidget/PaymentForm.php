@@ -14,6 +14,7 @@ use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Element\PaymentLineItemsInput;
+use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -31,6 +32,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class PaymentForm extends WidgetBase implements ContainerFactoryPluginInterface {
 
   /**
+   * The payment line item manager.
+   *
+   * @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface
+   */
+  protected $paymentLineItemManager;
+
+  /**
    * Constructs a new class instance.
    *
    * @param array $plugin_id
@@ -43,9 +51,12 @@ class PaymentForm extends WidgetBase implements ContainerFactoryPluginInterface 
    *   The widget settings.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translator.
+   * @param \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface $payment_line_item_manager
+   *   The payment line item manager.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, TranslationInterface $string_translation) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, TranslationInterface $string_translation, PaymentLineItemManagerInterface $payment_line_item_manager) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings);
+    $this->paymentLineItemManager = $payment_line_item_manager;
     $this->stringTranslation = $string_translation;
   }
 
@@ -53,7 +64,7 @@ class PaymentForm extends WidgetBase implements ContainerFactoryPluginInterface 
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($plugin_id, $plugin_definition, $configuration['field_definition'], $configuration['settings'], $container->get('string_translation'));
+    return new static($plugin_id, $plugin_definition, $configuration['field_definition'], $configuration['settings'], $container->get('string_translation'), $container->get('plugin.manager.payment.line_item'));
   }
 
   /**
@@ -81,18 +92,15 @@ class PaymentForm extends WidgetBase implements ContainerFactoryPluginInterface 
       '#value' => $element['#array_parents'],
       '#type' => 'value',
     );
-    $line_items_data = array();
+    $line_items = array();
     foreach ($element['#items'] as $item) {
       if ($item->plugin_id) {
-        $line_items_data[] = array(
-          'plugin_id' => $item->plugin_id,
-          'plugin_configuration' => $item->plugin_configuration,
-        );
+        $line_items[] = $this->paymentLineItemManager->createInstance($item->plugin_id, $item->plugin_configuration);
       }
     }
     $element['line_items'] = array(
       '#cardinality' => $this->fieldDefinition->getCardinality(),
-      '#default_value' => $line_items_data,
+      '#default_value' => $line_items,
       '#type' => 'payment_line_items_input',
     );
 
@@ -105,7 +113,15 @@ class PaymentForm extends WidgetBase implements ContainerFactoryPluginInterface 
   public function massageFormValues(array $values, array $form, array &$form_state) {
     $element = NestedArray::getValue($form, array_merge(array_slice($values['array_parents'], count($form['#array_parents'])), array('line_items')));
 
-    return PaymentLineItemsInput::getLineItemsData($element, $form_state);
+    $line_items_data = array();
+    foreach (PaymentLineItemsInput::getLineItems($element, $form_state) as $line_item) {
+      $line_items_data[] = array(
+        'plugin_id' => $line_item->getPluginId(),
+        'plugin_configuration' => $line_item->getConfiguration(),
+      );
+    }
+
+    return $line_items_data;
   }
 
 }

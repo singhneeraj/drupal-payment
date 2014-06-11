@@ -33,17 +33,10 @@ class PaymentLineItemElement implements ContainerInjectionInterface, FormInterfa
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
-    $line_item_data = array();
-    foreach (Generate::createPaymentLineItems() as $line_item) {
-      $line_item_data[] = array(
-        'plugin_configuration' => $line_item->getConfiguration(),
-        'plugin_id' => $line_item->getPluginId(),
-      );
-    }
     // Nest the element to make sure that works.
     $form['container']['line_item'] = array(
       '#cardinality' => 4,
-      '#default_value' => $line_item_data,
+      '#default_value' => Generate::createPaymentLineItems(),
       '#type' => 'payment_line_items_input',
     );
     $form['submit'] = array(
@@ -64,6 +57,13 @@ class PaymentLineItemElement implements ContainerInjectionInterface, FormInterfa
    * {@inheritdoc}
    */
   public function submitForm(array &$form, array &$form_state) {
-    \Drupal::state()->set('payment_test_line_item_form_element', PaymentLineItemsInput::getLineItemsData($form['container']['line_item'], $form_state));
+    $line_items_data = array();
+    foreach (PaymentLineItemsInput::getLineItems($form['container']['line_item'], $form_state) as $line_item) {
+      $line_items_data[] = array(
+        'plugin_id' => $line_item->getPluginId(),
+        'plugin_configuration' => $line_item->getConfiguration(),
+      );
+    }
+    \Drupal::state()->set('payment_test_line_item_form_element', $line_items_data);
   }
 }
