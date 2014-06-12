@@ -68,18 +68,6 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::instanceSettingsForm
-   */
-  public function testInstanceSettingsForm() {
-    $form = array();
-    $form_state = array();
-    $form = $this->fieldType->instanceSettingsForm($form, $form_state);
-    $this->assertInternalType('array', $form);
-    $this->arrayHasKey('currency_code', $form);
-    $this->arrayHasKey('line_items', $form);
-  }
-
-  /**
    * @covers ::settingsForm
    */
   public function testSettingsForm() {

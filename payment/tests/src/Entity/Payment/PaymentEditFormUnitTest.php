@@ -103,59 +103,6 @@ class PaymentEditFormUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::copyFormValuesToEntity
-   */
-  public function testCopyFormValuesToEntity() {
-    $currency_code = $this->randomName();
-
-    $this->payment->expects($this->once())
-      ->method('setCurrencyCode')
-      ->with($currency_code);
-
-    $line_items_data = array(
-      array(
-        'plugin_id' => $this->randomName(),
-        'plugin_configuration' => array(
-          'foo' => $this->randomName(),
-        ),
-      ),
-      array(
-        'plugin_id' => $this->randomName(),
-        'plugin_configuration' => array(
-          'bar' => $this->randomName(),
-        ),
-      ),
-    );
-    $name = $this->randomName();
-    $form = array(
-      'payment_line_items' => array(
-        '#name' => $name,
-      ),
-    );
-    $form_state = array(
-      'payment_line_item' => array(
-        $name => $line_items_data,
-      ),
-      'values' => array(
-        'payment_currency_code' => $currency_code,
-      ),
-    );
-    $this->form->setFormDisplay($this->formDisplay, $form_state);
-
-    $line_item_0 = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface');
-    $line_item_1 = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface');
-
-    $this->payment->expects($this->exactly(2))
-      ->method('setLineItem')
-      ->with($this->isInstanceOf('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface'));
-
-    $method = new \ReflectionMethod($this->form, 'copyFormValuesToEntity');
-    $method->setAccessible(TRUE);
-
-    $method->invokeArgs($this->form, array($this->payment, $form, &$form_state));
-  }
-
-  /**
    * @covers ::form
    */
   public function testForm() {
