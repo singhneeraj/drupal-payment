@@ -40,13 +40,6 @@ class PaymentMethodConfigurationManagerUnitTest extends UnitTestCase {
   protected $factory;
 
   /**
-   * The plugin factory used for testing.
-   *
-   * @var \Drupal\Core\Language\LanguageManager|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $languageManager;
-
-  /**
    * The module handler used for testing.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -83,23 +76,13 @@ class PaymentMethodConfigurationManagerUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $language = (object) array(
-      'id' => $this->randomName(),
-    );
-    $this->languageManager = $this->getMockBuilder('\Drupal\Core\Language\LanguageManager')
-      ->disableOriginalConstructor()
-      ->getMock();
-    $this->languageManager->expects($this->any())
-      ->method('getCurrentLanguage')
-      ->will($this->returnValue($language));
-
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
 
     $this->cache = $this->getMock('\Drupal\Core\Cache\CacheBackendInterface');
 
     $namespaces = new ArrayObject();
 
-    $this->manager = new PaymentMethodConfigurationManager($namespaces, $this->cache, $this->languageManager, $this->moduleHandler);
+    $this->manager = new PaymentMethodConfigurationManager($namespaces, $this->cache, $this->moduleHandler);
     $discovery_property = new \ReflectionProperty($this->manager, 'discovery');
     $discovery_property->setAccessible(TRUE);
     $discovery_property->setValue($this->manager, $this->discovery);

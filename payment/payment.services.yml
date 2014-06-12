@@ -1,32 +1,32 @@
 services:
   plugin.manager.payment.type:
     class: Drupal\payment\Plugin\Payment\Type\PaymentTypeManager
-    arguments: ['@container.namespaces', '@cache.discovery', '@language_manager', '@module_handler', '@class_resolver']
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@class_resolver']
     tags:
       - { name: plugin_manager_cache_clear}
   plugin.manager.payment.line_item:
     class: Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManager
-    arguments: ['@container.namespaces', '@cache.discovery', '@language_manager', '@module_handler']
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler']
     tags:
       - { name: plugin_manager_cache_clear}
   plugin.manager.payment.method:
     class: Drupal\payment\Plugin\Payment\Method\PaymentMethodManager
-    arguments: ['@container.namespaces', '@cache.discovery', '@language_manager', '@module_handler', '@class_resolver']
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@class_resolver']
     tags:
       - { name: plugin_manager_cache_clear}
   plugin.manager.payment.method_configuration:
     class: Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManager
-    arguments: ['@container.namespaces', '@cache.discovery', '@language_manager', '@module_handler']
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler']
     tags:
       - { name: plugin_manager_cache_clear}
   plugin.manager.payment.method_selector:
     class: Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManager
-    arguments: ['@container.namespaces', '@cache.discovery', '@language_manager', '@module_handler']
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler']
     tags:
       - { name: plugin_manager_cache_clear}
   plugin.manager.payment.status:
     class: Drupal\payment\Plugin\Payment\Status\PaymentStatusManager
-    arguments: ['@container.namespaces', '@cache.discovery', '@language_manager', '@module_handler', '@class_resolver']
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@class_resolver']
     tags:
       - { name: plugin_manager_cache_clear}
   payment.hook.element_info:

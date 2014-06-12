@@ -31,17 +31,15 @@ class PaymentTypeManager extends DefaultPluginManager implements PaymentTypeMana
    *   keyed by the corresponding namespace to look for plugin implementations.
    * @param \Drupal\Core\Cache\CacheBackendInterface $cache_backend
    *   Cache backend instance to use.
-   * @param \Drupal\Core\Language\LanguageManager $language_manager
-   *   The language manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler to invoke the alter hook with.
    * @param \Drupal\Core\DependencyInjection\ClassResolverInterface $class_resolver
    *   The class_resolver.
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, LanguageManager $language_manager, ModuleHandlerInterface $module_handler, ClassResolverInterface $class_resolver) {
+  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, ClassResolverInterface $class_resolver) {
     parent::__construct('Plugin/Payment/Type', $namespaces, $module_handler, '\Drupal\payment\Annotations\PaymentType');
     $this->alterInfo('payment_type');
-    $this->setCacheBackend($cache_backend, $language_manager, 'payment_type');
+    $this->setCacheBackend($cache_backend, 'payment_type');
     $this->classResolver = $class_resolver;
   }
 

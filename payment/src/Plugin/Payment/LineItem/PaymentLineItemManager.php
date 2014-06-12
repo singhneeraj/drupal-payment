@@ -25,15 +25,13 @@ class PaymentLineItemManager extends DefaultPluginManager implements PaymentLine
    *   The namespaces in which to look for plugins.
    * @param \Drupal\Core\Cache\CacheBackendInterface $cache_backend
    *   The cache backend.
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
-   *   The language manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, LanguageManagerInterface $language_manager, ModuleHandlerInterface $module_handler) {
+  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
     parent::__construct('Plugin/Payment/LineItem', $namespaces, $module_handler, '\Drupal\payment\Annotations\PaymentLineItem');
     $this->alterInfo('payment_line_item');
-    $this->setCacheBackend($cache_backend, $language_manager, 'payment_line_item');
+    $this->setCacheBackend($cache_backend, 'payment_line_item');
   }
 
   /**
