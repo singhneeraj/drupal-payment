@@ -70,13 +70,9 @@ class PaymentStatusWebTest extends WebTestBase {
     // Assert that all plugins are visible.
     $manager = Payment::statusManager();
     foreach ($manager->getDefinitions() as $definition) {
-      // @todo Uncomment the following assert once
-      //   https://drupal.org/node/2282453 has been fixed.
-//    $this->assertText($definition['label']);
+    $this->assertText($definition['label']);
       if ($definition['description']) {
-        // @todo Uncomment the following assert once
-        //   https://drupal.org/node/2282453 has been fixed.
-//        $this->assertText($definition['description']);
+        $this->assertText($definition['description']);
       }
     }
 
