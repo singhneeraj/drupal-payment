@@ -388,18 +388,18 @@ class Payment extends ContentEntityBase implements PaymentInterface {
       ->setReadOnly(TRUE);
     $fields['currency'] = FieldDefinition::create('entity_reference')
       ->setLabel(t('Currency'))
+      ->setDefaultValue(0)
       ->setSettings(array(
         'target_type' => 'currency',
-        'default_value' => 0,
       ));
     $fields['id'] = FieldDefinition::create('integer')
       ->setLabel(t('Payment ID'))
       ->setReadOnly(TRUE);
     $fields['owner'] = FieldDefinition::create('entity_reference')
       ->setLabel(t('Owner'))
+      ->setDefaultValue(0)
       ->setSettings(array(
         'target_type' => 'user',
-        'default_value' => 0,
       ));
     $fields['uuid'] = FieldDefinition::create('uuid')
       ->setLabel(t('Universally Unique ID'))
