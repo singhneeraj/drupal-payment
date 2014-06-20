@@ -56,7 +56,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
     $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
     $this->widget = $this->getMockBuilder('\Drupal\payment_reference\Plugin\Field\FieldWidget\PaymentReference')
-      ->setConstructorArgs(array($this->randomName(), array(), $this->fieldInstanceConfig, array(), $this->currentUser))
+      ->setConstructorArgs(array($this->randomName(), array(), $this->fieldInstanceConfig, array(), array(), $this->currentUser))
       ->setMethods(array('getFieldSetting'))
       ->getMock();
   }

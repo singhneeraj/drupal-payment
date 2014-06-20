@@ -48,11 +48,13 @@ class PaymentReference extends WidgetBase implements ContainerFactoryPluginInter
    *   The definition of the field to which the widget is associated.
    * @param array $settings
    *   The widget settings.
+   * @param array $third_party_settings
+   *   Any third party settings.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
    */
-  public function __construct($plugin_id, array $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, AccountInterface $current_user) {
-    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings);
+  public function __construct($plugin_id, array $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, AccountInterface $current_user) {
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->currentUser = $current_user;
   }
 
@@ -60,7 +62,7 @@ class PaymentReference extends WidgetBase implements ContainerFactoryPluginInter
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($plugin_id, $plugin_definition, $configuration['field_definition'], $configuration['settings'], $container->get('current_user'));
+    return new static($plugin_id, $plugin_definition, $configuration['field_definition'], $configuration['settings'], $configuration['third_party_settings'], $container->get('current_user'));
   }
 
   /**

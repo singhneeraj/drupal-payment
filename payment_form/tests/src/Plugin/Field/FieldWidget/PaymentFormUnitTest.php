@@ -61,12 +61,13 @@ class PaymentFormUnitTest extends UnitTestCase {
     $plugin_definition = array();
     $field_definition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
     $settings = array();
+    $third_party_settings = array();
 
     $this->paymentLineItemManager = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface');
 
     $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
-    $this->fieldWidget = new PaymentForm($plugin_id, $plugin_definition, $field_definition, $settings, $this->stringTranslation, $this->paymentLineItemManager);
+    $this->fieldWidget = new PaymentForm($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings, $this->stringTranslation, $this->paymentLineItemManager);
   }
 
   /**
@@ -86,6 +87,7 @@ class PaymentFormUnitTest extends UnitTestCase {
     $configuration = array(
       'field_definition' => $field_definition,
       'settings' => array(),
+      'third_party_settings' => array(),
     );
     $plugin_definition = array();
     $plugin_id = $this->randomName();

@@ -49,13 +49,15 @@ class PaymentForm extends WidgetBase implements ContainerFactoryPluginInterface 
    *   The definition of the field to which the widget is associated.
    * @param array $settings
    *   The widget settings.
+   * @param array $third_party_settings
+   *   Any third party settings.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translator.
    * @param \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface $payment_line_item_manager
    *   The payment line item manager.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, TranslationInterface $string_translation, PaymentLineItemManagerInterface $payment_line_item_manager) {
-    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings);
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, TranslationInterface $string_translation, PaymentLineItemManagerInterface $payment_line_item_manager) {
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->paymentLineItemManager = $payment_line_item_manager;
     $this->stringTranslation = $string_translation;
   }
@@ -64,7 +66,7 @@ class PaymentForm extends WidgetBase implements ContainerFactoryPluginInterface 
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($plugin_id, $plugin_definition, $configuration['field_definition'], $configuration['settings'], $container->get('string_translation'), $container->get('plugin.manager.payment.line_item'));
+    return new static($plugin_id, $plugin_definition, $configuration['field_definition'], $configuration['settings'], $configuration['third_party_settings'], $container->get('string_translation'), $container->get('plugin.manager.payment.line_item'));
   }
 
   /**

@@ -90,7 +90,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->fieldFormatter = new PaymentForm('payment_form', array(), $this->fieldDefinition, array(), $this->randomName(), $this->randomName());
+    $this->fieldFormatter = new PaymentForm('payment_form', array(), $this->fieldDefinition, array(), $this->randomName(), $this->randomName(), array());
   }
 
   /**
