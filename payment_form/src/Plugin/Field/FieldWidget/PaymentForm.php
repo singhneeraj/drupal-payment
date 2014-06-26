@@ -101,7 +101,7 @@ class PaymentForm extends WidgetBase implements ContainerFactoryPluginInterface 
       }
     }
     $element['line_items'] = array(
-      '#cardinality' => $this->fieldDefinition->getCardinality(),
+      '#cardinality' => $this->fieldDefinition->getFieldStorageDefinition()->getCardinality(),
       '#default_value' => $line_items,
       '#type' => 'payment_line_items_input',
     );

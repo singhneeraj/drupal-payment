@@ -7,7 +7,7 @@
 
 namespace Drupal\payment_reference\Tests\Plugin\Field\FieldWidget;
 
-use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -38,7 +38,7 @@ class PaymentReferenceWebTest extends WebTestBase {
     // Create the field and field instance.
     $field_name = strtolower($this->randomName());
     entity_create('field_config', array(
-      'cardinality' => FieldDefinitionInterface::CARDINALITY_UNLIMITED,
+      'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
       'entity_type' => 'user',
       'name' => $field_name,
       'type' => 'payment_reference',

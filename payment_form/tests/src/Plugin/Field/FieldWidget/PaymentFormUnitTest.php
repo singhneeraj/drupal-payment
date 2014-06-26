@@ -18,6 +18,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class PaymentFormUnitTest extends UnitTestCase {
 
   /**
+   * The field definition.
+   *
+   * @var \Drupal\Core\Field\FieldDefinitionInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $fieldDefinition;
+
+  /**
    * The field widget under test.
    *
    * @var \Drupal\payment_form\Plugin\Field\FieldWidget\PaymentForm
@@ -59,7 +66,7 @@ class PaymentFormUnitTest extends UnitTestCase {
   protected function setUp() {
     $plugin_id = $this->randomName();
     $plugin_definition = array();
-    $field_definition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
+    $this->fieldDefinition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
     $settings = array();
     $third_party_settings = array();
 
@@ -67,7 +74,7 @@ class PaymentFormUnitTest extends UnitTestCase {
 
     $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
-    $this->fieldWidget = new PaymentForm($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings, $this->stringTranslation, $this->paymentLineItemManager);
+    $this->fieldWidget = new PaymentForm($plugin_id, $plugin_definition, $this->fieldDefinition, $settings, $third_party_settings, $this->stringTranslation, $this->paymentLineItemManager);
   }
 
   /**
@@ -152,6 +159,12 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @covers ::formElementProcess
    */
   public function testFormElementProcess() {
+    $field_storage_definition = $this->getMock('\Drupal\Core\Field\FieldStorageDefinitionInterface');
+
+    $this->fieldDefinition->expects($this->atLeastOnce())
+      ->method('getFieldStorageDefinition')
+      ->will($this->returnValue($field_storage_definition));
+
     $iterator = new \ArrayIterator(array(
       (object) array(
       'plugin_configuration' => array(),
