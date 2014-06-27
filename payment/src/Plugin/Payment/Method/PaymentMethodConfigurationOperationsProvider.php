@@ -13,7 +13,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Plugin\Payment\OperationsProviderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Provides operations for payment methods based on config entities.
@@ -39,14 +39,14 @@ abstract class PaymentMethodConfigurationOperationsProvider implements Operation
   /**
    * The request.
    *
-   * @var \Symfony\Component\HttpFoundation\Request
+   * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $request;
+  protected $requestStack;
 
   /**
    * Constructs a new class instance.
    *
-   * @param \Symfony\Component\HttpFoundation\Request $request
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
    *   The request.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translator.
@@ -55,10 +55,10 @@ abstract class PaymentMethodConfigurationOperationsProvider implements Operation
    * @param \Drupal\Core\Entity\EntityListBuilderInterface $payment_method_configuration_list_builder
    *   The payment method configuration list builder.
    */
-  public function __construct(Request $request, TranslationInterface $string_translation, EntityStorageInterface $payment_method_configuration_storage, EntityListBuilderInterface $payment_method_configuration_list_builder) {
+  public function __construct(RequestStack $request_stack, TranslationInterface $string_translation, EntityStorageInterface $payment_method_configuration_storage, EntityListBuilderInterface $payment_method_configuration_list_builder) {
     $this->paymentMethodConfigurationListBuilder = $payment_method_configuration_list_builder;
     $this->paymentMethodConfigurationStorage = $payment_method_configuration_storage;
-    $this->request = $request;
+    $this->requestStack = $request_stack;
     $this->stringTranslation = $string_translation;
   }
 
@@ -69,7 +69,7 @@ abstract class PaymentMethodConfigurationOperationsProvider implements Operation
     /** @var \Drupal\Core\Entity\EntityManagerInterface $entity_manager */
     $entity_manager = $container->get('entity.manager');
 
-    return new static($container->get('request'), $container->get('string_translation'), $entity_manager->getStorage('payment_method_configuration'), $entity_manager->getListBuilder('payment_method_configuration'));
+    return new static($container->get('request_stack'), $container->get('string_translation'), $entity_manager->getStorage('payment_method_configuration'), $entity_manager->getListBuilder('payment_method_configuration'));
   }
 
   /**
@@ -99,7 +99,7 @@ abstract class PaymentMethodConfigurationOperationsProvider implements Operation
       if (array_key_exists($name, $titles)) {
         $operations[$name] = $payment_method_configuration_operation;
         $operations[$name]['title'] = $titles[$name];
-        $operations[$name]['query']['destination'] = $this->request->attributes->get('_system_path');
+        $operations[$name]['query']['destination'] = $this->requestStack->getCurrentRequest()->attributes->get('_system_path');
       }
     }
 

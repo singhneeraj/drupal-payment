@@ -8,14 +8,12 @@ namespace Drupal\payment_reference\Plugin\Payment\Type;
 
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\HttpKernel;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -45,13 +43,6 @@ class PaymentReference extends PaymentTypeBase implements ContainerFactoryPlugin
   protected $httpKernel;
 
   /**
-   * The request.
-   *
-   * @var \Symfony\Component\HttpFoundation\Request
-   */
-  protected $request;
-
-  /**
    * A URL generator.
    *
    * @var \Drupal\Core\Routing\UrlGeneratorInterface
@@ -67,18 +58,14 @@ class PaymentReference extends PaymentTypeBase implements ContainerFactoryPlugin
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\HttpKernel $http_kernel
-   * @param \Symfony\Component\HttpFoundation\Request $request
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher.
    * @param \Drupal\Core\Routing\UrlGeneratorInterface $url_generator
    * @param \Drupal\Core\Entity\EntityStorageInterface $field_instance_config_storage
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, HttpKernel $http_kernel, Request $request, ModuleHandlerInterface $module_handler , EventDispatcherInterface $event_dispatcher, UrlGeneratorInterface $url_generator, EntityStorageInterface $field_instance_config_storage) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler , EventDispatcherInterface $event_dispatcher, UrlGeneratorInterface $url_generator, EntityStorageInterface $field_instance_config_storage) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $module_handler, $event_dispatcher);
-    $this->httpKernel = $http_kernel;
-    $this->request = $request;
     $this->urlGenerator = $url_generator;
     $this->fieldInstanceConfigStorage = $field_instance_config_storage;
   }
@@ -91,8 +78,6 @@ class PaymentReference extends PaymentTypeBase implements ContainerFactoryPlugin
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('http_kernel'),
-      $container->get('request'),
       $container->get('module_handler'),
       $container->get('event_dispatcher'),
       $container->get('url_generator'),

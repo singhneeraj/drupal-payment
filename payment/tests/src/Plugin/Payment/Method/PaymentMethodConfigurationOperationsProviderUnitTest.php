@@ -41,9 +41,9 @@ class PaymentMethodConfigurationOperationsProviderUnitTest extends UnitTestCase 
   /**
    * The request.
    *
-   * @var \Symfony\Component\HttpFoundation\Request|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Symfony\Component\HttpFoundation\RequestStack|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $request;
+  protected $requestStack;
 
   /**
    * The string translation service.
@@ -73,14 +73,14 @@ class PaymentMethodConfigurationOperationsProviderUnitTest extends UnitTestCase 
 
     $this->paymentMethodConfigurationStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
 
-    $this->request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
+    $this->requestStack = $this->getMockBuilder('\Symfony\Component\HttpFoundation\RequestStack')
       ->disableOriginalConstructor()
       ->getMock();
 
     $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
     $this->provider = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\PaymentMethodConfigurationOperationsProvider')
-      ->setConstructorArgs(array($this->request, $this->stringTranslation, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationListBuilder))
+      ->setConstructorArgs(array($this->requestStack, $this->stringTranslation, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationListBuilder))
       ->getMockForAbstractClass();
   }
 
@@ -101,7 +101,7 @@ class PaymentMethodConfigurationOperationsProviderUnitTest extends UnitTestCase 
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
       array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $entity_manager),
-      array('request', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->request),
+      array('request_stack', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->requestStack),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
     $container->expects($this->any())
@@ -132,11 +132,15 @@ class PaymentMethodConfigurationOperationsProviderUnitTest extends UnitTestCase 
     );
 
     $destination = $this->randomName();
-
     $attributes = new ParameterBag();
     $attributes->set('_system_path', $destination);
-
-    $this->request->attributes = $attributes;
+    /** @var \Symfony\Component\HttpFoundation\Request|\PHPUnit_Framework_MockObject_MockObject $request */
+    $request = $this->getMock('\Symfony\Component\HttpFoundation\Request');
+    $request->attributes = new ParameterBag();
+    $request->attributes->set('_system_path', $destination);
+    $this->requestStack->expects($this->atLeastOnce())
+      ->method('getCurrentRequest')
+      ->will($this->returnValue($request));
 
     $plugin_id = $this->randomName();
 

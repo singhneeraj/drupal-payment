@@ -40,9 +40,9 @@ class BasicOperationsProviderUnitTest extends UnitTestCase {
   /**
    * The request.
    *
-   * @var \Symfony\Component\HttpFoundation\Request|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Symfony\Component\HttpFoundation\RequestStack|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $request;
+  protected $requestStack;
 
   /**
    * The string translation service.
@@ -72,13 +72,13 @@ class BasicOperationsProviderUnitTest extends UnitTestCase {
 
     $this->paymentMethodConfigurationStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
 
-    $this->request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
+    $this->requestStack = $this->getMockBuilder('\Symfony\Component\HttpFoundation\RequestStack')
       ->disableOriginalConstructor()
       ->getMock();
 
     $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
-    $this->provider = new BasicOperationsProvider($this->request, $this->stringTranslation, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationListBuilder);
+    $this->provider = new BasicOperationsProvider($this->requestStack, $this->stringTranslation, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationListBuilder);
   }
 
   /**

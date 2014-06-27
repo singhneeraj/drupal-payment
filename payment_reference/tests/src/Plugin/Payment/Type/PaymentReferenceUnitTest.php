@@ -94,15 +94,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
 
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
 
-    $http_kernel = $this->getMockBuilder('\Drupal\Core\HttpKernel')
-      ->disableOriginalConstructor()
-      ->getMock();
-
-    $request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
-      ->disableOriginalConstructor()
-      ->getMock();
-
-    $this->paymentType = new PaymentReference(array(), 'payment_reference', array(), $http_kernel, $request, $this->moduleHandler, $this->eventDispatcher, $url_generator, $field_instance_config_storage);
+    $this->paymentType = new PaymentReference(array(), 'payment_reference', array(), $this->moduleHandler, $this->eventDispatcher, $url_generator, $field_instance_config_storage);
 
     $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()

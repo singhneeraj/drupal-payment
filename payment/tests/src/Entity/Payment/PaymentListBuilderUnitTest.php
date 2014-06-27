@@ -63,9 +63,9 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
   /**
    * The request.
    *
-   * @var \Symfony\Component\HttpFoundation\Request|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Symfony\Component\HttpFoundation\RequestStack|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $request;
+  protected $requestStack;
 
   /**
    * The string translation service.
@@ -103,7 +103,7 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
 
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
 
-    $this->request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
+    $this->requestStack = $this->getMockBuilder('\Symfony\Component\HttpFoundation\RequestStack')
       ->disableOriginalConstructor()
       ->getMock();
 
@@ -112,7 +112,7 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
       ->method('translate')
       ->will($this->returnArgument(0));
 
-    $this->listBuilder = new PaymentListBuilder($this->entityType, $this->entityStorage, $this->stringTranslation, $this->moduleHandler, $this->request, $this->date, $this->currencyStorage);
+    $this->listBuilder = new PaymentListBuilder($this->entityType, $this->entityStorage, $this->stringTranslation, $this->moduleHandler, $this->requestStack, $this->date, $this->currencyStorage);
   }
 
   /**
@@ -133,7 +133,7 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
       array('date', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->date),
       array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $entity_manager),
       array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
-      array('request', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->request),
+      array('request_stack', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->requestStack),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
     $container->expects($this->any())
@@ -353,8 +353,13 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
       ->will($this->returnValueMap($map));
 
     $destination = $this->randomName();
-    $this->request->attributes = new ParameterBag();
-    $this->request->attributes->set('_system_path', $destination);
+    /** @var \Symfony\Component\HttpFoundation\Request|\PHPUnit_Framework_MockObject_MockObject $request */
+    $request = $this->getMock('\Symfony\Component\HttpFoundation\Request');
+    $request->attributes = new ParameterBag();
+    $request->attributes->set('_system_path', $destination);
+    $this->requestStack->expects($this->atLeastOnce())
+      ->method('getCurrentRequest')
+      ->will($this->returnValue($request));
 
     $operations = $method->invoke($this->listBuilder, $payment);
     $expected_operations = array(

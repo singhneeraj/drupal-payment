@@ -15,7 +15,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Lists payment entities.
@@ -39,9 +39,9 @@ class PaymentListBuilder extends EntityListBuilder {
   /**
    * The request.
    *
-   * @var \Symfony\Component\HttpFoundation\Request
+   * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $request;
+  protected $requestStack;
 
   /**
    * Constructs a new class instance.
@@ -54,19 +54,19 @@ class PaymentListBuilder extends EntityListBuilder {
    *   The string translator.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
-   * @param \Symfony\Component\HttpFoundation\Request $request
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
    *   The request.
    * @param \Drupal\Core\DateTime\Date $date
    *   The date formatter.
    * @param \Drupal\Core\Entity\EntityStorageInterface $currency_storage
    *   The currency storage.
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $payment_storage, TranslationInterface $string_translation, ModuleHandlerInterface $module_handler, Request $request, Date $date, EntityStorageInterface $currency_storage) {
+  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $payment_storage, TranslationInterface $string_translation, ModuleHandlerInterface $module_handler, RequestStack $request_stack, Date $date, EntityStorageInterface $currency_storage) {
     parent::__construct($entity_type, $payment_storage);
     $this->currencyStorage = $currency_storage;
     $this->date = $date;
     $this->moduleHandler = $module_handler;
-    $this->request = $request;
+    $this->requestStack = $request_stack;
     $this->stringTranslation = $string_translation;
   }
 
@@ -77,7 +77,7 @@ class PaymentListBuilder extends EntityListBuilder {
     /** @var \Drupal\Core\Entity\EntityManagerInterface $entity_manager */
     $entity_manager = $container->get('entity.manager');
 
-    return new static($entity_type, $entity_manager->getStorage('payment'), $container->get('string_translation'), $container->get('module_handler'), $container->get('request'), $container->get('date'), $entity_manager->getStorage('currency'));
+    return new static($entity_type, $entity_manager->getStorage('payment'), $container->get('string_translation'), $container->get('module_handler'), $container->get('request_stack'), $container->get('date'), $entity_manager->getStorage('currency'));
   }
 
   /**
@@ -159,7 +159,7 @@ class PaymentListBuilder extends EntityListBuilder {
           'data-accepts' => 'application/vnd.drupal-modal',
         ),
         'query' => array(
-          'destination' => $this->request->attributes->get('_system_path'),
+          'destination' => $this->requestStack->getCurrentRequest()->attributes->get('_system_path'),
         ),
       ) + $entity->urlInfo('update-status-form')->toArray();
     }
