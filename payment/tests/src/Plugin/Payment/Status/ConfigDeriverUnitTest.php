@@ -2,24 +2,24 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Tests\Plugin\Payment\Status\ConfigDerivativeUnitTest.
+ * Contains \Drupal\payment\Tests\Plugin\Payment\Status\ConfigDeriverUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Payment\Status;
 
-use Drupal\payment\Plugin\Payment\Status\ConfigDerivative;
+use Drupal\payment\Plugin\Payment\Status\ConfigDeriver;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @coversDefaultClass \Drupal\payment\Plugin\Payment\Status\ConfigDerivative
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\Status\ConfigDeriver
  */
-class ConfigDerivativeUnitTest extends UnitTestCase {
+class ConfigDeriverUnitTest extends UnitTestCase {
 
   /**
    * The plugin deriver under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\ConfigDerivative
+   * @var \Drupal\payment\Plugin\Payment\Status\ConfigDeriver
    */
   protected $deriver;
 
@@ -36,7 +36,7 @@ class ConfigDerivativeUnitTest extends UnitTestCase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\Status\ConfigDerivative unit test',
+      'name' => '\Drupal\payment\Plugin\Payment\Status\ConfigDeriver unit test',
       'group' => 'Payment',
     );
   }
@@ -49,7 +49,7 @@ class ConfigDerivativeUnitTest extends UnitTestCase {
   public function setUp() {
     $this->paymentStatusStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
 
-    $this->deriver = new ConfigDerivative($this->paymentStatusStorage);
+    $this->deriver = new ConfigDeriver($this->paymentStatusStorage);
   }
 
   /**
@@ -73,8 +73,8 @@ class ConfigDerivativeUnitTest extends UnitTestCase {
     $configuration = array();
     $plugin_definition = array();
     $plugin_id = $this->randomName();
-    $form = ConfigDerivative::create($container, $configuration, $plugin_id, $plugin_definition);
-    $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\Status\ConfigDerivative', $form);
+    $form = ConfigDeriver::create($container, $configuration, $plugin_id, $plugin_definition);
+    $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\Status\ConfigDeriver', $form);
   }
 
   /**

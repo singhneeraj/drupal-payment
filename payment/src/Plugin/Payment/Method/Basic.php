@@ -22,7 +22,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * - status: The ID of the payment status plugin to set at payment execution.
  *
  * @PaymentMethod(
- *   derivative = "Drupal\payment\Plugin\Payment\Method\BasicDerivative",
+ *   deriver = "Drupal\payment\Plugin\Payment\Method\BasicDeriver",
  *   id = "payment_basic",
  *   operations_provider = "\Drupal\payment\Plugin\Payment\Method\BasicOperationsProvider",
  * )

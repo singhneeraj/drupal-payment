@@ -2,23 +2,23 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Plugin\Payment\Method\BasicDerivative.
+ * Contains \Drupal\payment\Plugin\Payment\Method\BasicDeriver.
  */
 
 namespace Drupal\payment\Plugin\Payment\Method;
 
-use Drupal\Component\Plugin\Derivative\DerivativeBase;
+use Drupal\Component\Plugin\Derivative\DeriverBase;
 use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Plugin\Discovery\ContainerDerivativeInterface;
+use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Retrieves payment method plugin definitions based on configuration entities.
+ * Derives payment method plugin definitions based on configuration entities.
  *
  * @see \Drupal\payment\Plugin\Payment\Method\Basic
  */
-class BasicDerivative extends DerivativeBase implements ContainerDerivativeInterface {
+class BasicDeriver extends DeriverBase implements ContainerDeriverInterface {
 
   /**
    * The payment method configuration manager.
@@ -74,4 +74,5 @@ class BasicDerivative extends DerivativeBase implements ContainerDerivativeInter
 
     return $this->derivatives;
   }
+
 }

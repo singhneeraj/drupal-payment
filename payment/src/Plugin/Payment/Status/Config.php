@@ -11,7 +11,7 @@ namespace Drupal\payment\Plugin\Payment\Status;
  *
  * @PaymentStatus(
  *   operations_provider = "\Drupal\payment\Plugin\Payment\Status\ConfigOperationsProvider",
- *   derivative = "\Drupal\payment\Plugin\Payment\Status\ConfigDerivative",
+ *   deriver = "\Drupal\payment\Plugin\Payment\Status\ConfigDeriver",
  *   id = "payment_config",
  *   label = @Translation("Configuration entity status")
  * )

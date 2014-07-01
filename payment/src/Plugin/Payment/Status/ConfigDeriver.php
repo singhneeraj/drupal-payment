@@ -2,20 +2,20 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Plugin\Payment\Status\ConfigDerivative.
+ * Contains \Drupal\payment\Plugin\Payment\Status\ConfigDeriver.
  */
 
 namespace Drupal\payment\Plugin\Payment\Status;
 
-use Drupal\Component\Plugin\Derivative\DerivativeBase;
+use Drupal\Component\Plugin\Derivative\DeriverBase;
 use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Plugin\Discovery\ContainerDerivativeInterface;
+use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Retrieves payment status plugin definitions based on configuration entities.
+ * Derives payment status plugin definitions based on configuration entities.
  */
-class ConfigDerivative extends DerivativeBase implements ContainerDerivativeInterface {
+class ConfigDeriver extends DeriverBase implements ContainerDeriverInterface {
 
   /**
    * The payment status storage controller.

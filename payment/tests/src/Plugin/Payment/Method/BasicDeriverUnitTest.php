@@ -2,24 +2,24 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Tests\Plugin\Payment\Method\BasicDerivativeUnitTest.
+ * Contains \Drupal\payment\Tests\Plugin\Payment\Method\BasicDeriverUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Payment\Method;
 
-use Drupal\payment\Plugin\Payment\Method\BasicDerivative;
+use Drupal\payment\Plugin\Payment\Method\BasicDeriver;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\BasicDerivative
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\BasicDeriver
  */
-class BasicDerivativeUnitTest extends UnitTestCase {
+class BasicDeriverUnitTest extends UnitTestCase {
 
   /**
    * The plugin deriver under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\BasicDerivative
+   * @var \Drupal\payment\Plugin\Payment\Method\BasicDeriver
    */
   protected $deriver;
 
@@ -43,7 +43,7 @@ class BasicDerivativeUnitTest extends UnitTestCase {
   public static function getInfo() {
     return array(
       'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\Method\BasicDerivative unit test',
+      'name' => '\Drupal\payment\Plugin\Payment\Method\BasicDeriver unit test',
       'group' => 'Payment',
     );
   }
@@ -58,7 +58,7 @@ class BasicDerivativeUnitTest extends UnitTestCase {
 
     $this->paymentMethodConfigurationStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
 
-    $this->deriver = new BasicDerivative($this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationManager);
+    $this->deriver = new BasicDeriver($this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationManager);
   }
 
   /**
@@ -80,8 +80,8 @@ class BasicDerivativeUnitTest extends UnitTestCase {
       ->method('get')
       ->will($this->returnValueMap($map));
 
-    $form = BasicDerivative::create($container, array(), '', array());
-    $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\Method\BasicDerivative', $form);
+    $form = BasicDeriver::create($container, array(), '', array());
+    $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\Method\BasicDeriver', $form);
   }
 
   /**
