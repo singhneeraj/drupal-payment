@@ -13,6 +13,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodUpdatePaymentStatusInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -78,8 +79,15 @@ class PaymentStatusForm extends EntityForm {
    * {@inheritdoc}
    */
   public function form(array $form, array &$form_state) {
+    $limit_plugin_ids = NULL;
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
+    $payment = $this->getEntity();
+    $payment_method = $payment->getPaymentMethod();
+    if ($payment_method instanceof PaymentMethodUpdatePaymentStatusInterface) {
+      $limit_plugin_ids = $payment_method->getSettablePaymentStatuses($this->currentUser, $payment);
+    }
     $form['plugin_id'] = array(
-      '#options' => $this->paymentStatusManager->options(),
+      '#options' => $this->paymentStatusManager->options($limit_plugin_ids),
       '#required' => TRUE,
       '#title' => $this->t('New status'),
       '#type' => 'select',

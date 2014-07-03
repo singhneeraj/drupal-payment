@@ -9,7 +9,9 @@ namespace Drupal\payment\Tests\Entity\Payment;
 
   use Drupal\Core\Language\Language;
   use Drupal\payment\Entity\Payment\PaymentStatusForm;
-use Drupal\Tests\UnitTestCase;
+  use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
+  use Drupal\payment\Plugin\Payment\Method\PaymentMethodUpdatePaymentStatusInterface;
+  use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Entity\Payment\PaymentStatusForm
@@ -115,8 +117,11 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
    * @covers ::form
    */
   public function testFormWithDateTimeModule() {
+    $settable_payment_status_ids = array($this->randomName());
+
     $this->paymentStatusManager->expects($this->once())
-      ->method('options');
+      ->method('options')
+      ->with($settable_payment_status_ids);
 
     $this->moduleHandler->expects($this->once())
       ->method('moduleExists')
@@ -125,6 +130,15 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
 
     $language = new Language();
 
+    $payment_method = $this->getMock('\Drupal\payment\Tests\Entity\Payment\PaymentStatusFormUnitTestDummyPaymentMethodUpdateStatusInterface');
+    $payment_method->expects($this->once())
+      ->method('getSettablePaymentStatuses')
+      ->with($this->currentUser)
+      ->will($this->returnValue($settable_payment_status_ids));
+
+    $this->payment->expects($this->atLeastOnce())
+      ->method('getPaymentMethod')
+      ->will($this->returnValue($payment_method));
     $this->payment->expects($this->any())
       ->method('language')
       ->will($this->returnValue($language));
@@ -258,4 +272,10 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
     $this->form->submit($form, $form_state);
   }
 
+}
+
+/**
+ * Extends two interfaces, because we can only mock one.
+ */
+interface PaymentStatusFormUnitTestDummyPaymentMethodUpdateStatusInterface extends PaymentMethodUpdatePaymentStatusInterface, PaymentMethodInterface {
 }

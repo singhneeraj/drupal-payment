@@ -60,20 +60,23 @@ class PaymentStatusManager extends DefaultPluginManager implements PaymentStatus
   /**
    * {@inheritdoc}
    */
-  public function options() {
-    return $this->optionsLevel($this->hierarchy(), 0);
+  public function options(array $limit_plugin_ids = NULL) {
+    return $this->optionsLevel($this->hierarchy($limit_plugin_ids), 0);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function hierarchy() {
+  public function hierarchy(array $limit_plugin_ids = NULL) {
     static $hierarchy = NULL;
 
     if (is_null($hierarchy)) {
       $parents = array();
       $children = array();
       $definitions = $this->getDefinitions();
+      if (is_array($limit_plugin_ids)) {
+        $definitions = array_intersect_key($definitions, array_flip($limit_plugin_ids));
+      }
       uasort($definitions, array($this, 'sort'));
       foreach ($definitions as $plugin_id => $definition) {
         if (!empty($definition['parent_id'])) {

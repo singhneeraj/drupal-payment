@@ -18,6 +18,11 @@ use Drupal\payment\Entity\PaymentInterface;
  * PluginFormInterface is used to configure the plugin for a payment. The form
  * is embedded in another form, so self::submitForm() must only save form
  * values to $this and not redirect the page, for instance.
+ *
+ * Plugins can additionally implement the following interfaces:
+ * - \Drupal\payment\Plugin\Payment\Method\PaymentMethodUpdatePaymentStatusInterface:
+ *   This interface lets payment methods limit if users can update payment's
+ *   statuses, and if so, which statuses can be set.
  */
 interface PaymentMethodInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface {
 

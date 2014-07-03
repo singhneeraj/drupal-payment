@@ -152,6 +152,9 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
         'label' => $child_label,
         'parent_id' => 'foo',
       ),
+      'baz' => array(
+        'label' => $this->randomName(),
+      ),
     );
     $this->discovery->expects($this->once())
       ->method('getDefinitions')
@@ -161,7 +164,7 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
         'bar' => array(),
       ),
     );
-    $this->assertSame($expected_hierarchy, $this->paymentStatusManager->hierarchy());
+    $this->assertSame($expected_hierarchy, $this->paymentStatusManager->hierarchy(array('foo', 'bar')));
   }
 
   /**
@@ -180,6 +183,9 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
         'label' => $child_label,
         'parent_id' => 'foo',
       ),
+      'baz' => array(
+        'label' => $this->randomName(),
+      ),
     );
     $this->discovery->expects($this->once())
       ->method('getDefinitions')
@@ -188,7 +194,7 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
       'foo' => $parent_label,
       'bar' => '- ' . $child_label,
     );
-    $this->assertSame($expected_options, $this->paymentStatusManager->options());
+    $this->assertSame($expected_options, $this->paymentStatusManager->options(array('foo', 'bar')));
   }
 
   /**
