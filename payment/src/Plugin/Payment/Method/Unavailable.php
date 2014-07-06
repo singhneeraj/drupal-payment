@@ -83,6 +83,20 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function capturePaymentAccess(AccountInterface $account) {
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function capturePayment() {
+    throw new \RuntimeException('This plugin cannot capture payments.');
+  }
+
+  /**
    * Gets the payment this payment method is for.
    *
    * @return \Drupal\payment\Entity\PaymentInterface

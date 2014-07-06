@@ -8,6 +8,7 @@ namespace Drupal\payment\Plugin\Payment\Method;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -18,8 +19,12 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * Plugins that extend this class must have the following keys in their plugin
  * definitions:
- * - entity_id: The ID of the payment method entity the plugin is for.
- * - status: The ID of the payment status plugin to set at payment execution.
+ * - entity_id: (string) The ID of the payment method entity the plugin is for.
+ * - execute_status_id: (string) The ID of the payment status plugin to set at
+ *   payment execution.
+ * - capture: (boolean) Whether or not payment capture is supported.
+ * - capture_status_id: (string) The ID of the payment status plugin to set at
+ *   payment capture.
  *
  * @PaymentMethod(
  *   deriver = "Drupal\payment\Plugin\Payment\Method\BasicDeriver",
@@ -27,7 +32,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *   operations_provider = "\Drupal\payment\Plugin\Payment\Method\BasicOperationsProvider",
  * )
  */
-class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface {
+class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface, PaymentMethodCapturePaymentInterface {
 
   /**
    * The payment status manager.
@@ -70,16 +75,6 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
   /**
    * {@inheritdoc}
    */
-  public function defaultConfiguration() {
-    return parent::defaultConfiguration() + array(
-      'brand_label' => '',
-      'status' => '',
-    );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getSupportedCurrencies() {
     return TRUE;
   }
@@ -94,22 +89,57 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
   }
 
   /**
-   * Gets the final payment status.
+   * Gets the status to set on payment execution.
    *
    * @return string
    *   The plugin ID of the payment status to set.
    */
-  public function getStatus() {
-    return $this->pluginDefinition['status'];
+  public function getExecuteStatusId() {
+    return $this->pluginDefinition['execute_status_id'];
+  }
+
+  /**
+   * Gets the status to set on payment capture.
+   *
+   * @return string
+   *   The plugin ID of the payment status to set.
+   */
+  public function getCaptureStatusId() {
+    return $this->pluginDefinition['capture_status_id'];
+  }
+
+  /**
+   * Gets whether or not capture is supported.
+   *
+   * @param bool
+   *   Whether or not to support capture.
+   */
+  public function getCapture() {
+    return $this->pluginDefinition['capture'];
   }
 
   /**
    * {@inheritdoc}
    */
   protected function doExecutePayment() {
-    $this->getPayment()->setStatus($this->paymentStatusManager->createInstance($this->getStatus()));
+    $this->getPayment()->setStatus($this->paymentStatusManager->createInstance($this->getExecuteStatusId()));
     $this->getPayment()->save();
     $this->getPayment()->getPaymentType()->resumeContext();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function doCapturePayment() {
+    $this->getPayment()->setStatus($this->paymentStatusManager->createInstance($this->getCaptureStatusId()));
+    $this->getPayment()->save();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function doCapturePaymentAccess(AccountInterface $account) {
+    return $this->getCapture() && $this->getPayment()->getStatus()->getPluginId() != $this->getCaptureStatusId();
   }
 
 }

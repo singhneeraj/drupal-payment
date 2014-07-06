@@ -30,6 +30,14 @@ final class PaymentEvents {
   const PAYMENT_PRE_EXECUTE = 'drupal.payment.payment_pre_execute';
 
   /**
+   * The name of the event that is fired before a payment is captured.
+   *
+   * @see hook_payment_pre_capture()
+   * @see \Drupal\payment\Event\PaymentPreCapture
+   */
+  const PAYMENT_PRE_CAPTURE = 'drupal.payment.payment_pre_capture';
+
+  /**
    * The name of the event that is fired after a new payment status is set.
    *
    * @see hook_payment_status_set()

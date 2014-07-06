@@ -8,6 +8,7 @@
 namespace Drupal\payment\Tests\Entity\Payment;
 
 use Drupal\payment\Entity\Payment\PaymentAccess;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodUpdatePaymentStatusInterface;
 use Drupal\Tests\UnitTestCase;
@@ -41,6 +42,56 @@ class PaymentAccessUnitTest extends UnitTestCase {
   public function setUp() {
     $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
     $this->accessController = new PaymentAccess($entity_type);
+  }
+
+  /**
+   * @covers ::checkAccess
+   *
+   * @dataProvider providerTestCheckAccessCapture
+   */
+  public function testCheckAccessCapture($expected, $payment_method_interface, $payment_method_capture_access, $has_permissions) {
+    $operation = 'capture';
+    $language_code = $this->randomName();
+
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $map = array(
+      array('payment.payment.capture.any', $has_permissions),
+      array('payment.payment.capture.own', $has_permissions),
+    );
+    $account->expects($this->any())
+      ->method('hasPermission')
+      ->will($this->returnValueMap($map));
+
+    $payment_method = $this->getMock($payment_method_interface);
+    $payment_method->expects($this->any())
+      ->method('capturePaymentAccess')
+      ->with($account)
+      ->will($this->returnValue($payment_method_capture_access));
+
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $payment->expects($this->atLeastOnce())
+      ->method('getPaymentMethod')
+      ->will($this->returnValue($payment_method));
+
+    $method = new \ReflectionMethod($this->accessController, 'checkAccess');
+    $method->setAccessible(TRUE);
+
+    $this->assertSame($expected, $method->invokeArgs($this->accessController, array($payment, $operation, $language_code, $account)));
+  }
+
+  /**
+   * Provides data to self::testCheckAccessCapture().
+   */
+  public function providerTestCheckAccessCapture() {
+    return array(
+      array(TRUE, '\Drupal\payment\Tests\Entity\Payment\PaymentAccessUnitTestDummyPaymentMethodCapturePaymentInterface', TRUE, TRUE),
+      array(FALSE, '\Drupal\payment\Tests\Entity\Payment\PaymentAccessUnitTestDummyPaymentMethodCapturePaymentInterface', FALSE, TRUE),
+      array(FALSE, '\Drupal\payment\Tests\Entity\Payment\PaymentAccessUnitTestDummyPaymentMethodCapturePaymentInterface', TRUE, FALSE),
+      array(FALSE, '\Drupal\payment\Tests\Entity\Payment\PaymentAccessUnitTestDummyPaymentMethodCapturePaymentInterface', FALSE, FALSE),
+      array(FALSE, '\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface', TRUE, TRUE),
+    );
   }
 
   /**
@@ -218,4 +269,10 @@ class PaymentAccessUnitTest extends UnitTestCase {
  * Extends two interfaces, because we can only mock one.
  */
 interface PaymentAccessUnitTestDummyPaymentMethodUpdateStatusInterface extends PaymentMethodUpdatePaymentStatusInterface, PaymentMethodInterface {
+}
+
+/**
+ * Extends two interfaces, because we can only mock one.
+ */
+interface PaymentAccessUnitTestDummyPaymentMethodCapturePaymentInterface extends PaymentMethodCapturePaymentInterface, PaymentMethodInterface {
 }

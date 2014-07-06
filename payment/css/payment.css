@@ -38,3 +38,14 @@
 }
 
 /* @end */
+
+/* @group payment_basic method configuration plugin */
+
+.payment-method-configuration-plugin-payment_basic-capture-status-id {
+    margin-left: 2em; /* LTR */
+}
+[dir="rtl"] .payment-method-configuration-plugin-payment_basic-capture-status-id {
+    margin-right: 2em;
+}
+
+/* @end */

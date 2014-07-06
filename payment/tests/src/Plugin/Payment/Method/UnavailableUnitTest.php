@@ -162,13 +162,7 @@ class UnavailableUnitTest extends UnitTestCase {
    * @covers ::executePaymentAccess
    */
   public function testExecutePaymentAccess() {
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
-
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
-
-    $this->plugin->setPayment($payment);
 
     $this->assertFalse($this->plugin->executePaymentAccess($account));
   }
@@ -178,9 +172,24 @@ class UnavailableUnitTest extends UnitTestCase {
    * @expectedException \RuntimeException
    */
   public function testExecutePayment() {
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
-    $this->plugin->executePayment($payment);
+    $this->plugin->executePayment();
   }
+
+  /**
+   * @covers ::capturePaymentAccess
+   */
+  public function testCapturePaymentAccess() {
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
+    $this->assertFalse($this->plugin->capturePaymentAccess($account));
+  }
+
+  /**
+   * @covers ::capturePayment
+   * @expectedException \RuntimeException
+   */
+  public function testCapturePayment() {
+    $this->plugin->capturePayment();
+  }
+
 }

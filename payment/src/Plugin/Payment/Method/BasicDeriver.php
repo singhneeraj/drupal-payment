@@ -67,7 +67,9 @@ class BasicDeriver extends DeriverBase implements ContainerDeriverInterface {
           'label' => $configuration_plugin->getBrandLabel() ? $configuration_plugin->getBrandLabel() : $payment_method->label(),
           'message_text' => $configuration_plugin->getMessageText(),
           'message_text_format' => $configuration_plugin->getMessageTextFormat(),
-          'status' => $configuration_plugin->getStatus(),
+            'execute_status_id' => $configuration_plugin->getExecuteStatusId(),
+            'capture' => $configuration_plugin->getCapture(),
+            'capture_status_id' => $configuration_plugin->getCaptureStatusId(),
         ) + $base_plugin_definition;
       }
     }

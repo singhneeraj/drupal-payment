@@ -42,6 +42,16 @@ payment.payment.update_status:
   options:
     _admin_route: TRUE
 
+payment.payment.capture:
+  path: '/payment/{payment}/capture'
+  defaults:
+    _entity_form: 'payment.capture'
+    _title: Capture payment
+  requirements:
+    _entity_access: 'payment.capture'
+  options:
+    _admin_route: TRUE
+
 payment.payment.delete:
   path: '/payment/{payment}/delete'
   defaults:

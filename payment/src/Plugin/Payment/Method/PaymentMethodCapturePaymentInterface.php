@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * Contains \Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface.
+ */
+
+namespace Drupal\payment\Plugin\Payment\Method;
+
+use Drupal\Core\Session\AccountInterface;
+
+/**
+ * Defines a payment method that can capture authorized payments.
+ *
+ * Users can capture payments if they have the "payment.payment.capture.any"
+ * permissions. By implementing this interface, payment methods can exercise
+ * additional control on top of this permission.
+ *
+ * @see \Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentTrait
+ */
+interface PaymentMethodCapturePaymentInterface {
+
+  /**
+   * Checks if the payment can be captured.
+   *
+   * The payment method must have been configured and the payment must have been
+   * authorized prior to capture.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *
+   * @return bool
+   *
+   * @see self::capturePayment
+   */
+  public function capturePaymentAccess(AccountInterface $account);
+
+  /**
+   * Captures the payment.
+   *
+   * Implementations must invoke hook_payment_pre_capture() and dispatch the
+   * \Drupal\payment\Event\PaymentEvents::PAYMENT_PRE_CAPTURE Symfony event
+   * before capture.
+   *
+   * @see self::capturePaymentAccess
+   */
+  public function capturePayment();
+
+}

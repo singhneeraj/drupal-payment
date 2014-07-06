@@ -17,8 +17,14 @@ payment.payment_method_configuration.*:
       mapping:
         # This is for payment method entities that use a plugin that extends
         # \Drupal\payment\Plugin\Payment\MethodConfiguration\Basic
-        status:
-          label: Payment status
+        execute_status_id:
+          label: Execute payment status
+          type: string
+        capture:
+          label: Capture
+          type: boolean
+        execute_status_id:
+          label: Capture payment status
           type: string
         # This is for payment method entities that use a plugin that extends
         # \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationBase

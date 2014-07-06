@@ -50,7 +50,7 @@ class PaymentListBuilder extends EntityListBuilder {
    *   The entity type definition.
    * @param \Drupal\Core\Entity\EntityStorageInterface $payment_storage
    *   The payment storage.
-   * @param \Drupal\Core\StringTranslation\Translationinterface $string_translation
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translator.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
@@ -149,6 +149,7 @@ class PaymentListBuilder extends EntityListBuilder {
     if ($entity->access('view')) {
       $operations['view'] = array(
         'title' => $this->t('View'),
+        'weight' => -10,
       ) + $entity->urlInfo()->toArray();
     }
     if ($entity->access('update_status')) {
@@ -162,6 +163,18 @@ class PaymentListBuilder extends EntityListBuilder {
           'destination' => $this->requestStack->getCurrentRequest()->attributes->get('_system_path'),
         ),
       ) + $entity->urlInfo('update-status-form')->toArray();
+    }
+    if ($entity->access('capture')) {
+      $operations['capture'] = array(
+          'title' => $this->t('Capture'),
+          'attributes' => array(
+            'class' => array('use-ajax'),
+            'data-accepts' => 'application/vnd.drupal-modal',
+          ),
+          'query' => array(
+            'destination' => $this->requestStack->getCurrentRequest()->attributes->get('_system_path'),
+          ),
+        ) + $entity->urlInfo('capture-form')->toArray();
     }
 
     return $operations;

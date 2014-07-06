@@ -6,7 +6,7 @@
 
 namespace Drupal\payment_test\Plugin\Payment\Method;
 
-use Drupal\payment\Entity\PaymentInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodBase;
 
 /**
@@ -31,4 +31,18 @@ class PaymentTest extends PaymentMethodBase {
    */
   protected function doExecutePayment() {
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function doCapturePayment() {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function doCapturePaymentAccess(AccountInterface $account) {
+    return FALSE;
+  }
+
 }

@@ -165,6 +165,21 @@ function hook_payment_execute_access(PaymentInterface $payment, PaymentMethodInt
 function hook_payment_pre_execute(PaymentInterface $payment) {}
 
 /**
+ * Executes before a payment is captured.
+ *
+ * @param \Drupal\payment\Entity\PaymentInterface $payment
+ *
+ * @see \Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface::capturePayment()
+ * @see \Drupal\payment\Event\PaymentEvents::PAYMENT_PRE_CAPTURE
+ * @see \Drupal\payment\Event\PaymentPreCapture
+ *
+ * @deprecated For proper dependency injection and testability, you are advised
+ * to use the \Drupal\payment\Event\PaymentEvents::PAYMENT_PRE_CAPTURE Symfony
+ * event instead.
+ */
+function hook_payment_pre_capture(PaymentInterface $payment) {}
+
+/**
  * Alters the IDs of payments available for referencing through an instance.
  *
  * @param string $category_id

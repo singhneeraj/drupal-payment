@@ -33,6 +33,9 @@ class HookInfo {
     $hooks['payment_method_selector_alter'] = array(
       'group' => 'payment',
     );
+    $hooks['payment_pre_capture'] = array(
+      'group' => 'payment',
+    );
     $hooks['payment_pre_execute'] = array(
       'group' => 'payment',
     );

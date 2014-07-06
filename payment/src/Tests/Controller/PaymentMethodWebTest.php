@@ -181,14 +181,18 @@ class PaymentMethodWebTest extends WebTestBase {
     // Test form submission and payment method creation.
     $label = $this->randomString();;
     $brand_label = $this->randomString();
-    $final_status = 'payment_failed';
+    $execute_status_id = 'payment_failed';
+    $capture_status_id = 'payment_success';
     $id = strtolower($this->randomName());
     $this->drupalPostForm(NULL, array(
       'label' => $label,
       'id' => $id,
       'owner' => $user->label(),
       'plugin_form[brand_label]' => $brand_label,
-      'plugin_form[status]' => $final_status,
+      'plugin_form[execute_status_id]' => $execute_status_id,
+      'plugin_form[capture]' => TRUE,
+      'plugin_form[capture_status_id_wrapper][capture_status_id]' => $capture_status_id,
+      'plugin_form[capture_status_id_wrapper][capture_status_id]' => $capture_status_id,
     ), t('Save'));
     /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface $payment_method */
     $payment_method = entity_load('payment_method_configuration', $id);
@@ -198,7 +202,9 @@ class PaymentMethodWebTest extends WebTestBase {
       $this->assertEqual($payment_method->getOwnerId(), $user->id());
       $plugin_configuration = $payment_method->getPluginConfiguration();
       $this->assertEqual($plugin_configuration['brand_label'], $brand_label);
-      $this->assertEqual($plugin_configuration['status'], $final_status);
+      $this->assertEqual($plugin_configuration['execute_status_id'], $execute_status_id);
+      $this->assertEqual($plugin_configuration['capture'], TRUE);
+      $this->assertEqual($plugin_configuration['capture_status_id'], $capture_status_id);
     }
   }
 }

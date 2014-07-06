@@ -18,6 +18,11 @@ payment.payment.update_status:
   route_name: payment.payment.update_status
   title: 'Update status'
 
+payment.payment.capture:
+  base_route: payment.payment.view
+  route_name: payment.payment.capture
+  title: 'Capture'
+
 payment.payment_method.list:
   base_route: payment.payment_method.list
   route_name: payment.payment_method.list

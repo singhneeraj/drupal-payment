@@ -5,7 +5,7 @@
  * Contains \Drupal\payment\Tests\Plugin\Payment\MethodConfiguration\BasicUnitTest.
  */
 
-namespace Drupal\payment\Tests\Plugin\Payment\MethodConfiguration;
+namespace Drupal\payment\Tests\Plugin\Payment\MethodConfiguration {
 
 use Drupal\payment\Plugin\Payment\MethodConfiguration\Basic;
 use Drupal\Tests\UnitTestCase;
@@ -97,20 +97,42 @@ class BasicUnitTest extends UnitTestCase {
   public function testDefaultConfiguration() {
     $configuration = $this->paymentMethodConfiguration->defaultConfiguration();
     $this->assertInternalType('array', $configuration);
-    foreach (array('brand_label', 'message_text', 'message_text_format', 'status') as $key) {
+    foreach (array('brand_label', 'message_text', 'message_text_format', 'execute_status_id', 'capture_status_id') as $key) {
       $this->assertArrayHasKey($key, $configuration);
       $this->assertInternalType('string', $configuration[$key]);
     }
+    $this->assertArrayHasKey('capture', $configuration);
+    $this->assertInternalType('boolean', $configuration['capture']);
   }
 
   /**
-   * @covers ::getStatus
-   * @covers ::setStatus
+   * @covers ::getExecuteStatusId
+   * @covers ::setExecuteStatusId
    */
-  public function testGetStatus() {
+  public function testGetExecuteStatusId() {
     $status = $this->randomName();
-    $this->assertSame($this->paymentMethodConfiguration, $this->paymentMethodConfiguration->setStatus($status));
-    $this->assertSame($status, $this->paymentMethodConfiguration->getStatus());
+    $this->assertSame($this->paymentMethodConfiguration, $this->paymentMethodConfiguration->setExecuteStatusId($status));
+    $this->assertSame($status, $this->paymentMethodConfiguration->getExecuteStatusId());
+  }
+
+  /**
+   * @covers ::getCaptureStatusId
+   * @covers ::setCaptureStatusId
+   */
+  public function testGetCaptureStatusId() {
+    $status = $this->randomName();
+    $this->assertSame($this->paymentMethodConfiguration, $this->paymentMethodConfiguration->setCaptureStatusId($status));
+    $this->assertSame($status, $this->paymentMethodConfiguration->getCaptureStatusId());
+  }
+
+  /**
+   * @covers ::getCapture
+   * @covers ::setCapture
+   */
+  public function testGetCapture() {
+    $capture = TRUE;
+    $this->assertSame($this->paymentMethodConfiguration, $this->paymentMethodConfiguration->setCapture($capture));
+    $this->assertSame($capture, $this->paymentMethodConfiguration->getCapture());
   }
 
   /**
@@ -121,22 +143,26 @@ class BasicUnitTest extends UnitTestCase {
     $form_state = array();
     $elements = $this->paymentMethodConfiguration->buildConfigurationForm($form, $form_state);
     $this->assertInternalType('array', $elements);
-    foreach (array('brand_label', 'message', 'status') as $key) {
+    foreach (array('brand_label', 'message', 'execute_status_id', 'capture_status_id_wrapper') as $key) {
       $this->assertArrayHasKey($key, $elements);
       $this->assertInternalType('array', $elements[$key]);
     }
+    $this->assertArrayHasKey('capture_status_id', $elements['capture_status_id_wrapper']);
+    $this->assertInternalType('array', $elements['capture_status_id_wrapper']['capture_status_id']);
   }
 
   /**
    * @covers ::submitConfigurationForm
    */
   public function testSubmitConfigurationForm() {
-    $status = $this->randomName();
     $brand_label = $this->randomName();
     $message = $this->randomName();
+    $execute_status_id = $this->randomName();
+    $capture = TRUE;
+    $capture_status_id = $this->randomName();
 
     $form = array(
-      'status' => array(
+      'brand_label' => array(
         '#parents' => array('foo', 'bar', 'status')
       ),
       'message' => array(
@@ -147,9 +173,13 @@ class BasicUnitTest extends UnitTestCase {
       'values' => array(
         'foo' => array(
           'bar' => array(
-            'status' => $status,
             'brand_label' => $brand_label,
             'message' => $message,
+            'execute_status_id' => $execute_status_id,
+            'capture' => $capture,
+            'capture_status_id_wrapper' => array(
+              'capture_status_id' => $capture_status_id,
+            ),
           ),
         ),
       ),
@@ -157,8 +187,10 @@ class BasicUnitTest extends UnitTestCase {
 
     $this->paymentMethodConfiguration->submitConfigurationForm($form, $form_state);
 
-    $this->assertSame($status, $this->paymentMethodConfiguration->getStatus());
     $this->assertSame($brand_label, $this->paymentMethodConfiguration->getBrandLabel());
+    $this->assertSame($execute_status_id, $this->paymentMethodConfiguration->getExecuteStatusId());
+    $this->assertSame($capture, $this->paymentMethodConfiguration->getCapture());
+    $this->assertSame($capture_status_id, $this->paymentMethodConfiguration->getCaptureStatusId());
   }
 
   /**
@@ -171,3 +203,14 @@ class BasicUnitTest extends UnitTestCase {
     $this->assertSame($label, $this->paymentMethodConfiguration->getBrandLabel());
   }
 }
+
+}
+
+namespace {
+
+  if (!function_exists('drupal_html_id')) {
+    function drupal_html_id() {}
+  }
+
+}
+

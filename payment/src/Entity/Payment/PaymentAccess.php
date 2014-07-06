@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityAccessController;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodUpdatePaymentStatusInterface;
 
 /**
@@ -29,6 +30,12 @@ class PaymentAccess extends EntityAccessController {
       if ($payment_method instanceof PaymentMethodUpdatePaymentStatusInterface && !$payment_method->updatePaymentStatusAccess($account)) {
         return FALSE;
       }
+    }
+    elseif ($operation == 'capture') {
+      $payment_method = $payment->getPaymentMethod();
+      return $payment_method instanceof PaymentMethodCapturePaymentInterface
+        && $payment_method->capturePaymentAccess($account)
+        && $this->checkAccessPermission($payment, $operation, $account);
     }
     return $this->checkAccessPermission($payment, $operation, $account);
   }

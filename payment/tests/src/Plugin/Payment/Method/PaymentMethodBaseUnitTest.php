@@ -47,11 +47,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
 
     $this->plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\PaymentMethodBase')
       ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token))
-      ->setMethods(array('getSupportedCurrencies', 'doExecutePayment', 'checkMarkup'))
-      ->getMock();
-    $this->plugin->expects($this->any())
-      ->method('checkMarkup')
-      ->will($this->returnArgument(0));
+      ->getMockForAbstractClass();
   }
 
   /**
@@ -240,6 +236,79 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
       array(FALSE, TRUE, TRUE, FALSE, TRUE),
       array(FALSE, TRUE, TRUE, TRUE, FALSE),
     );
+  }
+
+  /**
+   * @covers ::capturePayment
+   */
+  public function testCapturePayment() {
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $this->plugin->setPayment($payment);
+    $this->plugin->expects($this->once())
+      ->method('doCapturePayment');
+
+    $this->plugin->capturePayment();
+  }
+
+  /**
+   * @covers ::capturePayment
+   *
+   * @expectedException \Exception
+   */
+  public function testCapturePaymentWithoutPayment() {
+    $this->plugin->capturePayment();
+  }
+
+  /**
+   * @covers ::capturePaymentAccess
+   *
+   * @dataProvider providerTestCapturePaymentAccess
+   */
+  public function testCapturePaymentAccess($expected, $update_access, $do) {
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $payment->expects($this->once())
+      ->method('access')
+      ->with('capture')
+      ->will($this->returnValue($update_access));
+
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
+    /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase|\PHPUnit_Framework_MockObject_MockObject $payment_method */
+    $this->plugin->setPayment($payment);
+    $this->plugin->expects($this->any())
+      ->method('doCapturePaymentAccess')
+      ->with($account)
+      ->will($this->returnValue($do));
+
+    $this->assertSame($expected, $this->plugin->capturePaymentAccess($account));
+  }
+
+  /**
+   * Provides data to self::testCapturePaymentAccess().
+   */
+  public function providerTestCapturePaymentAccess() {
+    return array(
+      array(TRUE, TRUE, TRUE),
+      array(FALSE, FALSE, TRUE),
+      array(FALSE, TRUE, FALSE),
+      array(FALSE, FALSE, FALSE),
+    );
+  }
+
+  /**
+   * @covers ::capturePaymentAccess
+   *
+   * @expectedException \Exception
+   */
+  public function testCapturePaymentAccessWithoutPayment() {
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
+    $this->plugin->capturePaymentAccess($account);
   }
 
   /**

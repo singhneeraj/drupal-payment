@@ -67,6 +67,9 @@ class Permission {
       'payment.payment.delete.own' => array(
         'title' => $this->t('Delete own payments'),
       ),
+      'payment.payment.capture.any' => array(
+        'title' => $this->t('Capture payments'),
+      ),
       'payment.payment_method_configuration.update.any' => array(
         'title' => $this->t('Update any payment method configuration'),
         'restrict access' => TRUE,

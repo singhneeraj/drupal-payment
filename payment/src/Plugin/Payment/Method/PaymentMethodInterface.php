@@ -23,6 +23,8 @@ use Drupal\payment\Entity\PaymentInterface;
  * - \Drupal\payment\Plugin\Payment\Method\PaymentMethodUpdatePaymentStatusInterface:
  *   This interface lets payment methods limit if users can update payment's
  *   statuses, and if so, which statuses can be set.
+ * - \Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface:
+ *   This interface lets payment methods capture already authorized payments.
  */
 interface PaymentMethodInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface {
 
@@ -32,11 +34,17 @@ interface PaymentMethodInterface extends PluginInspectionInterface, Configurable
    * @param \Drupal\Core\Session\AccountInterface $account
    *
    * @return bool
+   *
+   * @see self::executePayment
    */
   public function executePaymentAccess(AccountInterface $account);
 
   /**
    * Executes the payment.
+   *
+   * When executing a payment, it may be authorized, or authorized and captured.
+   *
+   * @see self::executePaymentAccess
    */
   public function executePayment();
 

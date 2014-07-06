@@ -66,32 +66,82 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
   public function defaultConfiguration() {
     return parent::defaultConfiguration() + array(
       'brand_label' => '',
-      'status' => '',
+      'execute_status_id' => 'payment_pending',
+      'capture' => FALSE,
+      'capture_status_id' => 'payment_success',
     );
   }
 
   /**
-   * Sets the final payment status.
+   * Sets the status to set on payment execution.
    *
    * @param string $status
    *   The plugin ID of the payment status to set.
    *
-   * @return \Drupal\payment\Plugin\Payment\MethodConfiguration\Basic
+   * @return $this
    */
-  public function setStatus($status) {
-    $this->configuration['status'] = $status;
+  public function setExecuteStatusId($status) {
+    $this->configuration['execute_status_id'] = $status;
 
     return $this;
   }
 
   /**
-   * Gets the final payment status.
+   * Gets the status to set on payment execution.
    *
    * @return string
    *   The plugin ID of the payment status to set.
    */
-  public function getStatus() {
-    return $this->configuration['status'];
+  public function getExecuteStatusId() {
+    return $this->configuration['execute_status_id'];
+  }
+
+  /**
+   * Sets the status to set on payment capture.
+   *
+   * @param string $status
+   *   The plugin ID of the payment status to set.
+   *
+   * @return $this
+   */
+  public function setCaptureStatusId($status) {
+    $this->configuration['capture_status_id'] = $status;
+
+    return $this;
+  }
+
+  /**
+   * Gets the status to set on payment capture.
+   *
+   * @return string
+   *   The plugin ID of the payment status to set.
+   */
+  public function getCaptureStatusId() {
+    return $this->configuration['capture_status_id'];
+  }
+
+  /**
+   * Sets whether or not capture is supported.
+   *
+   * @param bool $capture
+   *   Whether or not to support capture.
+   *
+   * @return $this
+   */
+  public function setCapture($capture) {
+    $this->configuration['capture'] = $capture;
+
+    return $this;
+  }
+
+  /**
+   * Gets whether or not capture is supported.
+   *
+   * @param bool
+   *   Whether or not to support capture.
+   */
+  public function getCapture() {
+    return $this->configuration['capture'];
   }
 
   /**
@@ -105,12 +155,47 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
       '#title' => $this->t('Brand label'),
       '#type' => 'textfield',
     );
-    $elements['status'] = array(
-      '#type' => 'select',
-      '#title' => $this->t('Final payment status'),
-      '#description' => $this->t('The status to set payments to after being processed by this payment method.'),
-      '#default_value' => $this->getStatus() ? $this->getStatus() : 'payment_success',
+    $elements['execute_status_id'] = array(
+      '#default_value' => !$this->getExecuteStatusId() ?: $this->getExecuteStatusId(),
+      '#description' => $this->t('The status to set payments to after being executed by this payment method.'),
+      '#empty_value' => '',
       '#options' => $this->paymentStatusManager->options(),
+      '#required' => TRUE,
+      '#title' => $this->t('Payment execution status'),
+      '#type' => 'select',
+    );
+    $capture_id = drupal_html_id('capture');
+    $elements['capture'] = array(
+      '#id' => $capture_id,
+      '#type' => 'checkbox',
+      '#title' => $this->t('Add an additional capture step after payments have been executed.'),
+      '#default_value' => $this->getCapture(),
+    );
+    $elements['capture_status_id_wrapper'] = array(
+      '#attributes' => array(
+        'class' => array('payment-method-configuration-plugin-payment_basic-capture-status-id'),
+      ),
+      '#type' => 'container',
+    );
+    $elements['capture_status_id_wrapper']['capture_status_id'] = array(
+      '#attached' => array(
+        'css' => array(
+          __DIR__ . '/../../../../css/payment.css',
+        ),
+      ),
+      '#description' => $this->t('The status to set payments to after being captured by this payment method.'),
+      '#default_value' => $this->getCaptureStatusId() ? $this->getCaptureStatusId() : 'payment_success',
+      '#options' => $this->paymentStatusManager->options(),
+      '#required' => TRUE,
+      '#states' => array(
+        'visible' => array(
+          '#' . $capture_id => array(
+            'checked' => TRUE,
+          ),
+        ),
+      ),
+      '#title' => $this->t('Payment capture status'),
+      '#type' => 'select',
     );
 
     return $elements;
@@ -121,11 +206,13 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
    */
   public function submitConfigurationForm(array &$form, array &$form_state) {
     parent::submitConfigurationForm($form, $form_state);
-    $parents = $form['status']['#parents'];
+    $parents = $form['brand_label']['#parents'];
     array_pop($parents);
     $values = NestedArray::getValue($form_state['values'], $parents);
-    $this->setStatus($values['status'])
-      ->setBrandLabel($values['brand_label']);
+    $this->setExecuteStatusId($values['execute_status_id']);
+    $this->setCapture($values['capture']);
+    $this->setCaptureStatusId($values['capture_status_id_wrapper']['capture_status_id']);
+    $this->setBrandLabel($values['brand_label']);
   }
 
   /**

@@ -220,10 +220,11 @@ class PaymentStorage extends ContentEntityDatabaseStorage implements PaymentStor
     while ($status_data = $result->fetchAssoc()) {
       $plugin_id = $status_data['plugin_id'];
       /** @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface $status */
-      $status = $this->paymentStatusManager->createInstance($plugin_id, array(
-        'created' => (int) $status_data['created'],
-        'paymentId' => (int) $status_data['payment_id'],
-      ));
+      $status = $this->paymentStatusManager->createInstance($plugin_id);
+      $status->setCreated((int) $status_data['created']);
+      $status->setId((int) $status_data['id']);
+      $status->setPaymentId((int) $status_data['payment_id']);
+
       $statuses[$status->getPaymentId()][] = $status;
     }
     foreach ($entities as $payment) {

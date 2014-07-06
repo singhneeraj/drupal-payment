@@ -93,7 +93,9 @@ class BasicDeriverUnitTest extends UnitTestCase {
     $brand_label = $this->randomName();
     $message_text = $this->randomName();
     $message_text_format = $this->randomName();
-    $status = $this->randomName();
+    $execute_status_id = $this->randomName();
+    $capture = TRUE;
+    $capture_status_id = $this->randomName();
 
     $payment_method_enabled_basic = $this->getMock('\Drupal\payment\Entity\PaymentMethodConfigurationInterface');
     $payment_method_enabled_basic->expects($this->any())
@@ -108,7 +110,9 @@ class BasicDeriverUnitTest extends UnitTestCase {
         'brand_label' => $brand_label,
         'message_text' => $message_text,
         'message_text_format' => $message_text_format,
-        'status' => $status,
+        'execute_status_id' => $execute_status_id,
+        'capture' => $capture,
+        'capture_status_id' => $capture_status_id,
       )));
     $payment_method_enabled_basic->expects($this->any())
       ->method('getPluginId')
@@ -127,7 +131,9 @@ class BasicDeriverUnitTest extends UnitTestCase {
         'brand_label' => $brand_label,
         'message_text' => $message_text,
         'message_text_format' => $message_text_format,
-        'status' => $status,
+        'execute_status_id' => $execute_status_id,
+        'capture' => $capture,
+        'capture_status_id' => $capture_status_id,
       )));
     $payment_method_disabled_basic->expects($this->any())
       ->method('getPluginId')
@@ -158,8 +164,14 @@ class BasicDeriverUnitTest extends UnitTestCase {
       ->method('getMessageTextFormat')
       ->will($this->returnValue($message_text_format));
     $payment_method_plugin->expects($this->any())
-      ->method('getStatus')
-      ->will($this->returnValue($status));
+      ->method('getExecuteStatusId')
+      ->will($this->returnValue($execute_status_id));
+    $payment_method_plugin->expects($this->any())
+      ->method('getCaptureStatusId')
+      ->will($this->returnValue($capture_status_id));
+    $payment_method_plugin->expects($this->any())
+      ->method('getCapture')
+      ->will($this->returnValue($capture));
 
     $this->paymentMethodConfigurationManager->expects($this->any())
       ->method('createInstance')
@@ -188,8 +200,12 @@ class BasicDeriverUnitTest extends UnitTestCase {
       $this->assertSame($message_text, $derivatives[$id]['message_text']);
       $this->assertArrayHasKey('message_text_format', $derivatives[$id]);
       $this->assertSame($message_text_format, $derivatives[$id]['message_text_format']);
-      $this->assertArrayHasKey('status', $derivatives[$id]);
-      $this->assertSame($status, $derivatives[$id]['status']);
+      $this->assertArrayHasKey('execute_status_id', $derivatives[$id]);
+      $this->assertSame($execute_status_id, $derivatives[$id]['execute_status_id']);
+      $this->assertArrayHasKey('capture', $derivatives[$id]);
+      $this->assertSame($capture, $derivatives[$id]['capture']);
+      $this->assertArrayHasKey('capture_status_id', $derivatives[$id]);
+      $this->assertSame($capture_status_id, $derivatives[$id]['capture_status_id']);
     }
   }
 }

@@ -36,7 +36,7 @@ class PaymentFormWebTest extends WebTestBase {
    *
    * @var string
    */
-  protected $statusPluginId = 'payment_cancelled';
+  protected $executeStatusPluginId = 'payment_pending';
 
   /**
    * The user to add the field to.
@@ -104,7 +104,7 @@ class PaymentFormWebTest extends WebTestBase {
     // Create a payment method.
     $this->paymentMethod = Generate::createPaymentMethodConfiguration(2, 'payment_basic');
     $this->paymentMethod->setPluginConfiguration(array(
-      'status' => $this->statusPluginId,
+      'execute_status_id' => $this->executeStatusPluginId,
     ));
     $this->paymentMethod->save();
   }
@@ -127,7 +127,7 @@ class PaymentFormWebTest extends WebTestBase {
     $payment = $this->paymentStorage->load(1);
     if ($this->assertTrue((bool) $payment)) {
       $this->assertTrue($payment->getPaymentType() instanceof PaymentForm);
-      $this->assertIdentical($payment->getStatus()->getPluginId(), $this->statusPluginId);
+      $this->assertIdentical($payment->getStatus()->getPluginId(), $this->executeStatusPluginId);
     }
   }
 }

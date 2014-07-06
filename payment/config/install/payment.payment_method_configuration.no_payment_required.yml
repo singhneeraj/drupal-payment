@@ -1,6 +1,9 @@
 id: no_payment_required
 label: 'No payment required'
 ownerId: 1
-pluginConfiguration: {}
+pluginConfiguration:
+  execute_status_id: payment_success
+  capture: false
+  capture_status_id: ''
 pluginId: payment_basic
 status: false

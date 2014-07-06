@@ -333,6 +333,7 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
 
     $url_canonical = new Url($this->randomName());
     $url_update_status_form = new Url($this->randomName());
+    $url_capture_form = new Url($this->randomName());
 
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
@@ -340,6 +341,7 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
     $map = array(
       array('view', NULL, TRUE),
       array('update_status', NULL, TRUE),
+      array('capture', NULL, TRUE),
     );
     $payment->expects($this->any())
       ->method('access')
@@ -347,6 +349,7 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
     $map = array(
       array('canonical', $url_canonical),
       array('update-status-form', $url_update_status_form),
+      array('capture-form', $url_capture_form),
     );
     $payment->expects($this->any())
       ->method('urlInfo')
@@ -365,6 +368,7 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
     $expected_operations = array(
       'view' => array(
         'title' => 'View',
+        'weight' => -10,
         'route_name' => $url_canonical->getRouteName(),
         'route_parameters' => array(),
         'options' => array(),
@@ -379,6 +383,19 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
           'destination' => $destination,
         ),
         'route_name' => $url_update_status_form->getRouteName(),
+        'route_parameters' => array(),
+        'options' => array(),
+      ),
+      'capture' => array(
+        'title' => 'Capture',
+        'attributes' => array(
+          'class' => array('use-ajax'),
+          'data-accepts' => 'application/vnd.drupal-modal',
+        ),
+        'query' => array(
+          'destination' => $destination,
+        ),
+        'route_name' => $url_capture_form->getRouteName(),
         'route_parameters' => array(),
         'options' => array(),
       ),

@@ -15,6 +15,7 @@ use Drupal\Core\Utility\Token;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Event\PaymentEvents;
 use Drupal\payment\Event\PaymentExecuteAccess;
+use Drupal\payment\Event\PaymentPreCapture;
 use Drupal\payment\Event\PaymentPreExecute;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -184,13 +185,6 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
   }
 
   /**
-   * Wraps check_markup().
-   */
-  protected function checkMarkup($text, $format_id = NULL, $langcode = '', $cache = FALSE, $filter_types_to_skip = array()) {
-    return check_markup($text, $format_id, $langcode, $cache, $filter_types_to_skip);
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function executePaymentAccess(AccountInterface $account) {
@@ -233,6 +227,45 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
    * Performs the actual payment execution.
    */
   abstract protected function doExecutePayment();
+
+  /**
+   * Implements \Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface::capturePaymentAccess().
+   */
+  public function capturePaymentAccess(AccountInterface $account) {
+    if (!$this->getPayment()) {
+      throw new \LogicException('Trying to check access for a non-existing payment. A payment must be set trough self::setPayment() first.');
+    }
+
+    return $this->getPayment()->access('capture') && $this->doCapturePaymentAccess($account);
+  }
+
+  /**
+   * Performs a payment method-specific access check for payment capture.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *
+   * @return bool
+   */
+  abstract protected function doCapturePaymentAccess(AccountInterface $account);
+
+  /**
+   * Implements \Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface::capturePayment().
+   */
+  public function capturePayment() {
+    if (!$this->getPayment()) {
+      throw new \LogicException('Trying to capture a non-existing payment. A payment must be set trough self::setPayment() first.');
+    }
+    $event = new PaymentPreCapture($this->getPayment());
+    $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_PRE_CAPTURE, $event);
+    $this->moduleHandler->invokeAll('payment_pre_capture', array($this->getPayment()));
+    // @todo invoke Rules event.
+    $this->doCapturePayment();
+  }
+
+  /**
+   * Performs the actual payment capture.
+   */
+  abstract protected function doCapturePayment();
 
   /**
    * Checks a payment's currency against this plugin.

@@ -31,7 +31,8 @@ use Drupal\user\UserInterface;
  *     "form" = {
  *       "delete" = "Drupal\payment\Entity\Payment\PaymentDeleteForm",
  *       "edit" = "Drupal\payment\Entity\Payment\PaymentEditForm",
- *       "update_status" = "Drupal\payment\Entity\Payment\PaymentStatusForm"
+ *       "update_status" = "Drupal\payment\Entity\Payment\PaymentStatusForm",
+ *       "capture" = "Drupal\payment\Entity\Payment\PaymentCaptureForm"
  *     },
  *     "list_builder" = "Drupal\payment\Entity\Payment\PaymentListBuilder",
  *     "view_builder" = "Drupal\payment\Entity\Payment\PaymentViewBuilder",
@@ -50,7 +51,8 @@ use Drupal\user\UserInterface;
  *     "canonical" = "payment.payment.view",
  *     "edit-form" = "payment.payment.edit",
  *     "delete-form" = "payment.payment.delete",
- *     "update-status-form" = "payment.payment.update_status"
+ *     "update-status-form" = "payment.payment.update_status",
+ *     "capture-form" = "payment.payment.capture"
  *   }
  * )
  */
@@ -352,6 +354,10 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public static function postLoad(EntityStorageInterface $storage, array &$entities) {
+    /** @var \Drupal\payment\Entity\PaymentInterface[] $entities */
+    foreach ($entities as $payment) {
+      $payment->getPaymentMethod()->setPayment($payment);
+    }
     /** @var \Drupal\payment\Entity\Payment\PaymentStorageInterface $storage */
     $storage->loadLineItems($entities);
     $storage->loadPaymentStatuses($entities);
