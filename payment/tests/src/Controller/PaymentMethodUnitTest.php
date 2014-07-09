@@ -5,7 +5,7 @@
  * Contains \Drupal\payment\Tests\Controller\PaymentMethodUnitTest.
  */
 
-namespace Drupal\payment\Tests\Controller;
+namespace Drupal\payment\Tests\Controller {
 
 use Drupal\Core\Access\AccessInterface;
 use Drupal\payment\Controller\PaymentMethod;
@@ -329,7 +329,6 @@ class PaymentMethodUnitTest extends UnitTestCase {
 
     $build = $this->controller->listPlugins();
     $this->assertInternalType('array', $build);
-    $this->assertFileExists($build['#attached']['css'][0]);
   }
 
   /**
@@ -406,3 +405,15 @@ class PaymentMethodUnitTest extends UnitTestCase {
   }
 
 }
+
+}
+
+namespace {
+
+  if (!function_exists('drupal_get_path')) {
+    function drupal_get_path() {
+    }
+  }
+
+}
+

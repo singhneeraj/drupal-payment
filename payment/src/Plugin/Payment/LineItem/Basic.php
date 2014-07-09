@@ -136,9 +136,6 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
    */
   public function buildConfigurationForm(array $form, array &$form_state) {
     $elements = array(
-      '#attached' => array(
-        'css' => array(__DIR__ . '/../../../../css/payment.css'),
-      ),
       '#input' => TRUE,
       '#tree' => TRUE,
       '#type' => 'container',

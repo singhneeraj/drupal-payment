@@ -11,7 +11,6 @@ use Drupal\Core\Url;
 use Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationListBuilder;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * @coversDefaultClass \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationListBuilder
@@ -221,7 +220,6 @@ class PaymentMethodConfigurationListBuilderUnitTest extends UnitTestCase {
       ->will($this->returnValue(array()));
 
     $build = $this->listBuilder->render();
-    $this->assertFileExists($build['#attached']['css'][0]);
     unset($build['#attached']);
     unset($build['#header']);
     $expected_build = array(
@@ -300,6 +298,10 @@ namespace {
   }
   if (!defined('RESPONSIVE_PRIORITY_MEDIUM')) {
     define('RESPONSIVE_PRIORITY_MEDIUM', 'priority-medium');
+  }
+  if (!function_exists('drupal_get_path')) {
+    function drupal_get_path() {
+    }
   }
 
 }

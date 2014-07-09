@@ -158,7 +158,6 @@ class BasicUnitTest extends UnitTestCase {
     $form_state = array();
     $form_elements = $this->lineItem->buildConfigurationForm($form, $form_state);
     $this->assertInternalType('array', $form_elements);
-    $this->assertFileExists($form_elements['#attached']['css'][0]);
   }
 
   /**

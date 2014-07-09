@@ -51,6 +51,5 @@ class ElementInfoUnitTest extends UnitTestCase {
       $this->assertInternalType('array', $element);
       $this->assertSame(0, count(Element::children($element)));
     }
-    $this->assertFileExists($elements['payment_line_items_input']['#attached']['css'][0]);
   }
 }

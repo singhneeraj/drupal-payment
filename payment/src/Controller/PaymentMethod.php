@@ -132,7 +132,7 @@ class PaymentMethod extends ControllerBase implements AccessInterface {
     return array(
       '#attached' => array(
         'css' => array(
-          __DIR__ . '/../../css/payment.css',
+          drupal_get_path('module', 'payment') . '/css/payment.css',
         ),
       ),
       '#attributes' => array(

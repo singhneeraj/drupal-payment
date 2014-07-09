@@ -24,9 +24,6 @@ class ElementInfo {
     // \Drupal\payment\Element\PaymentLineItemsInput::getLineItemsData() to get
     // the 'return' value.
     $elements['payment_line_items_input'] = array(
-      '#attached' => array(
-        'css' => array(__DIR__ . '/../../css/payment.css'),
-      ),
       // The number of values this element allows, which must be at least as
       // many as the number of line items in the default value. For unlimited
       // values, use
