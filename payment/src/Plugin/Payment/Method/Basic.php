@@ -10,6 +10,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Utility\Token;
+use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -25,6 +26,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * - capture: (boolean) Whether or not payment capture is supported.
  * - capture_status_id: (string) The ID of the payment status plugin to set at
  *   payment capture.
+ * - refund: (boolean) Whether or not payment refunds are supported.
+ * - refund_status_id: (string) The ID of the payment status plugin to set at
+ *   payment refund.
  *
  * @PaymentMethod(
  *   deriver = "Drupal\payment\Plugin\Payment\Method\BasicDeriver",
@@ -32,7 +36,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *   operations_provider = "\Drupal\payment\Plugin\Payment\Method\BasicOperationsProvider",
  * )
  */
-class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface, PaymentMethodCapturePaymentInterface {
+class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface, PaymentMethodCapturePaymentInterface, PaymentMethodRefundPaymentInterface, PaymentMethodUpdatePaymentStatusInterface {
 
   /**
    * The payment status manager.
@@ -119,6 +123,26 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
   }
 
   /**
+   * Gets the status to set on payment refund.
+   *
+   * @return string
+   *   The plugin ID of the payment status to set.
+   */
+  public function getRefundStatusId() {
+    return $this->pluginDefinition['refund_status_id'];
+  }
+
+  /**
+   * Gets whether or not capture is supported.
+   *
+   * @param bool
+   *   Whether or not to support capture.
+   */
+  public function getRefund() {
+    return $this->pluginDefinition['refund'];
+  }
+
+  /**
    * {@inheritdoc}
    */
   protected function doExecutePayment() {
@@ -139,7 +163,36 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
    * {@inheritdoc}
    */
   public function doCapturePaymentAccess(AccountInterface $account) {
-    return $this->getCapture() && $this->getPayment()->getStatus()->getPluginId() != $this->getCaptureStatusId();
+    return $this->getCapture() && $this->getPayment()->getStatus()->getPluginId() == $this->getExecuteStatusId();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function doRefundPayment() {
+    $this->getPayment()->setStatus($this->paymentStatusManager->createInstance($this->getRefundStatusId()));
+    $this->getPayment()->save();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function doRefundPaymentAccess(AccountInterface $account) {
+    return $this->getRefund() && $this->getPayment()->getStatus()->getPluginId() == $this->getCaptureStatusId();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function updatePaymentStatusAccess(AccountInterface $account) {
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSettablePaymentStatuses(AccountInterface $account, PaymentInterface $payment) {
+    return array();
   }
 
 }

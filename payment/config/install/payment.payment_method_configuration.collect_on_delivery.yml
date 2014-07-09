@@ -7,5 +7,7 @@ pluginConfiguration:
   execute_status_id: payment_pending
   capture: true
   capture_status_id: payment_success
+  refund: false
+  refund_status_id: payment_refunded
 pluginId: payment_basic
 status: false

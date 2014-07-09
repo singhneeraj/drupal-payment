@@ -180,6 +180,21 @@ function hook_payment_pre_execute(PaymentInterface $payment) {}
 function hook_payment_pre_capture(PaymentInterface $payment) {}
 
 /**
+ * Executes before a payment is refunded.
+ *
+ * @param \Drupal\payment\Entity\PaymentInterface $payment
+ *
+ * @see \Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface::capturePayment()
+ * @see \Drupal\payment\Event\PaymentEvents::PAYMENT_PRE_REFUND
+ * @see \Drupal\payment\Event\PaymentPreRefund
+ *
+ * @deprecated For proper dependency injection and testability, you are advised
+ * to use the \Drupal\payment\Event\PaymentEvents::PAYMENT_PRE_REFUND Symfony
+ * event instead.
+ */
+function hook_payment_pre_refund(PaymentInterface $payment) {}
+
+/**
  * Alters the IDs of payments available for referencing through an instance.
  *
  * @param string $category_id

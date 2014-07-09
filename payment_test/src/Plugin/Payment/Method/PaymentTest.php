@@ -45,4 +45,17 @@ class PaymentTest extends PaymentMethodBase {
     return FALSE;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  protected function doRefundPayment() {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function doRefundPaymentAccess(AccountInterface $account) {
+    return FALSE;
+  }
+
 }

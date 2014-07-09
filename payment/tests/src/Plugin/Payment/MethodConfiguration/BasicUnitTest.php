@@ -136,19 +136,70 @@ class BasicUnitTest extends UnitTestCase {
   }
 
   /**
+   * @covers ::getRefundStatusId
+   * @covers ::setRefundStatusId
+   */
+  public function testGetRefundStatusId() {
+    $status = $this->randomName();
+    $this->assertSame($this->paymentMethodConfiguration, $this->paymentMethodConfiguration->setRefundStatusId($status));
+    $this->assertSame($status, $this->paymentMethodConfiguration->getRefundStatusId());
+  }
+
+  /**
+   * @covers ::getRefund
+   * @covers ::setRefund
+   */
+  public function testGetRefund() {
+    $refund = TRUE;
+    $this->assertSame($this->paymentMethodConfiguration, $this->paymentMethodConfiguration->setRefund($refund));
+    $this->assertSame($refund, $this->paymentMethodConfiguration->getRefund());
+  }
+
+  /**
    * @covers ::buildConfigurationForm
    */
   public function testBuildConfigurationForm() {
     $form = array();
     $form_state = array();
     $elements = $this->paymentMethodConfiguration->buildConfigurationForm($form, $form_state);
+    $form['plugin_form']['#process'][] = array($this->paymentMethodConfiguration, 'processBuildConfigurationForm');
+    $this->assertArrayHasKey('message', $elements);
+    $this->assertArrayHasKey('plugin_form', $elements);
+    $this->assertSame(array(array($this->paymentMethodConfiguration, 'processBuildConfigurationForm')), $elements['plugin_form']['#process']);
+  }
+
+  /**
+   * @covers ::processBuildConfigurationForm
+   */
+  public function testProcessBuildConfigurationForm() {
+    $definitions = array(
+      array(
+        'id' => $this->randomName(),
+        'label' => $this->randomName(),
+      ),
+      array(
+        'id' => $this->randomName(),
+        'label' => $this->randomName(),
+      ),
+    );
+    $this->paymentStatusManager->expects($this->atLeastOnce())
+      ->method('getDefinitions')
+      ->will($this->returnValue($definitions));
+
+    $element = array(
+      '#parents' => array('foo', 'bar'),
+    );
+    $form = array();
+    $form_state = array();
+
+    $method = new \ReflectionMethod($this->paymentMethodConfiguration ,'processBuildConfigurationForm');
+    $method->setAccessible(TRUE);
+    $elements = $method->invokeArgs($this->paymentMethodConfiguration, array(&$element, &$form_state, &$form));
     $this->assertInternalType('array', $elements);
-    foreach (array('brand_label', 'message', 'execute_status_id', 'capture_status_id_wrapper') as $key) {
+    foreach (array('brand_label', 'execute', 'capture', 'refund') as $key) {
       $this->assertArrayHasKey($key, $elements);
       $this->assertInternalType('array', $elements[$key]);
     }
-    $this->assertArrayHasKey('capture_status_id', $elements['capture_status_id_wrapper']);
-    $this->assertInternalType('array', $elements['capture_status_id_wrapper']['capture_status_id']);
   }
 
   /**
@@ -160,13 +211,17 @@ class BasicUnitTest extends UnitTestCase {
     $execute_status_id = $this->randomName();
     $capture = TRUE;
     $capture_status_id = $this->randomName();
+    $refund = TRUE;
+    $refund_status_id = $this->randomName();
 
     $form = array(
-      'brand_label' => array(
-        '#parents' => array('foo', 'bar', 'status')
-      ),
       'message' => array(
         '#parents' => array('foo', 'bar', 'message')
+      ),
+      'plugin_form' => array(
+        'brand_label' => array(
+          '#parents' => array('foo', 'bar', 'status')
+        ),
       ),
     );
     $form_state = array(
@@ -175,10 +230,16 @@ class BasicUnitTest extends UnitTestCase {
           'bar' => array(
             'brand_label' => $brand_label,
             'message' => $message,
-            'execute_status_id' => $execute_status_id,
-            'capture' => $capture,
-            'capture_status_id_wrapper' => array(
+            'execute' => array(
+              'execute_status_id' => $execute_status_id,
+            ),
+            'capture' => array(
+              'capture' => $capture,
               'capture_status_id' => $capture_status_id,
+            ),
+            'refund' => array(
+              'refund' => $refund,
+              'refund_status_id' => $refund_status_id,
             ),
           ),
         ),
@@ -208,6 +269,9 @@ class BasicUnitTest extends UnitTestCase {
 
 namespace {
 
+  if (!function_exists('drupal_get_path')) {
+    function drupal_get_path() {}
+  }
   if (!function_exists('drupal_html_id')) {
     function drupal_html_id() {}
   }

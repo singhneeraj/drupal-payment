@@ -11,11 +11,8 @@ use Drupal\Core\Session\AccountInterface;
 /**
  * Defines a payment method that can capture authorized payments.
  *
- * Users can capture payments if they have the "payment.payment.capture.any"
- * permissions. By implementing this interface, payment methods can exercise
- * additional control on top of this permission.
- *
- * @see \Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentTrait
+ * Users can refund payments if they have the "payment.payment.capture.any"
+ * permissions and self::capturePaymentAccess() returns TRUE.
  */
 interface PaymentMethodCapturePaymentInterface {
 

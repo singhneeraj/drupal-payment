@@ -38,6 +38,14 @@ final class PaymentEvents {
   const PAYMENT_PRE_CAPTURE = 'drupal.payment.payment_pre_capture';
 
   /**
+   * The name of the event that is fired before a payment is refunded.
+   *
+   * @see hook_payment_pre_refunded()
+   * @see \Drupal\payment\Event\PaymentPreRefund
+   */
+  const PAYMENT_PRE_REFUND = 'drupal.payment.payment_pre_refund';
+
+  /**
    * The name of the event that is fired after a new payment status is set.
    *
    * @see hook_payment_status_set()

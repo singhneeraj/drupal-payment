@@ -69,6 +69,8 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
       'execute_status_id' => 'payment_pending',
       'capture' => FALSE,
       'capture_status_id' => 'payment_success',
+      'refund' => FALSE,
+      'refund_status_id' => 'payment_refunded',
     );
   }
 
@@ -145,17 +147,106 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
   }
 
   /**
+   * Sets the status to set on payment refund.
+   *
+   * @param string $status
+   *   The plugin ID of the payment status to set.
+   *
+   * @return $this
+   */
+  public function setRefundStatusId($status) {
+    $this->configuration['refund_status_id'] = $status;
+
+    return $this;
+  }
+
+  /**
+   * Gets the status to set on payment refund.
+   *
+   * @return string
+   *   The plugin ID of the payment status to set.
+   */
+  public function getRefundStatusId() {
+    return $this->configuration['refund_status_id'];
+  }
+
+  /**
+   * Sets whether or not refunds are supported.
+   *
+   * @param bool $refund
+   *   Whether or not to support refunds.
+   *
+   * @return $this
+   */
+  public function setRefund($refund) {
+    $this->configuration['refund'] = $refund;
+
+    return $this;
+  }
+
+  /**
+   * Gets whether or not refunds are supported.
+   *
+   * @param bool
+   *   Whether or not to support refunds.
+   */
+  public function getRefund() {
+    return $this->configuration['refund'];
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, array &$form_state) {
-    $elements = parent::buildConfigurationForm($form, $form_state);
-    $elements['brand_label'] = array(
+    $form = parent::buildConfigurationForm($form, $form_state);
+    $form['plugin_form'] = array(
+      '#process' => array(array($this, 'processBuildConfigurationForm')),
+      '#type' => 'container',
+    );
+
+    return $form;
+  }
+
+  /**
+   * Implements a form API #process callback.
+   */
+  public function processBuildConfigurationForm(array &$element, array &$form_state, array &$form) {
+    $element['brand_label'] = array(
       '#default_value' => $this->getBrandLabel(),
       '#description' => $this->t('The label that payers will see when choosing a payment method. Defaults to the payment method label.'),
       '#title' => $this->t('Brand label'),
       '#type' => 'textfield',
     );
-    $elements['execute_status_id'] = array(
+    $labels = array();
+    foreach ($this->paymentStatusManager->getDefinitions() as $definition) {
+      $labels[$definition['id']] = (string) $definition['label'];
+    }
+    $workflow_group = implode('][', array_merge($element['#parents'], array('workflow')));
+    $workflow_id = drupal_html_id('workflow');
+    $element['workflow'] = array(
+      '#attached' => array(
+        'js' => array(
+          drupal_get_path('module', 'payment') . '/js/payment.js',
+          array(
+            'data' => array(
+              'payment' => array(
+                'payment_method_configuration_basic' => $labels,
+              ),
+            ),
+            'type' => 'setting',
+          ),
+        ),
+      ),
+      '#id' => $workflow_id,
+      '#type' => 'vertical_tabs',
+    );
+    $element['execute'] = array(
+      '#group' => $workflow_group,
+      '#open' => TRUE,
+      '#type' => 'details',
+      '#title' => $this->t('Execution'),
+    );
+    $element['execute']['execute_status_id'] = array(
       '#default_value' => !$this->getExecuteStatusId() ?: $this->getExecuteStatusId(),
       '#description' => $this->t('The status to set payments to after being executed by this payment method.'),
       '#empty_value' => '',
@@ -164,27 +255,22 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
       '#title' => $this->t('Payment execution status'),
       '#type' => 'select',
     );
+    $element['capture'] = array(
+      '#group' => $workflow_group,
+      '#open' => TRUE,
+      '#type' => 'details',
+      '#title' => $this->t('Capture'),
+    );
     $capture_id = drupal_html_id('capture');
-    $elements['capture'] = array(
+    $element['capture']['capture'] = array(
       '#id' => $capture_id,
       '#type' => 'checkbox',
       '#title' => $this->t('Add an additional capture step after payments have been executed.'),
       '#default_value' => $this->getCapture(),
     );
-    $elements['capture_status_id_wrapper'] = array(
-      '#attributes' => array(
-        'class' => array('payment-method-configuration-plugin-payment_basic-capture-status-id'),
-      ),
-      '#type' => 'container',
-    );
-    $elements['capture_status_id_wrapper']['capture_status_id'] = array(
-      '#attached' => array(
-        'css' => array(
-          __DIR__ . '/../../../../css/payment.css',
-        ),
-      ),
+    $element['capture']['capture_status_id'] = array(
       '#description' => $this->t('The status to set payments to after being captured by this payment method.'),
-      '#default_value' => $this->getCaptureStatusId() ? $this->getCaptureStatusId() : 'payment_success',
+      '#default_value' => $this->getCaptureStatusId(),
       '#options' => $this->paymentStatusManager->options(),
       '#required' => TRUE,
       '#states' => array(
@@ -197,8 +283,36 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
       '#title' => $this->t('Payment capture status'),
       '#type' => 'select',
     );
+    $refund_id = drupal_html_id('refund');
+    $element['refund'] = array(
+      '#group' => $workflow_group,
+      '#open' => TRUE,
+      '#type' => 'details',
+      '#title' => $this->t('Refund'),
+    );
+    $element['refund']['refund'] = array(
+      '#id' => $refund_id,
+      '#type' => 'checkbox',
+      '#title' => $this->t('Add an additional refund step after payments have been executed.'),
+      '#default_value' => $this->getRefund(),
+    );
+    $element['refund']['refund_status_id'] = array(
+      '#description' => $this->t('The status to set payments to after being refunded by this payment method.'),
+      '#default_value' => $this->getRefundStatusId(),
+      '#options' => $this->paymentStatusManager->options(),
+      '#required' => TRUE,
+      '#states' => array(
+        'visible' => array(
+          '#' . $refund_id => array(
+            'checked' => TRUE,
+          ),
+        ),
+      ),
+      '#title' => $this->t('Payment refund status'),
+      '#type' => 'select',
+    );
 
-    return $elements;
+    return $element;
   }
 
   /**
@@ -206,12 +320,14 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
    */
   public function submitConfigurationForm(array &$form, array &$form_state) {
     parent::submitConfigurationForm($form, $form_state);
-    $parents = $form['brand_label']['#parents'];
+    $parents = $form['plugin_form']['brand_label']['#parents'];
     array_pop($parents);
     $values = NestedArray::getValue($form_state['values'], $parents);
-    $this->setExecuteStatusId($values['execute_status_id']);
-    $this->setCapture($values['capture']);
-    $this->setCaptureStatusId($values['capture_status_id_wrapper']['capture_status_id']);
+    $this->setExecuteStatusId($values['execute']['execute_status_id']);
+    $this->setCapture($values['capture']['capture']);
+    $this->setCaptureStatusId($values['capture']['capture_status_id']);
+    $this->setRefund($values['refund']['refund']);
+    $this->setRefundStatusId($values['refund']['refund_status_id']);
     $this->setBrandLabel($values['brand_label']);
   }
 
@@ -236,4 +352,5 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
 
     return $this;
   }
+
 }

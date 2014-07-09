@@ -267,14 +267,10 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
    *
    * @dataProvider providerTestCapturePaymentAccess
    */
-  public function testCapturePaymentAccess($expected, $update_access, $do) {
+  public function testCapturePaymentAccess($expected, $do) {
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
-    $payment->expects($this->once())
-      ->method('access')
-      ->with('capture')
-      ->will($this->returnValue($update_access));
 
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
@@ -293,10 +289,8 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
    */
   public function providerTestCapturePaymentAccess() {
     return array(
-      array(TRUE, TRUE, TRUE),
-      array(FALSE, FALSE, TRUE),
-      array(FALSE, TRUE, FALSE),
-      array(FALSE, FALSE, FALSE),
+      array(TRUE, TRUE),
+      array(FALSE, FALSE),
     );
   }
 
@@ -309,6 +303,81 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
     $this->plugin->capturePaymentAccess($account);
+  }
+
+  /**
+   * @covers ::refundPayment
+   */
+  public function testRefundPayment() {
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $this->eventDispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(PaymentEvents::PAYMENT_PRE_REFUND, $this->isInstanceOf('\Drupal\payment\Event\PaymentPreRefund'));
+
+    $this->moduleHandler->expects($this->once())
+      ->method('invokeAll')
+      ->with('payment_pre_refund', array($payment));
+
+    $this->plugin->setPayment($payment);
+    $this->plugin->expects($this->once())
+      ->method('doRefundPayment');
+
+    $this->plugin->refundPayment();
+  }
+
+  /**
+   * @covers ::refundPayment
+   *
+   * @expectedException \Exception
+   */
+  public function testRefundPaymentWithoutPayment() {
+    $this->plugin->refundPayment();
+  }
+
+  /**
+   * @covers ::refundPaymentAccess
+   *
+   * @dataProvider providerTestRefundPaymentAccess
+   */
+  public function testRefundPaymentAccess($expected, $do) {
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
+    /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase|\PHPUnit_Framework_MockObject_MockObject $payment_method */
+    $this->plugin->setPayment($payment);
+    $this->plugin->expects($this->any())
+      ->method('doRefundPaymentAccess')
+      ->with($account)
+      ->will($this->returnValue($do));
+
+    $this->assertSame($expected, $this->plugin->refundPaymentAccess($account));
+  }
+
+  /**
+   * Provides data to self::testRefundPaymentAccess().
+   */
+  public function providerTestRefundPaymentAccess() {
+    return array(
+      array(TRUE, TRUE),
+      array(FALSE, FALSE),
+    );
+  }
+
+  /**
+   * @covers ::refundPaymentAccess
+   *
+   * @expectedException \Exception
+   */
+  public function testRefundPaymentAccessWithoutPayment() {
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
+    $this->plugin->refundPaymentAccess($account);
   }
 
   /**

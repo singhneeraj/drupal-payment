@@ -17,6 +17,7 @@ use Drupal\payment\Event\PaymentEvents;
 use Drupal\payment\Event\PaymentExecuteAccess;
 use Drupal\payment\Event\PaymentPreCapture;
 use Drupal\payment\Event\PaymentPreExecute;
+use Drupal\payment\Event\PaymentPreRefund;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -29,7 +30,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *   form.
  * - message_text_format: The ID of the text format to format message_text with.
  */
-abstract class PaymentMethodBase extends PluginBase implements AccessInterface, ContainerFactoryPluginInterface, PaymentMethodInterface {
+abstract class PaymentMethodBase extends PluginBase implements AccessInterface, ContainerFactoryPluginInterface, PaymentMethodInterface, PaymentMethodCapturePaymentInterface, PaymentMethodRefundPaymentInterface {
 
   /**
    * The event dispatcher.
@@ -229,14 +230,14 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
   abstract protected function doExecutePayment();
 
   /**
-   * Implements \Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface::capturePaymentAccess().
+   * {@inheritdoc}
    */
   public function capturePaymentAccess(AccountInterface $account) {
     if (!$this->getPayment()) {
       throw new \LogicException('Trying to check access for a non-existing payment. A payment must be set trough self::setPayment() first.');
     }
 
-    return $this->getPayment()->access('capture') && $this->doCapturePaymentAccess($account);
+    return $this->doCapturePaymentAccess($account);
   }
 
   /**
@@ -249,7 +250,7 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
   abstract protected function doCapturePaymentAccess(AccountInterface $account);
 
   /**
-   * Implements \Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface::capturePayment().
+   * {@inheritdoc}
    */
   public function capturePayment() {
     if (!$this->getPayment()) {
@@ -266,6 +267,45 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
    * Performs the actual payment capture.
    */
   abstract protected function doCapturePayment();
+
+  /**
+   * {@inheritdoc}
+   */
+  public function refundPaymentAccess(AccountInterface $account) {
+    if (!$this->getPayment()) {
+      throw new \LogicException('Trying to check access for a non-existing payment. A payment must be set trough self::setPayment() first.');
+    }
+
+    return $this->doRefundPaymentAccess($account);
+  }
+
+  /**
+   * Performs a payment method-specific access check for payment refunds.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *
+   * @return bool
+   */
+  abstract protected function doRefundPaymentAccess(AccountInterface $account);
+
+  /**
+   * {@inheritdoc}
+   */
+  public function refundPayment() {
+    if (!$this->getPayment()) {
+      throw new \LogicException('Trying to refund a non-existing payment. A payment must be set trough self::setPayment() first.');
+    }
+    $event = new PaymentPreRefund($this->getPayment());
+    $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_PRE_REFUND, $event);
+    $this->moduleHandler->invokeAll('payment_pre_refund', array($this->getPayment()));
+    // @todo invoke Rules event.
+    $this->doRefundPayment();
+  }
+
+  /**
+   * Performs the actual payment refund.
+   */
+  abstract protected function doRefundPayment();
 
   /**
    * Checks a payment's currency against this plugin.

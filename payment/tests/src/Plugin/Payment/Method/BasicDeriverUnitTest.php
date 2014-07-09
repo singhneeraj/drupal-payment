@@ -96,6 +96,8 @@ class BasicDeriverUnitTest extends UnitTestCase {
     $execute_status_id = $this->randomName();
     $capture = TRUE;
     $capture_status_id = $this->randomName();
+    $refund = TRUE;
+    $refund_status_id = $this->randomName();
 
     $payment_method_enabled_basic = $this->getMock('\Drupal\payment\Entity\PaymentMethodConfigurationInterface');
     $payment_method_enabled_basic->expects($this->any())
@@ -113,6 +115,8 @@ class BasicDeriverUnitTest extends UnitTestCase {
         'execute_status_id' => $execute_status_id,
         'capture' => $capture,
         'capture_status_id' => $capture_status_id,
+        'refund' => $refund,
+        'refund_status_id' => $refund_status_id,
       )));
     $payment_method_enabled_basic->expects($this->any())
       ->method('getPluginId')
@@ -134,6 +138,8 @@ class BasicDeriverUnitTest extends UnitTestCase {
         'execute_status_id' => $execute_status_id,
         'capture' => $capture,
         'capture_status_id' => $capture_status_id,
+        'refund' => $refund,
+        'refund_status_id' => $refund_status_id,
       )));
     $payment_method_disabled_basic->expects($this->any())
       ->method('getPluginId')
@@ -172,6 +178,12 @@ class BasicDeriverUnitTest extends UnitTestCase {
     $payment_method_plugin->expects($this->any())
       ->method('getCapture')
       ->will($this->returnValue($capture));
+    $payment_method_plugin->expects($this->any())
+      ->method('getRefundStatusId')
+      ->will($this->returnValue($refund_status_id));
+    $payment_method_plugin->expects($this->any())
+      ->method('getRefund')
+      ->will($this->returnValue($refund));
 
     $this->paymentMethodConfigurationManager->expects($this->any())
       ->method('createInstance')

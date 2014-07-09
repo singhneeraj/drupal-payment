@@ -70,6 +70,9 @@ class Permission {
       'payment.payment.capture.any' => array(
         'title' => $this->t('Capture payments'),
       ),
+      'payment.payment.refund.any' => array(
+        'title' => $this->t('Refund payments'),
+      ),
       'payment.payment_method_configuration.update.any' => array(
         'title' => $this->t('Update any payment method configuration'),
         'restrict access' => TRUE,

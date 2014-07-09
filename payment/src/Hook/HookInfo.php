@@ -39,6 +39,9 @@ class HookInfo {
     $hooks['payment_pre_execute'] = array(
       'group' => 'payment',
     );
+    $hooks['payment_pre_refund'] = array(
+      'group' => 'payment',
+    );
     $hooks['payment_queue_payment_ids_alter'] = array(
       'group' => 'payment',
     );

@@ -176,6 +176,18 @@ class PaymentListBuilder extends EntityListBuilder {
           ),
         ) + $entity->urlInfo('capture-form')->toArray();
     }
+    if ($entity->access('refund')) {
+      $operations['refund'] = array(
+          'title' => $this->t('Refund'),
+          'attributes' => array(
+            'class' => array('use-ajax'),
+            'data-accepts' => 'application/vnd.drupal-modal',
+          ),
+          'query' => array(
+            'destination' => $this->requestStack->getCurrentRequest()->attributes->get('_system_path'),
+          ),
+        ) + $entity->urlInfo('refund-form')->toArray();
+    }
 
     return $operations;
   }

@@ -4,6 +4,8 @@ ownerId: 1
 pluginConfiguration:
   execute_status_id: payment_success
   capture: false
-  capture_status_id: ''
+  capture_status_id: payment_success
+  refund: true
+  refund_status_id: payment_refunded
 pluginId: payment_basic
 status: false

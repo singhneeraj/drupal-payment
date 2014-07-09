@@ -32,7 +32,8 @@ use Drupal\user\UserInterface;
  *       "delete" = "Drupal\payment\Entity\Payment\PaymentDeleteForm",
  *       "edit" = "Drupal\payment\Entity\Payment\PaymentEditForm",
  *       "update_status" = "Drupal\payment\Entity\Payment\PaymentStatusForm",
- *       "capture" = "Drupal\payment\Entity\Payment\PaymentCaptureForm"
+ *       "capture" = "Drupal\payment\Entity\Payment\PaymentCaptureForm",
+ *       "refund" = "Drupal\payment\Entity\Payment\PaymentRefundForm"
  *     },
  *     "list_builder" = "Drupal\payment\Entity\Payment\PaymentListBuilder",
  *     "view_builder" = "Drupal\payment\Entity\Payment\PaymentViewBuilder",
@@ -52,7 +53,8 @@ use Drupal\user\UserInterface;
  *     "edit-form" = "payment.payment.edit",
  *     "delete-form" = "payment.payment.delete",
  *     "update-status-form" = "payment.payment.update_status",
- *     "capture-form" = "payment.payment.capture"
+ *     "capture-form" = "payment.payment.capture",
+ *     "refund-form" = "payment.payment.refund"
  *   }
  * )
  */

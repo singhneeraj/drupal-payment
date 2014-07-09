@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityAccessController;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodRefundPaymentInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodUpdatePaymentStatusInterface;
 
 /**
@@ -34,8 +35,14 @@ class PaymentAccess extends EntityAccessController {
     elseif ($operation == 'capture') {
       $payment_method = $payment->getPaymentMethod();
       return $payment_method instanceof PaymentMethodCapturePaymentInterface
-        && $payment_method->capturePaymentAccess($account)
-        && $this->checkAccessPermission($payment, $operation, $account);
+      && $payment_method->capturePaymentAccess($account)
+      && $this->checkAccessPermission($payment, $operation, $account);
+    }
+    elseif ($operation == 'refund') {
+      $payment_method = $payment->getPaymentMethod();
+      return $payment_method instanceof PaymentMethodRefundPaymentInterface
+      && $payment_method->refundPaymentAccess($account)
+      && $this->checkAccessPermission($payment, $operation, $account);
     }
     return $this->checkAccessPermission($payment, $operation, $account);
   }

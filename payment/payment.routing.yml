@@ -52,6 +52,16 @@ payment.payment.capture:
   options:
     _admin_route: TRUE
 
+payment.payment.refund:
+  path: '/payment/{payment}/refund'
+  defaults:
+    _entity_form: 'payment.refund'
+    _title: Refund payment
+  requirements:
+    _entity_access: 'payment.refund'
+  options:
+    _admin_route: TRUE
+
 payment.payment.delete:
   path: '/payment/{payment}/delete'
   defaults:
