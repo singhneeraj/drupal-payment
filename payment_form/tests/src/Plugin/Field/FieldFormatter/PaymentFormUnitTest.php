@@ -72,8 +72,6 @@ class PaymentFormUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   protected function setUp() {
     $this->entityFormBuilder = $this->getMock('\Drupal\Core\Entity\EntityFormBuilderInterface');
@@ -97,6 +95,10 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @covers ::viewElements
    */
   public function testViewElements() {
+    $entity_type_id = $this->randomName();
+    $bundle = $this->randomName();
+    $field_name = $this->randomName();
+
     $plugin_id = $this->randomName();
     $plugin_configuration = array(
       $this->randomName() => $this->randomName(),
@@ -121,19 +123,29 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->method('get')
       ->will($this->returnValueMap($map));
 
+    $entity = $this->getMock('\Drupal\Core\Entity\EntityInterface');
+    $entity->expects($this->atLeastOnce())
+      ->method('bundle')
+      ->will($this->returnValue($bundle));
+    $entity->expects($this->atLeastOnce())
+      ->method('getEntityTypeId')
+      ->will($this->returnValue($entity_type_id));
+
     $iterator = new \ArrayIterator(array($item));
     $items = $this->getMockBuilder('Drupal\Core\Field\FieldItemList')
       ->disableOriginalConstructor()
-      ->setMethods(array('getIterator'))
+      ->setMethods(array('getEntity', 'getIterator'))
       ->getMock();
-    $items->expects($this->once())
+    $items->expects($this->atLeastOnce())
+      ->method('getEntity')
+      ->will($this->returnValue($entity));
+    $items->expects($this->atLeastOnce())
       ->method('getIterator')
       ->will($this->returnValue($iterator));
 
-    $field_id = $this->randomName();
     $this->fieldDefinition->expects($this->once())
       ->method('getName')
-      ->will($this->returnValue($field_id));
+      ->will($this->returnValue($field_name));
 
     // Create a dummy render array.
     $line_items_data = array(array(
@@ -145,8 +157,9 @@ class PaymentFormUnitTest extends UnitTestCase {
       '#post_render_cache' => array(
         'Drupal\payment_form\Plugin\Field\FieldFormatter\PaymentForm::viewElementsPostRenderCache' => array(
           array(
-            'currency_code' => NULL,
-            'field_definition_name' => $field_id,
+            'bundle' => $bundle,
+            'entity_type_id' => $entity_type_id,
+            'field_name' => $field_name,
             'line_items_data' => serialize($line_items_data),
           ),
         ),
@@ -161,18 +174,47 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @covers ::viewElementsPostRenderCache
    */
   public function testViewElementsPostRenderCache() {
+    $bundle = $this->randomName();
+    $entity_type_id = $this->randomName();
+    $field_name = $this->randomName();
+    $destination_url = $this->randomName();
+    $currency_code = $this->randomName();
+
+    $this->fieldDefinition->expects($this->atLeastOnce())
+      ->method('getSetting')
+      ->with('currency_code')
+      ->will($this->returnValue($currency_code));
+
+    $definitions = array(
+      $field_name => $this->fieldDefinition,
+    );
+    $this->entityManager->expects($this->atLeastOnce())
+      ->method('getFieldDefinitions')
+      ->with($entity_type_id, $bundle)
+      ->will($this->returnValue($definitions));
+
     $payment_type = $this->getMockBuilder('\Drupal\payment_form\Plugin\Payment\Type\PaymentForm')
       ->disableOriginalConstructor()
       ->getMock();
     $payment_type->expects($this->once())
-      ->method('setFieldInstanceConfigId');
+      ->method('setEntityTypeId')
+      ->with($entity_type_id);
+    $payment_type->expects($this->once())
+      ->method('setBundle')
+      ->with($bundle);
+    $payment_type->expects($this->once())
+      ->method('setFieldName')
+      ->with($field_name);
+    $payment_type->expects($this->once())
+      ->method('setDestinationUrl')
+      ->with($destination_url);
 
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
     $payment->expects($this->once())
       ->method('setCurrencyCode')
-      ->will($this->returnSelf());
+      ->with($currency_code);
     $payment->expects($this->once())
       ->method('getPaymentType')
       ->will($this->returnValue($payment_type));
@@ -204,6 +246,10 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->method('getForm')
       ->with($payment, 'payment_form');
 
+    $this->request->expects($this->atLeastOnce())
+      ->method('getUri')
+      ->will($this->returnValue($destination_url));
+
     $container = new Container();
     $container->set('entity.form_builder', $this->entityFormBuilder);
     $container->set('entity.manager', $this->entityManager);
@@ -220,9 +266,9 @@ class PaymentFormUnitTest extends UnitTestCase {
       '#markup' => $this->randomName(),
     );
     $context = array(
-      'currency_code' => $this->randomName(),
-      'destination_url' => $this->randomName(),
-      'field_definition_name' => $this->randomName(),
+      'bundle' => $bundle,
+      'entity_type_id' => $entity_type_id,
+      'field_name' => $field_name,
       'line_items_data' => serialize($line_items_data),
       'token' => $this->randomName(),
     );

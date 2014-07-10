@@ -10,6 +10,7 @@ namespace Drupal\payment_form\Tests\Plugin\Payment\Type;
 
 use Drupal\payment_form\Plugin\Payment\Type\PaymentForm;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -20,18 +21,18 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class PaymentFormUnitTest extends UnitTestCase {
 
   /**
+   * The entity manager.
+   *
+   * @var \Drupal\Core\Entity\EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $entityManager;
+
+  /**
    * The event dispatcher used for testing.
    *
    * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $eventDispatcher;
-
-  /**
-   * The field instance config used for testing.
-   *
-   * @var \Drupal\field\Entity\FieldInstanceConfig|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $fieldInstanceConfig;
 
   /**
    * The module handler used for testing.
@@ -55,6 +56,13 @@ class PaymentFormUnitTest extends UnitTestCase {
   protected $paymentType;
 
   /**
+   * The string translator.
+   *
+   * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $stringTranslation;
+
+  /**
    * {@inheritdoc}
    */
   public static function getInfo() {
@@ -67,31 +75,19 @@ class PaymentFormUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   protected function setUp() {
+    $this->entityManager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
+
     $this->eventDispatcher = $this->getMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
-
-    $this->fieldInstanceConfig = $this->getMockBuilder('\Drupal\field\Entity\FieldInstanceConfig')
-      ->disableOriginalConstructor()
-      ->getMock();
-    $this->fieldInstanceConfig->expects($this->any())
-      ->method('label')
-      ->will($this->returnValue($this->randomName()));
-
-    $field_instance_config_storage = $this->getMockBuilder('\Drupal\field\FieldInstanceConfigStorage')
-      ->disableOriginalConstructor()
-      ->getMock();
-    $field_instance_config_storage->expects($this->any())
-      ->method('load')
-      ->will($this->returnValue($this->fieldInstanceConfig));
 
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
 
-    $http_kernel = $this->getMockBuilder('\Drupal\Core\HttpKernel')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->stringTranslation = $this->getStringTranslationStub();
 
-    $this->paymentType = new PaymentForm(array(), 'payment_form', array(), $http_kernel, $this->moduleHandler, $this->eventDispatcher, $field_instance_config_storage);
+    $this->paymentType = new PaymentForm(array(), 'payment_form', array(), $this->moduleHandler, $this->eventDispatcher, $this->entityManager, $this->stringTranslation);
 
     $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
@@ -100,31 +96,106 @@ class PaymentFormUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::getFieldInstanceConfigId
+   * @covers ::create
    */
-  public function testGetFieldInstanceConfigId() {
-    $this->payment->expects($this->once())
+  function testCreate() {
+    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $map = array(
+      array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager),
+      array('event_dispatcher', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->eventDispatcher),
+      array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
+      array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
+    );
+    $container->expects($this->any())
       ->method('get')
-      ->with('payment_form_field_instance');
-    $this->paymentType->getFieldInstanceConfigId();
+      ->will($this->returnValueMap($map));
+
+    $configuration = array();
+    $plugin_definition = array();
+    $plugin_id = $this->randomName();
+    $plugin = PaymentForm::create($container, $configuration, $plugin_id, $plugin_definition);
+    $this->assertInstanceOf('\Drupal\payment_form\Plugin\Payment\Type\PaymentForm', $plugin);
   }
 
   /**
-   * @covers ::setFieldInstanceConfigId
+   * @covers ::setEntityTypeId
+   * @covers ::getEntityTypeId
    */
-  public function testSetFieldInstanceConfigId() {
-    $this->payment->expects($this->once())
-      ->method('set')
-      ->with('payment_form_field_instance')
-      ->will($this->returnValue($this->paymentType));
-    $this->assertSame(spl_object_hash($this->paymentType), spl_object_hash($this->paymentType->setFieldInstanceConfigId($this->randomName())));
+  public function testGetEntityTypeId() {
+    $id = $this->randomName();
+    $this->assertSame($this->paymentType, $this->paymentType->setEntityTypeId($id));
+    $this->assertSame($id, $this->paymentType->getEntityTypeId());
+  }
+
+  /**
+   * @covers ::setBundle
+   * @covers ::getBundle
+   */
+  public function testGetBundle() {
+    $bundle = $this->randomName();
+    $this->assertSame($this->paymentType, $this->paymentType->setBundle($bundle));
+    $this->assertSame($bundle, $this->paymentType->getBundle());
+  }
+
+  /**
+   * @covers ::setFieldName
+   * @covers ::getFieldName
+   */
+  public function testGetFieldName() {
+    $name = $this->randomName();
+    $this->assertSame($this->paymentType, $this->paymentType->setFieldName($name));
+    $this->assertSame($name, $this->paymentType->getFieldName());
+  }
+
+  /**
+   * @covers ::paymentDescription
+   *
+   * @depends testGetEntityTypeId
+   * @depends testGetBundle
+   * @depends testGetFieldName
+   */
+  public function testPaymentDescription() {
+    $entity_type_id = $this->randomName();
+    $bundle = $this->randomName();
+    $field_name = $this->randomName();
+    $label = $this->randomName();
+    $field_definition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
+    $field_definition->expects($this->atLeastOnce())
+      ->method('getLabel')
+      ->will($this->returnValue($label));
+
+    $definitions = array(
+      $field_name => $field_definition,
+    );
+
+    $this->entityManager->expects($this->atLeastOnce())
+      ->method('getFieldDefinitions')
+      ->with($entity_type_id, $bundle)
+      ->will($this->returnValue($definitions));
+
+    $this->paymentType->setEntityTypeId($entity_type_id);
+    $this->paymentType->setBundle($bundle);
+    $this->paymentType->setFieldName($field_name);
+
+    $this->assertSame($label, $this->paymentType->paymentDescription());
   }
 
   /**
    * @covers ::paymentDescription
    */
-  public function testPaymentDescription() {
-    $this->assertSame($this->paymentType->paymentDescription(), $this->fieldInstanceConfig->label());
+  public function testPaymentDescriptionWithNonExistingField() {
+    $entity_type_id = $this->randomName();
+    $bundle = $this->randomName();
+
+    $this->entityManager->expects($this->atLeastOnce())
+      ->method('getFieldDefinitions')
+      ->with($entity_type_id, $bundle)
+      ->will($this->returnValue(array()));
+
+    $this->paymentType->setEntityTypeId($entity_type_id);
+    $this->paymentType->setBundle($bundle);
+
+    $this->assertSame('Unavailable', $this->paymentType->paymentDescription());
   }
 
   /**

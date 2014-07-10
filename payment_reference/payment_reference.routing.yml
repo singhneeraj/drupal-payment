@@ -1,5 +1,5 @@
 payment_reference.pay:
-  path: '/payment_reference/pay/{field_instance_config}'
+  path: '/payment_reference/pay/{entity_type_id}/{bundle}/{field_name}'
   defaults:
     _content: '\Drupal\payment_reference\Controller\PaymentReference::pay'
     _title_callback: '\Drupal\payment_reference\Controller\PaymentReference::payLabel'
@@ -11,4 +11,4 @@ payment_reference.resume_context:
     _content: '\Drupal\payment_reference\Controller\PaymentReference::resumeContext'
     _title_callback: '\Drupal\payment_reference\Controller\PaymentReference::resumeContextLabel'
   requirements:
-    _access: 'true'
+    _custom_access: '\Drupal\payment_reference\Controller\PaymentReference::resumeContextAccess'

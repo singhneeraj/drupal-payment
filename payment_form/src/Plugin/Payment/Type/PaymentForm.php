@@ -6,10 +6,11 @@
 
 namespace Drupal\payment_form\Plugin\Payment\Type;
 
-use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\HttpKernel;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -29,11 +30,11 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The field instance storage.
+   * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
+   * @var \Drupal\Core\Entity\EntityManagerInterface
    */
-  protected $fieldInstanceConfigStorage;
+  protected $entityManager;
 
   /**
    * The HTTP kernel.
@@ -51,16 +52,19 @@ class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInter
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\HttpKernel $http_kernel
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher.
-   * @param \Drupal\Core\Entity\EntityStorageInterface $field_instance_config_storage
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   *   The entity manager.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translator.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, HttpKernel $http_kernel, ModuleHandlerInterface $module_handler, EventDispatcherInterface $event_dispatcher, EntityStorageInterface $field_instance_config_storage) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler, EventDispatcherInterface $event_dispatcher, EntityManagerInterface $entity_manager, TranslationInterface $string_translation) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $module_handler, $event_dispatcher);
-    $this->httpKernel = $http_kernel;
-    $this->fieldInstanceConfigStorage = $field_instance_config_storage;
+    $this->entityManager = $entity_manager;
+    $this->stringTranslation = $string_translation;
   }
 
   /**
@@ -71,10 +75,10 @@ class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInter
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('http_kernel'),
       $container->get('module_handler'),
       $container->get('event_dispatcher'),
-      $container->get('entity.manager')->getStorage('field_instance_config')
+      $container->get('entity.manager'),
+      $container->get('string_translation')
     );
   }
 
@@ -83,8 +87,11 @@ class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInter
    */
   public function defaultConfiguration() {
     return array(
+      'bundle' => NULL,
       'destination_url' => NULL,
-    );
+      'entity_type_id' => NULL,
+      'field_name' => NULL,
+    ) + parent::defaultConfiguration();
   }
 
   /**
@@ -102,33 +109,75 @@ class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInter
    * {@inheritdoc}
    */
   public function paymentDescription($language_code = NULL) {
-    $instance = $this->fieldInstanceConfigStorage->load($this->getFieldInstanceConfigId());
+    $field_definitions = $this->entityManager->getFieldDefinitions($this->getEntityTypeId(), $this->getBundle());
 
-    return $instance ? $instance->label() : $this->t('Unavailable');
+    return isset($field_definitions[$this->getFieldName()]) ? $field_definitions[$this->getFieldName()]->getLabel() : $this->t('Unavailable');
   }
 
   /**
-   * Sets the ID of the field instance config the payment was made for.
+   * Sets the ID of the entity type the payment was made for.
    *
-   * @param string $field_instance_config_id
+   * @param string $entity_type_id
    *
-   * @return static
+   * @return $this
    */
-  public function setFieldInstanceConfigId($field_instance_config_id) {
-    $this->getPayment()->set('payment_form_field_instance', $field_instance_config_id);
+  public function setEntityTypeId($entity_type_id) {
+    $this->configuration['entity_type_id'] = $entity_type_id;
 
     return $this;
   }
 
   /**
-   * Gets the ID of the field instance config the payment was made for.
+   * Gets the ID of the entity type the payment was made for.
    *
    * @return string
    */
-  public function getFieldInstanceConfigId() {
-    $values =  $this->getPayment()->get('payment_form_field_instance');
+  public function getEntityTypeId() {
+    return $this->configuration['entity_type_id'];
+  }
 
-    return isset($values[0]) ? $values[0]->get('target_id')->getValue() : NULL;
+  /**
+   * Sets the bundle of the entity the payment was made for.
+   *
+   * @param string $bundle
+   *
+   * @return $this
+   */
+  public function setBundle($bundle) {
+    $this->configuration['bundle'] = $bundle;
+
+    return $this;
+  }
+
+  /**
+   * Gets the bundle of the entity the payment was made for.
+   *
+   * @return string
+   */
+  public function getBundle() {
+    return $this->configuration['bundle'];
+  }
+
+  /**
+   * Sets the name of the field the payment was made for.
+   *
+   * @param string $field_name
+   *
+   * @return $this
+   */
+  public function setFieldName($field_name) {
+    $this->configuration['field_name'] = $field_name;
+
+    return $this;
+  }
+
+  /**
+   * Gets the name of the field the payment was made for.
+   *
+   * @return string
+   */
+  public function getFieldName() {
+    return $this->configuration['field_name'];
   }
 
   /**

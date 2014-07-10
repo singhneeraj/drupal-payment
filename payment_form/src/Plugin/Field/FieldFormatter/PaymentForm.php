@@ -42,8 +42,9 @@ class PaymentForm extends FormatterBase {
 
     $callback = __CLASS__ . '::viewElementsPostRenderCache';
     $context = array(
-      'currency_code' => $this->fieldDefinition->getSetting('currency_code'),
-      'field_definition_name' => $this->fieldDefinition->getName(),
+      'bundle' => $items->getEntity()->bundle(),
+      'entity_type_id' => $items->getEntity()->getEntityTypeId(),
+      'field_name' => $this->fieldDefinition->getName(),
       'line_items_data' => serialize($line_items_data),
     );
     $placeholder = drupal_render_cache_generate_placeholder($callback, $context);
@@ -61,19 +62,23 @@ class PaymentForm extends FormatterBase {
    * Implements #post_render_cache.
    */
   public static function viewElementsPostRenderCache(array $element, array $context) {
+    $field_definitions = \Drupal::entityManager()->getFieldDefinitions($context['entity_type_id'], $context['bundle']);
+    $field_definition = $field_definitions[$context['field_name']];
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = \Drupal::entityManager()->getStorage('payment')->create(array(
       'bundle' => 'payment_form',
     ));
-    $payment->setCurrencyCode($context['currency_code']);
+    $payment->setCurrencyCode($field_definition->getSetting('currency_code'));
     /** @var \Drupal\payment_form\Plugin\Payment\Type\PaymentForm $payment_type */
     $payment_type = $payment->getPaymentType();
     $payment_type->setDestinationUrl(\Drupal::request()->getUri());
+    $payment_type->setEntityTypeId($context['entity_type_id']);
+    $payment_type->setBundle($context['bundle']);
+    $payment_type->setFieldName($context['field_name']);
     $line_items_data = unserialize($context['line_items_data']);
     foreach ($line_items_data as $line_item_data) {
       $payment->setLineItem(Payment::lineItemManager()->createInstance($line_item_data['plugin_id'], $line_item_data['plugin_configuration']));
     }
-    $payment_type->setFieldInstanceConfigId($context['field_definition_name']);
 
     /** @var \Drupal\Core\Entity\EntityFormBuilderInterface $entity_form_builder */
     $entity_form_builder = \Drupal::service('entity.form_builder');

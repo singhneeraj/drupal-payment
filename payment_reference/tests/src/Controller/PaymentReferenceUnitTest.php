@@ -8,7 +8,9 @@
 namespace Drupal\payment_reference\Test\Controller;
 
 use Drupal\Core\Access\AccessInterface;
+use Drupal\payment_reference\Controller\PaymentReference;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment_reference\Controller\PaymentReference
@@ -16,11 +18,11 @@ use Drupal\Tests\UnitTestCase;
 class PaymentReferenceUnitTest extends UnitTestCase {
 
   /**
-   * The entity manager.
+   * The controller under test.
    *
-   * @var \Drupal\Core\Entity\EntityManager|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment_reference\Controller\PaymentReference
    */
-  protected $entityManager;
+  protected $controller;
 
   /**
    * The current user.
@@ -30,11 +32,18 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   protected $currentUser;
 
   /**
-   * The form builder.
+   * The entity form builder.
    *
-   * @var \Drupal\Core\Form\FormBuilder|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\Entity\EntityFormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $formBuilder;
+  protected $entityFormBuilder;
+
+  /**
+   * The entity manager.
+   *
+   * @var \Drupal\Core\Entity\EntityManager|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $entityManager;
 
   /**
    * The payment line item manager.
@@ -44,18 +53,18 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   protected $paymentLineItemManager;
 
   /**
-   * The controller under test.
-   *
-   * @var \Drupal\payment_reference\Controller\PaymentReference|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $controller;
-
-  /**
    * The payment reference queue.
    *
    * @var \Drupal\payment\QueueInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $queue;
+
+  /**
+   * The string translation service.
+   *
+   * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $stringTranslation;
 
   /**
    * {@inheritdoc}
@@ -64,56 +73,102 @@ class PaymentReferenceUnitTest extends UnitTestCase {
     return array(
       'description' => '',
       'group' => 'Payment Reference Field',
-      'name' => '\Drupal\payment_reference\PaymentReference unit test',
+      'name' => '\Drupal\payment_reference\Controller\PaymentReference unit test',
     );
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   protected function setUp() {
-    $this->entityManager = $this->getMockBuilder('\Drupal\Core\Entity\EntityManager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->entityManager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
 
-    $this->currentUser = $this->getMockBuilder('\Drupal\Core\Session\AccountInterface')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
-    $this->formBuilder = $this->getMockBuilder('\Drupal\Core\Form\FormBuilder')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->entityFormBuilder = $this->getMock('\Drupal\Core\Entity\EntityFormBuilderInterface');
 
-    $this->paymentLineItemManager = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->paymentLineItemManager = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface');
 
-    $this->queue = $this->getMockBuilder('\Drupal\payment\QueueInterface')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->queue = $this->getMock('\Drupal\payment\QueueInterface');
 
-    $this->controller = $this->getMockBuilder('\Drupal\payment_reference\Controller\PaymentReference')
-      ->setMethods(array('currentUser', 'entityManager', 't'))
-      ->setConstructorArgs(array($this->formBuilder, $this->paymentLineItemManager, $this->queue))
-      ->getMock();
-    $this->controller->expects($this->any())
-      ->method('entityManager')
-      ->will($this->returnValue($this->entityManager));
-    $this->controller->expects($this->any())
-      ->method('currentUser')
-      ->will($this->returnValue($this->currentUser));
+    $this->stringTranslation = $this->getStringTranslationStub();
+
+    $this->controller = new PaymentReference($this->entityManager, $this->currentUser, $this->entityFormBuilder, $this->stringTranslation, $this->paymentLineItemManager, $this->queue);
+  }
+
+  /**
+   * @covers ::create
+   */
+  function testCreate() {
+    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $map = array(
+      array('current_user', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->currentUser),
+      array('entity.form_builder', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityFormBuilder),
+      array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager),
+      array('plugin.manager.payment.line_item', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentLineItemManager),
+      array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
+      array('payment_reference.queue', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->queue),
+    );
+    $container->expects($this->any())
+      ->method('get')
+      ->will($this->returnValueMap($map));
+
+    $form = PaymentReference::create($container);
+    $this->assertInstanceOf('\Drupal\payment_reference\Controller\PaymentReference', $form);
   }
 
   /**
    * @covers ::pay
    */
   public function testPay() {
+    $entity_type_id = $this->randomName();
+    $bundle = $this->randomName();
+    $field_name = $this->randomName();
+    $currency_code = $this->randomName();
+    $line_items_data = array(array(
+      'plugin_configuration' => array(),
+      'plugin_id' => $this->randomName(),
+    ));
+
+    $field_definition = $this->getMock('\Drupal\Core\Field\\FieldDefinitionInterface');
+    $map = array(
+      array('currency_code', $currency_code),
+      array('line_items_data', $line_items_data),
+    );
+    $field_definition->expects($this->atLeastOnce())
+      ->method('getSetting')
+      ->will($this->returnValueMap($map));
+
+    $definitions = array(
+      $field_name => $field_definition,
+    );
+
+    $this->entityManager->expects($this->once())
+      ->method('getFieldDefinitions')
+      ->with($entity_type_id, $bundle)
+      ->will($this->returnValue($definitions));
+
     $payment_type = $this->getMockBuilder('\Drupal\payment_reference\Plugin\Payment\Type\PaymentReference')
       ->disableOriginalConstructor()
       ->getMock();
     $payment_type->expects($this->once())
-      ->method('setFieldInstanceConfigId')
-      ->will($this->returnSelf());
+      ->method('setEntityTypeId')
+      ->with($entity_type_id);
+    $payment_type->expects($this->once())
+      ->method('setBundle')
+      ->with($bundle);
+    $payment_type->expects($this->once())
+      ->method('setFieldName')
+      ->with($field_name);
+
+    $payment_line_item = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface');
+
+    $this->paymentLineItemManager->expects($this->once())
+      ->method('createInstance')
+      ->with($line_items_data[0]['plugin_id'])
+      ->will($this->returnValue($payment_line_item));
 
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
@@ -123,7 +178,10 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       ->will($this->returnValue($payment_type));
     $payment->expects($this->once())
       ->method('setCurrencyCode')
-      ->will($this->returnSelf());
+      ->with($currency_code);
+    $payment->expects($this->once())
+      ->method('setLineItem')
+      ->with($payment_line_item);
 
     $storage_controller = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
     $storage_controller->expects($this->once())
@@ -136,51 +194,52 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       ->will($this->returnValue($storage_controller));
 
     $form = $this->getMockBuilder('\Drupal\payment_reference\Entity\PaymentFormController')
-    ->disableOriginalConstructor()
+      ->disableOriginalConstructor()
       ->getMock();
 
-    $this->entityManager->expects($this->once())
-      ->method('getFormObject')
+    $this->entityFormBuilder->expects($this->once())
+      ->method('getForm')
+      ->with($payment, 'payment_reference')
       ->will($this->returnValue($form));
 
-    $payment_line_item = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface');
 
-    $this->paymentLineItemManager->expects($this->once())
-      ->method('createInstance')
-      ->will($this->returnValue($payment_line_item));
-
-    $field_instance_config = $this->getMock('\Drupal\field\FieldInstanceConfigInterface');
-    $field_instance_config->expects($this->once())
-      ->method('id')
-      ->will($this->returnValue($this->randomName()));
-    $map = array(
-      array('currency_code', $this->randomName()),
-      array('line_items_data', array(array(
-        'plugin_configuration' => array(),
-        'plugin_id' => '',
-      ))),
-    );
-    $field_instance_config->expects($this->exactly(2))
-      ->method('getSetting')
-      ->will($this->returnValueMap($map));
-
-    $this->controller->pay($field_instance_config);
+    $this->assertSame($form, $this->controller->pay($entity_type_id, $bundle, $field_name));
   }
 
   /**
    * @covers ::payAccess
+   * @covers ::fieldExists
+   *
+   * @dataProvider providerTestPayAccess
    */
-  public function testPayAccess() {
+  public function testPayAccess($expected, $entity_type_exists, $bundle_exists, $field_exists, $entity_access, $field_access, $queued_payments) {
+    $entity_type_id = $this->randomName();
+    $bundle = $this->randomName();
+    $field_name = $this->randomName();
+
+    $field_definition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
+
     $user_id = mt_rand();
-    $this->currentUser->expects($this->exactly(4))
+    $this->currentUser->expects($this->any())
       ->method('id')
       ->will($this->returnValue($user_id));
 
-    $field_instance_config_id = $this->randomName();
-    $field_instance_config = $this->getMock('\Drupal\field\FieldInstanceConfigInterface');
-    $field_instance_config->expects($this->any())
-      ->method('id')
-      ->will($this->returnValue($field_instance_config_id));
+    $this->entityManager->expects($this->any())
+      ->method('hasDefinition')
+      ->with($entity_type_id)
+      ->will($this->returnValue($entity_type_exists));
+    $this->entityManager->expects($this->any())
+      ->method('getBundleInfo')
+      ->with($entity_type_id)
+      ->will($this->returnValue($bundle_exists ? array(
+        $bundle => array(),
+      ) : array()));
+    $this->entityManager->expects($this->any())
+      ->method('getFieldDefinitions')
+      ->with($entity_type_id, $bundle)
+      ->will($this->returnValue($field_exists ? array(
+        $field_name => $field_definition,
+      ) : array()));
 
     $request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
       ->disableOriginalConstructor()
@@ -189,77 +248,70 @@ class PaymentReferenceUnitTest extends UnitTestCase {
     $payment_id = mt_rand();
 
     $access_controller = $this->getMock('\Drupal\Core\Entity\EntityAccessControllerInterface');
-    // Test a payment without create access, without queued payments.
-    $access_controller->expects($this->at(0))
+    $access_controller->expects($this->any())
       ->method('createAccess')
-      ->will($this->returnValue(FALSE));
-    $this->queue->expects($this->at(0))
+      ->with('payment_reference')
+      ->will($this->returnValue($entity_access));
+    $access_controller->expects($this->any())
+      ->method('fieldAccess')
+      ->with('edit', $field_definition)
+      ->will($this->returnValue($field_access));
+    $this->queue->expects($this->any())
       ->method('loadPaymentIds')
-      ->will($this->returnValue(array()));
-    // Test a payment with create access, without queued payments.
-    $access_controller->expects($this->at(1))
-      ->method('createAccess')
-      ->will($this->returnValue(TRUE));
-    $this->queue->expects($this->at(1))
-      ->method('loadPaymentIds')
-      ->will($this->returnValue(array()));
-    // Test a payment without create access, with queued payments.
-    $access_controller->expects($this->at(2))
-      ->method('createAccess')
-      ->will($this->returnValue(FALSE));
-    $this->queue->expects($this->at(2))
-      ->method('loadPaymentIds')
-      ->will($this->returnValue(array($payment_id)));
-    // Test a payment with create access, with queued payments.
-    $access_controller->expects($this->at(3))
-      ->method('createAccess')
-      ->will($this->returnValue(TRUE));
-    $this->queue->expects($this->at(3))
-      ->method('loadPaymentIds')
-      ->will($this->returnValue(array($payment_id)));
+      ->will($this->returnValue($queued_payments ? array($payment_id) : array()));
 
     $this->entityManager->expects($this->any())
       ->method('getAccessController')
       ->will($this->returnValue($access_controller));
 
-    // Test a payment without create access, without queued payments.
-    $this->assertSame(AccessInterface::DENY, $this->controller->payAccess($request, $field_instance_config));
+    $this->assertSame($expected, $this->controller->payAccess($request, $entity_type_id, $bundle, $field_name));
+  }
 
-    // Test a payment with create access, without queued payments.
-    $this->assertSame(AccessInterface::ALLOW, $this->controller->payAccess($request, $field_instance_config));
-
-    // Test a payment without create access, with queued payments.
-    $this->assertSame(AccessInterface::DENY, $this->controller->payAccess($request, $field_instance_config));
-
-    // Test a payment with create access, with queued payments.
-    $this->assertSame(AccessInterface::DENY, $this->controller->payAccess($request, $field_instance_config));
+  /**
+   * Provides data to testPayAccess().
+   */
+  public function providerTestPayAccess() {
+    return array(
+      array(AccessInterface::ALLOW, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE),
+      array(AccessInterface::DENY, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE),
+      array(AccessInterface::DENY, TRUE, FALSE, TRUE, TRUE, TRUE, FALSE),
+      array(AccessInterface::DENY, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE),
+      array(AccessInterface::DENY, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE),
+      array(AccessInterface::DENY, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE),
+      array(AccessInterface::DENY, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE),
+    );
   }
 
   /**
    * @covers ::payLabel
    */
   public function testPayLabel() {
+    $entity_type_id = $this->randomName();
+    $bundle = $this->randomName();
+    $field_name = $this->randomName();
     $label = $this->randomName();
-    $field_instance_config = $this->getMock('\Drupal\field\FieldInstanceConfigInterface');
-    $field_instance_config->expects($this->once())
-      ->method('label')
+
+    $field_definition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
+    $field_definition->expects($this->atLeastOnce())
+      ->method('getLabel')
       ->will($this->returnValue($label));
 
-    $this->assertSame($label, $this->controller->payLabel($field_instance_config));
+    $field_definitions = array(
+      $field_name => $field_definition,
+    );
+
+    $this->entityManager->expects($this->atLeastOnce())
+      ->method('getFieldDefinitions')
+      ->with($entity_type_id, $bundle)
+      ->will($this->returnValue($field_definitions));
+
+    $this->assertSame($label, $this->controller->payLabel($entity_type_id, $bundle, $field_name));
   }
 
   /**
    * @covers ::resumeContext
    */
   public function testResumeContext() {
-    $this->controller = $this->getMockBuilder('\Drupal\payment_reference\Controller\PaymentReference')
-      ->disableOriginalConstructor()
-      ->setMethods(array('drupalGetPath', 't'))
-      ->getMock();
-    $this->controller->expects($this->once())
-      ->method('drupalGetPath')
-      ->will($this->returnValue($this->randomName()));
-
     $payment_status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
 
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
@@ -280,29 +332,36 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    * @covers ::resumeContextLabel
    */
   public function testResumeContextLabel() {
-    $field_instance_config_label = $this->randomName();
-    $field_instance_config_id = $this->randomName();
-    $field_instance_config = $this->getMock('\Drupal\field\FieldInstanceConfigInterface');
-    $field_instance_config->expects($this->once())
-      ->method('label')
-      ->will($this->returnValue($field_instance_config_label));
+    $entity_type_id = $this->randomName();
+    $bundle = $this->randomName();
+    $field_name = $this->randomName();
+    $label = $this->randomName();
+    $field_definition = $this->getMock('\Drupal\Core\Field\\FieldDefinitionInterface');
+    $field_definition->expects($this->atLeastOnce())
+      ->method('getLabel')
+      ->will($this->returnValue($label));
 
-    $storage_controller = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
-    $storage_controller->expects($this->once())
-      ->method('load')
-      ->with($field_instance_config_id)
-      ->will($this->returnValue($field_instance_config));
+    $definitions = array(
+      $field_name => $field_definition,
+    );
 
     $this->entityManager->expects($this->once())
-      ->method('getStorage')
-      ->will($this->returnValue($storage_controller));
+      ->method('getFieldDefinitions')
+      ->with($entity_type_id, $bundle)
+      ->will($this->returnValue($definitions));
 
     $payment_type = $this->getMockBuilder('\Drupal\payment_reference\Plugin\Payment\Type\PaymentReference')
       ->disableOriginalConstructor()
       ->getMock();
     $payment_type->expects($this->once())
-      ->method('getFieldInstanceConfigId')
-      ->will($this->returnValue($field_instance_config_id));
+      ->method('getEntityTypeId')
+      ->will($this->returnValue($entity_type_id));
+    $payment_type->expects($this->once())
+      ->method('getBundle')
+      ->will($this->returnValue($bundle));
+    $payment_type->expects($this->once())
+      ->method('getFieldName')
+      ->will($this->returnValue($field_name));
 
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
@@ -311,7 +370,72 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       ->method('getPaymentType')
       ->will($this->returnValue($payment_type));
 
-    $this->assertSame($field_instance_config_label, $this->controller->resumeContextLabel($payment));
+    $this->assertSame($label, $this->controller->resumeContextLabel($payment));
+  }
+
+  /**
+   * @covers ::resumeContextAccess
+   * @covers ::fieldExists
+   *
+   * @dataProvider providerTestResumeContextAccess
+   */
+  public function testResumeContextAccess($expected, $entity_type_exists, $bundle_exists, $field_exists) {
+    $entity_type_id = $this->randomName();
+    $bundle = $this->randomName();
+    $field_name = $this->randomName();
+
+    $payment_type = $this->getMockBuilder('\Drupal\payment_reference\Plugin\Payment\Type\PaymentReference')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $payment_type->expects($this->atLeastOnce())
+      ->method('getEntityTypeId')
+      ->will($this->returnValue($entity_type_id));
+    $payment_type->expects($this->atLeastOnce())
+      ->method('getBundle')
+      ->will($this->returnValue($bundle));
+    $payment_type->expects($this->atLeastOnce())
+      ->method('getFieldName')
+      ->will($this->returnValue($field_name));
+
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $payment->expects($this->atLeastOnce())
+      ->method('getPaymentType')
+      ->will($this->returnValue($payment_type));
+
+    $field_definition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
+
+    $this->entityManager->expects($this->any())
+      ->method('hasDefinition')
+      ->with($entity_type_id)
+      ->will($this->returnValue($entity_type_exists));
+    $this->entityManager->expects($this->any())
+      ->method('getBundleInfo')
+      ->with($entity_type_id)
+      ->will($this->returnValue($bundle_exists ? array(
+        $bundle => array(),
+      ) : array()));
+    $this->entityManager->expects($this->any())
+      ->method('getFieldDefinitions')
+      ->with($entity_type_id, $bundle)
+      ->will($this->returnValue($field_exists ? array(
+        $field_name => $field_definition,
+      ) : array()));
+
+    $this->assertSame($expected, $this->controller->resumeContextAccess($payment));
+  }
+
+  /**
+   * Provides data to testResumeCOntextAccess().
+   */
+  public function providerTestResumeContextAccess() {
+    return array(
+      array(AccessInterface::ALLOW, TRUE, TRUE, TRUE),
+      array(AccessInterface::DENY, FALSE, TRUE, TRUE),
+      array(AccessInterface::DENY, TRUE, FALSE, TRUE),
+      array(AccessInterface::DENY, TRUE, TRUE, FALSE),
+    );
   }
 
 }

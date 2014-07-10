@@ -12,7 +12,6 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\field\FieldInstanceConfigInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -66,16 +65,14 @@ class PaymentReference extends WidgetBase implements ContainerFactoryPluginInter
   }
 
   /**
-   * Implements hook_field_widget_form().
+   * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, array &$form_state) {
-    if (!($this->fieldDefinition instanceof FieldInstanceConfigInterface)) {
-      throw new \RuntimeException('This widget can only be used on configurable fields.');
-    }
-
     $element['payment_id'] = array(
+      '#bundle' => $items->getEntity()->bundle(),
       '#default_value' => isset($items[$delta]) ? $items[$delta]->target_id : NULL,
-      '#field_instance_config_id' => $this->fieldDefinition->id(),
+      '#entity_type_id' => $items->getEntity()->getEntityTypeId(),
+      '#field_name' => $this->fieldDefinition->getName(),
       // The requested user account may contain a string numeric ID.
       '#owner_id' => (int) $this->currentUser->id(),
       '#payment_line_items_data' => $this->getFieldSetting('line_items_data'),

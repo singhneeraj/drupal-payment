@@ -30,14 +30,20 @@ class PaymentReference {
     if (!is_string($element['#payment_currency_code'])) {
       throw new \InvalidArgumentException('The currency code must be a string, but ' . gettype($element['#payment_currency_code']) . ' was given.');
     }
-    if (!is_string($element['#field_instance_config_id'])) {
-      throw new \InvalidArgumentException('The field instance config ID must be a string, but ' . gettype($element['#field_instance_config_id']) . ' was given.');
+    if (!is_string($element['#entity_type_id'])) {
+      throw new \InvalidArgumentException('#entity_type_id must be a string, but ' . gettype($element['#entity_type_id']) . ' was given.');
+    }
+    if (!is_string($element['#bundle'])) {
+      throw new \InvalidArgumentException('#bundle must be a string, but ' . gettype($element['#bundle']) . ' was given.');
+    }
+    if (!is_string($element['#field_name'])) {
+      throw new \InvalidArgumentException('#field_name must be a string, but ' . gettype($element['#field_name']) . ' was given.');
     }
 
     // Find the default payment to use.
     $pid = $element['#default_value'];
     if (!$pid) {
-      $pids = PaymentReferenceServiceWrapper::queue()->loadPaymentIds($element['#field_instance_config_id'], $element['#owner_id']);
+      $pids = PaymentReferenceServiceWrapper::queue()->loadPaymentIds($element['#entity_type_id'] . '.' . $element['#bundle'] . '.' . $element['#field_name'], $element['#owner_id']);
       $pid = reset($pids);
     }
     // Form API considers an empty string to be an empty value, but not NULL.
@@ -82,7 +88,8 @@ class PaymentReference {
         ),
         '#markup' => t('<a href="@url" target="_blank">Add a new payment</a> (opens in a new window)', array(
           '@url' => \Drupal::urlGenerator()->generateFromRoute('payment_reference.pay', array(
-            'field_instance_config' => $element['#field_instance_config_id'],
+              'entity_type_id' => $element['#entity_type_id'],
+              'field_name' => $element['#field_name'],
           )),
         )),
       );

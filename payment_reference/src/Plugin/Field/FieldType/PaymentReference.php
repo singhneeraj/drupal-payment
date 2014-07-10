@@ -17,8 +17,6 @@ use Drupal\payment\Payment;
 /**
  * Provides a configurable payment reference field.
  *
- * This field cannot be used as a base field.
- *
  * @FieldType(
  *   configurable = "true",
  *   constraints = {
