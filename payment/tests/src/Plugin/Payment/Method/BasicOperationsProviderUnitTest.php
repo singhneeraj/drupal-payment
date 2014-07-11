@@ -5,7 +5,7 @@
  * Contains \Drupal\payment\Tests\Plugin\Payment\Status\BasicOperationsProviderUnitTest.
  */
 
-namespace Drupal\payment\Tests\Plugin\Payment;
+namespace Drupal\payment\Tests\Plugin\Payment\Method;
 
 use Drupal\payment\Plugin\Payment\Method\BasicOperationsProvider;
 use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait;
