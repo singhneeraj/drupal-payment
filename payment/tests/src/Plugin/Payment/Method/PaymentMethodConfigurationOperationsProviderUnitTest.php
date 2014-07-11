@@ -5,7 +5,7 @@
  * Contains \Drupal\payment\Tests\Plugin\Payment\Status\PaymentMethodConfigurationOperationsProviderUnitTest.
  */
 
-namespace Drupal\payment\Tests\Plugin\Payment;
+namespace Drupal\payment\Tests\Plugin\Payment\Method;
 
 use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait;
 use Drupal\Tests\UnitTestCase;
