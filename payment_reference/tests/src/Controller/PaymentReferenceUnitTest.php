@@ -5,7 +5,7 @@
  * Contains \Drupal\payment_reference\Test\Controller\PaymentReferenceUnitTest.
  */
 
-namespace Drupal\payment_reference\Test\Controller;
+namespace Drupal\payment_reference\Tests\Controller;
 
 use Drupal\Core\Access\AccessInterface;
 use Drupal\payment_reference\Controller\PaymentReference;
