@@ -5,7 +5,7 @@
  * Contains \Drupal\payment_reference\Tests\PaymentReferenceUnitTest.
  */
 
-namespace Drupal\payment_reference\Test;
+namespace Drupal\payment_reference\Tests;
 
 use Drupal\payment_reference\PaymentReference;
 use Drupal\Tests\UnitTestCase;
