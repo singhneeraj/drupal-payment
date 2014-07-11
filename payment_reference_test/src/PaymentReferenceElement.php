@@ -27,17 +27,14 @@ class PaymentReferenceElement implements FormInterface {
    */
   public function buildForm(array $form, array &$form_state) {
     $form['payment_reference'] = array(
-      // The ID of the field instance the element is used for.
-      '#field_instance_config_id' => 'payment_reference_test_payment_reference_element',
-      // The ID of the account that must own the payment.
+      '#entity_type_id' => 'user',
+      '#bundle' => 'user',
+      '#field_name' => 'foobarbaz',
       '#owner_id' => 2,
-      // An array of
-      // \Drupal\payment\Plugin\payment\line_item\PaymentLineItemInterface
-      // instances.
       '#payment_line_items' => Generate::createPaymentLineItems(),
       '#payment_currency_code' => 'EUR',
       '#required' => TRUE,
-      '#title' => 'Foo',
+      '#title' => 'FooBarBaz',
       '#type' => 'payment_reference',
     );
     $form['submit'] = array(

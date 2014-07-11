@@ -64,7 +64,7 @@ class PaymentReferenceWebTest extends WebTestBase {
     // Test the widget when creating an entity.
     $this->drupalGet('user/' . $user->id() . '/edit');
     $this->clickLink(t('Add a new payment'));
-    $this->assertUrl('/payment_reference/pay/user.user.' . $field_name);
+    $this->assertUrl('/payment_reference/pay/user/user/' . $field_name);
     $this->assertResponse('200');
   }
 }

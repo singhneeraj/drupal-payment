@@ -7,5 +7,5 @@ configure_parameters:
 type: module
 package: Payment
 dependencies:
-  - field
+  - entity_reference
   - payment

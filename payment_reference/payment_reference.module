@@ -13,7 +13,6 @@ use Drupal\field\FieldConfigInterface;
 use Drupal\field\FieldInstanceConfigInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment_reference\PaymentReference;
-use Drupal\payment_reference\Plugin\Payment\Type\PaymentReference as PaymentReferencePlugin;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
 /**
@@ -87,7 +86,7 @@ function payment_reference_field_instance_config_delete(FieldInstanceConfigInter
  * Implements hook_ENTITY_TYPE_insert().
  */
 function payment_reference_payment_insert(PaymentInterface $payment) {
-  if ($payment->getPaymentType() instanceof PaymentReferencePlugin) {
+  if ($payment->bundle() == 'payment_reference') {
     /** @var \Drupal\payment_reference\Plugin\Payment\Type\PaymentReference $payment_type */
     $payment_type = $payment->getPaymentType();
     PaymentReference::queue()->save($payment_type->getFieldId(), $payment->id());

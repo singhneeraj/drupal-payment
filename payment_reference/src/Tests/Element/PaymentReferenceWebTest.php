@@ -7,6 +7,7 @@
 
 namespace Drupal\payment_reference\Tests\Element;
 
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\payment\Generate;
 use Drupal\payment_reference\PaymentReference;
 use Drupal\simpletest\WebTestBase;
@@ -36,14 +37,33 @@ class PaymentReferenceWebTest extends WebTestBase {
    * Tests the element.
    */
   protected function testElement() {
+    // Create the field and field instance.
+    $field_name = 'foobarbaz';
+    entity_create('field_config', array(
+      'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
+      'entity_type' => 'user',
+      'name' => $field_name,
+      'type' => 'payment_reference',
+    ))->save();
+
+    entity_create('field_instance_config', array(
+      'bundle' => 'user',
+      'entity_type' => 'user',
+      'field_name' => $field_name,
+      'settings' => array(
+        'currency_code' => 'EUR',
+        'line_items_data' => array(),
+      ),
+    ))->save();
+
     $state = \Drupal::state();
     $path = 'payment_reference_test-element-payment_reference';
 
     // Test without queued payments.
     $this->drupalGet($path);
-    $this->assertLinkByHref('payment_reference/pay/payment_reference_test_payment_reference_element');
+    $this->assertLinkByHref('payment_reference/pay/user/user/' . $field_name);
     $this->drupalPostForm($path, array(), t('Submit'));
-    $this->assertText('Foo field is required');
+    $this->assertText('FooBarBaz field is required');
     $value = $state->get('payment_reference_test_payment_reference_element');
     $this->assertNull($value);
 
@@ -51,7 +71,7 @@ class PaymentReferenceWebTest extends WebTestBase {
     $payment = Generate::createPayment(2);
     $payment->setStatus(\Drupal::service('plugin.manager.payment.status')->createInstance('payment_success'));
     $payment->save();
-    PaymentReference::queue()->save('payment_reference_test_payment_reference_element', $payment->id());
+    PaymentReference::queue()->save('user.user.' . $field_name, $payment->id());
     $this->drupalGet($path);
     $this->drupalPostForm($path, array(), t('Submit'));
     $value = $state->get('payment_reference_test_payment_reference_element');

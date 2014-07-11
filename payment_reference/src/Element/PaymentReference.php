@@ -21,23 +21,23 @@ class PaymentReference {
    */
   public static function process(array $element, array &$form_state, array $form) {
     // Validate the element's configuration.
+    if (!is_string($element['#bundle'])) {
+      throw new \InvalidArgumentException('#bundle must be a string, but ' . gettype($element['#bundle']) . ' was given.');
+    }
     if (!is_int($element['#default_value']) && !is_null($element['#default_value'])) {
       throw new \InvalidArgumentException('The default value must be an integer or NULL, but ' . gettype($element['#default_value']) . ' was given.');
+    }
+    if (!is_string($element['#entity_type_id'])) {
+      throw new \InvalidArgumentException('#entity_type_id must be a string, but ' . gettype($element['#entity_type_id']) . ' was given.');
+    }
+    if (!is_string($element['#field_name'])) {
+      throw new \InvalidArgumentException('#field_name must be a string, but ' . gettype($element['#field_name']) . ' was given.');
     }
     if (!is_int($element['#owner_id'])) {
       throw new \InvalidArgumentException('The owner ID must be an integer, but ' . gettype($element['#owner_id']) . ' was given.');
     }
     if (!is_string($element['#payment_currency_code'])) {
       throw new \InvalidArgumentException('The currency code must be a string, but ' . gettype($element['#payment_currency_code']) . ' was given.');
-    }
-    if (!is_string($element['#entity_type_id'])) {
-      throw new \InvalidArgumentException('#entity_type_id must be a string, but ' . gettype($element['#entity_type_id']) . ' was given.');
-    }
-    if (!is_string($element['#bundle'])) {
-      throw new \InvalidArgumentException('#bundle must be a string, but ' . gettype($element['#bundle']) . ' was given.');
-    }
-    if (!is_string($element['#field_name'])) {
-      throw new \InvalidArgumentException('#field_name must be a string, but ' . gettype($element['#field_name']) . ' was given.');
     }
 
     // Find the default payment to use.
@@ -88,6 +88,7 @@ class PaymentReference {
         ),
         '#markup' => t('<a href="@url" target="_blank">Add a new payment</a> (opens in a new window)', array(
           '@url' => \Drupal::urlGenerator()->generateFromRoute('payment_reference.pay', array(
+              'bundle' => $element['#bundle'],
               'entity_type_id' => $element['#entity_type_id'],
               'field_name' => $element['#field_name'],
           )),

@@ -36,6 +36,10 @@ class PaymentFormControllerWebTest extends WebTestBase {
    * Tests the form.
    */
   protected function testForm() {
+    // Create a user.
+    $user = $this->drupalCreateUser(array('administer users'));
+    $this->drupalLogin($user);
+
     // Create a payment method.
     $payment_method = Generate::createPaymentMethodConfiguration(2, 'payment_basic');
     $payment_method->setPluginConfiguration(array(
@@ -52,6 +56,7 @@ class PaymentFormControllerWebTest extends WebTestBase {
       'type' => 'payment_reference',
     ))->save();
 
+    /** @var \Drupal\field\FieldInstanceConfigInterface $field_instance_config */
     $field_instance_config = entity_create('field_instance_config', array(
       'bundle' => 'user',
       'entity_type' => 'user',
@@ -63,7 +68,7 @@ class PaymentFormControllerWebTest extends WebTestBase {
     ));
     $field_instance_config->save();
 
-    $path = '/payment_reference/pay/' . $field_instance_config->id();
+    $path = '/payment_reference/pay/user/user/' . $field_name;
     $this->drupalGet($path);
     $this->drupalPostForm($path, array(), t('Pay'));
     // This actually tests the payment_reference payment type plugin, but it lets

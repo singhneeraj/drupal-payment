@@ -78,8 +78,6 @@ class PaymentFormController extends EntityForm {
    * {@inheritdoc}
    */
   public function validate(array $form, array &$form_state) {
-    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
-    $payment = $this->getEntity();
     /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface $payment_method_selector */
     $payment_method_selector = $form_state['storage']['payment_method_selector'];
     $payment_method_selector->validateConfigurationForm($form['payment_method'], $form_state);
