@@ -5,16 +5,17 @@
  * Contains \Drupal\payment_reference\Entity\PaymentFormController.
  */
 
-namespace Drupal\payment_reference\Entity;
+namespace Drupal\payment_reference\Entity\Payment;
 
-use Drupal\Core\Entity\EntityForm;
+use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides the payment form.
  */
-class PaymentFormController extends EntityForm {
+class PaymentForm extends ContentEntityForm {
 
   /**
    * The payment method selector manager.
@@ -24,11 +25,15 @@ class PaymentFormController extends EntityForm {
   protected $paymentMethodSelectorManager;
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   *   The entity manager.
    * @param \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface $payment_method_selector_manager
+   *   The payment method selector manager.
    */
-  public function __construct(PaymentMethodSelectorManagerInterface $payment_method_selector_manager) {
+  public function __construct(EntityManagerInterface $entity_manager, PaymentMethodSelectorManagerInterface $payment_method_selector_manager) {
+    parent::__construct($entity_manager);
     $this->paymentMethodSelectorManager = $payment_method_selector_manager;
   }
 
@@ -37,7 +42,7 @@ class PaymentFormController extends EntityForm {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('plugin.manager.payment.method_selector'));
+    return new static($container->get('entity.manager'), $container->get('plugin.manager.payment.method_selector'));
   }
 
 
@@ -111,10 +116,4 @@ class PaymentFormController extends EntityForm {
     return $actions;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function buildEntity(array $form, array &$form_state) {
-    return $this->getEntity();
-  }
 }

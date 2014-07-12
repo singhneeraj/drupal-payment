@@ -2,21 +2,21 @@
 
 /**
  * @file
- * Contains \Drupal\payment_reference\Tests\Entity\PaymentFormControllerWebTest.
+ * Contains \Drupal\payment_reference\Tests\Entity\Payment\PaymentFormWebTest.
  */
 
-namespace Drupal\payment_reference\Tests\Entity;
+namespace Drupal\payment_reference\Tests\Entity\Payment;
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\payment\Generate;
 use Drupal\simpletest\WebTestBase;
 
 /**
- * \Drupal\payment_reference\Entity\PaymentFormController web test.
+ * \Drupal\payment_reference\Entity\Payment\PaymentForm web test.
  *
  * @group Payment Reference Field
  */
-class PaymentFormControllerWebTest extends WebTestBase {
+class PaymentFormWebTest extends WebTestBase {
 
   /**
    * {@inheritdoc}

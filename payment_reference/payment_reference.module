@@ -63,7 +63,7 @@ function payment_reference_page_alter(&$page) {
 function payment_reference_entity_type_alter(&$entity_types) {
   /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
   $entity_type = $entity_types['payment'];
-  $entity_type->setFormClass('payment_reference', 'Drupal\payment_reference\Entity\PaymentFormController');
+  $entity_type->setFormClass('payment_reference', 'Drupal\payment_reference\Entity\Payment\PaymentForm');
 }
 
 /**
