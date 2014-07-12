@@ -25,6 +25,13 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
   public $paymentStatusManager;
 
   /**
+   * The definition of the payment status under test.
+   *
+   * @var array
+   */
+  public $pluginDefinition;
+
+  /**
    * The ID of the payment status under test.
    *
    * @var string
@@ -48,9 +55,11 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
 
     $configuration = array();
     $this->pluginId = $this->randomName();
-    $plugin_definition = array();
+    $this->pluginDefinition = array(
+      'label' => $this->randomName(),
+    );
     $this->status = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Status\PaymentStatusBase')
-      ->setConstructorArgs(array($configuration, $this->pluginId, $plugin_definition, $this->paymentStatusManager))
+      ->setConstructorArgs(array($configuration, $this->pluginId, $this->pluginDefinition, $this->paymentStatusManager))
       ->getMockForAbstractClass();
   }
 
@@ -193,4 +202,12 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
       ->will($this->returnValue($expected));
     $this->assertSame($expected, $this->status->isOrHasAncestor($this->pluginId));
   }
+
+  /**
+   * @covers ::getLabel
+   */
+  public function testGetLabel() {
+    $this->assertSame($this->pluginDefinition['label'], $this->status->getLabel());
+  }
+
 }

@@ -10,14 +10,14 @@ namespace Drupal\payment\Tests\Entity;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Payment;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface;
-use Drupal\simpletest\DrupalUnitTestBase;
+use Drupal\simpletest\KernelTestBase;
 
 /**
  * \Drupal\payment\Entity\Payment unit test.
  *
  * @group Payment
  */
-class PaymentUnitTest extends DrupalUnitTestBase {
+class PaymentUnitTest extends KernelTestBase {
 
   /**
    * The payment bundle to test with used for testing.

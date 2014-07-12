@@ -48,6 +48,9 @@ class OperationsProviderPluginManagerTraitUnitTest extends UnitTestCase {
         'id' => 'foo',
         'operations_provider' => '\Drupal\payment\Tests\Plugin\Payment\OperationsProviderPluginManagerTraitUnitTestOperationsProvider',
       ),
+      'bar' => array(
+        'id' => 'bar',
+      ),
     );
 
     $operations_provider = new \stdClass();
@@ -60,6 +63,7 @@ class OperationsProviderPluginManagerTraitUnitTest extends UnitTestCase {
       ->will($this->returnValue($operations_provider));
 
     $this->assertSame($operations_provider, $this->trait->getOperationsProvider('foo'));
+    $this->assertNull($this->trait->getOperationsProvider('bar'));
   }
 
 }

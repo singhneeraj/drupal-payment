@@ -32,6 +32,13 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
   protected $paymentMethodConfiguration;
 
   /**
+   * The payment method plugin's definition.
+   *
+   * @var mixed[]
+   */
+  protected $pluginDefinition;
+
+  /**
    * The string translator.
    *
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -51,8 +58,12 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
       ->method('translate')
       ->will($this->returnArgument(0));
 
+    $this->pluginDefinition = array(
+      'description' => $this->randomName(),
+      'label' => $this->randomName(),
+    );
     $this->paymentMethodConfiguration = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationBase')
-      ->setConstructorArgs(array(array(), '', array(), $this->stringTranslation, $this->moduleHandler))
+      ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->stringTranslation, $this->moduleHandler))
       ->getMockForAbstractClass();
   }
 
@@ -262,6 +273,20 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
 
     $this->assertSame($message_text, $this->paymentMethodConfiguration->getMessageText());
     $this->assertSame($message_format, $this->paymentMethodConfiguration->getMessageTextFormat());
+  }
+
+  /**
+   * @covers ::getPluginLabel
+   */
+  public function testGetPluginLabel() {
+    $this->assertSame($this->pluginDefinition['label'], $this->paymentMethodConfiguration->getPluginLabel());
+  }
+
+  /**
+   * @covers ::getPluginDescription
+   */
+  public function testGetPluginDescription() {
+    $this->assertSame($this->pluginDefinition['description'], $this->paymentMethodConfiguration->getPluginDescription());
   }
 
 }

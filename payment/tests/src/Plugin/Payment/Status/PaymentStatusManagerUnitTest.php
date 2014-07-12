@@ -130,6 +130,8 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
 
   /**
    * @covers ::hierarchy
+   * @covers ::hierarchyLevel
+   * @covers ::sort
    * @depends testGetDefinitions
    */
   public function testHierarchy() {
@@ -160,6 +162,7 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
 
   /**
    * @covers ::options
+   * @covers ::optionsLevel
    * @depends testGetDefinitions
    * @depends testHierarchy
    */

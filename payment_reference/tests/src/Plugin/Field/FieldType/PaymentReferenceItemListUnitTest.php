@@ -52,7 +52,7 @@ class PaymentReferenceItemListUnitTest extends UnitTestCase {
     $form = array();
     $form_state = array();
     // These methods do nothing, but make sure they do not cause errors either.
-    $this->itemList->defaultValuesFormSubmit($element, $form, $form_state);
+    $this->itemList->defaultValuesFormValidate($element, $form, $form_state);
   }
 
   /**

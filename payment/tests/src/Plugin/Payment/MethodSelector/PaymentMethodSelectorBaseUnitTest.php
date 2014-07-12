@@ -8,6 +8,7 @@
 namespace Drupal\payment\Tests\Plugin\Payment\MethodSelector;
 
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorBase
@@ -52,8 +53,27 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
     $plugin_definition = array();
     $this->paymentMethodSelectorPlugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorBase')
       ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->currentUser, $this->paymentMethodManager))
-      ->setMethods(array('buildConfigurationForm'))
-      ->getMock();
+      ->getMockForAbstractClass();
+  }
+
+  /**
+   * @covers ::create
+   */
+  public function testCreate() {
+    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $map = array(
+      array('current_user', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->currentUser),
+      array('plugin.manager.payment.method', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodManager),
+    );
+    $container->expects($this->any())
+      ->method('get')
+      ->will($this->returnValueMap($map));
+
+    /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase $class_name */
+    $class_name = get_class($this->paymentMethodSelectorPlugin);
+
+    $payment_method_selector = $class_name::create($container, array(), $this->randomName(), array());
+    $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorBase', $payment_method_selector);
   }
 
   /**
@@ -111,6 +131,16 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
       ->getMock();
     $this->assertSame($this->paymentMethodSelectorPlugin, $this->paymentMethodSelectorPlugin->setPayment($payment));
     $this->assertSame($payment, $this->paymentMethodSelectorPlugin->getPayment());
+  }
+
+  /**
+   * @covers ::setPaymentMethod
+   * @covers ::getPaymentMethod
+   */
+  public function testGetPaymentMethod() {
+    $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
+    $this->assertSame($this->paymentMethodSelectorPlugin, $this->paymentMethodSelectorPlugin->setPaymentMethod($payment_method));
+    $this->assertSame($payment_method, $this->paymentMethodSelectorPlugin->getPaymentMethod());
   }
 
   /**

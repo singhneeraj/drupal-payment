@@ -9,6 +9,7 @@ namespace Drupal\payment\Plugin\Payment\MethodSelector;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -93,7 +94,7 @@ class PaymentSelect extends PaymentMethodSelectorBase {
         $this->selectedPaymentMethods[$payment_method_id] = $this->paymentMethodManager->createInstance($payment_method_id);
         $this->selectedPaymentMethods[$payment_method_id]->setPayment($this->getPayment());
       }
-      $this->selectedPaymentMethod = $this->selectedPaymentMethods[$payment_method_id];
+      $this->setPaymentMethod($this->selectedPaymentMethods[$payment_method_id]);
     }
     // If no (different) payment method was chosen, delegate validation to the
     // payment method.
@@ -179,7 +180,7 @@ class PaymentSelect extends PaymentMethodSelectorBase {
     // Use the only available payment method if no other was configured
     // before, or the configured payment method is not available.
     if (is_null($this->getPaymentMethod()) || $this->getPaymentMethod()->getPluginId() != $payment_method->getPluginId()) {
-      $this->selectedPaymentMethod = $payment_method;
+      $this->setPaymentMethod($payment_method);
     }
 
     $element['select']['payment_method_id'] = array(
@@ -269,6 +270,15 @@ class PaymentSelect extends PaymentMethodSelectorBase {
     }
 
     return $form_state[$this->getPluginId()][spl_object_hash($this)]['element_id'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setPaymentMethod(PaymentMethodInterface $payment_method) {
+    $this->selectedPaymentMethods[$payment_method->getPluginId()] = $payment_method;
+
+    return parent::setPaymentMethod($payment_method);
   }
 
 }

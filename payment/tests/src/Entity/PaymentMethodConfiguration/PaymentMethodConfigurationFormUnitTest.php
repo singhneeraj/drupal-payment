@@ -169,12 +169,12 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
       'foo' => $this->randomName(),
     );
 
-    $payment_method_configuration_plugin->expects($this->once())
+    $payment_method_configuration_plugin->expects($this->atLeastOnce())
       ->method('buildConfigurationForm')
       ->with(array(), $this->isType('array'))
       ->will($this->returnValue($payment_method_configuration_plugin_form));
 
-    $this->paymentMethodConfigurationManager->expects($this->once())
+    $this->paymentMethodConfigurationManager->expects($this->atLeastOnce())
       ->method('getDefinition')
       ->will($this->returnValue($payment_method_configuration_plugin_definition));
 
@@ -210,6 +210,9 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
       ->will($this->returnValue($payment_method_configuration_plugin));
 
     $build = $this->form->form($form, $form_state);
+    // Make sure the payment method configuration plugin is instantiated only
+    // once by building the form twice.
+    $this->form->form($form, $form_state);
     unset($build['#process']);
     unset($build['langcode']);
     $expected_build = array(

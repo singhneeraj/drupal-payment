@@ -8,7 +8,6 @@
 
 namespace Drupal\payment\Tests\Plugin\Payment\MethodSelector {
 
-use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -37,7 +36,7 @@ class PaymentSelectUnitTest extends UnitTestCase {
   /**
    * The payment method selector plugin under test.
    *
-   * @var \Drupal\payment\Tests\Plugin\Payment\MethodSelector\PaymentSelectUnitTestPaymentSelect
+   * @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect
    */
   protected $paymentMethodSelector;
 
@@ -71,7 +70,7 @@ class PaymentSelectUnitTest extends UnitTestCase {
       ->will($this->returnArgument(0));
 
     $this->paymentMethodSelectorPluginId = $this->randomName();
-    $this->paymentMethodSelector = new PaymentSelectUnitTestPaymentSelect(array(), $this->paymentMethodSelectorPluginId, array(), $this->currentUser, $this->paymentMethodManager, $this->stringTranslation);
+    $this->paymentMethodSelector = new PaymentSelect(array(), $this->paymentMethodSelectorPluginId, array(), $this->currentUser, $this->paymentMethodManager, $this->stringTranslation);
   }
 
   /**
@@ -96,8 +95,6 @@ class PaymentSelectUnitTest extends UnitTestCase {
    * @covers ::buildPaymentMethodForm
    */
   public function testBuildPaymentMethodForm() {
-    $plugin_id = $this->randomName();
-
     $payment_method_form = array(
       '#type' => $this->randomName(),
     );
@@ -168,8 +165,8 @@ class PaymentSelectUnitTest extends UnitTestCase {
 
     $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
 
-    /** @var \Drupal\payment\Tests\Plugin\Payment\MethodSelector\PaymentSelectUnitTestPaymentSelect|\PHPUnit_Framework_MockObject_MockObject $payment_method_selector */
-    $payment_method_selector = $this->getMockBuilder('\Drupal\payment\Tests\Plugin\Payment\MethodSelector\PaymentSelectUnitTestPaymentSelect')
+    /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect|\PHPUnit_Framework_MockObject_MockObject $payment_method_selector */
+    $payment_method_selector = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect')
       ->setMethods(array('getAvailablePaymentMethods'))
       ->setConstructorArgs(array(array(), $this->paymentMethodSelectorPluginId, array(), $this->currentUser, $this->paymentMethodManager, $this->stringTranslation))
       ->getMock();
@@ -212,8 +209,8 @@ class PaymentSelectUnitTest extends UnitTestCase {
     $payment_method_a = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
     $payment_method_b = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
 
-    /** @var \Drupal\payment\Tests\Plugin\Payment\MethodSelector\PaymentSelectUnitTestPaymentSelect|\PHPUnit_Framework_MockObject_MockObject $payment_method_selector */
-    $payment_method_selector = $this->getMockBuilder('\Drupal\payment\Tests\Plugin\Payment\MethodSelector\PaymentSelectUnitTestPaymentSelect')
+    /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect|\PHPUnit_Framework_MockObject_MockObject $payment_method_selector */
+    $payment_method_selector = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect')
       ->setMethods(array('getAvailablePaymentMethods'))
       ->setConstructorArgs(array(array(), $this->paymentMethodSelectorPluginId, array(), $this->currentUser, $this->paymentMethodManager, $this->stringTranslation))
       ->getMock();
@@ -271,7 +268,6 @@ class PaymentSelectUnitTest extends UnitTestCase {
 
   /**
    * @covers ::validateConfigurationForm
-   * @covers ::getPaymentMethod
    */
   public function testValidateConfigurationForm() {
     $payment_method_id_a = $this->randomName();
@@ -505,10 +501,17 @@ class PaymentSelectUnitTest extends UnitTestCase {
   public function testBuildOneAvailablePaymentMethod() {
     $plugin_id = $this->randomName();
 
+    $payment_method_form = array(
+      '#type' => $this->randomName(),
+    );
+
     $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
     $payment_method->expects($this->atLeastOnce())
       ->method('getPluginId')
       ->will($this->returnValue($plugin_id));
+    $payment_method->expects($this->once())
+      ->method('buildConfigurationForm')
+      ->will($this->returnValue($payment_method_form));
 
     $element = array(
       '#available_payment_methods' => array($payment_method),
@@ -518,20 +521,6 @@ class PaymentSelectUnitTest extends UnitTestCase {
     );
     $form = array();
 
-    $payment_method_form = array(
-      '#type' => $this->randomName(),
-    );
-
-    /** @var \Drupal\payment\Tests\Plugin\Payment\MethodSelector\PaymentSelectUnitTestPaymentSelect|\PHPUnit_Framework_MockObject_MockObject $payment_method_selector */
-    $payment_method_selector = $this->getMockBuilder('\Drupal\payment\Tests\Plugin\Payment\MethodSelector\PaymentSelectUnitTestPaymentSelect')
-      ->setMethods(array('buildPaymentMethodForm'))
-      ->setConstructorArgs(array(array(), $this->paymentMethodSelectorPluginId, array(), $this->currentUser, $this->paymentMethodManager, $this->stringTranslation))
-      ->getMock();
-    $payment_method_selector->expects($this->once())
-      ->method('buildPaymentMethodForm')
-      ->with($form_state)
-      ->will($this->returnValue($payment_method_form));
-    $payment_method_selector->setPaymentMethod($payment_method);
 
     $expected_build = array(
       '#available_payment_methods' => array($payment_method),
@@ -541,9 +530,13 @@ class PaymentSelectUnitTest extends UnitTestCase {
           '#value' => $plugin_id,
         ),
       ),
-      'payment_method_form' => $payment_method_form,
+      'payment_method_form' => array(
+        '#type' => 'container',
+      ) + $payment_method_form,
     );
-    $this->assertSame($expected_build, $payment_method_selector->buildOneAvailablePaymentMethod($element, $form_state, $form));
+    $build = $this->paymentMethodSelector->buildOneAvailablePaymentMethod($element, $form_state, $form);
+    unset($build['payment_method_form']['#id']);
+    $this->assertSame($expected_build, $build);
   }
 
   /**
@@ -568,8 +561,8 @@ class PaymentSelectUnitTest extends UnitTestCase {
       '#type' => $this->randomName(),
     );
 
-    /** @var \Drupal\payment\Tests\Plugin\Payment\MethodSelector\PaymentSelectUnitTestPaymentSelect|\PHPUnit_Framework_MockObject_MockObject $payment_method_selector */
-    $payment_method_selector = $this->getMockBuilder('\Drupal\payment\Tests\Plugin\Payment\MethodSelector\PaymentSelectUnitTestPaymentSelect')
+    /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect|\PHPUnit_Framework_MockObject_MockObject $payment_method_selector */
+    $payment_method_selector = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect')
       ->setMethods(array('buildPaymentMethodForm', 'buildSelector'))
       ->setConstructorArgs(array(array(), $this->paymentMethodSelectorPluginId, array(), $this->currentUser, $this->paymentMethodManager, $this->stringTranslation))
       ->getMock();
@@ -591,24 +584,14 @@ class PaymentSelectUnitTest extends UnitTestCase {
     $this->assertEquals($expected_build, $payment_method_selector->buildMultipleAvailablePaymentMethods($element, $form_state, $form));
   }
 
-}
-
-/**
- * Adds testing methods to the class under test.
- */
-class PaymentSelectUnitTestPaymentSelect extends PaymentSelect {
-
   /**
-   * Sets the selected payment method.
-   *
-   * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
-   *
-   * @return $this;
+   * @covers ::setPaymentMethod
+   * @covers ::getPaymentMethod
    */
-  public function setPaymentMethod(PaymentMethodInterface $payment_method) {
-    $this->selectedPaymentMethod = $payment_method;
-
-    return $this;
+  public function testGetPaymentMethod() {
+    $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
+    $this->assertSame($this->paymentMethodSelector, $this->paymentMethodSelector->setPaymentMethod($payment_method));
+    $this->assertSame($payment_method, $this->paymentMethodSelector->getPaymentMethod());
   }
 
 }

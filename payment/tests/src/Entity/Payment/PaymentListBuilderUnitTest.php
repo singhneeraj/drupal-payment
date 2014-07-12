@@ -182,9 +182,11 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
   /**
    * @covers ::buildRow
    *
+   * @dataProvider providerTestBuildRow
+   *
    * @depends testBuildOperations
    */
-  function testBuildRow() {
+  function testBuildRow($payment_currency_exists) {
     $payment_changed_time = time();
     $payment_changed_time_formatted = $this->randomName();
     $payment_currency_code = $this->randomName();
@@ -240,10 +242,13 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
       ->with($payment_amount)
       ->will($this->returnValue($payment_amount_formatted));
 
-    $this->currencyStorage->expects($this->once())
+    $map = array(
+      array($payment_currency_code, $payment_currency_exists ? $currency : NULL),
+      array('XXX', $payment_currency_exists ? NULL : $currency),
+    );
+    $this->currencyStorage->expects($this->atLeastOnce())
       ->method('load')
-      ->with($payment_currency_code)
-      ->will($this->returnValue($currency));
+      ->will($this->returnValueMap($map));
 
     $this->date->expects($this->once())
       ->method('format')
@@ -277,6 +282,16 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
       ),
     );
     $this->assertSame($expected_build, $build);
+  }
+
+  /**
+   * Provides data to self::testBuildRow().
+   */
+  public function providerTestBuildRow() {
+    return array(
+      array(TRUE),
+      array(FALSE),
+    );
   }
 
   /**
@@ -325,6 +340,7 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
     $url_canonical = new Url($this->randomName());
     $url_update_status_form = new Url($this->randomName());
     $url_capture_form = new Url($this->randomName());
+    $url_refund_form = new Url($this->randomName());
 
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
@@ -333,6 +349,7 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
       array('view', NULL, TRUE),
       array('update_status', NULL, TRUE),
       array('capture', NULL, TRUE),
+      array('refund', NULL, TRUE),
     );
     $payment->expects($this->any())
       ->method('access')
@@ -341,6 +358,7 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
       array('canonical', $url_canonical),
       array('update-status-form', $url_update_status_form),
       array('capture-form', $url_capture_form),
+      array('refund-form', $url_refund_form),
     );
     $payment->expects($this->any())
       ->method('urlInfo')
@@ -387,6 +405,19 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
           'destination' => $destination,
         ),
         'route_name' => $url_capture_form->getRouteName(),
+        'route_parameters' => array(),
+        'options' => array(),
+      ),
+      'refund' => array(
+        'title' => 'Refund',
+        'attributes' => array(
+          'class' => array('use-ajax'),
+          'data-accepts' => 'application/vnd.drupal-modal',
+        ),
+        'query' => array(
+          'destination' => $destination,
+        ),
+        'route_name' => $url_refund_form->getRouteName(),
         'route_parameters' => array(),
         'options' => array(),
       ),

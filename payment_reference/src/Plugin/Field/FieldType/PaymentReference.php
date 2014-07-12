@@ -9,10 +9,12 @@ namespace Drupal\payment_reference\Plugin\Field\FieldType;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\currency\Entity\Currency;
 use Drupal\entity_reference\ConfigurableEntityReferenceItem;
 use Drupal\payment\Element\PaymentLineItemsInput;
 use Drupal\payment\Payment;
+use Drupal\payment_reference\PaymentReference as PaymentReferenceServiceWrapper;
 
 /**
  * Provides a configurable payment reference field.
@@ -30,6 +32,8 @@ use Drupal\payment\Payment;
  * )
  */
 class PaymentReference extends ConfigurableEntityReferenceItem {
+
+  use StringTranslationTrait;
 
   /**
    * {@inheritdoc}
@@ -124,7 +128,7 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
         'currency_code' => $values['currency_code'],
         'line_items_data' => $line_items_data,
       );
-      form_set_value($element, $value, $form_state);
+      \Drupal::formBuilder()->setValue($element, $value, $form_state);
     }
   }
 
@@ -145,21 +149,11 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
   }
 
   /**
-   * Wraps t().
-   *
-   * @todo Revisit this when we can use traits and use those to wrap the
-   *   translation manager.
-   */
-  protected function t($string, array $args = array(), array $options = array()) {
-    return t($string, $args, $options);
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function preSave() {
     $payment_id = $this->get('target_id')->getValue();
-    $queue = $this->getPaymentQueue();
+    $queue = PaymentReferenceServiceWrapper::queue();
     $acquisition_code = $queue->claimPayment($payment_id);
     if ($acquisition_code !== FALSE) {
       $queue->acquirePayment($payment_id, $acquisition_code);
@@ -169,12 +163,4 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
     }
   }
 
-  /**
-   * Gets the payment queue.
-   *
-   * @todo Inject this once https://drupal.org/node/2053415 is fixed.
-   */
-  protected function getPaymentQueue() {
-    return \Drupal::service('payment_reference.queue');
-  }
 }

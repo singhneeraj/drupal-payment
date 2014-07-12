@@ -194,7 +194,7 @@ class PaymentStatusManager extends DefaultPluginManager implements PaymentStatus
    * {@inheritdoc}
    */
   public function isOrHasAncestor($plugin_id, $ancestor_plugin_id) {
-    return $plugin_id == $ancestor_plugin_id|| $this->hasAncestor($plugin_id, $ancestor_plugin_id);
+    return $plugin_id == $ancestor_plugin_id || $this->hasAncestor($plugin_id, $ancestor_plugin_id);
   }
 
 }

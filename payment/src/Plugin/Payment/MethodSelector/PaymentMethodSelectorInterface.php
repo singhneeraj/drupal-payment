@@ -10,6 +10,7 @@ use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
 
 /**
  * Provides a plugin to select and configure a payment method for a payment.
@@ -79,4 +80,14 @@ interface PaymentMethodSelectorInterface extends PluginInspectionInterface, Conf
    * @return \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
    */
   public function getPaymentMethod();
+
+  /**
+   * Sets the selected payment method.
+   *
+   * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface $payment_method
+   *
+   * @return $this
+   */
+  public function setPaymentMethod(PaymentMethodInterface $payment_method);
+
 }

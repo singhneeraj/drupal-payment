@@ -6,8 +6,9 @@
 
 namespace Drupal\payment_reference\Plugin\Payment\Type;
 
-use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -34,15 +35,16 @@ class PaymentReferenceConfigurationForm extends ConfigFormBase {
   /**
    * Constructs a \Drupal\system\ConfigFormBase object.
    *
-   * @param \Drupal\Core\Config\ConfigFactory $config_factory
-   *   The configuration context to use.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface $payment_method_manager
    * @param \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface $payment_method_selector_manager
    */
-  public function __construct(ConfigFactory $config_factory, PaymentMethodManagerInterface $payment_method_manager, PaymentMethodSelectorManagerInterface $payment_method_selector_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, TranslationInterface $string_translation, PaymentMethodManagerInterface $payment_method_manager, PaymentMethodSelectorManagerInterface $payment_method_selector_manager) {
     parent::__construct($config_factory);
     $this->paymentMethodManager = $payment_method_manager;
     $this->paymentMethodSelectorManager = $payment_method_selector_manager;
+    $this->stringTranslation = $string_translation;
   }
 
   /**
@@ -51,6 +53,7 @@ class PaymentReferenceConfigurationForm extends ConfigFormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
+      $container->get('string_translation'),
       $container->get('plugin.manager.payment.method'),
       $container->get('plugin.manager.payment.method_selector')
     );

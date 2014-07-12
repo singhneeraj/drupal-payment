@@ -305,10 +305,16 @@ class PaymentMethodUnitTest extends UnitTestCase {
    * @covers ::listPlugins
    */
   public function testListPlugins() {
-    $plugin_id = $this->randomName();
+    $plugin_id_a = $this->randomName();
+    $plugin_id_b = $this->randomName();
     $definitions = array(
-      $plugin_id => array(
+      $plugin_id_a => array(
         'active' => TRUE,
+        'class' => $this->getMockClass('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface'),
+        'label' => $this->randomName(),
+      ),
+      $plugin_id_b => array(
+        'active' => FALSE,
         'class' => $this->getMockClass('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface'),
         'label' => $this->randomName(),
       ),

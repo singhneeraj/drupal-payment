@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\payment_reference\Tests\Entity\Payment\PaymentFormUnitTest.
+ * Contains \Drupal\payment_form\Tests\Entity\Payment\PaymentFormUnitTest.
  */
 
-namespace Drupal\payment_reference\Tests\Entity\Payment;
+namespace Drupal\payment_form\Tests\Entity\Payment;
 
-use Drupal\payment_reference\Entity\Payment\PaymentForm;
+use Drupal\payment_form\Entity\Payment\PaymentForm;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @coversDefaultClass \Drupal\payment_reference\Entity\Payment\PaymentForm
+ * @coversDefaultClass \Drupal\payment_form\Entity\Payment\PaymentForm
  *
  * @group Payment Form Field
  */
@@ -44,7 +44,7 @@ class PaymentFormUnitTest extends UnitTestCase {
   /**
    * The form under test.
    *
-   * @var \Drupal\payment_reference\Entity\Payment\PaymentForm
+   * @var \Drupal\payment_form\Entity\Payment\PaymentForm
    */
   protected $form;
 
@@ -104,7 +104,7 @@ class PaymentFormUnitTest extends UnitTestCase {
     $this->stringTranslation = $this->getStringTranslationStub();
 
     $this->configFactoryConfiguration = array(
-      'payment_reference.payment_type' => array(
+      'payment_form.payment_type' => array(
         'limit_allowed_payment_methods' => TRUE,
         'allowed_payment_method_ids' => array($this->randomName()),
         'payment_method_selector_id' => $this->randomName(),
@@ -133,7 +133,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->will($this->returnValueMap($map));
 
     $form = PaymentForm::create($container);
-    $this->assertInstanceOf('\Drupal\payment_reference\Entity\Payment\PaymentForm', $form);
+    $this->assertInstanceOf('\Drupal\payment_form\Entity\Payment\PaymentForm', $form);
   }
 
   /**
@@ -148,11 +148,11 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->will($this->returnValue($payment_method_selector_build));
     $this->paymentMethodSelector->expects($this->once())
       ->method('setAllowedPaymentMethods')
-      ->with($this->configFactoryConfiguration['payment_reference.payment_type']['allowed_payment_method_ids']);
+      ->with($this->configFactoryConfiguration['payment_form.payment_type']['allowed_payment_method_ids']);
 
     $this->paymentMethodSelectorManager->expects($this->once())
       ->method('createInstance')
-      ->with($this->configFactoryConfiguration['payment_reference.payment_type']['payment_method_selector_id'])
+      ->with($this->configFactoryConfiguration['payment_form.payment_type']['payment_method_selector_id'])
       ->will($this->returnValue($this->paymentMethodSelector));
 
     $payment_type = $this->getMock('\Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface');

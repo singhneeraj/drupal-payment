@@ -8,6 +8,7 @@ namespace Drupal\payment_form\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\currency\Entity\Currency;
 
@@ -25,6 +26,8 @@ use Drupal\currency\Entity\Currency;
  * )
  */
 class PaymentForm extends FieldItemBase {
+
+  use StringTranslationTrait;
 
   /**
    * Definitions of the contained properties.
@@ -104,16 +107,6 @@ class PaymentForm extends FieldItemBase {
       ->setRequired(TRUE);
 
     return $definitions;
-  }
-
-  /**
-   * Wraps t().
-   *
-   * @todo Revisit this when we can use traits and use those to wrap the
-   *   translation manager.
-   */
-  protected function t($string, array $args = array(), array $options = array()) {
-    return t($string, $args, $options);
   }
 
   /**

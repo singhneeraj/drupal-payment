@@ -5,15 +5,16 @@
  * Contains \Drupal\payment\Tests\Entity\Payment\PaymentStatusFormUnitTest.
  */
 
-namespace Drupal\payment\Tests\Entity\Payment;
+namespace Drupal\payment\Tests\Entity\Payment {
 
-  use Drupal\Core\Language\Language;
-  use Drupal\payment\Entity\Payment\PaymentStatusForm;
-  use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
-  use Drupal\payment\Plugin\Payment\Method\PaymentMethodUpdatePaymentStatusInterface;
-  use Drupal\Tests\UnitTestCase;
+use Drupal\Core\Language\Language;
+use Drupal\payment\Entity\Payment\PaymentStatusForm;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodUpdatePaymentStatusInterface;
+use Drupal\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/**
+  /**
  * @coversDefaultClass \Drupal\payment\Entity\Payment\PaymentStatusForm
  *
  * @group Payment
@@ -42,6 +43,13 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
   protected $form;
 
   /**
+   * The language manager.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $languageManager;
+
+  /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -63,11 +71,11 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
   protected $paymentStatusManager;
 
   /**
-   * The translation manager.
+   * The string translator.
    *
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $translationManager;
+  protected $stringTranslation;
 
   /**
    * The URL generator.
@@ -88,20 +96,52 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
+    $this->languageManager = $this->getMock('\Drupal\Core\Language\LanguageManagerInterface');
+
     $this->moduleHandler = $this->getmock('\Drupal\Core\Extension\ModuleHandlerInterface');
 
     $this->paymentStatusManager = $this->getmock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
     $this->urlGenerator = $this->getmock('\Drupal\Core\Routing\UrlGeneratorInterface');
 
-    $this->translationManager = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
+    $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
     $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->form = new PaymentStatusForm($this->moduleHandler, $this->currentUser, $this->urlGenerator, $this->translationManager, $this->paymentStatusManager, $this->defaultDateTime);
+    $this->form = new PaymentStatusForm($this->moduleHandler, $this->currentUser, $this->urlGenerator, $this->stringTranslation, $this->paymentStatusManager, $this->defaultDateTime);
     $this->form->setEntity($this->payment);
+  }
+
+  /**
+   * @covers ::create
+   */
+  function testCreate() {
+    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    \Drupal::setContainer($container);
+    $map = array(
+      array('current_user', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->currentUser),
+      array('language_manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->languageManager),
+      array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
+      array('plugin.manager.payment.status', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentStatusManager),
+      array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
+      array('url_generator', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->urlGenerator),
+    );
+    $container->expects($this->any())
+      ->method('get')
+      ->will($this->returnValueMap($map));
+
+    $language = $this->getMockBuilder('\Drupal\Core\Language\Language')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $this->languageManager->expects($this->any())
+      ->method('getCurrentLanguage')
+      ->will($this->returnValue($language));
+
+    $form = PaymentStatusForm::create($container);
+    $this->assertInstanceOf('\Drupal\payment\Entity\Payment\PaymentStatusForm', $form);
   }
 
   /**
@@ -263,10 +303,33 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
     $this->form->submit($form, $form_state);
   }
 
+  /**
+   * @covers ::actions
+   */
+  public function testActions() {
+    $form = array();
+    $form_state = array();
+
+    $method = new \ReflectionMethod($this->form, 'actions');
+    $method->setAccessible(TRUE);
+    $method->invokeArgs($this->form, array($form, &$form_state));
+  }
+
 }
 
 /**
  * Extends two interfaces, because we can only mock one.
  */
 interface PaymentStatusFormUnitTestDummyPaymentMethodUpdateStatusInterface extends PaymentMethodUpdatePaymentStatusInterface, PaymentMethodInterface {
+}
+
+}
+
+namespace {
+
+if (!function_exists('drupal_get_user_timezone')) {
+  function drupal_get_user_timezone() {
+  }
+}
+
 }

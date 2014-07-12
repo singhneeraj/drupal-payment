@@ -9,6 +9,7 @@ namespace Drupal\payment_form\Entity\Payment;
 
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -29,12 +30,14 @@ class PaymentForm extends ContentEntityForm {
    *
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    *   The entity manager.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    * @param \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface $payment_method_selector_manager
    *   The payment method selector manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager, PaymentMethodSelectorManagerInterface $payment_method_selector_manager) {
+  public function __construct(EntityManagerInterface $entity_manager, TranslationInterface $string_translation, PaymentMethodSelectorManagerInterface $payment_method_selector_manager) {
     parent::__construct($entity_manager);
     $this->paymentMethodSelectorManager = $payment_method_selector_manager;
+    $this->stringTranslation = $string_translation;
   }
 
 
@@ -42,7 +45,7 @@ class PaymentForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('entity.manager'), $container->get('plugin.manager.payment.method_selector'));
+    return new static($container->get('entity.manager'), $container->get('string_translation'), $container->get('plugin.manager.payment.method_selector'));
   }
 
   /**
@@ -56,7 +59,7 @@ class PaymentForm extends ContentEntityForm {
     }
     else {
       $config = $this->config('payment_form.payment_type');
-      $payment_method_selector_id = $config->get('payment_selector_id');
+      $payment_method_selector_id = $config->get('payment_method_selector_id');
       $limit_allowed_payment_methods = $config->get('limit_allowed_payment_methods');
       $allowed_payment_method_ids = $config->get('allowed_payment_method_ids');
       $payment_method_selector = $this->paymentMethodSelectorManager->createInstance($payment_method_selector_id);

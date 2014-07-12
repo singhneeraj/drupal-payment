@@ -164,6 +164,15 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
 
   /**
    * @covers ::executePayment
+   *
+   * @expectedException \Exception
+   */
+  public function testExecutePaymentWithoutPayment() {
+    $this->plugin->executePayment();
+  }
+
+  /**
+   * @covers ::executePayment
    */
   public function testExecutePayment() {
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
@@ -179,6 +188,17 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $this->plugin->setPayment($payment);
 
     $this->plugin->executePayment();
+  }
+
+  /**
+   * @covers ::executePaymentAccess
+   *
+   * @expectedException \Exception
+   */
+  public function testExecutePaymentAccessWithoutPayment() {
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
+    $this->plugin->executePaymentAccess($account);
   }
 
   /**

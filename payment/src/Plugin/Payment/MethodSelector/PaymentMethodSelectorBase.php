@@ -10,6 +10,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -185,6 +186,15 @@ abstract class PaymentMethodSelectorBase extends PluginBase implements Container
    */
   public function getPaymentMethod() {
     return $this->selectedPaymentMethod;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setPaymentMethod(PaymentMethodInterface $payment_method) {
+    $this->selectedPaymentMethod = $payment_method;
+
+    return $this;
   }
 
   /**

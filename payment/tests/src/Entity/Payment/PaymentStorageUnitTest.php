@@ -214,4 +214,22 @@ class PaymentStorageUnitTest extends UnitTestCase {
     $this->assertSame(serialize($payment_type_configuration), $record->payment_type_configuration);
   }
 
+  /**
+   * @covers ::getSchema
+   */
+  public function testGetSchema() {
+    $schema = $this->storage->getSchema();
+    $this->assertInternalType('array', $schema);
+    $this->assertArrayHasKey('payment', $schema);
+    $this->assertInternalType('array', $schema['payment']);
+    $this->assertArrayHasKey('fields', $schema['payment']);
+    foreach ($schema['payment']['fields'] as $field) {
+      $this->assertInternalType('array', $field);
+      $this->assertArrayHasKey('type', $field);
+    }
+    $this->assertArrayHasKey('foreign keys', $schema['payment']);
+    $this->assertArrayHasKey('indexes', $schema['payment']);
+    $this->assertArrayHasKey('primary key', $schema['payment']);
+  }
+
 }

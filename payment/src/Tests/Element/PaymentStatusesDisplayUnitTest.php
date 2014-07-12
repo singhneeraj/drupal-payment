@@ -9,14 +9,14 @@ namespace Drupal\payment\Tests\Element;
 
 use Drupal\payment\Generate;
 use Drupal\payment\Payment;
-use Drupal\simpletest\DrupalUnitTestBase;
+use Drupal\simpletest\KernelTestBase;
 
 /**
  * payment_statuses_display element unit test.
  *
  * @group Payment
  */
-class PaymentStatusesDisplayUnitTest extends DrupalUnitTestBase {
+class PaymentStatusesDisplayUnitTest extends KernelTestBase {
 
   /**
    * {@inheritdoc}

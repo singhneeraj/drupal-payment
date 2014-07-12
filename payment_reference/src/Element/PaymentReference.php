@@ -7,9 +7,9 @@
 
 namespace Drupal\payment_reference\Element;
 
-use Drupal\payment\Payment;
+use Drupal\payment\Entity\Payment;
+use Drupal\payment\Payment as PaymentServiceWrapper;
 use Drupal\payment_reference\PaymentReference as PaymentReferenceServiceWrapper;
-
 
 /**
  * Provides form callbacks for the payment_reference form element.
@@ -41,13 +41,13 @@ class PaymentReference {
     }
 
     // Find the default payment to use.
-    $pid = $element['#default_value'];
-    if (!$pid) {
-      $pids = PaymentReferenceServiceWrapper::queue()->loadPaymentIds($element['#entity_type_id'] . '.' . $element['#bundle'] . '.' . $element['#field_name'], $element['#owner_id']);
-      $pid = reset($pids);
+    $payment_id = $element['#default_value'];
+    if (!$payment_id) {
+      $payment_ids = PaymentReferenceServiceWrapper::queue()->loadPaymentIds($element['#entity_type_id'] . '.' . $element['#bundle'] . '.' . $element['#field_name'], $element['#owner_id']);
+      $payment_id = reset($payment_ids);
     }
     // Form API considers an empty string to be an empty value, but not NULL.
-    $element['#value'] = $pid ? $pid : '';
+    $element['#value'] = $payment_id ? $payment_id : '';
 
     // AJAX.
     $ajax_wrapper_id = drupal_html_id('payment_reference-' . $element['#name']);
@@ -59,7 +59,7 @@ class PaymentReference {
       'type' => 'setting',
         'data' => array(
           'PaymentReferencePaymentAvailable' => array(
-            $ajax_wrapper_id => !empty($pid),
+            $ajax_wrapper_id => !empty($payment_id),
           ),
         ),
       ),
@@ -67,14 +67,14 @@ class PaymentReference {
 
     // Payment information.
     $element['payment'] = array(
-      '#empty' => t('There are no line items.'),
-      '#header' => array(t('Amount'), t('Status'), t('Last updated')),
+      '#empty' => \Drupal::translation()->translate('There are no line items.'),
+      '#header' => array(\Drupal::translation()->translate('Amount'), \Drupal::translation()->translate('Status'), \Drupal::translation()->translate('Last updated')),
       '#type' => 'table',
     );
-    if (!$pid) {
+    if (!$payment_id) {
       $amount = 0;
       foreach ($element['#payment_line_items_data'] as $line_item_data) {
-        $line_item = Payment::lineItemManager()->createInstance($line_item_data['plugin_id'], $line_item_data['plugin_configuration']);
+        $line_item = PaymentServiceWrapper::lineItemManager()->createInstance($line_item_data['plugin_id'], $line_item_data['plugin_configuration']);
         $amount += $line_item->getTotalAmount();
       }
       /** @var \Drupal\currency\Entity\CurrencyInterface $currency */
@@ -86,7 +86,7 @@ class PaymentReference {
         '#attributes' => array(
           'colspan' => 2,
         ),
-        '#markup' => t('<a href="@url" target="_blank">Add a new payment</a> (opens in a new window)', array(
+        '#markup' => \Drupal::translation()->translate('<a href="@url" target="_blank">Add a new payment</a> (opens in a new window)', array(
           '@url' => \Drupal::urlGenerator()->generateFromRoute('payment_reference.pay', array(
               'bundle' => $element['#bundle'],
               'entity_type_id' => $element['#entity_type_id'],
@@ -97,7 +97,7 @@ class PaymentReference {
     }
     else {
       /** @var \Drupal\payment\Entity\PaymentInterface $payment */
-      $payment = entity_load('payment', $pid);
+      $payment = Payment::load($payment_id);
       /** @var \Drupal\currency\Entity\CurrencyInterface $currency */
       $currency = entity_load('currency', $payment->getCurrencyCode());
       $status = $payment->getStatus();
@@ -113,8 +113,8 @@ class PaymentReference {
       );
       if ($payment->access('view')) {
         $uri = $payment->urlInfo();
-        $element['payment']['header'][] = t('Operations');
-        $element['payment'][0]['view'] = t('<a href="@url" target="_blank">View payment details</a> (opens in a new window)', array(
+        $element['payment']['header'][] = \Drupal::translation()->translate('Operations');
+        $element['payment'][0]['view'] = \Drupal::translation()->translate('<a href="@url" target="_blank">View payment details</a> (opens in a new window)', array(
           '@url' => url($uri['path'], $uri['options']),
         ));
       }
@@ -123,7 +123,7 @@ class PaymentReference {
     // Refresh button.
     $element['refresh'] = array(
       '#type' => 'submit',
-      '#value' => t('Re-check available payments'),
+      '#value' => \Drupal::translation()->translate('Re-check available payments'),
       '#submit' => isset($element['#submit']) ? $element['#submit'] : array(),
       '#limit_validation_errors' => array(),
       '#ajax' => array(
