@@ -15,6 +15,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @coversDefaultClass \Drupal\payment\Controller\PaymentMethod
+ *
+ * @group Payment
  */
 class PaymentMethodUnitTest extends UnitTestCase {
 
@@ -73,17 +75,6 @@ class PaymentMethodUnitTest extends UnitTestCase {
    * @var \Drupal\Core\Routing\UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $urlGenerator;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'group' => 'Payment',
-      'name' => '\Drupal\payment\Controller\PaymentMethod unit test',
-    );
-  }
 
   /**
    * {@inheritdoc}

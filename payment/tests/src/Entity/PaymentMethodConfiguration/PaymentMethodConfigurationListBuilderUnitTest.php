@@ -14,6 +14,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationListBuilder
+ *
+ * @group Payment
  */
 class PaymentMethodConfigurationListBuilderUnitTest extends UnitTestCase {
 
@@ -58,17 +60,6 @@ class PaymentMethodConfigurationListBuilderUnitTest extends UnitTestCase {
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $stringTranslation;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationListBuilder unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

@@ -12,6 +12,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Event\PaymentPreExecute
+ *
+ * @group Payment
  */
 class PaymentPreExecuteUnitTest extends UnitTestCase {
 
@@ -28,17 +30,6 @@ class PaymentPreExecuteUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Entity\PaymentInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $payment;
-
-  /**
-   * {@inheritdoc}
-   */
-  static function getInfo() {
-    return array(
-      'description' => '',
-      'group' => 'Payment',
-      'name' => '\Drupal\payment\Event\PaymentPreExecute unit test',
-    );
-  }
 
   /**
    * {@inheritdoc}

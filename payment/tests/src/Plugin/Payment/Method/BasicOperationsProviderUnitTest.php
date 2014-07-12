@@ -13,6 +13,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\BasicOperationsProvider
+ *
+ * @group Payment
  */
 class BasicOperationsProviderUnitTest extends UnitTestCase {
 
@@ -50,17 +52,6 @@ class BasicOperationsProviderUnitTest extends UnitTestCase {
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $stringTranslation;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\Method\BasicOperationsProvider unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

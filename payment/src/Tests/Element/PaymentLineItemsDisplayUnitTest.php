@@ -8,28 +8,19 @@
 namespace Drupal\payment\Tests\Element;
 
 use Drupal\payment\Generate;
-use Drupal\simpletest\DrupalUnitTestBase;
+use Drupal\simpletest\KernelTestBase;
 
 /**
- * Tests the payment_line_items_display element.
+ * payment_line_items_display element unit test
+ *
+ * @group Payment
  */
-class PaymentLineItemsDisplayUnitTest extends DrupalUnitTestBase {
+class PaymentLineItemsDisplayUnitTest extends KernelTestBase {
 
   /**
    * {@inheritdoc}
    */
   public static $modules = array('currency', 'field', 'payment', 'system', 'user');
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => 'payment_line_items_display element unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

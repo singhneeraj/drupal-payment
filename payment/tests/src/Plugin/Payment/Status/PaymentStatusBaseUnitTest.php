@@ -12,6 +12,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Status\PaymentStatusBase
+ *
+ * @group Payment
  */
 class PaymentStatusBaseUnitTest extends UnitTestCase {
 
@@ -35,17 +37,6 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusBase|\PHPUnit_Framework_MockObject_MockObject
    */
   public $status;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\Status\PaymentStatusBase unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

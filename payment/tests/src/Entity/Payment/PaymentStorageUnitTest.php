@@ -13,6 +13,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Entity\Payment\PaymentStorage
+ *
+ * @group Payment
  */
 class PaymentStorageUnitTest extends UnitTestCase {
 
@@ -71,17 +73,6 @@ class PaymentStorageUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Entity\Payment\PaymentStorage
    */
   protected $storage;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Entity\Payment\PaymentStorage unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

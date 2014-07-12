@@ -17,6 +17,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * @coversDefaultClass \Drupal\payment_form\Plugin\Payment\Type\PaymentForm
+ *
+ * @group Payment Form Field
  */
 class PaymentFormUnitTest extends UnitTestCase {
 
@@ -61,17 +63,6 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $stringTranslation;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'group' => 'Payment Form Field',
-      'name' => '\Drupal\payment_form\Plugin\Payment\Type\PaymentForm unit test',
-    );
-  }
 
   /**
    * {@inheritdoc}

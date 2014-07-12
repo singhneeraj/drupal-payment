@@ -13,7 +13,9 @@ use Drupal\payment_reference\PaymentReference;
 use Drupal\simpletest\WebTestBase;
 
 /**
- * Tests the payment_reference element.
+ * payment_reference element web test.
+ *
+ * @group Payment Reference Field
  */
 class PaymentReferenceWebTest extends WebTestBase {
 
@@ -21,17 +23,6 @@ class PaymentReferenceWebTest extends WebTestBase {
    * {@inheritdoc}
    */
   public static $modules = array('payment', 'payment_reference', 'payment_reference_test');
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => 'payment_reference element web test',
-      'group' => 'Payment Reference Field',
-    );
-  }
 
   /**
    * Tests the element.

@@ -13,6 +13,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Queue
+ *
+ * @group Payment
  */
 class QueueUnitTest extends UnitTestCase {
 
@@ -57,17 +59,6 @@ class QueueUnitTest extends UnitTestCase {
    * @var string
    */
   protected $queueId;
-
-  /**
-   * {@inheritdoc}
-   */
-  static function getInfo() {
-    return array(
-      'description' => '',
-      'group' => 'Payment',
-      'name' => '\Drupal\payment\Queue unit test',
-    );
-  }
 
   /**
    * {@inheritdoc}

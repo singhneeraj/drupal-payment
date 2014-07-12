@@ -10,7 +10,9 @@ namespace Drupal\payment\Tests;
 use Drupal\simpletest\WebTestBase ;
 
 /**
- * Tests Payment category in the administration UI.
+ * Tests the Payment category in the administration UI.
+ *
+ * @group Payment
  */
 class PaymentAdministrationCategoryWebTest extends WebTestBase {
 
@@ -18,17 +20,6 @@ class PaymentAdministrationCategoryWebTest extends WebTestBase {
    * {@inheritdoc}
    */
   public static $modules = array('payment');
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => 'Administrative UI',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * Tests administrative overview.

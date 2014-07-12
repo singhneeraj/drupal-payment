@@ -12,6 +12,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Event\PaymentQueuePaymentIdsAlter
+ *
+ * @group Payment
  */
 class PaymentQueuePaymentIdsAlterUnitTest extends UnitTestCase {
 
@@ -42,17 +44,6 @@ class PaymentQueuePaymentIdsAlterUnitTest extends UnitTestCase {
    * @var int[]
    */
   protected $paymentIds;
-
-  /**
-   * {@inheritdoc}
-   */
-  static function getInfo() {
-    return array(
-      'description' => '',
-      'group' => 'Payment',
-      'name' => '\Drupal\payment\Event\PaymentQueuePaymentIdsAlter unit test',
-    );
-  }
 
   /**
    * {@inheritdoc}

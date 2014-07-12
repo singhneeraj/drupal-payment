@@ -13,6 +13,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Action\UnsetLineItem
+ *
+ * @group Payment
  */
 class UnsetLineItemUnitTest extends UnitTestCase {
 
@@ -29,17 +31,6 @@ class UnsetLineItemUnitTest extends UnitTestCase {
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $stringTranslation;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Plugin\Action\UnsetLineItem unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

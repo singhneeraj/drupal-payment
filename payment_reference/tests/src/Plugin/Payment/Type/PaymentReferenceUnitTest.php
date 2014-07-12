@@ -17,6 +17,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * @coversDefaultClass \Drupal\payment_reference\Plugin\Payment\Type\PaymentReference
+ *
+ * @group Payment Reference Field
  */
 class PaymentReferenceUnitTest extends UnitTestCase {
 
@@ -68,17 +70,6 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    * @var \Drupal\Core\Routing\UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $urlGenerator;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'group' => 'Payment Reference Field',
-      'name' => '\Drupal\payment_reference\Plugin\Payment\Type\PaymentReference unit test',
-    );
-  }
 
   /**
    * {@inheritdoc}

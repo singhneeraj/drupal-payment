@@ -11,7 +11,9 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\simpletest\WebTestBase;
 
 /**
- * Tests \Drupal\payment_reference\Plugin\field\widget\PaymentReference.
+ * \Drupal\payment_reference\Plugin\Field\FieldWidget\PaymentReference web test.
+ *
+ * @group Payment Reference Field
  */
 class PaymentReferenceWebTest extends WebTestBase {
 
@@ -19,17 +21,6 @@ class PaymentReferenceWebTest extends WebTestBase {
    * {@inheritdoc}
    */
   public static $modules = array('payment', 'payment_reference');
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment_reference\Plugin\Field\FieldWidget\PaymentReference web test',
-      'group' => 'Payment Reference Field',
-    );
-  }
 
   /**
    * Tests the widget.

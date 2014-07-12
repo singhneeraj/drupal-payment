@@ -11,7 +11,9 @@ use Drupal\payment\Payment;
 use Drupal\simpletest\WebTestBase;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\LineItem\Basic.
+ * \Drupal\payment\Plugin\Payment\LineItem\Basic web test.
+ *
+ * @group Payment
  */
 class BasicWebTest extends WebTestBase {
 
@@ -26,17 +28,6 @@ class BasicWebTest extends WebTestBase {
    * {@inheritdoc}
    */
   public static $modules = array('payment', 'payment_test');
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\LineItem\Basic web test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

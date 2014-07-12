@@ -13,6 +13,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Status\ConfigDeriver
+ *
+ * @group Payment
  */
 class ConfigDeriverUnitTest extends UnitTestCase {
 
@@ -29,17 +31,6 @@ class ConfigDeriverUnitTest extends UnitTestCase {
    * @var \Drupal\Core\Entity\EntityStorageInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentStatusStorage;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\Status\ConfigDeriver unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

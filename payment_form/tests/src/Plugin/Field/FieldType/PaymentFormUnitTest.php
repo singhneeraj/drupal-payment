@@ -12,6 +12,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment_form\Plugin\Field\FieldType\PaymentForm
+ *
+ * @group Payment Form Field
  */
 class PaymentFormUnitTest extends UnitTestCase {
 
@@ -21,17 +23,6 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @var \Drupal\payment_form\Plugin\Field\FieldType\PaymentForm|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $fieldType;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'group' => 'Payment Form Field',
-      'name' => '\Drupal\payment_form\Plugin\Field\FieldType\PaymentForm unit test',
-    );
-  }
 
   /**
    * {@inheritdoc}

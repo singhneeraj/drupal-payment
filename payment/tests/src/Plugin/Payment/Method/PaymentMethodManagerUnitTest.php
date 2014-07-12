@@ -14,6 +14,8 @@ use Zend\Stdlib\ArrayObject;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\PaymentMethodManager
+ *
+ * @group Payment
  */
 class PaymentMethodManagerUnitTest extends UnitTestCase {
 
@@ -58,17 +60,6 @@ class PaymentMethodManagerUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManager
    */
   public $paymentMethodManager;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\Method\PaymentMethodManager unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

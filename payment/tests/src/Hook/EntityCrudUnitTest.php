@@ -12,6 +12,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Hook\EntityCrud
+ *
+ * @group Payment
  */
 class EntityCrudUnitTest extends UnitTestCase {
 
@@ -35,17 +37,6 @@ class EntityCrudUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Hook\EntityCrud.
    */
   protected $service;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Hook\EntityCrud unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

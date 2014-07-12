@@ -13,6 +13,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Action\SetStatus
+ *
+ * @group Payment
  */
 class SetStatusUnitTest extends UnitTestCase {
 
@@ -36,17 +38,6 @@ class SetStatusUnitTest extends UnitTestCase {
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $stringTranslation;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Plugin\Action\SetStatus unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

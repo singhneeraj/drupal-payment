@@ -12,6 +12,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Hook\EntityExtraFieldInfo
+ *
+ * @group Payment
  */
 class EntityExtraFieldInfoUnitTest extends UnitTestCase {
 
@@ -35,17 +37,6 @@ class EntityExtraFieldInfoUnitTest extends UnitTestCase {
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $stringTranslation;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Hook\FieldExtraFields unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

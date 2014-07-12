@@ -13,6 +13,8 @@ use Symfony\Component\DependencyInjection\Container;
 
 /**
  * @coversDefaultClass \Drupal\payment\Payment
+ *
+ * @group Payment
  */
 class PaymentUnitTest extends UnitTestCase {
 
@@ -20,17 +22,6 @@ class PaymentUnitTest extends UnitTestCase {
    * The host site's container.
    */
   protected $originalContainer;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'group' => 'Payment',
-      'name' => '\Drupal\payment\Payment unit test',
-    );
-  }
 
   /**
    * {@inheritdoc}

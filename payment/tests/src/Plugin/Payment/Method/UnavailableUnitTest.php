@@ -12,6 +12,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\Unavailable
+ *
+ * @group Payment
  */
 class UnavailableUnitTest extends UnitTestCase {
 
@@ -35,17 +37,6 @@ class UnavailableUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentStatusManager;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\Method\Unavailable unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

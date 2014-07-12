@@ -11,19 +11,10 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Event\PaymentEvents
+ *
+ * @group Payment
  */
 class PaymentEventsUnitTest extends UnitTestCase {
-
-  /**
-   * {@inheritdoc}
-   */
-  static function getInfo() {
-    return array(
-      'description' => '',
-      'group' => 'Payment',
-      'name' => '\Drupal\payment\Event\PaymentEvents unit test',
-    );
-  }
 
   /**
    * Tests constants with event names.

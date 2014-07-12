@@ -12,7 +12,9 @@ use Drupal\payment\Payment;
 use Drupal\simpletest\DrupalUnitTestBase;
 
 /**
- * Tests the payment_statuses_display element.
+ * payment_statuses_display element unit test.
+ *
+ * @group Payment
  */
 class PaymentStatusesDisplayUnitTest extends DrupalUnitTestBase {
 
@@ -20,17 +22,6 @@ class PaymentStatusesDisplayUnitTest extends DrupalUnitTestBase {
    * {@inheritdoc}
    */
   public static $modules = array('currency', 'field', 'payment', 'system', 'user');
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => 'payment_statuses_display element unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

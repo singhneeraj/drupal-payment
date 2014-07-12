@@ -13,6 +13,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm
+ *
+ * @group Payment
  */
 class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
 
@@ -71,17 +73,6 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
    * @var \Drupal\Core\Entity\EntityStorageInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $userStorage;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

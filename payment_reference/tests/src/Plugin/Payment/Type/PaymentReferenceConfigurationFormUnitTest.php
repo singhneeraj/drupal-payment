@@ -12,6 +12,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment_reference\Plugin\Payment\Type\PaymentReferenceConfigurationForm
+ *
+ * @group Payment Reference Field
  */
 class PaymentReferenceConfigurationFormUnitTest extends UnitTestCase {
 
@@ -42,17 +44,6 @@ class PaymentReferenceConfigurationFormUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentMethodSelectorManager;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'group' => 'Payment Form Field',
-      'name' => '\Drupal\payment_reference\Plugin\Payment\Type\PaymentReferenceConfigurationForm unit test',
-    );
-  }
 
   /**
    * {@inheritdoc}

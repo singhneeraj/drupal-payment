@@ -13,6 +13,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait
+ *
+ * @group Payment
  */
 class OperationsProviderPluginManagerTraitUnitTest extends UnitTestCase {
 
@@ -29,17 +31,6 @@ class OperationsProviderPluginManagerTraitUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait
    */
   public $trait;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

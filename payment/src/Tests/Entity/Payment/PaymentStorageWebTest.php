@@ -14,7 +14,9 @@ use Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface;
 use Drupal\simpletest\WebTestBase;
 
 /**
- * Tests \Drupal\payment\Entity\Payment\PaymentStorage.
+ * \Drupal\payment\Entity\Payment\PaymentStorage web test.
+ *
+ * @group Payment
  */
 class PaymentStorageWebTest extends WebTestBase {
 
@@ -22,17 +24,6 @@ class PaymentStorageWebTest extends WebTestBase {
    * {@inheritdoc}
    */
   public static $modules = array('payment');
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Entity\Payment\PaymentStorage web test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * Tests CRUD();

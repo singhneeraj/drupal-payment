@@ -13,6 +13,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment_reference\Entity\PaymentFormController
+ *
+ * @group Payment Reference Field
  */
 class PaymentFormControllerUnitTest extends UnitTestCase {
 
@@ -57,17 +59,6 @@ class PaymentFormControllerUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentMethodSelectorManager;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'group' => 'Payment Reference Field',
-      'name' => '\Drupal\payment_reference\Entity\PaymentFormController unit test',
-    );
-  }
 
   /**
    * {@inheritdoc}

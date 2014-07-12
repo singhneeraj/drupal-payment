@@ -14,6 +14,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment_form\Plugin\Field\FieldWidget\PaymentForm
+ *
+ * @group Payment Form Field
  */
 class PaymentFormUnitTest extends UnitTestCase {
 
@@ -44,19 +46,6 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $stringTranslation;
-
-  /**
-   * {@inheritdoc}
-   *
-   * @covers ::__construct
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'group' => 'Payment Form Field',
-      'name' => '\Drupal\payment_form\Plugin\Field\FieldWidget\PaymentForm unit test',
-    );
-  }
 
   /**
    * {@inheritdoc}

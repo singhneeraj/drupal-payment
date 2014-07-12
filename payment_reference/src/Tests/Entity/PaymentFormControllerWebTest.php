@@ -12,7 +12,9 @@ use Drupal\payment\Generate;
 use Drupal\simpletest\WebTestBase;
 
 /**
- * Tests \Drupal\payment_reference\Entity\PaymentFormController.
+ * \Drupal\payment_reference\Entity\PaymentFormController web test.
+ *
+ * @group Payment Reference Field
  */
 class PaymentFormControllerWebTest extends WebTestBase {
 
@@ -20,17 +22,6 @@ class PaymentFormControllerWebTest extends WebTestBase {
    * {@inheritdoc}
    */
   public static $modules = array('filter', 'payment', 'payment_reference', 'payment_reference_test');
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment_reference\Entity\PaymentFormController web test',
-      'group' => 'Payment Reference Field',
-    );
-  }
 
   /**
    * Tests the form.

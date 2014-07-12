@@ -12,6 +12,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Entity\PaymentStatus\PaymentStatusDeleteForm
+ *
+ * @group Payment
  */
 class PaymentStatusDeleteFormUnitTest extends UnitTestCase {
 
@@ -35,17 +37,6 @@ class PaymentStatusDeleteFormUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Entity\PaymentStatus\PaymentStatusDeleteForm
    */
   protected $form;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Entity\PaymentStatus\PaymentStatusDeleteForm unit test',
-      'group' => 'PaymentStatus',
-    );
-  }
 
   /**
    * {@inheritdoc}

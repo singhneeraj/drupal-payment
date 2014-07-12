@@ -12,7 +12,9 @@ use Drupal\payment\Payment;
 use Drupal\simpletest\WebTestBase ;
 
 /**
- * Tests the payment_line_items_input element.
+ * payment_line_items_input element unit test.
+ *
+ * @group Payment
  */
 class PaymentLineItemsInputWebTest extends WebTestBase {
 
@@ -20,17 +22,6 @@ class PaymentLineItemsInputWebTest extends WebTestBase {
    * {@inheritdoc}
    */
   public static $modules = array('payment_test');
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => 'payment_line_items_input element',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * Creates line item form data.

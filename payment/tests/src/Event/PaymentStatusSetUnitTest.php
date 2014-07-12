@@ -12,6 +12,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Event\PaymentStatusSet
+ *
+ * @group Payment
  */
 class PaymentStatusSetUnitTest extends UnitTestCase {
 
@@ -35,17 +37,6 @@ class PaymentStatusSetUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface|null
    */
   protected $previousPaymentStatus;
-
-  /**
-   * {@inheritdoc}
-   */
-  static function getInfo() {
-    return array(
-      'description' => '',
-      'group' => 'Payment',
-      'name' => '\Drupal\payment\Event\PaymentStatusSet unit test',
-    );
-  }
 
   /**
    * {@inheritdoc}

@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\PaymentMethodConfigurationOperationsProvider
+ *
+ * @group Payment
  */
 class PaymentMethodConfigurationOperationsProviderUnitTest extends UnitTestCase {
 
@@ -51,17 +53,6 @@ class PaymentMethodConfigurationOperationsProviderUnitTest extends UnitTestCase 
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $stringTranslation;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\Method\PaymentMethodConfigurationOperationsProvider unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

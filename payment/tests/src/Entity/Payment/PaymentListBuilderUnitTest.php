@@ -15,6 +15,8 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * @coversDefaultClass \Drupal\payment\Entity\Payment\PaymentListBuilder
+ *
+ * @group Payment
  */
 class PaymentListBuilderUnitTest extends UnitTestCase {
 
@@ -73,17 +75,6 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $stringTranslation;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Entity\Payment\PaymentListBuilder unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

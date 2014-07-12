@@ -12,6 +12,8 @@ use Drupal\simpletest\WebTestBase;
 
 /**
  * Tests module installation and uninstallation.
+ *
+ * @group Payment
  */
 class ModuleInstallUninstallWebTest extends WebTestBase {
 
@@ -19,17 +21,6 @@ class ModuleInstallUninstallWebTest extends WebTestBase {
    * {@inheritdoc}
    */
   public static $modules = array('payment');
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => 'Module installation and uninstallation',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * Test installation and uninstallation.

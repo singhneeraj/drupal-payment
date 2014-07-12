@@ -12,6 +12,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Controller\Payment
+ *
+ * @group Payment
  */
 class PaymentUnitTest extends UnitTestCase {
 
@@ -28,17 +30,6 @@ class PaymentUnitTest extends UnitTestCase {
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $stringTranslation;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Controller\Payment unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

@@ -8,12 +8,14 @@
 namespace Drupal\payment\Tests\Entity;
 
 use Drupal\payment\Entity\PaymentStatusInterface;
-use Drupal\simpletest\DrupalUnitTestBase;
+use Drupal\simpletest\KernelTestBase;
 
 /**
- * Tests \Drupal\payment\Entity\PaymentStatus.
+ * \Drupal\payment\Entity\PaymentStatus unit test.
+ *
+ * @group Payment
  */
-class PaymentStatusUnitTest extends DrupalUnitTestBase {
+class PaymentStatusUnitTest extends KernelTestBase {
 
   /**
    * {@inheritdoc}
@@ -26,17 +28,6 @@ class PaymentStatusUnitTest extends DrupalUnitTestBase {
    * @var \Drupal\payment\Entity\PaymentStatusInterface
    */
   protected $status;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Entity\PaymentStatus unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc

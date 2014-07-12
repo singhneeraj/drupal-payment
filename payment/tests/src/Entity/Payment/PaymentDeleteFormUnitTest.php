@@ -9,10 +9,12 @@ namespace Drupal\payment\Tests\Entity\Payment {
 
 use Drupal\payment\Entity\Payment\PaymentDeleteForm;
 use Drupal\Tests\UnitTestCase;
-  use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-  /**
+/**
  * @coversDefaultClass \Drupal\payment\Entity\Payment\PaymentDeleteForm
+ *
+ * @group Payment
  */
 class PaymentDeleteFormUnitTest extends UnitTestCase {
 
@@ -43,17 +45,6 @@ class PaymentDeleteFormUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Entity\Payment\PaymentDeleteForm
    */
   protected $form;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Entity\Payment\PaymentDeleteForm unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

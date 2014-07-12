@@ -15,6 +15,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect
+ *
+ * @group Payment
  */
 class PaymentSelectUnitTest extends UnitTestCase {
 
@@ -52,17 +54,6 @@ class PaymentSelectUnitTest extends UnitTestCase {
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $stringTranslation;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

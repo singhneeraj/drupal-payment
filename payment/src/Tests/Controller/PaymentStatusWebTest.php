@@ -11,7 +11,9 @@ use Drupal\payment\Payment;
 use Drupal\simpletest\WebTestBase ;
 
 /**
- * Tests the payment status UI.
+ * Payment status UI.
+ *
+ * @group Payment
  */
 class PaymentStatusWebTest extends WebTestBase {
 
@@ -26,17 +28,6 @@ class PaymentStatusWebTest extends WebTestBase {
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
   public $paymentStatusStorage;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => 'Payment status UI',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

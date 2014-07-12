@@ -12,6 +12,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Hook\Permission
+ *
+ * @group Payment
  */
 class PermissionUnitTest extends UnitTestCase {
 
@@ -35,17 +37,6 @@ class PermissionUnitTest extends UnitTestCase {
    * @var \Drupal\Core\StringTranslation\TranslationInterface
    */
   protected $stringTranslation;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Hook\Permission unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

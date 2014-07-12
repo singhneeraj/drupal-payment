@@ -13,6 +13,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Entity\PaymentStatus\PaymentStatusForm
+ *
+ * @group Payment
  */
 class PaymentStatusFormUnitTest extends UnitTestCase {
 
@@ -50,17 +52,6 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $stringTranslation;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Entity\PaymentStatus\PaymentStatusForm unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

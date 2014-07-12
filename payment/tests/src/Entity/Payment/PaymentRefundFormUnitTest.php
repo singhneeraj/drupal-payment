@@ -12,8 +12,10 @@ use Drupal\payment\Entity\Payment\PaymentRefundForm;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-  /**
+/**
  * @coversDefaultClass \Drupal\payment\Entity\Payment\PaymentRefundForm
+ *
+ * @group Payment
  */
 class PaymentRefundFormUnitTest extends UnitTestCase {
 
@@ -44,17 +46,6 @@ class PaymentRefundFormUnitTest extends UnitTestCase {
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $stringTranslation;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'group' => 'Payment',
-      'name' => '\Drupal\payment\Entity\Payment\PaymentRefundForm unit test',
-    );
-  }
 
   /**
    * {@inheritdoc}

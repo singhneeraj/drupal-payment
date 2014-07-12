@@ -12,7 +12,9 @@ use Drupal\payment\Payment;
 use Drupal\simpletest\WebTestBase;
 
 /**
- * Tests \Drupal\payment_form\Plugin\field\widget\PaymentForm.
+ * \Drupal\payment_form\Plugin\Field\FieldWidget\PaymentForm web test.
+ *
+ * @group Payment Form Field
  */
 class PaymentFormWebTest extends WebTestBase {
 
@@ -20,17 +22,6 @@ class PaymentFormWebTest extends WebTestBase {
    * {@inheritdoc}
    */
   public static $modules = array('field_ui', 'payment', 'payment_form');
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment_form\Plugin\Field\FieldWidget\PaymentForm web test',
-      'group' => 'Payment Form Field',
-    );
-  }
 
   /**
    * Tests the widget.

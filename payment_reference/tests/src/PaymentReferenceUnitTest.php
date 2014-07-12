@@ -13,19 +13,10 @@ use Symfony\Component\DependencyInjection\Container;
 
 /**
  * @coversDefaultClass \Drupal\payment_reference\PaymentReference
+ *
+ * @group Payment Reference Field
  */
 class PaymentReferenceUnitTest extends UnitTestCase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'group' => 'Payment',
-      'name' => '\Drupal\payment_reference\PaymentReference unit test',
-    );
-  }
 
   /**
    * @covers ::queue

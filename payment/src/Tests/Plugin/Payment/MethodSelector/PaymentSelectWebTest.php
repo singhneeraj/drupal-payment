@@ -12,7 +12,9 @@ use Drupal\payment\Payment;
 use Drupal\simpletest\WebTestBase ;
 
 /**
- * Tests \Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect.
+ * \Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect web test.
+ *
+ * @group Payment
  */
 class PaymentSelectWebTest extends WebTestBase {
 
@@ -20,17 +22,6 @@ class PaymentSelectWebTest extends WebTestBase {
    * {@inheritdoc}
    */
   public static $modules = array('filter', 'payment_test');
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect web test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * Creates a payment method.

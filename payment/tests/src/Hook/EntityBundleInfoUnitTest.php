@@ -12,6 +12,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Hook\EntityBundleInfo
+ *
+ * @group Payment
  */
 class EntityBundleInfoUnitTest extends UnitTestCase {
 
@@ -35,17 +37,6 @@ class EntityBundleInfoUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Hook\EntityBundleInfo.
    */
   protected $service;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Hook\EntityBundleInfo unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

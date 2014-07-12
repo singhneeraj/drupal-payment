@@ -14,6 +14,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
   /**
  * @coversDefaultClass \Drupal\payment\Entity\Payment\PaymentCaptureForm
+   *
+   * @group Payment
  */
 class PaymentCaptureFormUnitTest extends UnitTestCase {
 
@@ -44,17 +46,6 @@ class PaymentCaptureFormUnitTest extends UnitTestCase {
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $stringTranslation;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'group' => 'Payment',
-      'name' => '\Drupal\payment\Entity\Payment\PaymentCaptureForm unit test',
-    );
-  }
 
   /**
    * {@inheritdoc}

@@ -16,6 +16,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Entity\Payment\PaymentAccess
+ *
+ * @group Payment
  */
 class PaymentAccessUnitTest extends UnitTestCase {
 
@@ -25,17 +27,6 @@ class PaymentAccessUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Entity\Payment\PaymentAccess
    */
   protected $accessController;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Entity\Payment\PaymentAccess unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

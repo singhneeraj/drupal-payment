@@ -12,6 +12,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccess
+ *
+ * @group Payment
  */
 class PaymentMethodConfigurationAccessUnitTest extends UnitTestCase {
 
@@ -21,17 +23,6 @@ class PaymentMethodConfigurationAccessUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccess
    */
   protected $accessController;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccess unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

@@ -12,6 +12,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Status\ConfigOperationsProvider
+ *
+ * @group Payment
  */
 class ConfigOperationsProviderUnitTest extends UnitTestCase {
 
@@ -35,17 +37,6 @@ class ConfigOperationsProviderUnitTest extends UnitTestCase {
    * @var \Drupal\Core\Entity\EntityStorageInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentStatusStorage;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\Status\ConfigOperationsProvider unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

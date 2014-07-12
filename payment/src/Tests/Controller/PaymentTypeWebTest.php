@@ -10,7 +10,9 @@ namespace Drupal\payment\Tests\Controller;
 use Drupal\simpletest\WebTestBase ;
 
 /**
- * Tests the payment type UI.
+ * Payment type UI.
+ *
+ * @group Payment
  */
 class PaymentTypeWebTest extends WebTestBase {
 
@@ -18,17 +20,6 @@ class PaymentTypeWebTest extends WebTestBase {
    * {@inheritdoc}
    */
   public static $modules = array('field_ui', 'payment_test');
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => 'Payment type UI',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * Tests administrative overview.

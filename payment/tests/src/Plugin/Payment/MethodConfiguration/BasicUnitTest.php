@@ -13,6 +13,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\MethodConfiguration\Basic
+ *
+ * @group Payment
  */
 class BasicUnitTest extends UnitTestCase {
 
@@ -43,17 +45,6 @@ class BasicUnitTest extends UnitTestCase {
    * @var \Drupal\Core\StringTranslation\TranslationInterface
    */
   protected $stringTranslation;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\MethodConfiguration\Basic unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

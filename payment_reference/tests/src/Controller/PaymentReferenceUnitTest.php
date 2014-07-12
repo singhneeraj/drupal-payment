@@ -14,6 +14,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment_reference\Controller\PaymentReference
+ *
+ * @group Payment Reference Field
  */
 class PaymentReferenceUnitTest extends UnitTestCase {
 
@@ -65,17 +67,6 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $stringTranslation;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'group' => 'Payment Reference Field',
-      'name' => '\Drupal\payment_reference\Controller\PaymentReference unit test',
-    );
-  }
 
   /**
    * {@inheritdoc}

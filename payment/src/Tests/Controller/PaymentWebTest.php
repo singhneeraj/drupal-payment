@@ -12,7 +12,9 @@ use Drupal\payment\Payment;
 use Drupal\simpletest\WebTestBase ;
 
 /**
- * Tests the payment UI.
+ * Payment UI.
+ *
+ * @group Payment
  */
 class PaymentWebTest extends WebTestBase {
 
@@ -20,17 +22,6 @@ class PaymentWebTest extends WebTestBase {
    * {@inheritdoc}
    */
   public static $modules = array('payment', 'payment_test');
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => 'Payment UI',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * Tests the payment UI.

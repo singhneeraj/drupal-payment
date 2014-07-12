@@ -12,6 +12,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationDeleteForm
+ *
+ * @group Payment
  */
 class PaymentMethodConfigurationDeleteFormUnitTest extends UnitTestCase {
 
@@ -35,17 +37,6 @@ class PaymentMethodConfigurationDeleteFormUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationDeleteForm
    */
   protected $form;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationDeleteForm unit test',
-      'group' => 'PaymentMethodConfiguration',
-    );
-  }
 
   /**
    * {@inheritdoc}

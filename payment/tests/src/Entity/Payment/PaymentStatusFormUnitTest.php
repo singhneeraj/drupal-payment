@@ -15,6 +15,8 @@ namespace Drupal\payment\Tests\Entity\Payment;
 
 /**
  * @coversDefaultClass \Drupal\payment\Entity\Payment\PaymentStatusForm
+ *
+ * @group Payment
  */
 class PaymentStatusFormUnitTest extends UnitTestCase {
 
@@ -73,17 +75,6 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
    * @var \Drupal\Core\Routing\UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $urlGenerator;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'group' => 'Payment',
-      'name' => '\Drupal\payment\Entity\Payment\PaymentStatusForm unit test',
-    );
-  }
 
   /**
    * {@inheritdoc}

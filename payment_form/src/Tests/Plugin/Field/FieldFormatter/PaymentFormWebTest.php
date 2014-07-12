@@ -13,7 +13,9 @@ use Drupal\payment_form\Plugin\Payment\Type\PaymentForm;
 use Drupal\simpletest\WebTestBase;
 
 /**
- * Tests \Drupal\payment\Plugin\field\formatter\PaymentForm.
+ * \Drupal\payment\Plugin\Field\FieldFormatter\PaymentForm web test.
+ *
+ * @group Payment Form Field
  */
 class PaymentFormWebTest extends WebTestBase {
 
@@ -49,17 +51,6 @@ class PaymentFormWebTest extends WebTestBase {
    * {@inheritdoc}
    */
   public static $modules = array('entity_reference', 'field', 'filter', 'payment', 'payment_form');
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Plugin\Field\FieldFormatter\PaymentForm web test',
-      'group' => 'Payment Form Field',
-    );
-  }
 
   /**
    * {@inheritdoc

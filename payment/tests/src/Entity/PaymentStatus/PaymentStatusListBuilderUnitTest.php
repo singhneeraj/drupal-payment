@@ -12,6 +12,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Entity\PaymentStatus\PaymentStatusListBuilder
+ *
+ * @group Payment
  */
 class PaymentStatusListBuilderUnitTest extends UnitTestCase {
 
@@ -35,17 +37,6 @@ class PaymentStatusListBuilderUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Entity\PaymentStatus\PaymentStatusListBuilder
    */
   protected $listBuilder;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Entity\PaymentStatus\PaymentStatusListBuilder unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

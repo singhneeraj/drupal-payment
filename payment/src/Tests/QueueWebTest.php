@@ -13,7 +13,9 @@ use Drupal\payment\Queue;
 use Drupal\simpletest\WebTestBase;
 
 /**
- * Tests \Drupal\payment\Queue.
+ * \Drupal\payment\Queue web test.
+ *
+ * @group Payment
  */
 class QueueWebTest extends WebTestBase {
 
@@ -49,17 +51,6 @@ class QueueWebTest extends WebTestBase {
    * {@inheritdoc}
    */
   public static $modules = array('payment', 'payment_test');
-
-  /**
-   * {@inheritdoc}
-   */
-  static function getInfo() {
-    return array(
-      'description' => '',
-      'group' => 'Payment',
-      'name' => '\Drupal\payment\Queue web test',
-    );
-  }
 
   /**
    * {@inheritdoc}

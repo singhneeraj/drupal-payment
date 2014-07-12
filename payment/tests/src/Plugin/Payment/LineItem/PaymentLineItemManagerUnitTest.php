@@ -12,6 +12,8 @@ use Zend\Stdlib\ArrayObject;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManager
+ *
+ * @group Payment
  */
 class PaymentLineItemManagerUnitTest extends UnitTestCase {
 
@@ -49,17 +51,6 @@ class PaymentLineItemManagerUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface
    */
   public $paymentLineItemManager;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManager unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

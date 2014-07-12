@@ -12,6 +12,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Hook\HookInfo
+ *
+ * @group Payment
  */
 class HookInfoUnitTest extends UnitTestCase {
 
@@ -21,17 +23,6 @@ class HookInfoUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Hook\HookInfo.
    */
   protected $service;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Hook\HookInfo unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

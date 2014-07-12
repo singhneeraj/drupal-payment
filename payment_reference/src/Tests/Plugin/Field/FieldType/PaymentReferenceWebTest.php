@@ -12,7 +12,9 @@ use Drupal\payment_reference\PaymentReference;
 use Drupal\simpletest\WebTestBase;
 
 /**
- * Tests \Drupal\payment_reference\Plugin\Field\FieldType\PaymentReference.
+ * \Drupal\payment_reference\Plugin\Field\FieldType\PaymentReference web test.
+ *
+ * @group Payment Reference Field
  */
 class PaymentReferenceWebTest extends WebTestBase {
 
@@ -20,17 +22,6 @@ class PaymentReferenceWebTest extends WebTestBase {
    * {@inheritdoc}
    */
   public static $modules = array('field_ui', 'payment', 'payment_reference');
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment_reference\Plugin\Field\FieldType\PaymentReference web test',
-      'group' => 'Payment Reference Field',
-    );
-  }
 
   /**
    * Tests the field.

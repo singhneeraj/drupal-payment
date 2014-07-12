@@ -9,12 +9,14 @@ namespace Drupal\payment\Tests\Entity;
 
 use Drupal\payment\Entity\PaymentMethodConfigurationInterface;
 use Drupal\payment\Payment;
-use Drupal\simpletest\DrupalUnitTestBase;
+use Drupal\simpletest\KernelTestBase;
 
 /**
- * Tests \Drupal\payment\Entity\PaymentMethodConfiguration.
+ * \Drupal\payment\Entity\PaymentMethodConfiguration unit test.
+ *
+ * @group Payment
  */
-class PaymentMethodConfigurationUnitTest extends DrupalUnitTestBase {
+class PaymentMethodConfigurationUnitTest extends KernelTestBase {
 
   /**
    * The payment method plugin manager.
@@ -34,17 +36,6 @@ class PaymentMethodConfigurationUnitTest extends DrupalUnitTestBase {
    * @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface
    */
   protected $paymentMethodConfiguration;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Entity\PaymentMethodConfiguration unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc

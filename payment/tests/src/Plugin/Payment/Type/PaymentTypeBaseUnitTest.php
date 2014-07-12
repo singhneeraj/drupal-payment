@@ -13,6 +13,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Type\PaymentTypeBase
+ *
+ * @group Payment
  */
 class PaymentTypeBaseUnitTest extends UnitTestCase {
 
@@ -36,17 +38,6 @@ class PaymentTypeBaseUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Plugin\Payment\Type\PaymentTypeBase|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentType;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\Type\PaymentTypeBase unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

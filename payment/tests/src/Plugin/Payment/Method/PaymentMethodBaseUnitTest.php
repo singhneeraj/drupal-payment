@@ -14,6 +14,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
   /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase
+   *
+   * @group Payment
  */
 class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
 
@@ -23,17 +25,6 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
    * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $plugin;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\Method\PaymentMethodBase unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

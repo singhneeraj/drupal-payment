@@ -11,6 +11,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorBase
+ *
+ * @group Payment
  */
 class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
 
@@ -34,17 +36,6 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorBase|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentMethodSelectorPlugin;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorBase unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc}

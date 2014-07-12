@@ -13,7 +13,9 @@ use Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface;
 use Drupal\simpletest\DrupalUnitTestBase;
 
 /**
- * Tests \Drupal\payment\Entity\Payment.
+ * \Drupal\payment\Entity\Payment unit test.
+ *
+ * @group Payment
  */
 class PaymentUnitTest extends DrupalUnitTestBase {
 
@@ -49,17 +51,6 @@ class PaymentUnitTest extends DrupalUnitTestBase {
    * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    */
   protected $statusManager;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'name' => '\Drupal\payment\Entity\Payment unit test',
-      'group' => 'Payment',
-    );
-  }
 
   /**
    * {@inheritdoc

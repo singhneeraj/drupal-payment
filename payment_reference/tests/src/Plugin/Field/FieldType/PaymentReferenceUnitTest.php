@@ -12,6 +12,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment_reference\Plugin\Field\FieldType\PaymentReference
+ *
+ * @group Payment Reference Field
  */
 class PaymentReferenceUnitTest extends UnitTestCase {
 
@@ -34,17 +36,6 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    * @var \Drupal\Core\TypedData\TypedDataInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $targetId;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'description' => '',
-      'group' => 'Payment Reference Field',
-      'name' => '\Drupal\payment_reference\Plugin\Field\FieldType\PaymentReference unit test',
-    );
-  }
 
   /**
    * {@inheritdoc}
