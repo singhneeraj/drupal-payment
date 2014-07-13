@@ -9,7 +9,7 @@ namespace Drupal\payment_form\Tests\Plugin\Field\FieldType;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\field\FieldConfigInterface;
-use Drupal\payment\Generate;
+use Drupal\payment\Tests\Generate;
 use Drupal\simpletest\WebTestBase;
 
 /**

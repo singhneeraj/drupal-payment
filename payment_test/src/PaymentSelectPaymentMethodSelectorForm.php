@@ -11,7 +11,7 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormInterface;
-use Drupal\payment\Generate;
+use Drupal\payment\Tests\Generate;
 use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;

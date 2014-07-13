@@ -7,7 +7,7 @@
 
 namespace Drupal\payment\Tests\Controller;
 
-use Drupal\payment\Generate;
+use Drupal\payment\Tests\Generate;
 use Drupal\payment\Payment;
 use Drupal\simpletest\WebTestBase ;
 

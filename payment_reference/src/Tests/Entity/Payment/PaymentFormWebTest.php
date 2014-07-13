@@ -8,7 +8,7 @@
 namespace Drupal\payment_reference\Tests\Entity\Payment;
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
-use Drupal\payment\Generate;
+use Drupal\payment\Tests\Generate;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -32,7 +32,7 @@ class PaymentFormWebTest extends WebTestBase {
     $this->drupalLogin($user);
 
     // Create a payment method.
-    $payment_method = Generate::createPaymentMethodConfiguration(2, 'payment_basic');
+    $payment_method = \Drupal\payment\Tests\Generate::createPaymentMethodConfiguration(2, 'payment_basic');
     $payment_method->setPluginConfiguration(array(
       'status' => 'payment_success',
     ));

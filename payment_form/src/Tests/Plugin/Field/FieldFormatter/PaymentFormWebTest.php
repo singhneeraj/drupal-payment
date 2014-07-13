@@ -8,7 +8,7 @@
 namespace Drupal\payment_form\Tests\Plugin\Field\FieldFormatter;
 
 use Drupal\field\FieldConfigInterface;
-use Drupal\payment\Generate;
+use Drupal\payment\Tests\Generate;
 use Drupal\payment_form\Plugin\Payment\Type\PaymentForm;
 use Drupal\simpletest\WebTestBase;
 

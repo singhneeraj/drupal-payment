@@ -7,7 +7,7 @@
 
 namespace Drupal\payment\Tests\Element;
 
-use Drupal\payment\Generate;
+use Drupal\payment\Tests\Generate;
 use Drupal\simpletest\KernelTestBase;
 
 /**

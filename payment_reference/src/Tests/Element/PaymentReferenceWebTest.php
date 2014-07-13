@@ -8,7 +8,7 @@
 namespace Drupal\payment_reference\Tests\Element;
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
-use Drupal\payment\Generate;
+use Drupal\payment\Tests\Generate;
 use Drupal\payment_reference\PaymentReference;
 use Drupal\simpletest\WebTestBase;
 

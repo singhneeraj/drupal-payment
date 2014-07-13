@@ -5,8 +5,9 @@
  * Contains \Drupal\payment\Generate.
  */
 
-namespace Drupal\payment;
+namespace Drupal\payment\Tests;
 
+use Drupal\payment\Payment;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
 use Drupal\Component\Utility\Random;
 

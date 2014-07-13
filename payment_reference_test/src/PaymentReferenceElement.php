@@ -8,7 +8,7 @@
 namespace Drupal\payment_reference_test;
 
 use Drupal\Core\Form\FormInterface;
-use Drupal\payment\Generate;
+use Drupal\payment\Tests\Generate;
 
 /**
  * Provides a form for testing the payment_reference element.

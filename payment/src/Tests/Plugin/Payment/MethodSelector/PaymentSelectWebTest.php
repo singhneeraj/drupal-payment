@@ -7,7 +7,7 @@
 
 namespace Drupal\payment\Tests\Plugin\Payment\MethodSelector;
 
-use Drupal\payment\Generate;
+use Drupal\payment\Tests\Generate;
 use Drupal\payment\Payment;
 use Drupal\simpletest\WebTestBase ;
 

@@ -10,7 +10,7 @@ namespace Drupal\payment_test;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormInterface;
 use Drupal\payment\Element\PaymentLineItemsInput;
-use Drupal\payment\Generate;
+use Drupal\payment\Tests\Generate;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class PaymentLineItemElement implements ContainerInjectionInterface, FormInterface {

@@ -8,7 +8,7 @@
 namespace Drupal\payment\Tests\Entity\Payment;
 
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Generate;
+use Drupal\payment\Tests\Generate;
 use Drupal\payment\Payment;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface;
 use Drupal\simpletest\WebTestBase;
