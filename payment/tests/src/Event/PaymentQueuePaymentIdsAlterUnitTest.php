@@ -46,6 +46,13 @@ class PaymentQueuePaymentIdsAlterUnitTest extends UnitTestCase {
   protected $paymentIds;
 
   /**
+   * The queue ID.
+   *
+   * @var string
+   */
+  protected $queueId;
+
+  /**
    * {@inheritdoc}
    *
    * @covers ::__construct
@@ -57,7 +64,14 @@ class PaymentQueuePaymentIdsAlterUnitTest extends UnitTestCase {
 
     $this->paymentIds = array($this->randomName());
 
-    $this->event = new PaymentQueuePaymentIdsAlter($this->categoryId, $this->ownerId, $this->paymentIds);
+    $this->event = new PaymentQueuePaymentIdsAlter($this->queueId, $this->categoryId, $this->ownerId, $this->paymentIds);
+  }
+
+  /**
+   * @covers ::getQueueId
+   */
+  public function testGetQueueId() {
+    $this->assertSame($this->queueId, $this->event->getQueueId());
   }
 
   /**

@@ -39,9 +39,18 @@ class PaymentQueuePaymentIdsAlter extends Event implements AccessInterface {
    */
   protected $paymentIds;
 
+  /**
+   * The queue ID.
+   *
+   * @var string
+   */
+  protected $queueId;
+
   /**-
    * Constructs a new class instance.
    *
+   * @param string $queue_id
+   *   The queue ID.
    * @param string $category_id
    *   The queue category ID.
    * @param int $owner_id
@@ -49,10 +58,20 @@ class PaymentQueuePaymentIdsAlter extends Event implements AccessInterface {
    * @param int[] $payment_ids
    *   The IDs of available payments as loaded by the queue.
    */
-  public function __construct($category_id, $owner_id, array &$payment_ids) {
+  public function __construct($queue_id, $category_id, $owner_id, array &$payment_ids) {
     $this->categoryId = $category_id;
     $this->ownerId = $owner_id;
     $this->paymentIds = $payment_ids;
+    $this->queueId = $queue_id;
+  }
+
+  /**
+   * Gets the queue ID.
+   *
+   * @return string
+   */
+  public function getQueueId() {
+    return $this->queueId;
   }
 
   /**

@@ -219,7 +219,7 @@ class Queue implements QueueInterface {
    * @return int[] $payment_ids
    */
   protected function alterLoadedPaymentIds($category_id, $owner_id, array $payment_ids) {
-    $event = new PaymentQueuePaymentIdsAlter($category_id, $owner_id, $payment_ids);
+    $event = new PaymentQueuePaymentIdsAlter($this->queueId, $category_id, $owner_id, $payment_ids);
     $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_QUEUE_PAYMENT_IDS_ALTER, $event);
     $payment_ids = $event->getPaymentIds();
     // @todo Add a Rules event.

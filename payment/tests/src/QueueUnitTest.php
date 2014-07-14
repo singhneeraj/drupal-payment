@@ -95,7 +95,7 @@ class QueueUnitTest extends UnitTestCase {
 
     $this->eventDispatcher->expects($this->once())
       ->method('dispatch')
-      ->with(PaymentEvents::PAYMENT_QUEUE_PAYMENT_IDS_ALTER);
+      ->with(PaymentEvents::PAYMENT_QUEUE_PAYMENT_IDS_ALTER, $this->isInstanceOf('\Drupal\payment\Event\PaymentQueuePaymentIdsAlter'));
 
     $method = new \ReflectionMethod($this->queue, 'alterLoadedPaymentIds');
     $method->setAccessible(TRUE);
