@@ -10,7 +10,6 @@ namespace Drupal\payment;
 use Drupal\Component\Utility\Random;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Database;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\payment\Event\PaymentEvents;
 use Drupal\payment\Event\PaymentQueuePaymentIdsAlter;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
@@ -41,7 +40,7 @@ class Queue implements QueueInterface {
    * @var int
    *   A number of seconds.
    */
-  const CLAIM_EXPIRATION_PERIOD = 1;
+  protected $claimExpirationPeriod = 1;
 
   /**
    * The database connection.
@@ -85,6 +84,30 @@ class Queue implements QueueInterface {
   }
 
   /**
+   * Sets the claim expiration period.
+   *
+   * @param int $expiration_period
+   *   A number of seconds.
+   *
+   * @return $this
+   */
+  public function setClaimExpirationPeriod($expiration_period) {
+    $this->claimExpirationPeriod = $expiration_period;
+
+    return $this;
+  }
+
+  /**
+   * Gets the claim expiration period.
+   *
+   * @return int
+   *   A number of seconds.
+   */
+  public function getClaimExpirationPeriod() {
+    return $this->claimExpirationPeriod;
+  }
+
+  /**
    * {@inheritdoc}
    */
   function save($category_id, $payment_id) {
@@ -105,7 +128,7 @@ class Queue implements QueueInterface {
     // If a payment cannot be claimed at the first try, wait until the prevous
     // claim has expired and try to claim the payment one more time.
     if ($acquisition_code === FALSE) {
-      sleep(static::CLAIM_EXPIRATION_PERIOD);
+      sleep($this->getClaimExpirationPeriod());
       $acquisition_code = $this->tryClaimPaymentOnce($payment_id);
     }
 
@@ -126,7 +149,7 @@ class Queue implements QueueInterface {
     $count = $this->database->update('payment_queue', array(
       'return' => Database::RETURN_AFFECTED,
     ))
-      ->condition('claimed', time() - self::CLAIM_EXPIRATION_PERIOD, '<')
+      ->condition('claimed', time() - $this->getClaimExpirationPeriod(), '<')
       ->condition('payment_id', $payment_id)
       ->condition('queue_id', $this->queueId)
       ->fields(array(
@@ -146,7 +169,7 @@ class Queue implements QueueInterface {
       'return' => Database::RETURN_AFFECTED,
     ))
       ->condition('acquisition_code', $acquisition_code)
-      ->condition('claimed', time() - self::CLAIM_EXPIRATION_PERIOD, '>=')
+      ->condition('claimed', time() - $this->getClaimExpirationPeriod(), '>=')
       ->condition('payment_id', $payment_id)
       ->condition('queue_id', $this->queueId)
       ->execute();

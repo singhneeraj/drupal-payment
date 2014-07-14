@@ -76,6 +76,16 @@ class QueueUnitTest extends UnitTestCase {
   }
 
   /**
+   * @covers ::getClaimExpirationPeriod
+   * @covers ::setClaimExpirationPeriod
+   */
+  public function testGetClaimExpirationPeriod() {
+    $expiration_period = mt_rand();
+    $this->assertSame($this->queue, $this->queue->setClaimExpirationPeriod($expiration_period));
+    $this->assertSame($expiration_period, $this->queue->getClaimExpirationPeriod());
+  }
+
+  /**
    * @covers ::alterLoadedPaymentIds
    */
   public function testAlterLoadedPaymentIds() {
