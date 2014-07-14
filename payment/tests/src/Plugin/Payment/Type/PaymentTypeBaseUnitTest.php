@@ -26,13 +26,6 @@ class PaymentTypeBaseUnitTest extends UnitTestCase {
   protected $eventDispatcher;
 
   /**
-   * The module handler.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $moduleHandler;
-
-  /**
    * The payment type under test.
    *
    * @var \Drupal\payment\Plugin\Payment\Type\PaymentTypeBase|\PHPUnit_Framework_MockObject_MockObject
@@ -47,13 +40,11 @@ class PaymentTypeBaseUnitTest extends UnitTestCase {
   public function setUp() {
     $this->eventDispatcher = $this->getMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
-    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
-
     $configuration = array();
     $plugin_id = $this->randomName();
     $plugin_definition = array();
     $this->paymentType = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Type\PaymentTypeBase')
-      ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->moduleHandler, $this->eventDispatcher))
+      ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->eventDispatcher))
       ->getMockForAbstractClass();
   }
 
@@ -64,7 +55,6 @@ class PaymentTypeBaseUnitTest extends UnitTestCase {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
       array('event_dispatcher', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->eventDispatcher),
-      array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
     );
     $container->expects($this->any())
       ->method('get')
@@ -125,10 +115,6 @@ class PaymentTypeBaseUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
     $this->paymentType->setPayment($payment);
-
-    $this->moduleHandler->expects($this->once())
-      ->method('invokeAll')
-      ->with('payment_type_pre_resume_context');
 
     $this->eventDispatcher->expects($this->once())
       ->method('dispatch')

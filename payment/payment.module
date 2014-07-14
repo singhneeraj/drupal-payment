@@ -17,13 +17,6 @@ function payment_permission() {
 }
 
 /**
- * Implements hook_hook_info().
- */
-function payment_hook_info() {
-  return \Drupal::service('payment.hook.hook_info')->invoke();
-}
-
-/**
  * Implements hook_entity_extra_field_info().
  */
 function payment_entity_extra_field_info() {

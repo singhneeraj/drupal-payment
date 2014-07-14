@@ -26,13 +26,6 @@ class UnavailableUnitTest extends UnitTestCase {
   protected $eventDispatcher;
 
   /**
-   * The module handler used for testing.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $moduleHandler;
-
-  /**
    * The payment type under test.
    *
    * @var \Drupal\payment\Plugin\Payment\Type\Unavailable|\PHPUnit_Framework_MockObject_MockObject
@@ -54,8 +47,6 @@ class UnavailableUnitTest extends UnitTestCase {
   public function setUp() {
     $this->eventDispatcher = $this->getMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
-    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
-
     $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
     $this->stringTranslation->expects($this->any())
       ->method('translate')
@@ -64,7 +55,7 @@ class UnavailableUnitTest extends UnitTestCase {
     $configuration = array();
     $plugin_id = $this->randomName();
     $plugin_definition = array();
-    $this->paymentType = new Unavailable($configuration, $plugin_id, $plugin_definition, $this->moduleHandler, $this->eventDispatcher, $this->stringTranslation);
+    $this->paymentType = new Unavailable($configuration, $plugin_id, $plugin_definition, $this->eventDispatcher, $this->stringTranslation);
   }
 
   /**
@@ -74,7 +65,6 @@ class UnavailableUnitTest extends UnitTestCase {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
       array('event_dispatcher', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->eventDispatcher),
-      array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
     $container->expects($this->any())

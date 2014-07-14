@@ -33,13 +33,6 @@ class QueueUnitTest extends UnitTestCase {
   protected $eventDispatcher;
 
   /**
-   * The module handler.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $moduleHandler;
-
-  /**
    * The database connection.
    *
    * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -73,15 +66,13 @@ class QueueUnitTest extends UnitTestCase {
 
     $this->eventDispatcher = $this->getMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
-    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
-
     $this->paymentMethodManager = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface');
 
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
     $this->queueId = $this->randomName();
 
-    $this->queue = new Queue($this->queueId, $this->database, $this->moduleHandler, $this->eventDispatcher, $this->paymentStatusManager);
+    $this->queue = new Queue($this->queueId, $this->database, $this->eventDispatcher, $this->paymentStatusManager);
   }
 
   /**
@@ -91,10 +82,6 @@ class QueueUnitTest extends UnitTestCase {
     $category_id = $this->randomName();
     $owner_id = $this->randomName();
     $payment_ids = array($this->randomName());
-
-    $this->moduleHandler->expects($this->once())
-      ->method('alter')
-      ->with('payment_queue_payment_ids', $category_id, $owner_id, $payment_ids);
 
     $this->eventDispatcher->expects($this->once())
       ->method('dispatch')
@@ -114,7 +101,7 @@ class QueueUnitTest extends UnitTestCase {
 
     /** @var \Drupal\payment\Queue|\PHPUnit_Framework_MockObject_MockObject $queue */
     $queue = $this->getMockBuilder('\Drupal\payment\Queue')
-      ->setConstructorArgs(array($this->queueId, $this->database, $this->moduleHandler, $this->eventDispatcher, $this->paymentStatusManager))
+      ->setConstructorArgs(array($this->queueId, $this->database, $this->eventDispatcher, $this->paymentStatusManager))
       ->setMethods(array('tryClaimPaymentOnce'))
       ->getMock();
     $queue->expects($this->at(0))

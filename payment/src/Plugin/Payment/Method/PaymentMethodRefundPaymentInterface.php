@@ -33,7 +33,7 @@ interface PaymentMethodRefundPaymentInterface {
   /**
    * Refunds the payment.
    *
-   * Implementations must invoke hook_payment_pre_refund() and dispatch the
+   * Implementations must dispatch the
    * \Drupal\payment\Event\PaymentEvents::PAYMENT_PRE_REFUND Symfony event
    * before refunding the payment.
    *

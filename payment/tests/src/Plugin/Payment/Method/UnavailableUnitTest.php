@@ -44,8 +44,6 @@ class UnavailableUnitTest extends UnitTestCase {
   public function setUp() {
     parent::setUp();
 
-    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
-
     $this->token = $this->getMockBuilder('\Drupal\Core\Utility\Token')
       ->disableOriginalConstructor()
       ->getMock();
@@ -56,7 +54,7 @@ class UnavailableUnitTest extends UnitTestCase {
       'label' => $this->randomName(),
     );
 
-    $this->plugin = new Unavailable(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->token, $this->paymentStatusManager);
+    $this->plugin = new Unavailable(array(), '', $this->pluginDefinition, $this->token, $this->paymentStatusManager);
   }
 
   /**

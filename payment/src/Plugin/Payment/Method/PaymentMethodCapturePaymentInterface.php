@@ -33,7 +33,7 @@ interface PaymentMethodCapturePaymentInterface {
   /**
    * Captures the payment.
    *
-   * Implementations must invoke hook_payment_pre_capture() and dispatch the
+   * Implementations must dispatch the
    * \Drupal\payment\Event\PaymentEvents::PAYMENT_PRE_CAPTURE Symfony event
    * before capture.
    *

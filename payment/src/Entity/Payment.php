@@ -234,17 +234,6 @@ class Payment extends ContentEntityBase implements PaymentInterface {
       $event_dispatcher = \Drupal::service('event_dispatcher');
       $event = new PaymentStatusSet($this, $previous_status);
       $event_dispatcher->dispatch(PaymentEvents::PAYMENT_STATUS_SET, $event);
-
-      $module_handler = \Drupal::moduleHandler();
-      foreach ($module_handler->getImplementations('payment_status_set') as $moduleName) {
-        $module_handler->invoke($moduleName, 'payment_status_set', array($this, $previous_status));
-        // If a hook invocation has added another log item, a new loop with
-        // invocations has already been executed and we don't need to continue
-        // with this one.
-        if ($this->getStatus()->getPluginId() != $status->getPluginId()) {
-          return NULL;
-        }
-      }
       // @todo Invoke Rules event.
     }
 

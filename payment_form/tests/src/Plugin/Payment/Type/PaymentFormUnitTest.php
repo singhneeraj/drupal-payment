@@ -37,13 +37,6 @@ class PaymentFormUnitTest extends UnitTestCase {
   protected $eventDispatcher;
 
   /**
-   * The module handler used for testing.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $moduleHandler;
-
-  /**
    * The payment used for testing.
    *
    * @var \Drupal\payment\Entity\PaymentInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -74,11 +67,9 @@ class PaymentFormUnitTest extends UnitTestCase {
 
     $this->eventDispatcher = $this->getMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
-    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
-
     $this->stringTranslation = $this->getStringTranslationStub();
 
-    $this->paymentType = new PaymentForm(array(), 'payment_form', array(), $this->moduleHandler, $this->eventDispatcher, $this->entityManager, $this->stringTranslation);
+    $this->paymentType = new PaymentForm(array(), 'payment_form', array(), $this->eventDispatcher, $this->entityManager, $this->stringTranslation);
 
     $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
@@ -94,7 +85,6 @@ class PaymentFormUnitTest extends UnitTestCase {
     $map = array(
       array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager),
       array('event_dispatcher', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->eventDispatcher),
-      array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
     $container->expects($this->any())

@@ -44,13 +44,6 @@ class Queue implements QueueInterface {
   const CLAIM_EXPIRATION_PERIOD = 1;
 
   /**
-   * The module handler.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
-   */
-  protected $moduleHandler;
-
-  /**
    * The database connection.
    *
    * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
@@ -78,17 +71,14 @@ class Queue implements QueueInterface {
    *   The unique ID of the queue (instance).
    * @param \Drupal\Core\Database\Connection $database
    *   A database connection.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface
-   *   The module handler.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher.
    * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    *   The payment status plugin manager.
    */
-  public function __construct($queue_id, Connection $database, ModuleHandlerInterface $module_handler, EventDispatcherInterface $event_dispatcher, PaymentStatusManagerInterface $payment_status_manager) {
+  public function __construct($queue_id, Connection $database, EventDispatcherInterface $event_dispatcher, PaymentStatusManagerInterface $payment_status_manager) {
     $this->database = $database;
     $this->eventDispatcher = $event_dispatcher;
-    $this->moduleHandler = $module_handler;
     $this->paymentStatusManager = $payment_status_manager;
     $this->randomGenerator = new Random();
     $this->queueId = $queue_id;
@@ -209,7 +199,6 @@ class Queue implements QueueInterface {
     $event = new PaymentQueuePaymentIdsAlter($category_id, $owner_id, $payment_ids);
     $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_QUEUE_PAYMENT_IDS_ALTER, $event);
     $payment_ids = $event->getPaymentIds();
-    $this->moduleHandler->alter('payment_queue_payment_ids', $category_id, $owner_id, $payment_ids);
     // @todo Add a Rules event.
 
     return $payment_ids;

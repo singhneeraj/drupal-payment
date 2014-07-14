@@ -38,8 +38,8 @@ class Unavailable extends PaymentTypeBase {
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translator.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler, EventDispatcherInterface $event_dispatcher, TranslationInterface $string_translation) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $module_handler, $event_dispatcher);
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, EventDispatcherInterface $event_dispatcher, TranslationInterface $string_translation) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher);
     $this->stringTranslation = $string_translation;
   }
 
@@ -47,7 +47,7 @@ class Unavailable extends PaymentTypeBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('module_handler'), $container->get('event_dispatcher'), $container->get('string_translation'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('event_dispatcher'), $container->get('string_translation'));
   }
 
   /**

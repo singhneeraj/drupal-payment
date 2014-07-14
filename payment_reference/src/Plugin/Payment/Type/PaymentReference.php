@@ -52,8 +52,6 @@ class PaymentReference extends PaymentTypeBase implements ContainerFactoryPlugin
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   The module handler.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher.
    * @param \Drupal\Core\Routing\UrlGeneratorInterface $url_generator
@@ -63,9 +61,9 @@ class PaymentReference extends PaymentTypeBase implements ContainerFactoryPlugin
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translator.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler , EventDispatcherInterface $event_dispatcher, UrlGeneratorInterface $url_generator, EntityManagerInterface $entity_manager, TranslationInterface $string_translation) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, EventDispatcherInterface $event_dispatcher, UrlGeneratorInterface $url_generator, EntityManagerInterface $entity_manager, TranslationInterface $string_translation) {
     $configuration += $this->defaultConfiguration();
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $module_handler, $event_dispatcher);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher);
     $this->urlGenerator = $url_generator;
     $this->entityManager = $entity_manager;
     $this->stringTranslation = $string_translation;
@@ -79,7 +77,6 @@ class PaymentReference extends PaymentTypeBase implements ContainerFactoryPlugin
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('module_handler'),
       $container->get('event_dispatcher'),
       $container->get('url_generator'),
       $container->get('entity.manager'),

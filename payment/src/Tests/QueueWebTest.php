@@ -61,7 +61,7 @@ class QueueWebTest extends WebTestBase {
     $this->paymentMethodManager = \Drupal::service('plugin.manager.payment.method');
     $this->paymentStatusManager = \Drupal::service('plugin.manager.payment.status');
     $queue_id = $this->randomName();
-    $this->queue = new Queue($queue_id, $this->database, \Drupal::moduleHandler(), \Drupal::service('event_dispatcher'), $this->paymentStatusManager);
+    $this->queue = new Queue($queue_id, $this->database, \Drupal::service('event_dispatcher'), $this->paymentStatusManager);
   }
 
   /**
@@ -107,7 +107,6 @@ class QueueWebTest extends WebTestBase {
     // Tests loadPaymentIds().
     $loaded_payment_ids = $this->queue->loadPaymentIds($category_id, $payment->getOwnerId());
     $this->assertEqual($loaded_payment_ids, array($payment->id()));
-    $this->assertTrue(\Drupal::state()->get('payment_test_payment_queue_payment_ids_alter'));
 
     // Tests deleteByPaymentId().
     $this->queue->deleteByPaymentId($payment->id());

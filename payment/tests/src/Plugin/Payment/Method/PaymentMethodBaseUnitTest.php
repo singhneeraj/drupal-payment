@@ -37,7 +37,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $this->pluginDefinition['label'] = $this->randomName();
 
     $this->plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\PaymentMethodBase')
-      ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token))
+      ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->eventDispatcher, $this->token))
       ->getMockForAbstractClass();
   }
 
@@ -48,7 +48,6 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
       array('event_dispatcher', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->eventDispatcher),
-      array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
       array('token', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->token),
     );
     $container->expects($this->any())
@@ -178,9 +177,6 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
-    $this->moduleHandler->expects($this->once())
-      ->method('invokeAll')
-      ->with('payment_pre_execute');
     $this->eventDispatcher->expects($this->once())
       ->method('dispatch')
       ->with(PaymentEvents::PAYMENT_PRE_EXECUTE);
@@ -216,7 +212,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $this->pluginDefinition['active'] = $active;
     /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase|\PHPUnit_Framework_MockObject_MockObject $payment_method */
     $payment_method = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\PaymentMethodBase')
-      ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token))
+      ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->eventDispatcher, $this->token))
       ->setMethods(array('executePaymentAccessCurrency', 'executePaymentAccessEvent', 'doExecutePaymentAccess'))
       ->getMockForAbstractClass();
     $payment_method->expects($this->any())
@@ -328,10 +324,6 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
       ->method('dispatch')
       ->with(PaymentEvents::PAYMENT_PRE_REFUND, $this->isInstanceOf('\Drupal\payment\Event\PaymentPreRefund'));
 
-    $this->moduleHandler->expects($this->once())
-      ->method('invokeAll')
-      ->with('payment_pre_refund', array($payment));
-
     $this->plugin->setPayment($payment);
     $this->plugin->expects($this->once())
       ->method('doRefundPayment');
@@ -396,7 +388,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
    *
    * @dataProvider providerTestExecutePaymentAccessEvent
    */
-  public function testExecutePaymentAccessEvent($expected, $event_results, $hook_results) {
+  public function testExecutePaymentAccessEvent($expected, $event_results) {
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
@@ -414,11 +406,6 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
         }
       }));
 
-    $this->moduleHandler->expects($this->once())
-      ->method('invokeAll')
-      ->with('payment_execute_access', array($payment, $this->plugin, $account))
-      ->will($this->returnValue($hook_results));
-
     $method = new \ReflectionMethod($this->plugin, 'executePaymentAccessEvent');
     $method->setAccessible(TRUE);
 
@@ -431,20 +418,15 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
   public function providerTestExecutePaymentAccessEvent() {
     return array(
       // No access results.
-      array(TRUE, array(), array()),
+      array(TRUE, array()),
       // Some access results, all positive.
-      array(TRUE, array(AccessInterface::ALLOW), array()),
-      array(TRUE, array(), array(AccessInterface::ALLOW)),
+      array(TRUE, array(AccessInterface::ALLOW)),
       // Both ALLOW and DENY, but no KILL, so access is granted.
-      array(TRUE, array(AccessInterface::ALLOW), array(AccessInterface::DENY)),
-      array(TRUE, array(AccessInterface::DENY), array(AccessInterface::ALLOW)),
+      array(TRUE, array(AccessInterface::ALLOW, AccessInterface::DENY)),
       // Various combinations of access denied.
-      array(FALSE, array(AccessInterface::DENY), array()),
-      array(FALSE, array(), array(AccessInterface::DENY)),
-      array(FALSE, array(AccessInterface::KILL), array()),
-      array(FALSE, array(), array(AccessInterface::KILL)),
-      array(FALSE, array(AccessInterface::KILL), array(AccessInterface::ALLOW)),
-      array(FALSE, array(AccessInterface::ALLOW), array(AccessInterface::KILL)),
+      array(FALSE, array(AccessInterface::DENY)),
+      array(FALSE, array(AccessInterface::KILL)),
+      array(FALSE, array(AccessInterface::KILL, AccessInterface::ALLOW)),
     );
   }
 

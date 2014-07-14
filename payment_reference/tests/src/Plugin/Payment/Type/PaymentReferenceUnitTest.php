@@ -37,13 +37,6 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   protected $entityManager;
 
   /**
-   * The module handler used for testing.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $moduleHandler;
-
-  /**
    * The payment used for testing.
    *
    * @var \Drupal\payment\Entity\PaymentInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -86,11 +79,9 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       ->method('generateFromRoute')
       ->will($this->returnValue('http://example.com'));
 
-    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
-
     $this->stringTranslation = $this->getStringTranslationStub();
 
-    $this->paymentType = new PaymentReference(array(), 'payment_reference', array(), $this->moduleHandler, $this->eventDispatcher, $this->urlGenerator, $this->entityManager, $this->stringTranslation);
+    $this->paymentType = new PaymentReference(array(), 'payment_reference', array(), $this->eventDispatcher, $this->urlGenerator, $this->entityManager, $this->stringTranslation);
 
     $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
@@ -106,7 +97,6 @@ class PaymentReferenceUnitTest extends UnitTestCase {
     $map = array(
       array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager),
       array('event_dispatcher', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->eventDispatcher),
-      array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
       array('url_generator', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->urlGenerator),
     );
