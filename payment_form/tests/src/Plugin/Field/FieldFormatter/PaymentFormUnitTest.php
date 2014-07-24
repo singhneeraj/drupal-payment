@@ -62,6 +62,13 @@ class PaymentFormUnitTest extends UnitTestCase {
   protected $request;
 
   /**
+   * The request stack.
+   *
+   * @var \Symfony\Component\HttpFoundation\RequestStack|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $requestStack;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp() {
@@ -78,6 +85,13 @@ class PaymentFormUnitTest extends UnitTestCase {
     $this->request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
       ->disableOriginalConstructor()
       ->getMock();
+
+    $this->requestStack = $this->getMockBuilder('\Symfony\Component\HttpFoundation\RequestStack')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $this->requestStack->expects($this->any())
+      ->method('getCurrentRequest')
+      ->willReturn($this->request);
 
     $this->fieldFormatter = new PaymentForm('payment_form', array(), $this->fieldDefinition, array(), $this->randomName(), $this->randomName(), array());
   }
@@ -245,7 +259,7 @@ class PaymentFormUnitTest extends UnitTestCase {
     $container->set('entity.form_builder', $this->entityFormBuilder);
     $container->set('entity.manager', $this->entityManager);
     $container->set('plugin.manager.payment.line_item', $this->paymentLineItemManager);
-    $container->set('request', $this->request);
+    $container->set('request_stack', $this->requestStack);
     \Drupal::setContainer($container);
 
     $line_items_data = array(array(

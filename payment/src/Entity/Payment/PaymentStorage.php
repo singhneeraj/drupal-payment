@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Entity\Payment;
 
+use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\ContentEntityDatabaseStorage;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -60,6 +61,8 @@ class PaymentStorage extends ContentEntityDatabaseStorage implements PaymentStor
    *   The database connection.
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    *   The entity manager.
+   * @param \Drupal\Core\Cache\CacheBackendInterface $cache
+   *   The entity cache.
    * @param \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface $payment_line_item_manager
    *   The payment line item manager.
    * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface $payment_method_manager
@@ -69,8 +72,8 @@ class PaymentStorage extends ContentEntityDatabaseStorage implements PaymentStor
    * @param \Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface $payment_type_manager
    *   The payment type manager.
    */
-  public function __construct(EntityTypeInterface $entity_type, Connection $database, EntityManagerInterface $entity_manager, PaymentLineItemManagerInterface $payment_line_item_manager, PaymentMethodManagerInterface $payment_method_manager, PaymentStatusManagerInterface $payment_status_manager, PaymentTypeManagerInterface $payment_type_manager) {
-    parent::__construct($entity_type, $database, $entity_manager);
+  public function __construct(EntityTypeInterface $entity_type, Connection $database, EntityManagerInterface $entity_manager, CacheBackendInterface $cache, PaymentLineItemManagerInterface $payment_line_item_manager, PaymentMethodManagerInterface $payment_method_manager, PaymentStatusManagerInterface $payment_status_manager, PaymentTypeManagerInterface $payment_type_manager) {
+    parent::__construct($entity_type, $database, $entity_manager, $cache);
     $this->paymentLineItemManager = $payment_line_item_manager;
     $this->paymentMethodManager = $payment_method_manager;
     $this->paymentStatusManager = $payment_status_manager;
@@ -81,7 +84,7 @@ class PaymentStorage extends ContentEntityDatabaseStorage implements PaymentStor
    * {@inheritdoc}
    */
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
-    return new static($entity_type, $container->get('database'), $container->get('entity.manager'), $container->get('plugin.manager.payment.line_item'), $container->get('plugin.manager.payment.method'), $container->get('plugin.manager.payment.status'), $container->get('plugin.manager.payment.type'));
+    return new static($entity_type, $container->get('database'), $container->get('entity.manager'), $container->get('cache.entity'), $container->get('plugin.manager.payment.line_item'), $container->get('plugin.manager.payment.method'), $container->get('plugin.manager.payment.status'), $container->get('plugin.manager.payment.type'));
   }
 
   /**

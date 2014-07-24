@@ -19,6 +19,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class PaymentStorageUnitTest extends UnitTestCase {
 
   /**
+   * The entity cache.
+   *
+   * @var \Drupal\Core\Cache\CacheBackendInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $cacheBackend;
+
+  /**
    * The database connection.
    *
    * @var \Drupal\Core\Database\Connection|\PHPUnit_Framework_MockObject_MockObject
@@ -80,6 +87,8 @@ class PaymentStorageUnitTest extends UnitTestCase {
    * @covers ::__construct
    */
   public function setUp() {
+    $this->cacheBackend = $this->getMock('\Drupal\Core\Cache\CacheBackendInterface');
+
     $this->database = $this->getMockBuilder('\Drupal\Core\Database\Connection')
       ->disableOriginalConstructor()
       ->getMock();
@@ -96,7 +105,7 @@ class PaymentStorageUnitTest extends UnitTestCase {
 
     $this->paymentTypeManager = $this->getMock('\Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface');
 
-    $this->storage = new PaymentStorage($this->entityType, $this->database, $this->entityManager, $this->paymentLineItemManager, $this->paymentMethodManager, $this->paymentStatusManager, $this->paymentTypeManager);
+    $this->storage = new PaymentStorage($this->entityType, $this->database, $this->entityManager, $this->cacheBackend, $this->paymentLineItemManager, $this->paymentMethodManager, $this->paymentStatusManager, $this->paymentTypeManager);
   }
 
   /**
@@ -105,6 +114,7 @@ class PaymentStorageUnitTest extends UnitTestCase {
   public function testCreateInstance() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
+      array('cache.entity', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->cacheBackend),
       array('database', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->database),
       array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager),
       array('plugin.manager.payment.line_item', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentLineItemManager),

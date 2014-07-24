@@ -27,8 +27,6 @@ use Drupal\currency\Entity\Currency;
  */
 class PaymentForm extends FieldItemBase {
 
-  use StringTranslationTrait;
-
   /**
    * Definitions of the contained properties.
    *

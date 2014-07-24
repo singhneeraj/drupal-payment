@@ -50,8 +50,8 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @covers ::schema
    */
   public function testSchema() {
-    $field = $this->getMock('\Drupal\field\FieldConfigInterface');
-    $schema = $this->fieldType->schema($field);
+    $field_storage_definition = $this->getMock('\Drupal\Core\Field\FieldStorageDefinitionInterface');
+    $schema = $this->fieldType->schema($field_storage_definition);
     $this->assertInternalType('array', $schema);
     $this->assertArrayHasKey('plugin_configuration', $schema['columns']);
     $this->assertArrayHasKey('plugin_id', $schema['columns']);

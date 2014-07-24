@@ -33,8 +33,6 @@ use Drupal\payment_reference\PaymentReference as PaymentReferenceServiceWrapper;
  */
 class PaymentReference extends ConfigurableEntityReferenceItem {
 
-  use StringTranslationTrait;
-
   /**
    * {@inheritdoc}
    */
