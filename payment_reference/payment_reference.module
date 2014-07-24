@@ -9,7 +9,7 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\field\FieldConfigInterface;
+use Drupal\field\FieldStorageConfigInterface;
 use Drupal\field\FieldInstanceConfigInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment_reference\PaymentReference;
@@ -69,7 +69,7 @@ function payment_reference_entity_type_alter(&$entity_types) {
 /**
  * Implements hook_ENTITY_TYPE_delete().
  */
-function payment_reference_field_config_delete(FieldConfigInterface $field) {
+function payment_reference_field_config_delete(FieldStorageConfigInterface $field) {
   if ($field->getType() == 'payment_reference') {
     PaymentReference::queue()->deleteByCategoryIdPrefix($field->id());
   }

@@ -40,7 +40,7 @@ class PaymentFormWebTest extends WebTestBase {
 
     // Create the field and field instance.
     $field_name = strtolower($this->randomName());
-    entity_create('field_config', array(
+    entity_create('field_storage_config', array(
       'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
       'entity_type' => 'user',
       'name' => $field_name,

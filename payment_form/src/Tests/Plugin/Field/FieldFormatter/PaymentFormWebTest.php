@@ -7,7 +7,7 @@
 
 namespace Drupal\payment_form\Tests\Plugin\Field\FieldFormatter;
 
-use Drupal\field\FieldConfigInterface;
+use Drupal\field\FieldStorageConfigInterface;
 use Drupal\payment\Tests\Generate;
 use Drupal\payment_form\Plugin\Payment\Type\PaymentForm;
 use Drupal\simpletest\WebTestBase;
@@ -61,8 +61,8 @@ class PaymentFormWebTest extends WebTestBase {
 
     // Create the field and field instance.
     $field_name = strtolower($this->randomName());
-    entity_create('field_config', array(
-      'cardinality' => FieldConfigInterface::CARDINALITY_UNLIMITED,
+    entity_create('field_storage_config', array(
+      'cardinality' => FieldStorageConfigInterface::CARDINALITY_UNLIMITED,
       'entity_type' => 'user',
       'name' => $field_name,
       'type' => 'payment_form',
