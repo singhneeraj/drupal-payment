@@ -50,7 +50,7 @@ class PaymentDeleteForm extends ContentEntityConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getCancelRoute() {
+  public function getCancelUrl() {
     return new Url('payment.payment.view', array(
       'payment' => $this->getEntity()->id(),
     ));

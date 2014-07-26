@@ -54,12 +54,9 @@ class PaymentRefundForm extends ContentEntityConfirmFormBase {
   }
 
   /**
-   * Returns the route to go to if the user cancels the action.
-   *
-   * @return \Drupal\Core\Url
-   *   A URL object.
+   * {@inheritdoc}
    */
-  public function getCancelRoute() {
+  public function getCancelUrl() {
     return $this->getEntity()->urlInfo();
   }
 

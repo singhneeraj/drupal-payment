@@ -105,10 +105,10 @@ class PaymentMethodConfigurationDeleteFormUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::getCancelRoute
+   * @covers ::getCancelUrl
    */
-  function testGetCancelRoute() {
-    $url = $this->form->getCancelRoute();
+  function testGetCancelUrl() {
+    $url = $this->form->getCancelUrl();
     $this->assertInstanceOf('\Drupal\Core\Url', $url);
     $this->assertSame('payment.payment_method_configuration.list', $url->getRouteName());
   }

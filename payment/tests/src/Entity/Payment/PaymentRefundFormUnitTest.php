@@ -100,9 +100,9 @@ class PaymentRefundFormUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::getCancelRoute
+   * @covers ::getCancelUrl
    */
-  function testGetCancelRoute() {
+  function testGetCancelUrl() {
     $url = new Url($this->randomName());
 
     $this->payment->expects($this->atLeastOnce())
@@ -110,7 +110,7 @@ class PaymentRefundFormUnitTest extends UnitTestCase {
       ->with('canonical')
       ->will($this->returnValue($url));
 
-    $this->assertSame($url, $this->form->getCancelRoute());
+    $this->assertSame($url, $this->form->getCancelUrl());
   }
 
   /**

@@ -46,7 +46,7 @@ class PaymentStatusDeleteForm extends EntityConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getCancelRoute() {
+  public function getCancelUrl() {
     return new Url('payment.payment_status.list');
   }
 
