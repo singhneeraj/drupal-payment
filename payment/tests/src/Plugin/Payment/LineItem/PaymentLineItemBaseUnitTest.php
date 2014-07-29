@@ -27,7 +27,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
   /**
    * The math service used for testing.
    *
-   * @var \Drupal\currency\MathInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\currency\Math\MathInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $math;
 
@@ -37,7 +37,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
    * @covers ::__construct
    */
   public function setUp() {
-    $this->math = $this->getMock('\Drupal\currency\MathInterface');
+    $this->math = $this->getMock('\Drupal\currency\Math\MathInterface');
 
     $configuration = array();
     $plugin_id = $this->randomName();

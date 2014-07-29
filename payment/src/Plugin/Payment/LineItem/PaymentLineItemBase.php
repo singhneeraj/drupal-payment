@@ -8,7 +8,7 @@ namespace Drupal\payment\Plugin\Payment\LineItem;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
-use Drupal\currency\MathInterface;
+use Drupal\currency\Math\MathInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -19,7 +19,7 @@ abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItem
   /**
    * The math service.
    *
-   * @var \Drupal\currency\MathInterface
+   * @var \Drupal\currency\Math\MathInterface
    */
   protected $math;
 
@@ -32,7 +32,7 @@ abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItem
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\currency\MathInterface $math
+   * @param \Drupal\currency\Math\MathInterface $math
    *   The math service.
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition, MathInterface $math) {

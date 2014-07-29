@@ -11,7 +11,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\currency\MathInterface;
+use Drupal\currency\Math\MathInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -47,7 +47,7 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\currency\MathInterface $math
+   * @param \Drupal\currency\Math\MathInterface $math
    *   The math service.
    * @param \Drupal\Core\StringTranslation\TranslationInterface  $string_translation
    *   The translation manager.
