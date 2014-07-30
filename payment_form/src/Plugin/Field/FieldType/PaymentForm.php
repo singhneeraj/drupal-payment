@@ -40,10 +40,13 @@ class PaymentForm extends FieldItemBase {
    * {@inheritdoc}
    */
   public function instanceSettingsForm(array $form, array &$form_state) {
+    /** @var \Drupal\currency\FormHelperInterface $form_helper */
+    $form_helper = \Drupal::service('currency.form_helper');
+
     $form['currency_code'] = array(
       '#type' => 'select',
       '#title' => $this->t('Payment currency'),
-      '#options' => $this->currencyOptions(),
+      '#options' => $form_helper->getCurrencyOptions(),
       '#default_value' => $this->getSetting('currency_code'),
       '#required' => TRUE,
     );
@@ -105,15 +108,6 @@ class PaymentForm extends FieldItemBase {
       ->setRequired(TRUE);
 
     return $definitions;
-  }
-
-  /**
-   * Wraps \Drupal\currency\Entity\Currency::options().
-   *
-   * @todo Revisit this when https://drupal.org/node/2118295 is fixed.
-   */
-  protected function currencyOptions() {
-    return Currency::options();
   }
 
   /**

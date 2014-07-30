@@ -19,6 +19,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class PaymentEditFormUnitTest extends UnitTestCase {
 
   /**
+   * The Currency form helper.
+   *
+   * @var \Drupal\currency\FormHelperInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $currencyFormHelper;
+
+  /**
    * The entity manager.
    *
    * @var \Drupal\Core\Entity\EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -59,6 +66,8 @@ class PaymentEditFormUnitTest extends UnitTestCase {
    * @covers ::__construct
    */
   public function setUp() {
+    $this->currencyFormHelper = $this->getMock('\Drupal\currency\FormHelperInterface');
+
     $this->entityManager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
 
     $this->formDisplay = $this->getMock('\Drupal\Core\Entity\Display\EntityFormDisplayInterface');
@@ -72,7 +81,7 @@ class PaymentEditFormUnitTest extends UnitTestCase {
       ->method('translate')
       ->will($this->returnArgument(0));
 
-    $this->form = new PaymentEditForm($this->entityManager, $this->stringTranslation);
+    $this->form = new PaymentEditForm($this->entityManager, $this->stringTranslation, $this->currencyFormHelper);
     $this->form->setEntity($this->payment);
   }
 
@@ -82,6 +91,7 @@ class PaymentEditFormUnitTest extends UnitTestCase {
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
+      array('currency.form_helper', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->currencyFormHelper),
       array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
@@ -97,15 +107,9 @@ class PaymentEditFormUnitTest extends UnitTestCase {
    * @covers ::form
    */
   public function testForm() {
-    $form_state = array();
+    $this->form->setFormDisplay($this->formDisplay, $form_state);
 
-    /** @var \Drupal\payment\Entity\Payment\PaymentEditForm|\PHPUnit_Framework_MockObject_MockObject $form */
-    $form = $this->getMockBuilder('\Drupal\payment\Entity\Payment\PaymentEditForm')
-      ->setConstructorArgs(array($this->entityManager, $this->stringTranslation))
-      ->setMethods(array('currencyOptions'))
-      ->getMock();
-    $form->setFormDisplay($this->formDisplay, $form_state);
-    $form->setEntity($this->payment);
+    $form_state = array();
 
     $line_item_id_a = $this->randomName();
     $line_item_configuration_a = array(
@@ -150,10 +154,11 @@ class PaymentEditFormUnitTest extends UnitTestCase {
       'baz' => $this->randomName(),
       'qux' => $this->randomName(),
     );
-    $form->expects($this->any())
-      ->method('currencyOptions')
+    $this->currencyFormHelper->expects($this->once())
+      ->method('getCurrencyOptions')
       ->will($this->returnValue($currency_options));
-    $build = $form->form(array(), $form_state);
+
+    $build = $this->form->form(array(), $form_state);
     unset($build['#process']);
     unset($build['langcode']);
     $expected_build = array(

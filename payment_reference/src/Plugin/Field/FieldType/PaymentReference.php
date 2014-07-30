@@ -82,12 +82,15 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
    * {@inheritdoc}
    */
   public function instanceSettingsForm(array $form, array &$form_state) {
+    /** @var \Drupal\currency\FormHelperInterface $form_helper */
+    $form_helper = \Drupal::service('currency.form_helper');
+
     $form['#element_validate'] = array(get_class() . '::instanceSettingsFormValidate');
     $form['currency_code'] = array(
       '#empty_value' => '',
       '#type' => 'select',
       '#title' => $this->t('Payment currency'),
-      '#options' => $this->currencyOptions(),
+      '#options' => $form_helper->getCurrencyOptions(),
       '#default_value' => $this->getSetting('currency_code'),
       '#required' => TRUE,
     );
@@ -135,15 +138,6 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
    */
   public function settingsForm(array &$form, array &$form_state, $has_data) {
     return array();
-  }
-
-  /**
-   * Wraps \Drupal\currency\Entity\Currency::options().
-   *
-   * @todo Revisit this when https://drupal.org/node/2118295 is fixed.
-   */
-  protected function currencyOptions() {
-    return Currency::options();
   }
 
   /**

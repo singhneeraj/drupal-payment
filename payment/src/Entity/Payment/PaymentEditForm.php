@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\currency\Entity\Currency;
+use Drupal\currency\FormHelperInterface;
 use Drupal\payment\Element\PaymentLineItemsInput;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -20,6 +21,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Provides the payment edit form.
  */
 class PaymentEditForm extends ContentEntityForm {
+
+  /**
+   * The Currency form helper.
+   *
+   * @var \Drupal\currency\FormHelperInterface
+   */
+  protected $currencyFormHelper;
 
   /**
    * The payment line item plugin manager.
@@ -35,9 +43,12 @@ class PaymentEditForm extends ContentEntityForm {
    *   The entity manager.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translator.
+   * @param \Drupal\currency\FormHelperInterface
+   *   The Currency form helper.
    */
-  function __construct(EntityManagerInterface $entity_manager, TranslationInterface $string_translation) {
+  function __construct(EntityManagerInterface $entity_manager, TranslationInterface $string_translation, FormHelperInterface $currency_form_helper) {
     parent::__construct($entity_manager);
+    $this->currencyFormHelper = $currency_form_helper;
     $this->stringTranslation = $string_translation;
   }
 
@@ -45,7 +56,7 @@ class PaymentEditForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('entity.manager'), $container->get('string_translation'));
+    return new static($container->get('entity.manager'), $container->get('string_translation'), $container->get('currency.form_helper'));
   }
 
   /**
@@ -58,7 +69,7 @@ class PaymentEditForm extends ContentEntityForm {
     $form['payment_currency_code'] = array(
       '#type' => 'select',
       '#title' => $this->t('Currency'),
-      '#options' => $this->currencyOptions(),
+      '#options' => $this->currencyFormHelper->getCurrencyOptions(),
       '#default_value' => $payment->getCurrencyCode(),
       '#required' => TRUE,
     );
@@ -100,12 +111,4 @@ class PaymentEditForm extends ContentEntityForm {
     ));
   }
 
-  /**
-   * Wraps \Drupal\currency\Entity\Currency::options().
-   *
-   * @todo Revisit this when https://drupal.org/node/2118295 is fixed.
-   */
-  protected function currencyOptions() {
-    return Currency::options();
-  }
 }
