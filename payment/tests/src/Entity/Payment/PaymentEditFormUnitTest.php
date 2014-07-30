@@ -107,9 +107,9 @@ class PaymentEditFormUnitTest extends UnitTestCase {
    * @covers ::form
    */
   public function testForm() {
-    $this->form->setFormDisplay($this->formDisplay, $form_state);
-
     $form_state = array();
+
+    $this->form->setFormDisplay($this->formDisplay, $form_state);
 
     $line_item_id_a = $this->randomName();
     $line_item_configuration_a = array(
@@ -188,7 +188,7 @@ class PaymentEditFormUnitTest extends UnitTestCase {
 
     /** @var \Drupal\payment\Entity\Payment\PaymentEditForm|\PHPUnit_Framework_MockObject_MockObject $form */
     $form = $this->getMockBuilder('\Drupal\payment\Entity\Payment\PaymentEditForm')
-      ->setConstructorArgs(array($this->entityManager, $this->stringTranslation))
+      ->setConstructorArgs(array($this->entityManager, $this->stringTranslation, $this->currencyFormHelper))
       ->setMethods(array('copyFormValuesToEntity'))
       ->getMock();
     $form->setFormDisplay($this->formDisplay, $form_state);

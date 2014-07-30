@@ -82,15 +82,12 @@ class PaymentReferenceUnitTest extends UnitTestCase {
 
     $this->fieldType = $this->getMockBuilder('\Drupal\payment_reference\Plugin\Field\FieldType\PaymentReference')
       ->disableOriginalConstructor()
-      ->setMethods(array('currencyOptions', 'get'))
+      ->setMethods(array('get'))
       ->getMock();
     $this->fieldType->expects($this->any())
       ->method('get')
       ->with('target_id')
       ->will($this->returnValue($this->targetId));
-    $this->fieldType->expects($this->any())
-      ->method('getPaymentQueue')
-      ->will($this->returnValue($this->queue));
   }
 
   /**

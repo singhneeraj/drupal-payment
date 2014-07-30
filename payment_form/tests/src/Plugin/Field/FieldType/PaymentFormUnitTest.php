@@ -8,6 +8,7 @@
 
 namespace Drupal\payment_form\Tests\Plugin\Field\FieldType;
 
+use Drupal\Core\DependencyInjection\Container;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -18,6 +19,13 @@ use Drupal\Tests\UnitTestCase;
 class PaymentFormUnitTest extends UnitTestCase {
 
   /**
+   * The Currency form helper.
+   *
+   * @var \Drupal\currency\FormHelperInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $currencyFormHelper;
+
+  /**
    * The field type under test.
    *
    * @var \Drupal\payment_form\Plugin\Field\FieldType\PaymentForm|\PHPUnit_Framework_MockObject_MockObject
@@ -25,12 +33,28 @@ class PaymentFormUnitTest extends UnitTestCase {
   protected $fieldType;
 
   /**
+   * The string translator.
+   *
+   * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $stringTranslation;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp() {
+    $this->currencyFormHelper = $this->getMock('\Drupal\currency\FormHelperInterface');
+
+    $this->stringTranslation = $this->getStringTranslationStub();
+
+    $container = new Container();
+    $container->set('currency.form_helper', $this->currencyFormHelper);
+    $container->set('string_translation', $this->stringTranslation);
+    \Drupal::setContainer($container);
+
     $this->fieldType = $this->getMockBuilder('\Drupal\payment_form\Plugin\Field\FieldType\PaymentForm')
       ->disableOriginalConstructor()
-      ->setMethods(array('currencyOptions', 'getSetting', 't'))
+      ->setMethods(array('getSetting'))
       ->getMock();
   }
 
