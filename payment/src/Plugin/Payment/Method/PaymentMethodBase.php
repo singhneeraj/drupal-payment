@@ -7,6 +7,7 @@
 namespace Drupal\payment\Plugin\Payment\Method;
 
 use Drupal\Core\Access\AccessInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -145,7 +146,7 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, array &$form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     // Do not use the module handler, as we only need check_markup() anyway,
     $message = function_exists('check_markup') ? check_markup($this->getMessageText(), $this->getMessageTextFormat()) : $this->getMessageText();
     $message = $this->token->replace($message, array(
@@ -165,13 +166,13 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
   /**
    * {@inheritdoc}
    */
-  public function validateConfigurationForm(array &$form, array &$form_state) {
+  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, array &$form_state) {
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
   }
 
   /**

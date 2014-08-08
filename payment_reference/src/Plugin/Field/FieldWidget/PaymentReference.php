@@ -10,6 +10,7 @@ namespace Drupal\payment_reference\Plugin\Field\FieldWidget;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -67,7 +68,7 @@ class PaymentReference extends WidgetBase implements ContainerFactoryPluginInter
   /**
    * {@inheritdoc}
    */
-  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, array &$form_state) {
+  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $element['payment_id'] = array(
       '#bundle' => $items->getEntity()->bundle(),
       '#default_value' => isset($items[$delta]) ? $items[$delta]->target_id : NULL,

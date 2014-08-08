@@ -175,7 +175,7 @@ class PaymentMethodWebTest extends WebTestBase {
     $execute_status_id = 'payment_failed';
     $capture_status_id = 'payment_success';
     $refund_status_id = 'payment_cancelled';
-    $id = strtolower($this->randomName());
+    $id = strtolower($this->randomMachineName());
     $this->drupalPostForm(NULL, array(
       'label' => $label,
       'id' => $id,

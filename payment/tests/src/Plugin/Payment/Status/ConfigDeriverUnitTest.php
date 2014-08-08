@@ -63,7 +63,7 @@ class ConfigDeriverUnitTest extends UnitTestCase {
 
     $configuration = array();
     $plugin_definition = array();
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
     $form = ConfigDeriver::create($container, $configuration, $plugin_id, $plugin_definition);
     $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\Status\ConfigDeriver', $form);
   }
@@ -75,30 +75,30 @@ class ConfigDeriverUnitTest extends UnitTestCase {
     $status_a = $this->getMock('\Drupal\payment\Entity\PaymentStatusInterface');
     $status_a->expects($this->once())
       ->method('getDescription')
-      ->will($this->returnValue($this->randomName()));
+      ->will($this->returnValue($this->randomMachineName()));
     $status_a->expects($this->once())
       ->method('id')
-      ->will($this->returnValue($this->randomName()));
+      ->will($this->returnValue($this->randomMachineName()));
     $status_a->expects($this->once())
       ->method('label')
-      ->will($this->returnValue($this->randomName()));
+      ->will($this->returnValue($this->randomMachineName()));
     $status_a->expects($this->once())
       ->method('getParentId')
-      ->will($this->returnValue($this->randomName()));
+      ->will($this->returnValue($this->randomMachineName()));
 
     $status_b = $this->getMock('\Drupal\payment\Entity\PaymentStatusInterface');
     $status_b->expects($this->once())
       ->method('getDescription')
-      ->will($this->returnValue($this->randomName()));
+      ->will($this->returnValue($this->randomMachineName()));
     $status_b->expects($this->once())
       ->method('id')
-      ->will($this->returnValue($this->randomName()));
+      ->will($this->returnValue($this->randomMachineName()));
     $status_b->expects($this->once())
       ->method('label')
-      ->will($this->returnValue($this->randomName()));
+      ->will($this->returnValue($this->randomMachineName()));
     $status_b->expects($this->once())
       ->method('getParentId')
-      ->will($this->returnValue($this->randomName()));
+      ->will($this->returnValue($this->randomMachineName()));
 
     $this->paymentStatusStorage->expects($this->once())
       ->method('loadMultiple')

@@ -114,13 +114,13 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    * @covers ::pay
    */
   public function testPay() {
-    $entity_type_id = $this->randomName();
-    $bundle = $this->randomName();
-    $field_name = $this->randomName();
-    $currency_code = $this->randomName();
+    $entity_type_id = $this->randomMachineName();
+    $bundle = $this->randomMachineName();
+    $field_name = $this->randomMachineName();
+    $currency_code = $this->randomMachineName();
     $line_items_data = array(array(
       'plugin_configuration' => array(),
-      'plugin_id' => $this->randomName(),
+      'plugin_id' => $this->randomMachineName(),
     ));
 
     $field_definition = $this->getMock('\Drupal\Core\Field\\FieldDefinitionInterface');
@@ -204,9 +204,9 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    * @dataProvider providerTestPayAccess
    */
   public function testPayAccess($expected, $entity_type_exists, $bundle_exists, $field_exists, $entity_access, $field_access, $queued_payments) {
-    $entity_type_id = $this->randomName();
-    $bundle = $this->randomName();
-    $field_name = $this->randomName();
+    $entity_type_id = $this->randomMachineName();
+    $bundle = $this->randomMachineName();
+    $field_name = $this->randomMachineName();
 
     $field_definition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
 
@@ -238,7 +238,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
 
     $payment_id = mt_rand();
 
-    $access_controller = $this->getMock('\Drupal\Core\Entity\EntityAccessControllerInterface');
+    $access_controller = $this->getMock('\Drupal\Core\Entity\EntityAccessControlHandlerInterface');
     $access_controller->expects($this->any())
       ->method('createAccess')
       ->with('payment_reference')
@@ -252,7 +252,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       ->will($this->returnValue($queued_payments ? array($payment_id) : array()));
 
     $this->entityManager->expects($this->any())
-      ->method('getAccessController')
+      ->method('getAccessControlHandler')
       ->will($this->returnValue($access_controller));
 
     $this->assertSame($expected, $this->controller->payAccess($request, $entity_type_id, $bundle, $field_name));
@@ -277,10 +277,10 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    * @covers ::payLabel
    */
   public function testPayLabel() {
-    $entity_type_id = $this->randomName();
-    $bundle = $this->randomName();
-    $field_name = $this->randomName();
-    $label = $this->randomName();
+    $entity_type_id = $this->randomMachineName();
+    $bundle = $this->randomMachineName();
+    $field_name = $this->randomMachineName();
+    $label = $this->randomMachineName();
 
     $field_definition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
     $field_definition->expects($this->atLeastOnce())
@@ -323,10 +323,10 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    * @covers ::resumeContextLabel
    */
   public function testResumeContextLabel() {
-    $entity_type_id = $this->randomName();
-    $bundle = $this->randomName();
-    $field_name = $this->randomName();
-    $label = $this->randomName();
+    $entity_type_id = $this->randomMachineName();
+    $bundle = $this->randomMachineName();
+    $field_name = $this->randomMachineName();
+    $label = $this->randomMachineName();
     $field_definition = $this->getMock('\Drupal\Core\Field\\FieldDefinitionInterface');
     $field_definition->expects($this->atLeastOnce())
       ->method('getLabel')
@@ -371,9 +371,9 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    * @dataProvider providerTestResumeContextAccess
    */
   public function testResumeContextAccess($expected, $entity_type_exists, $bundle_exists, $field_exists) {
-    $entity_type_id = $this->randomName();
-    $bundle = $this->randomName();
-    $field_name = $this->randomName();
+    $entity_type_id = $this->randomMachineName();
+    $bundle = $this->randomMachineName();
+    $field_name = $this->randomMachineName();
 
     $payment_type = $this->getMockBuilder('\Drupal\payment_reference\Plugin\Payment\Type\PaymentReference')
       ->disableOriginalConstructor()

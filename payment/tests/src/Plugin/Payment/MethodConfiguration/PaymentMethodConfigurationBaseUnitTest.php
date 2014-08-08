@@ -59,8 +59,8 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
       ->will($this->returnArgument(0));
 
     $this->pluginDefinition = array(
-      'description' => $this->randomName(),
-      'label' => $this->randomName(),
+      'description' => $this->randomMachineName(),
+      'label' => $this->randomMachineName(),
     );
     $this->paymentMethodConfiguration = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationBase')
       ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->stringTranslation, $this->moduleHandler))
@@ -110,7 +110,7 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
    * @covers ::setMessageText
    */
   public function testGetMessageText() {
-    $message_text = $this->randomName();
+    $message_text = $this->randomMachineName();
     $this->assertSame($this->paymentMethodConfiguration, $this->paymentMethodConfiguration->setMessageText($message_text));
     $this->assertSame($message_text, $this->paymentMethodConfiguration->getMessageText());
   }
@@ -120,7 +120,7 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
    * @covers ::setMessageTextFormat
    */
   public function testGetMessageTextFormat() {
-    $message_text_format = $this->randomName();
+    $message_text_format = $this->randomMachineName();
     $this->assertSame($this->paymentMethodConfiguration, $this->paymentMethodConfiguration->setMessageTextFormat($message_text_format));
     $this->assertSame($message_text_format, $this->paymentMethodConfiguration->getMessageTextFormat());
   }
@@ -130,14 +130,14 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
    */
   public function testBuildConfigurationFormWithoutFilter() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
     $this->moduleHandler->expects($this->once())
       ->method('moduleExists')
       ->with('filter')
       ->will($this->returnValue(FALSE));
 
-    $message_text = $this->randomName();
+    $message_text = $this->randomMachineName();
     $this->paymentMethodConfiguration->setMessageText($message_text);
 
     $build = $this->paymentMethodConfiguration->buildConfigurationForm($form, $form_state);
@@ -159,15 +159,15 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
    */
   public function testBuildConfigurationFormWithFilter() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
     $this->moduleHandler->expects($this->once())
       ->method('moduleExists')
       ->with('filter')
       ->will($this->returnValue(TRUE));
 
-    $message_text = $this->randomName();
-    $message_format = $this->randomName();
+    $message_text = $this->randomMachineName();
+    $message_format = $this->randomMachineName();
     $this->paymentMethodConfiguration->setMessageText($message_text);
     $this->paymentMethodConfiguration->setMessageTextFormat($message_format);
 
@@ -192,7 +192,7 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
    */
   public function testGetConfiguration() {
     $configuration = array(
-      $this->randomName() => $this->randomName(),
+      $this->randomMachineName() => $this->randomMachineName(),
     );
     $return = $this->paymentMethodConfiguration->setConfiguration($configuration);
     $this->assertSame(NULL, $return);
@@ -204,7 +204,7 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
    */
   public function testValidateConfigurationForm() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $this->paymentMethodConfiguration->validateConfigurationForm($form, $form_state);
   }
 
@@ -212,7 +212,7 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
    * @covers ::submitConfigurationForm
    */
   public function testSubmitConfigurationFormWithoutFilter() {
-    $message_text = $this->randomName();
+    $message_text = $this->randomMachineName();
 
     $this->moduleHandler->expects($this->once())
       ->method('moduleExists')
@@ -224,15 +224,16 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
         '#parents' => array('foo', 'bar', 'message')
       ),
     );
-    $form_state = array(
-      'values' => array(
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state->expects($this->atLeastOnce())
+      ->method('getValues')
+      ->willReturn(array(
         'foo' => array(
           'bar' => array(
             'message' => $message_text,
           ),
         ),
-      ),
-    );
+      ));
 
     $this->paymentMethodConfiguration->submitConfigurationForm($form, $form_state);
 
@@ -243,8 +244,8 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
    * @covers ::submitConfigurationForm
    */
   public function testSubmitConfigurationFormWithFilter() {
-    $message_text = $this->randomName();
-    $message_format = $this->randomName();
+    $message_text = $this->randomMachineName();
+    $message_format = $this->randomMachineName();
 
     $this->moduleHandler->expects($this->once())
       ->method('moduleExists')
@@ -256,8 +257,10 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
         '#parents' => array('foo', 'bar', 'message')
       ),
     );
-    $form_state = array(
-      'values' => array(
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state->expects($this->atLeastOnce())
+      ->method('getValues')
+      ->willReturn(array(
         'foo' => array(
           'bar' => array(
             'message' => array(
@@ -266,8 +269,7 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
             ),
           ),
         ),
-      ),
-    );
+      ));
 
     $this->paymentMethodConfiguration->submitConfigurationForm($form, $form_state);
 

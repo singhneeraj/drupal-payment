@@ -151,7 +151,7 @@ class PaymentMethod extends ControllerBase implements AccessInterface {
   public function select() {
     $definitions = $this->paymentMethodConfigurationManager->getDefinitions();
     unset($definitions['payment_unavailable']);
-    $access_controller = $this->entityManager->getAccessController('payment_method_configuration');
+    $access_controller = $this->entityManager->getAccessControlHandler('payment_method_configuration');
     $items = array();
     foreach ($definitions as $plugin_id => $definition) {
       $access = $access_controller->createAccess($plugin_id);
@@ -186,7 +186,7 @@ class PaymentMethod extends ControllerBase implements AccessInterface {
   public function selectAccess(Request $request) {
     $definitions = $this->paymentMethodConfigurationManager->getDefinitions();
     unset($definitions['payment_unavailable']);
-    $access_controller = $this->entityManager->getAccessController('payment_method_configuration');
+    $access_controller = $this->entityManager->getAccessControlHandler('payment_method_configuration');
     foreach (array_keys($definitions) as $plugin_id) {
       if ($access_controller->createAccess($plugin_id, $this->currentUser)) {
         return static::ALLOW;
@@ -237,7 +237,7 @@ class PaymentMethod extends ControllerBase implements AccessInterface {
   public function addAccess(Request $request) {
     $plugin_id = $request->attributes->get('plugin_id');
 
-    return $this->entityManager->getAccessController('payment_method_configuration')->createAccess($plugin_id, $this->currentUser) ? self::ALLOW : self::DENY;
+    return $this->entityManager->getAccessControlHandler('payment_method_configuration')->createAccess($plugin_id, $this->currentUser) ? self::ALLOW : self::DENY;
   }
 
   /**

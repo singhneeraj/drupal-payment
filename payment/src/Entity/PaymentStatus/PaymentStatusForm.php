@@ -10,6 +10,7 @@ namespace Drupal\payment\Entity\PaymentStatus;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
@@ -56,7 +57,7 @@ class PaymentStatusForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function form(array $form, array &$form_state) {
+  public function form(array $form, FormStateInterface $form_state) {
     /** @var \Drupal\payment\Entity\PaymentStatusInterface $payment_status */
     $payment_status = $this->getEntity();
     $form['label'] = array(
@@ -97,7 +98,7 @@ class PaymentStatusForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  protected function copyFormValuesToEntity(EntityInterface $payment_status, array $form, array &$form_state) {
+  protected function copyFormValuesToEntity(EntityInterface $payment_status, array $form, FormStateInterface $form_state) {
     /** @var \Drupal\payment\Entity\PaymentStatusInterface $payment_status */
     parent::copyFormValuesToEntity($payment_status, $form, $form_state);
     $values = $form_state['values'];
@@ -110,13 +111,13 @@ class PaymentStatusForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, array &$form_state) {
+  public function save(array $form, FormStateInterface $form_state) {
     $payment_status = $this->getEntity();
     $payment_status->save();
     drupal_set_message($this->t('@label has been saved.', array(
       '@label' => $payment_status->label()
     )));
-    $form_state['redirect_route'] = new Url('payment.payment_status.list');
+    $form_state->setRedirect('payment.payment_status.list');
   }
 
   /**

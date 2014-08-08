@@ -9,6 +9,7 @@ namespace Drupal\payment\Plugin\Payment\LineItem;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\currency\Math\MathInterface;
@@ -32,13 +33,6 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
   protected $database;
 
   /**
-   * The form builder.
-   *
-   * @var \Drupal\Core\Form\FormBuilderInterface
-   */
-  protected $formBuilder;
-
-  /**
    * Constructs a new class instance.
    *
    * @param array $configuration
@@ -53,13 +47,10 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
    *   The translation manager.
    * @param \Drupal\Core\Database\Connection $database
    *   The database connection.
-   * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
-   *   The form builder.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, MathInterface $math, TranslationInterface $string_translation, Connection $database, FormBuilderInterface $form_builder) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, MathInterface $math, TranslationInterface $string_translation, Connection $database) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $math);
     $this->database = $database;
-    $this->formBuilder = $form_builder;
     $this->stringTranslation = $string_translation;
   }
 
@@ -67,7 +58,7 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('currency.math'), $container->get('string_translation'), $container->get('database'), $container->get('form_builder'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('currency.math'), $container->get('string_translation'), $container->get('database'));
   }
 
   /**
@@ -134,7 +125,7 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, array &$form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $elements = array(
       '#input' => TRUE,
       '#tree' => TRUE,
@@ -183,8 +174,9 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, array &$form_state) {
-    $values = NestedArray::getValue($form_state['values'], $form['#parents']);
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+    $values = $form_state->getValues();
+    $values = NestedArray::getValue($values, $form['#parents']);
 
     $this->setAmount($values['amount']['amount']);
     $this->setCurrencyCode($values['amount']['currency_code']);

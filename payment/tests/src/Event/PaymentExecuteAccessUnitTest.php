@@ -88,7 +88,7 @@ class PaymentExecuteAccessUnitTest extends UnitTestCase {
    * @covers ::setAccessResult
    */
   public function testGetAccessResults() {
-    $result = $this->randomName();
+    $result = $this->randomMachineName();
     $this->assertSame($this->event, $this->event->setAccessResult($result));
     $this->assertSame(array($result), $this->event->getAccessResults());
   }

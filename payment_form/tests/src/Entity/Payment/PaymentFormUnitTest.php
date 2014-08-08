@@ -7,6 +7,7 @@
 
 namespace Drupal\payment_form\Tests\Entity\Payment;
 
+use Drupal\Core\Form\FormState;
 use Drupal\payment_form\Entity\Payment\PaymentForm;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -106,8 +107,8 @@ class PaymentFormUnitTest extends UnitTestCase {
     $this->configFactoryConfiguration = array(
       'payment_form.payment_type' => array(
         'limit_allowed_payment_methods' => TRUE,
-        'allowed_payment_method_ids' => array($this->randomName()),
-        'payment_method_selector_id' => $this->randomName(),
+        'allowed_payment_method_ids' => array($this->randomMachineName()),
+        'payment_method_selector_id' => $this->randomMachineName(),
       ),
     );
 
@@ -141,7 +142,7 @@ class PaymentFormUnitTest extends UnitTestCase {
    */
   public function testForm() {
     $payment_method_selector_build = array(
-      '#type' => $this->randomName(),
+      '#type' => $this->randomMachineName(),
     );
     $this->paymentMethodSelector->expects($this->atLeastOnce())
       ->method('buildConfigurationForm')
@@ -167,7 +168,9 @@ class PaymentFormUnitTest extends UnitTestCase {
     $form = array(
       'langcode' => array(),
     );
-    $form_state = array();
+    // @todo Mock FormStateInterface once ContentEntityForm no longer uses
+    //   ArrayAccess.
+    $form_state = new FormState();
     $this->form->setFormDisplay($this->formDisplay, $form_state);
     $build = $this->form->form($form, $form_state);
     // Build the form a second time to make sure the payment method selector is
@@ -186,14 +189,16 @@ class PaymentFormUnitTest extends UnitTestCase {
   public function testValidate() {
     $form = array(
       'payment_method' => array(
-        '#type' => $this->randomName(),
+        '#type' => $this->randomMachineName(),
       ),
     );
-    $form_state = array(
-      'storage' => array(
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state->expects($this->atLeastOnce())
+      ->method('get')
+      ->with('storage')
+      ->willReturn(array(
         'payment_method_selector' => $this->paymentMethodSelector,
-      ),
-    );
+      ));
 
     $this->paymentMethodSelector->expects($this->once())
       ->method('validateConfigurationForm')
@@ -208,14 +213,16 @@ class PaymentFormUnitTest extends UnitTestCase {
   public function testSubmit() {
     $form = array(
       'payment_method' => array(
-        '#type' => $this->randomName(),
+        '#type' => $this->randomMachineName(),
       ),
     );
-    $form_state = array(
-      'storage' => array(
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state->expects($this->atLeastOnce())
+      ->method('get')
+      ->with('storage')
+      ->willReturn(array(
         'payment_method_selector' => $this->paymentMethodSelector,
-      ),
-    );
+      ));
 
     $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
 
@@ -242,11 +249,11 @@ class PaymentFormUnitTest extends UnitTestCase {
    */
   public function testActions() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
     $method = new \ReflectionMethod($this->form, 'actions');
     $method->setAccessible(TRUE);
-    $method->invokeArgs($this->form, array($form, &$form_state));
+    $method->invokeArgs($this->form, array($form, $form_state));
   }
 
 }

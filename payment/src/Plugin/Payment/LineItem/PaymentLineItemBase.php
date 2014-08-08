@@ -6,6 +6,7 @@
 
 namespace Drupal\payment\Plugin\Payment\LineItem;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\currency\Math\MathInterface;
@@ -140,20 +141,20 @@ abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItem
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, array &$form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     return array();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function validateConfigurationForm(array &$form, array &$form_state) {
+  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, array &$form_state) {
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
   }
 
 }

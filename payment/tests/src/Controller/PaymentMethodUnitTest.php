@@ -155,25 +155,25 @@ class PaymentMethodUnitTest extends UnitTestCase {
     $definitions = array(
       'payment_unavailable' => array(),
       'foo' => array(
-        'description' => $this->randomName(),
-        'label' => $this->randomName(),
+        'description' => $this->randomMachineName(),
+        'label' => $this->randomMachineName(),
       ),
       'bar' => array(
-        'description' => $this->randomName(),
-        'label' => $this->randomName(),
+        'description' => $this->randomMachineName(),
+        'label' => $this->randomMachineName(),
       ),
     );
     $this->paymentMethodConfigurationManager->expects($this->once())
       ->method('getDefinitions')
       ->will($this->returnValue($definitions));
 
-    $access_controller = $this->getMock('\Drupal\Core\Entity\EntityAccessControllerInterface');
+    $access_controller = $this->getMock('\Drupal\Core\Entity\EntityAccessControlHandlerInterface');
     $access_controller->expects($this->any())
       ->method('createAccess')
       ->will($this->returnValue(TRUE));
 
     $this->entityManager->expects($this->once())
-      ->method('getAccessController')
+      ->method('getAccessControlHandler')
       ->with('payment_method_configuration')
       ->will($this->returnValue($access_controller));
 
@@ -187,19 +187,19 @@ class PaymentMethodUnitTest extends UnitTestCase {
     $definitions = array(
       'payment_unavailable' => array(),
       'foo' => array(
-        'description' => $this->randomName(),
-        'label' => $this->randomName(),
+        'description' => $this->randomMachineName(),
+        'label' => $this->randomMachineName(),
       ),
       'bar' => array(
-        'description' => $this->randomName(),
-        'label' => $this->randomName(),
+        'description' => $this->randomMachineName(),
+        'label' => $this->randomMachineName(),
       ),
     );
     $this->paymentMethodConfigurationManager->expects($this->exactly(2))
       ->method('getDefinitions')
       ->will($this->returnValue($definitions));
 
-    $access_controller = $this->getMock('\Drupal\Core\Entity\EntityAccessControllerInterface');
+    $access_controller = $this->getMock('\Drupal\Core\Entity\EntityAccessControlHandlerInterface');
     $access_controller->expects($this->at(0))
       ->method('createAccess')
       ->with('foo', $this->currentUser)
@@ -214,7 +214,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
       ->will($this->returnValue(FALSE));
 
     $this->entityManager->expects($this->exactly(2))
-      ->method('getAccessController')
+      ->method('getAccessControlHandler')
       ->with('payment_method_configuration')
       ->will($this->returnValue($access_controller));
 
@@ -228,7 +228,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
    * @covers ::add
    */
   public function testAdd() {
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
 
     $payment_method_configuration = $this->getMock('\Drupal\payment\Entity\PaymentMethodConfigurationInterface');
 
@@ -256,11 +256,11 @@ class PaymentMethodUnitTest extends UnitTestCase {
    * @covers ::addAccess
    */
   public function testAddAccess() {
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
     $request = new Request();
     $request->attributes->set('plugin_id', $plugin_id);
 
-    $access_controller = $this->getMock('\Drupal\Core\Entity\EntityAccessControllerInterface');
+    $access_controller = $this->getMock('\Drupal\Core\Entity\EntityAccessControlHandlerInterface');
     $access_controller->expects($this->at(0))
       ->method('createAccess')
       ->with($plugin_id, $this->currentUser)
@@ -271,7 +271,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
       ->will($this->returnValue(FALSE));
 
     $this->entityManager->expects($this->exactly(2))
-      ->method('getAccessController')
+      ->method('getAccessControlHandler')
       ->with('payment_method_configuration')
       ->will($this->returnValue($access_controller));
 
@@ -305,18 +305,18 @@ class PaymentMethodUnitTest extends UnitTestCase {
    * @covers ::listPlugins
    */
   public function testListPlugins() {
-    $plugin_id_a = $this->randomName();
-    $plugin_id_b = $this->randomName();
+    $plugin_id_a = $this->randomMachineName();
+    $plugin_id_b = $this->randomMachineName();
     $definitions = array(
       $plugin_id_a => array(
         'active' => TRUE,
         'class' => $this->getMockClass('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface'),
-        'label' => $this->randomName(),
+        'label' => $this->randomMachineName(),
       ),
       $plugin_id_b => array(
         'active' => FALSE,
         'class' => $this->getMockClass('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface'),
-        'label' => $this->randomName(),
+        'label' => $this->randomMachineName(),
       ),
     );
 
@@ -332,8 +332,8 @@ class PaymentMethodUnitTest extends UnitTestCase {
    * @covers ::addTitle
    */
   public function testAddTitle() {
-    $label = $this->randomName();
-    $plugin_id = $this->randomName();
+    $label = $this->randomMachineName();
+    $plugin_id = $this->randomMachineName();
     $string = 'Add %label payment method configuration';
 
     $this->paymentMethodConfigurationManager->expects($this->once())
@@ -357,7 +357,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
    * @covers ::editTitle
    */
   public function testEditTitle() {
-    $label = $this->randomName();
+    $label = $this->randomMachineName();
     $string = 'Edit %label';
 
     $payment_method_configuration = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
@@ -381,7 +381,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
    * @covers ::duplicateTitle
    */
   public function testDuplicateTitle() {
-    $label = $this->randomName();
+    $label = $this->randomMachineName();
     $string = 'Duplicate %label';
 
     $payment_method_configuration = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')

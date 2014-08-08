@@ -8,6 +8,7 @@
 namespace Drupal\payment\Plugin\Action;
 
 use Drupal\Core\Action\ConfigurableActionBase;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -68,7 +69,7 @@ class UnsetLineItem extends ConfigurableActionBase {
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, array &$form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form['line_item_name'] = array(
       '#default_value' => $this->configuration['line_item_name'],
       '#required' => TRUE,
@@ -82,8 +83,9 @@ class UnsetLineItem extends ConfigurableActionBase {
   /**
    * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, array &$form_state) {
-    $this->configuration['line_item_name'] = $form_state['values']['line_item_name'];
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+    $values = $form_state->getValues();
+    $this->configuration['line_item_name'] = $values['line_item_name'];
   }
 
 }

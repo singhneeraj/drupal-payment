@@ -95,7 +95,7 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
    */
   public function testCreateInstance() {
     $existing_plugin_id = 'payment_unknown';
-    $non_existing_plugin_id = $this->randomName();
+    $non_existing_plugin_id = $this->randomMachineName();
     $this->factory->expects($this->at(0))
       ->method('createInstance')
       ->with($non_existing_plugin_id)
@@ -116,7 +116,7 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
   public function testGetDefinitions() {
     $definitions = array(
       'foo' => array(
-        'label' => $this->randomName(),
+        'label' => $this->randomMachineName(),
       ),
     );
     $this->discovery->expects($this->once())
@@ -135,8 +135,8 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
    * @depends testGetDefinitions
    */
   public function testHierarchy() {
-    $parent_label = $this->randomName();
-    $child_label = $this->randomName();
+    $parent_label = $this->randomMachineName();
+    $child_label = $this->randomMachineName();
     $definitions = array(
       'foo' => array(
         'label' => $parent_label,
@@ -146,7 +146,7 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
         'parent_id' => 'foo',
       ),
       'baz' => array(
-        'label' => $this->randomName(),
+        'label' => $this->randomMachineName(),
       ),
     );
     $this->discovery->expects($this->once())
@@ -167,8 +167,8 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
    * @depends testHierarchy
    */
   public function testOptions() {
-    $parent_label = $this->randomName();
-    $child_label = $this->randomName();
+    $parent_label = $this->randomMachineName();
+    $child_label = $this->randomMachineName();
     $definitions = array(
       'foo' => array(
         'label' => $parent_label,
@@ -178,7 +178,7 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
         'parent_id' => 'foo',
       ),
       'baz' => array(
-        'label' => $this->randomName(),
+        'label' => $this->randomMachineName(),
       ),
     );
     $this->discovery->expects($this->once())

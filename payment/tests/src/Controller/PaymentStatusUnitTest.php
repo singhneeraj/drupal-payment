@@ -99,7 +99,7 @@ class PaymentStatusUnitTest extends UnitTestCase {
    * @covers ::editTitle
    */
   public function testEditTitle() {
-    $label = $this->randomName();
+    $label = $this->randomMachineName();
     $string = 'Edit %label';
 
     $payment_status = $this->getMockBuilder('\Drupal\payment\Entity\PaymentStatus')
@@ -146,22 +146,22 @@ class PaymentStatusUnitTest extends UnitTestCase {
    * @covers ::listingLevel
    */
   function testListing() {
-    $plugin_id_a = $this->randomName();
-    $plugin_id_b = $this->randomName();
+    $plugin_id_a = $this->randomMachineName();
+    $plugin_id_b = $this->randomMachineName();
 
     $definitions = array(
       $plugin_id_a => array(
-        'label' => $this->randomName(),
-        'description' => $this->randomName(),
+        'label' => $this->randomMachineName(),
+        'description' => $this->randomMachineName(),
       ),
       $plugin_id_b => array(
-        'label' => $this->randomName(),
-        'description' => $this->randomName(),
+        'label' => $this->randomMachineName(),
+        'description' => $this->randomMachineName(),
       ),
     );
 
     $operations_a = array(
-      'title' => $this->randomName(),
+      'title' => $this->randomMachineName(),
     );
 
     $operations_provider_a = $this->getMock('\Drupal\payment\Plugin\Payment\OperationsProviderInterface');

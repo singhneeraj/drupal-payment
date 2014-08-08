@@ -7,6 +7,7 @@
 namespace Drupal\payment\Plugin\Payment\MethodConfiguration;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -142,7 +143,7 @@ abstract class PaymentMethodConfigurationBase extends PluginBase implements Paym
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, array &$form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     // @todo Add a token overview, possibly when Token.module has been ported.
     $elements['message'] = array(
       '#tree' => TRUE,
@@ -161,14 +162,15 @@ abstract class PaymentMethodConfigurationBase extends PluginBase implements Paym
   /**
    * {@inheritdoc}
    */
-  public function validateConfigurationForm(array &$form, array &$form_state) {
+  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, array &$form_state) {
-    $message = NestedArray::getValue($form_state['values'], $form['message']['#parents']);
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+    $values = $form_state->getValues();
+    $message = NestedArray::getValue($values, $form['message']['#parents']);
     if ($this->moduleHandler->moduleExists('filter')) {
       $this->setMessageText($message['value']);
       $this->setMessageTextFormat($message['format']);

@@ -84,7 +84,7 @@ class PaymentMethodSelectorManagerUnitTest extends UnitTestCase {
    */
   public function testCreateInstance() {
     $existing_plugin_id = 'payment_select';
-    $non_existing_plugin_id = $this->randomName();
+    $non_existing_plugin_id = $this->randomMachineName();
     $this->factory->expects($this->at(0))
       ->method('createInstance')
       ->with($non_existing_plugin_id)
@@ -105,7 +105,7 @@ class PaymentMethodSelectorManagerUnitTest extends UnitTestCase {
   public function testGetDefinitions() {
     $definitions = array(
       'foo' => array(
-        'label' => $this->randomName(),
+        'label' => $this->randomMachineName(),
       ),
     );
     $this->discovery->expects($this->once())
@@ -122,7 +122,7 @@ class PaymentMethodSelectorManagerUnitTest extends UnitTestCase {
    * @depends testGetDefinitions
    */
   public function testOptions() {
-    $label = $this->randomName();
+    $label = $this->randomMachineName();
     $definitions = array(
       'foo' => array(
         'label' => $label,

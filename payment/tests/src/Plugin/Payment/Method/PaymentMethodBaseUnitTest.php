@@ -34,7 +34,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->pluginDefinition['label'] = $this->randomName();
+    $this->pluginDefinition['label'] = $this->randomMachineName();
 
     $this->plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\PaymentMethodBase')
       ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->eventDispatcher, $this->token))
@@ -96,7 +96,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
    */
   public function testGetConfiguration() {
     $configuration = array(
-      $this->randomName() => mt_rand(),
+      $this->randomMachineName() => mt_rand(),
     );
     $this->assertNull($this->plugin->setConfiguration($configuration));
     $this->assertSame($configuration, $this->plugin->getConfiguration());
@@ -133,7 +133,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
    */
   public function testBuildConfigurationForm() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
@@ -148,7 +148,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
    */
   public function testValidateConfigurationForm() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $this->plugin->validateConfigurationForm($form, $form_state);
   }
 
@@ -157,7 +157,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
    */
   public function testSubmitConfigurationForm() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $this->plugin->submitConfigurationForm($form, $form_state);
   }
 
@@ -465,7 +465,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
   public function providerTestExecutePaymentAccessCurrency() {
     return array(
       // All currencies are allowed.
-      array(TRUE, TRUE, $this->randomName(), mt_rand()),
+      array(TRUE, TRUE, $this->randomMachineName(), mt_rand()),
       // The payment currency is allowed. No amount limitations.
       array(TRUE, array(
         'ABC' => array(),

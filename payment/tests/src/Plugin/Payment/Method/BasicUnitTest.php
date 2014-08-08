@@ -40,12 +40,12 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
     parent::setUp();
 
     $this->pluginDefinition += array(
-      'entity_id' => $this->randomName(),
-      'execute_status_id' => $this->randomName(),
+      'entity_id' => $this->randomMachineName(),
+      'execute_status_id' => $this->randomMachineName(),
       'capture' => TRUE,
-      'capture_status_id' => $this->randomName(),
+      'capture_status_id' => $this->randomMachineName(),
       'refund' => TRUE,
-      'refund_status_id' => $this->randomName(),
+      'refund_status_id' => $this->randomMachineName(),
     );
 
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
@@ -219,9 +219,9 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
    * Provides data to self::testDoCapturePaymentAccess().
    */
   public function providerDoCapturePaymentAccess() {
-    $status_id_a = $this->randomName();
-    $status_id_b = $this->randomName();
-    $status_id_c = $this->randomName();
+    $status_id_a = $this->randomMachineName();
+    $status_id_b = $this->randomMachineName();
+    $status_id_c = $this->randomMachineName();
     return array(
       array(TRUE, TRUE, $status_id_a, $status_id_a, $status_id_b),
       array(FALSE, TRUE, $status_id_a, $status_id_b, $status_id_c),
@@ -295,9 +295,9 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
    * Provides data to self::testDoRefundPaymentAccess().
    */
   public function providerDoRefundPaymentAccess() {
-    $status_id_a = $this->randomName();
-    $status_id_b = $this->randomName();
-    $status_id_c = $this->randomName();
+    $status_id_a = $this->randomMachineName();
+    $status_id_b = $this->randomMachineName();
+    $status_id_c = $this->randomMachineName();
     return array(
       array(TRUE, TRUE, $status_id_a, $status_id_a, $status_id_b),
       array(FALSE, TRUE, $status_id_a, $status_id_b, $status_id_c),

@@ -93,20 +93,20 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->method('getCurrentRequest')
       ->willReturn($this->request);
 
-    $this->fieldFormatter = new PaymentForm('payment_form', array(), $this->fieldDefinition, array(), $this->randomName(), $this->randomName(), array());
+    $this->fieldFormatter = new PaymentForm('payment_form', array(), $this->fieldDefinition, array(), $this->randomMachineName(), $this->randomMachineName(), array());
   }
 
   /**
    * @covers ::viewElements
    */
   public function testViewElements() {
-    $entity_type_id = $this->randomName();
-    $bundle = $this->randomName();
-    $field_name = $this->randomName();
+    $entity_type_id = $this->randomMachineName();
+    $bundle = $this->randomMachineName();
+    $field_name = $this->randomMachineName();
 
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
     $plugin_configuration = array(
-      $this->randomName() => $this->randomName(),
+      $this->randomMachineName() => $this->randomMachineName(),
     );
 
     $plugin_id_property = $this->getMock('\Drupal\Core\TypedData\TypedDataInterface');
@@ -179,11 +179,11 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @covers ::viewElementsPostRenderCache
    */
   public function testViewElementsPostRenderCache() {
-    $bundle = $this->randomName();
-    $entity_type_id = $this->randomName();
-    $field_name = $this->randomName();
-    $destination_url = $this->randomName();
-    $currency_code = $this->randomName();
+    $bundle = $this->randomMachineName();
+    $entity_type_id = $this->randomMachineName();
+    $field_name = $this->randomMachineName();
+    $destination_url = $this->randomMachineName();
+    $currency_code = $this->randomMachineName();
 
     $this->fieldDefinition->expects($this->atLeastOnce())
       ->method('getSetting')
@@ -237,7 +237,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->with('payment')
       ->will($this->returnValue($storage));
 
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
     $plugin_configuration = array();
 
     $payment_line_item = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface');
@@ -268,14 +268,14 @@ class PaymentFormUnitTest extends UnitTestCase {
     ));
 
     $element = array(
-      '#markup' => $this->randomName(),
+      '#markup' => $this->randomMachineName(),
     );
     $context = array(
       'bundle' => $bundle,
       'entity_type_id' => $entity_type_id,
       'field_name' => $field_name,
       'line_items_data' => serialize($line_items_data),
-      'token' => $this->randomName(),
+      'token' => $this->randomMachineName(),
     );
 
     $method = new \ReflectionMethod($this->fieldFormatter, 'viewElementsPostRenderCache');

@@ -8,6 +8,7 @@ namespace Drupal\payment_form\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\currency\Entity\Currency;
@@ -39,7 +40,7 @@ class PaymentForm extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
-  public function instanceSettingsForm(array $form, array &$form_state) {
+  public function instanceSettingsForm(array $form, FormStateInterface $form_state) {
     /** @var \Drupal\currency\FormHelperInterface $form_helper */
     $form_helper = \Drupal::service('currency.form_helper');
 

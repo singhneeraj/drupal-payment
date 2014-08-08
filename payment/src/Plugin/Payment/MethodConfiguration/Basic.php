@@ -8,6 +8,7 @@ namespace Drupal\payment\Plugin\Payment\MethodConfiguration;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
@@ -197,7 +198,7 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, array &$form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildConfigurationForm($form, $form_state);
     $form['plugin_form'] = array(
       '#process' => array(array($this, 'processBuildConfigurationForm')),
@@ -210,7 +211,7 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
   /**
    * Implements a form API #process callback.
    */
-  public function processBuildConfigurationForm(array &$element, array &$form_state, array &$form) {
+  public function processBuildConfigurationForm(array &$element, FormStateInterface $form_state, array &$form) {
     $element['brand_label'] = array(
       '#default_value' => $this->getBrandLabel(),
       '#description' => $this->t('The label that payers will see when choosing a payment method. Defaults to the payment method label.'),
@@ -318,11 +319,12 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
   /**
    * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, array &$form_state) {
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     parent::submitConfigurationForm($form, $form_state);
     $parents = $form['plugin_form']['brand_label']['#parents'];
     array_pop($parents);
-    $values = NestedArray::getValue($form_state['values'], $parents);
+    $values = $form_state->getValues();
+    $values = NestedArray::getValue($values, $parents);
     $this->setExecuteStatusId($values['execute']['execute_status_id']);
     $this->setCapture($values['capture']['capture']);
     $this->setCaptureStatusId($values['capture']['capture_status_id']);

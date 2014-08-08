@@ -115,7 +115,7 @@ function payment_reference_entity_field_access($operation, FieldDefinitionInterf
  * @todo Move this to \Drupal\payment_reference\Element\PaymentReference once
  * https://drupal.org/node/2040559 has been fixed.
  */
-function payment_reference_element_payment_reference_value(array $element, $input, array &$form_state) {
+function payment_reference_element_payment_reference_value(array $element, $input, \Drupal\Core\Form\FormStateInterface $form_state) {
   $payment_ids = PaymentReference::queue()->loadPaymentIds($element['#entity_type_id'] . '.' . $element['#bundle'] . '.' . $element['#field_name'], $element['#owner_id']);
   if ($payment_ids) {
     return reset($payment_ids);

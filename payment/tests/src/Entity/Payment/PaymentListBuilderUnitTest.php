@@ -30,9 +30,9 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
   /**
    * The date formatter.
    *
-   * @var \Drupal\Core\Datetime\Date|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\Datetime\DateFormatter|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $date;
+  protected $dateFormatter;
 
   /**
    * The entity storage.
@@ -84,7 +84,7 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
   public function setUp() {
     $this->currencyStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
 
-    $this->date = $this->getMockBuilder('\Drupal\Core\Datetime\Date')
+    $this->dateFormatter = $this->getMockBuilder('\Drupal\Core\Datetime\DateFormatter')
       ->disableOriginalConstructor()
       ->getMock();
 
@@ -103,7 +103,7 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
       ->method('translate')
       ->will($this->returnArgument(0));
 
-    $this->listBuilder = new PaymentListBuilder($this->entityType, $this->entityStorage, $this->stringTranslation, $this->moduleHandler, $this->requestStack, $this->date, $this->currencyStorage);
+    $this->listBuilder = new PaymentListBuilder($this->entityType, $this->entityStorage, $this->stringTranslation, $this->moduleHandler, $this->requestStack, $this->dateFormatter, $this->currencyStorage);
   }
 
   /**
@@ -121,7 +121,7 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
 
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
-      array('date', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->date),
+      array('date.formatter', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->dateFormatter),
       array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $entity_manager),
       array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
       array('request_stack', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->requestStack),
@@ -188,13 +188,13 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
    */
   function testBuildRow($payment_currency_exists) {
     $payment_changed_time = time();
-    $payment_changed_time_formatted = $this->randomName();
-    $payment_currency_code = $this->randomName();
+    $payment_changed_time_formatted = $this->randomMachineName();
+    $payment_currency_code = $this->randomMachineName();
     $payment_amount = mt_rand();
-    $payment_amount_formatted = $this->randomName();
+    $payment_amount_formatted = $this->randomMachineName();
 
     $payment_status_definition = array(
-      'label' => $this->randomName(),
+      'label' => $this->randomMachineName(),
     );
 
     $payment_status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
@@ -206,7 +206,7 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $payment_method_label = $this->randomName();
+    $payment_method_label = $this->randomMachineName();
     $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
     $payment_method->expects($this->atLeastOnce())
       ->method('getPluginLabel')
@@ -250,7 +250,7 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
       ->method('load')
       ->will($this->returnValueMap($map));
 
-    $this->date->expects($this->once())
+    $this->dateFormatter->expects($this->once())
       ->method('format')
       ->with($payment_changed_time)
       ->will($this->returnValue($payment_changed_time_formatted));
@@ -337,10 +337,10 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
     $method = new \ReflectionMethod($this->listBuilder, 'getDefaultOperations');
     $method->setAccessible(TRUE);
 
-    $url_canonical = new Url($this->randomName());
-    $url_update_status_form = new Url($this->randomName());
-    $url_capture_form = new Url($this->randomName());
-    $url_refund_form = new Url($this->randomName());
+    $url_canonical = new Url($this->randomMachineName());
+    $url_update_status_form = new Url($this->randomMachineName());
+    $url_capture_form = new Url($this->randomMachineName());
+    $url_refund_form = new Url($this->randomMachineName());
 
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
@@ -364,7 +364,7 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
       ->method('urlInfo')
       ->will($this->returnValueMap($map));
 
-    $destination = $this->randomName();
+    $destination = $this->randomMachineName();
     /** @var \Symfony\Component\HttpFoundation\Request|\PHPUnit_Framework_MockObject_MockObject $request */
     $request = $this->getMock('\Symfony\Component\HttpFoundation\Request');
     $request->attributes = new ParameterBag();

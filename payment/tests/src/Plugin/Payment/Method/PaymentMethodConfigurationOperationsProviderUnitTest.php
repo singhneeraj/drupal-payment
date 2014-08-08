@@ -122,7 +122,7 @@ class PaymentMethodConfigurationOperationsProviderUnitTest extends UnitTestCase 
       ),
     );
 
-    $destination = $this->randomName();
+    $destination = $this->randomMachineName();
     $attributes = new ParameterBag();
     $attributes->set('_system_path', $destination);
     /** @var \Symfony\Component\HttpFoundation\Request|\PHPUnit_Framework_MockObject_MockObject $request */
@@ -133,7 +133,7 @@ class PaymentMethodConfigurationOperationsProviderUnitTest extends UnitTestCase 
       ->method('getCurrentRequest')
       ->will($this->returnValue($request));
 
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
 
     $payment_method_configuration = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
       ->disableOriginalConstructor()

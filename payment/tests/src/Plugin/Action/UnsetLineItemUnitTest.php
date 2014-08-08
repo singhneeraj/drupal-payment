@@ -42,7 +42,7 @@ class UnsetLineItemUnitTest extends UnitTestCase {
 
     $configuration = array();
     $plugin_definition = array();
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
     $this->action = new UnsetLineItem($configuration, $plugin_id, $plugin_definition, $this->stringTranslation);
   }
 
@@ -60,7 +60,7 @@ class UnsetLineItemUnitTest extends UnitTestCase {
 
     $configuration = array();
     $plugin_definition = array();
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
     $form = UnsetLineItem::create($container, $configuration, $plugin_id, $plugin_definition);
     $this->assertInstanceOf('\Drupal\payment\Plugin\Action\UnsetLineItem', $form);
   }
@@ -79,7 +79,7 @@ class UnsetLineItemUnitTest extends UnitTestCase {
    */
   public function testBuildConfigurationForm() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form = $this->action->buildConfigurationForm($form, $form_state);
     $this->assertInternalType('array', $form);
     $this->assertArrayHasKey('line_item_name', $form);
@@ -90,13 +90,14 @@ class UnsetLineItemUnitTest extends UnitTestCase {
    * @depends testBuildConfigurationForm
    */
   public function testSubmitConfigurationForm() {
-    $name = $this->randomName();
+    $name = $this->randomMachineName();
     $form = array();
-    $form_state = array(
-      'values' => array(
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state->expects($this->atLeastOnce())
+      ->method('getValues')
+      ->willReturn(array(
         'line_item_name' => $name,
-      ),
-    );
+      ));
     $this->action->submitConfigurationForm($form, $form_state);
     $configuration = $this->action->getConfiguration();
     $this->assertSame($name, $configuration['line_item_name']);
@@ -106,7 +107,7 @@ class UnsetLineItemUnitTest extends UnitTestCase {
    * @covers ::execute
    */
   public function testExecute() {
-    $name = $this->randomName();
+    $name = $this->randomMachineName();
 
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()

@@ -8,6 +8,7 @@
 namespace Drupal\payment\Entity\PaymentStatus;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -60,11 +61,11 @@ class PaymentStatusDeleteForm extends EntityConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submit(array $form, array &$form_state) {
+  public function submit(array $form, FormStateInterface $form_state) {
     $this->getEntity()->delete();
     drupal_set_message($this->t('%label has been deleted.', array(
       '%label' => $this->getEntity()->label(),
     )));
-    $form_state['redirect_route'] = new Url('payment.payment_status.list');
+    $form_state->setRedirect('payment.payment_status.list');
   }
 }

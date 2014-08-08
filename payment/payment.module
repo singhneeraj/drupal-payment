@@ -10,7 +10,7 @@ use Drupal\Core\Entity\EntityInterface;
 /**
  * Implements hook_permission().
  *
- * @see \Drupal\payment\PaymentMethodAccessController
+ * @see \Drupal\payment\PaymentMethodAccessControlHandler
  */
 function payment_permission() {
   return \Drupal::service('payment.hook.permission')->invoke();

@@ -133,10 +133,10 @@ class PaymentMethodConfigurationListBuilderUnitTest extends UnitTestCase {
    * @covers ::buildRow
    */
   function testBuildRow() {
-    $payment_method_configuration_entity_label = $this->randomName();
+    $payment_method_configuration_entity_label = $this->randomMachineName();
     $payment_method_configuration_entity_status = FALSE;
-    $payment_method_configuration_plugin_id = $this->randomName();
-    $payment_method_configuration_plugin_label = $this->randomName();
+    $payment_method_configuration_plugin_id = $this->randomMachineName();
+    $payment_method_configuration_plugin_label = $this->randomMachineName();
 
     $payment_method_configuration_plugin_definition = array(
       'label' => $payment_method_configuration_plugin_label,
@@ -247,7 +247,7 @@ class PaymentMethodConfigurationListBuilderUnitTest extends UnitTestCase {
     $method = new \ReflectionMethod($this->listBuilder, 'getDefaultOperations');
     $method->setAccessible(TRUE);
 
-    $url_duplicate_form = new Url($this->randomName());
+    $url_duplicate_form = new Url($this->randomMachineName());
 
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()

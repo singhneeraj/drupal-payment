@@ -8,7 +8,8 @@
 namespace Drupal\payment\Tests\Entity\Payment {
 
 use Drupal\Core\Language\Language;
-use Drupal\payment\Entity\Payment\PaymentStatusForm;
+  use Drupal\Core\Url;
+  use Drupal\payment\Entity\Payment\PaymentStatusForm;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodUpdatePaymentStatusInterface;
 use Drupal\Tests\UnitTestCase;
@@ -148,7 +149,7 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
    * @covers ::form
    */
   public function testFormWithDateTimeModule() {
-    $settable_payment_status_ids = array($this->randomName());
+    $settable_payment_status_ids = array($this->randomMachineName());
 
     $this->paymentStatusManager->expects($this->once())
       ->method('options')
@@ -175,7 +176,7 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
       ->will($this->returnValue($language));
 
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form = $this->form->form($form, $form_state);
     $this->assertInternalType('array', $form);
     $this->assertArrayHasKey('plugin_id', $form);
@@ -213,7 +214,7 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
       ->will($this->returnValue($language));
 
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form = $this->form->form($form, $form_state);
     $this->assertInternalType('array', $form);
     $this->assertArrayHasKey('plugin_id', $form);
@@ -252,7 +253,7 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
       ->will($this->returnValue($language));
 
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form = $this->form->form($form, $form_state);
     $this->assertInternalType('array', $form);
     $this->assertArrayHasKey('plugin_id', $form);
@@ -270,8 +271,8 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
    * @covers ::submit
    */
   public function testSubmit() {
-    $timestamp = $this->randomName();
-    $plugin_id = $this->randomName();
+    $timestamp = $this->randomMachineName();
+    $plugin_id = $this->randomMachineName();
 
     $payment_status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
     $payment_status->expects($this->once())
@@ -287,19 +288,30 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
       ->with($plugin_id)
       ->will($this->returnValue($payment_status));
 
+    $url = new Url($this->randomMachineName());
+
     $this->payment->expects($this->once())
       ->method('setStatus')
       ->with($payment_status);
     $this->payment->expects($this->once())
       ->method('save');
+    $this->payment->expects($this->once())
+      ->method('urlInfo')
+      ->with('canonical')
+      ->willReturn($url);
 
     $form = array();
-    $form_state = array(
-      'values' => array(
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state->expects($this->atLeastOnce())
+      ->method('getValues')
+      ->willReturn(array(
         'created' => $this->defaultDateTime,
         'plugin_id' => $plugin_id,
-      ),
-    );
+      ));
+    $form_state->expects($this->once())
+      ->method('setRedirectUrl')
+      ->with($url);
+
     $this->form->submit($form, $form_state);
   }
 
@@ -308,11 +320,11 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
    */
   public function testActions() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
     $method = new \ReflectionMethod($this->form, 'actions');
     $method->setAccessible(TRUE);
-    $method->invokeArgs($this->form, array($form, &$form_state));
+    $method->invokeArgs($this->form, array($form, $form_state));
   }
 
 }

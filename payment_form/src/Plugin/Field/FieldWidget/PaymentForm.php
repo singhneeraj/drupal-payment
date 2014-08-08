@@ -11,6 +11,7 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Element\PaymentLineItemsInput;
@@ -79,7 +80,7 @@ class PaymentForm extends WidgetBase implements ContainerFactoryPluginInterface 
   /**
    * {@inheritdoc}
    */
-  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, array &$form_state) {
+  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $element['#items'] = $items;
     $element['#process'][] = array($this, 'formElementProcess');
 
@@ -89,7 +90,7 @@ class PaymentForm extends WidgetBase implements ContainerFactoryPluginInterface 
   /**
    * Implements form API #process callback.
    */
-  public function formElementProcess(array $element, array &$form_state, array $form) {
+  public function formElementProcess(array $element, FormStateInterface $form_state, array $form) {
     $element['array_parents'] = array(
       '#value' => $element['#array_parents'],
       '#type' => 'value',
@@ -112,7 +113,7 @@ class PaymentForm extends WidgetBase implements ContainerFactoryPluginInterface 
   /**
    * {@inheritdoc}
    */
-  public function massageFormValues(array $values, array $form, array &$form_state) {
+  public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
     $element = NestedArray::getValue($form, array_merge(array_slice($values['array_parents'], count($form['#array_parents'])), array('line_items')));
 
     $line_items_data = array();

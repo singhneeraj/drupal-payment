@@ -76,7 +76,7 @@ class BasicOperationsProviderUnitTest extends UnitTestCase {
    * @covers ::getPaymentMethodConfiguration
    */
   public function testGetPaymentMethodConfiguration() {
-    $entity_id = $this->randomName();
+    $entity_id = $this->randomMachineName();
     $plugin_id = 'payment_basic:' . $entity_id;
 
     $payment_method_configuration = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')

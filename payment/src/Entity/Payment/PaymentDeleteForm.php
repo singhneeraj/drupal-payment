@@ -9,6 +9,7 @@ namespace Drupal\payment\Entity\Payment;
 
 use Drupal\Core\Entity\ContentEntityConfirmFormBase;
 use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -66,11 +67,11 @@ class PaymentDeleteForm extends ContentEntityConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submit(array $form, array &$form_state) {
+  public function submit(array $form, FormStateInterface $form_state) {
     $this->getEntity()->delete();
     drupal_set_message($this->t('Payment #!payment_id has been deleted.', array(
       '!id' => $this->getEntity()->id(),
     )));
-    $form_state['redirect_route'] = new Url('<front>');
+    $form_state->setRedirect('<front>');
   }
 }

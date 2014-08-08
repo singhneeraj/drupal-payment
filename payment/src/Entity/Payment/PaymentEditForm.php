@@ -10,6 +10,7 @@ namespace Drupal\payment\Entity\Payment;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\currency\Entity\Currency;
@@ -62,7 +63,7 @@ class PaymentEditForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function form(array $form, array &$form_state) {
+  public function form(array $form, FormStateInterface $form_state) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->getEntity();
 
@@ -87,7 +88,7 @@ class PaymentEditForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  protected function copyFormValuesToEntity(EntityInterface $payment, array $form, array &$form_state) {
+  protected function copyFormValuesToEntity(EntityInterface $payment, array $form, FormStateInterface $form_state) {
     parent::copyFormValuesToEntity($payment, $form, $form_state);
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $values = $form_state['values'];
@@ -100,15 +101,13 @@ class PaymentEditForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, array &$form_state) {
+  public function save(array $form, FormStateInterface $form_state) {
     parent::save($form, $form_state);
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->getEntity();
     $payment->save();
 
-    $form_state['redirect_route'] = new Url('payment.payment.view', array(
-      'payment' => $payment->id(),
-    ));
+    $form_state->setRedirectUrl($payment->urlInfo());
   }
 
 }

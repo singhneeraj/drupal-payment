@@ -66,7 +66,7 @@ class PaymentMethodConfigurationUnitTest extends KernelTestBase {
    * Tests setConfiguration() and getConfiguration().
    */
   protected function testGetConfiguration() {
-    $configuration = array($this->randomName());
+    $configuration = array($this->randomMachineName());
     $this->assertEqual(spl_object_hash($this->paymentMethodConfiguration->setPluginConfiguration($configuration)), spl_object_hash($this->paymentMethodConfiguration));
     $this->assertEqual($this->paymentMethodConfiguration->getPluginConfiguration(), $configuration);
   }
@@ -75,7 +75,7 @@ class PaymentMethodConfigurationUnitTest extends KernelTestBase {
    * Tests setLabel() and label().
    */
   protected function testLabel() {
-    $label = $this->randomName();
+    $label = $this->randomMachineName();
     $this->assertTrue($this->paymentMethodConfiguration->setLabel($label) instanceof PaymentMethodConfigurationInterface);
     $this->assertIdentical($this->paymentMethodConfiguration->label(), $label);
   }

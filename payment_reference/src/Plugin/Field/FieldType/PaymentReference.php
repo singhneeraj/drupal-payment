@@ -9,6 +9,7 @@ namespace Drupal\payment_reference\Plugin\Field\FieldType;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\currency\Entity\Currency;
 use Drupal\entity_reference\ConfigurableEntityReferenceItem;
@@ -81,7 +82,7 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
   /**
    * {@inheritdoc}
    */
-  public function instanceSettingsForm(array $form, array &$form_state) {
+  public function instanceSettingsForm(array $form, FormStateInterface $form_state) {
     /** @var \Drupal\currency\FormHelperInterface $form_helper */
     $form_helper = \Drupal::service('currency.form_helper');
 
@@ -112,7 +113,7 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
   /**
    * Implements #element_validate callback for self::instanceSettingsForm().
    */
-  public static function instanceSettingsFormValidate(array $element, array &$form_state) {
+  public static function instanceSettingsFormValidate(array $element, FormStateInterface $form_state) {
     $add_more_button_form_parents = array_merge($element['#array_parents'], array('line_items', 'add_more', 'add'));
     // Only set the field settings as a value when it is not the "Add more"
     // button that has been clicked.
@@ -129,14 +130,14 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
         'currency_code' => $values['currency_code'],
         'line_items_data' => $line_items_data,
       );
-      \Drupal::formBuilder()->setValue($element, $value, $form_state);
+      $form_state->addValue($element, $value);
     }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array &$form, array &$form_state, $has_data) {
+  public function settingsForm(array &$form, FormStateInterface $form_state, $has_data) {
     return array();
   }
 

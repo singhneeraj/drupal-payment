@@ -51,7 +51,7 @@ class UnavailableUnitTest extends UnitTestCase {
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
     $this->pluginDefinition = array(
-      'label' => $this->randomName(),
+      'label' => $this->randomMachineName(),
     );
 
     $this->plugin = new Unavailable(array(), '', $this->pluginDefinition, $this->token, $this->paymentStatusManager);
@@ -120,7 +120,7 @@ class UnavailableUnitTest extends UnitTestCase {
    */
   public function testBuildConfigurationForm() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
@@ -134,7 +134,7 @@ class UnavailableUnitTest extends UnitTestCase {
    */
   public function testValidateConfigurationForm() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $this->plugin->validateConfigurationForm($form, $form_state);
   }
 
@@ -143,7 +143,7 @@ class UnavailableUnitTest extends UnitTestCase {
    */
   public function testSubmitConfigurationForm() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $this->plugin->submitConfigurationForm($form, $form_state);
   }
 

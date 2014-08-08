@@ -9,6 +9,7 @@ namespace Drupal\payment\Entity\Payment;
 
 use Drupal\Core\Entity\ContentEntityConfirmFormBase;
 use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -63,14 +64,14 @@ class PaymentCaptureForm extends ContentEntityConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submit(array $form, array &$form_state) {
+  public function submit(array $form, FormStateInterface $form_state) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->getEntity();
     /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface $payment_method */
     $payment_method = $payment->getPaymentMethod();
     $payment_method->capturePayment();
 
-    $form_state['redirect_route'] = $this->getEntity()->urlInfo();
+    $form_state->setRedirectUrl($payment->urlInfo());
   }
 
 }

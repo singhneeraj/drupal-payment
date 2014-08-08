@@ -10,7 +10,7 @@ namespace Drupal\payment\Entity\PaymentMethodConfiguration;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
@@ -29,13 +29,6 @@ class PaymentMethodConfigurationForm extends EntityForm {
    * @var \Drupal\Core\Session\AccountInterface
    */
   protected $currentUser;
-
-  /**
-   * The form builder.
-   *
-   * @var \Drupal\Core\Form\FormBuilderInterface
-   */
-  protected $formBuilder;
 
   /**
    * The payment method configuration manager.
@@ -61,8 +54,6 @@ class PaymentMethodConfigurationForm extends EntityForm {
   /**
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translator.
-   * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
-   *   The form builder.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
    * @param \Drupal\Core\Entity\EntityStorageInterface $user_storage
@@ -72,9 +63,8 @@ class PaymentMethodConfigurationForm extends EntityForm {
    * @param \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager
    *   The payment method configuration manager.
    */
-  function __construct(TranslationInterface $string_translation, FormBuilderInterface $form_builder, AccountInterface $current_user, EntityStorageInterface $user_storage, EntityStorageInterface $payment_method_configuration_storage, PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager) {
+  function __construct(TranslationInterface $string_translation, AccountInterface $current_user, EntityStorageInterface $user_storage, EntityStorageInterface $payment_method_configuration_storage, PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager) {
     $this->currentUser = $current_user;
-    $this->formBuilder = $form_builder;
     $this->paymentMethodConfigurationManager = $payment_method_configuration_manager;
     $this->paymentMethodConfigurationStorage = $payment_method_configuration_storage;
     $this->stringTranslation = $string_translation;
@@ -88,13 +78,13 @@ class PaymentMethodConfigurationForm extends EntityForm {
     /** @var \Drupal\Core\Entity\EntityManagerInterface $entity_manager */
     $entity_manager = $container->get('entity.manager');
 
-    return new static($container->get('string_translation'), $container->get('form_builder'), $container->get('current_user'), $entity_manager->getStorage('user'), $entity_manager->getStorage('payment_method_configuration'), $container->get('plugin.manager.payment.method_configuration'));
+    return new static($container->get('string_translation'), $container->get('current_user'), $entity_manager->getStorage('user'), $entity_manager->getStorage('payment_method_configuration'), $container->get('plugin.manager.payment.method_configuration'));
   }
 
   /**
    * {@inheritdoc}
    */
-  public function form(array $form, array &$form_state) {
+  public function form(array $form, FormStateInterface $form_state) {
     /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface $payment_method_configuration */
     $payment_method_configuration = $this->getEntity();
     $definition = $this->paymentMethodConfigurationManager->getDefinition($payment_method_configuration->getPluginId());
@@ -141,12 +131,12 @@ class PaymentMethodConfigurationForm extends EntityForm {
       '#autocomplete_route_name' => 'user.autocomplete',
       '#required' => TRUE,
     );
-    if (isset($form_state['storage']['payment_method_configuration'])) {
-      $payment_method_configuration_plugin = $form_state['storage']['payment_method_configuration'];
+    if ($form_state->has('payment_method_configuration')) {
+      $payment_method_configuration_plugin = $form_state->get('payment_method_configuration');
     }
     else {
       $payment_method_configuration_plugin = $this->paymentMethodConfigurationManager->createInstance($payment_method_configuration->getPluginId(), $payment_method_configuration->getPluginConfiguration());
-      $form_state['storage']['payment_method_configuration'] = $payment_method_configuration_plugin;
+      $form_state->set('payment_method_configuration', $payment_method_configuration_plugin);
     }
     $form['plugin_form'] = array(
         '#tree' => TRUE,
@@ -158,28 +148,28 @@ class PaymentMethodConfigurationForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function validate(array $form, array &$form_state) {
+  public function validate(array $form, FormStateInterface $form_state) {
     parent::validate($form, $form_state);
-    $values = $form_state['values'];
+    $values = $form_state->getValues();
     $owner = $this->userStorage->loadByProperties(array(
       'name' => $values['owner'],
     ));
     if (!$owner) {
-      $this->formBuilder->setError($form['owner'], $form_state, $this->t('The username %name does not exist.', array(
+      $form_state->setError($form['owner'], $this->t('The username %name does not exist.', array(
         '%name' => $values['owner'],
       )));
     }
     /** @var \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface $payment_method_configuration */
-    $payment_method_configuration = $form_state['storage']['payment_method_configuration'];
+    $payment_method_configuration = $form_state->get('payment_method_configuration');
     $payment_method_configuration->validateConfigurationForm($form['plugin_form'], $form_state);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submit(array $form, array &$form_state) {
+  public function submit(array $form, FormStateInterface $form_state) {
     /** @var \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface $payment_method_configuration */
-    $payment_method_configuration = $form_state['storage']['payment_method_configuration'];
+    $payment_method_configuration = $form_state->get('payment_method_configuration');
     $payment_method_configuration->submitConfigurationForm($form['plugin_form'], $form_state);
     parent::submit($form, $form_state);
   }
@@ -187,17 +177,17 @@ class PaymentMethodConfigurationForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  protected function copyFormValuesToEntity(EntityInterface $payment_method_configuration, array $form, array &$form_state) {
+  protected function copyFormValuesToEntity(EntityInterface $payment_method_configuration, array $form, FormStateInterface $form_state) {
     /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface $payment_method_configuration */
     parent::copyFormValuesToEntity($payment_method_configuration, $form, $form_state);
-    $values = $form_state['values'];
+    $values = $form_state->getValues();
     $users = $this->userStorage->loadByProperties(array(
       'name' => $values['owner'],
     ));
     /** @var \Drupal\user\UserInterface $owner */
     $owner = reset($users);
     /** @var \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface $payment_method_configuration_plugin */
-    $payment_method_configuration_plugin = $form_state['storage']['payment_method_configuration'];
+    $payment_method_configuration_plugin = $form_state->get('payment_method_configuration');
     $payment_method_configuration->setLabel($values['label']);
     $payment_method_configuration->setStatus($values['status']);
     $payment_method_configuration->setOwnerId($owner->id());
@@ -207,14 +197,14 @@ class PaymentMethodConfigurationForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, array &$form_state) {
+  public function save(array $form, FormStateInterface $form_state) {
     parent::save($form, $form_state);
     $payment_method = $this->getEntity();
     $payment_method->save();
     drupal_set_message($this->t('@label has been saved.', array(
       '@label' => $payment_method->label()
     )));
-    $form_state['redirect_route'] = new Url('payment.payment_method_configuration.list');
+    $form_state->setRedirect('payment.payment_method_configuration.list');
   }
 
   /**

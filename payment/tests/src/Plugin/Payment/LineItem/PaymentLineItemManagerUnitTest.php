@@ -85,7 +85,7 @@ class PaymentLineItemManagerUnitTest extends UnitTestCase {
   public function testGetDefinitions() {
     $definitions = array(
       'foo' => array(
-        'label' => $this->randomName(),
+        'label' => $this->randomMachineName(),
       ),
     );
     $this->discovery->expects($this->once())
@@ -102,7 +102,7 @@ class PaymentLineItemManagerUnitTest extends UnitTestCase {
    * @depends testGetDefinitions
    */
   public function testOptions() {
-    $label = $this->randomName();
+    $label = $this->randomMachineName();
     $definitions = array(
       'foo' => array(
         'label' => $label,

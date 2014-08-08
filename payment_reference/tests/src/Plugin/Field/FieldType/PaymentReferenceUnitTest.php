@@ -26,13 +26,6 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   protected $fieldType;
 
   /**
-   * The form builder..
-   *
-   * @var \Drupal\Core\Form\FormBuilderInterface
-   */
-  protected $formBuilder;
-
-  /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
@@ -63,8 +56,6 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   protected function setUp() {
-    $this->formBuilder = $this->getMock('\Drupal\Core\Form\FormBuilderInterface');
-
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
 
     $this->queue = $this->getMock('\Drupal\payment\QueueInterface');
@@ -74,7 +65,6 @@ class PaymentReferenceUnitTest extends UnitTestCase {
     $this->targetId = $this->getMock('\Drupal\Core\TypedData\TypedDataInterface');
 
     $container = new ContainerBuilder();
-    $container->set('form_builder', $this->formBuilder);
     $container->set('module_handler', $this->moduleHandler);
     $container->set('payment_reference.queue', $this->queue);
     $container->set('string_translation', $this->stringTranslation);
@@ -128,7 +118,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    */
   public function testSettingsForm() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $has_data = TRUE;
     $this->assertSame(array(), $this->fieldType->settingsForm($form, $form_state, $has_data));
   }
@@ -138,7 +128,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    */
   public function testPreSave() {
     $payment_id = mt_rand();
-    $acquisition_code = $this->randomName();
+    $acquisition_code = $this->randomMachineName();
     $this->targetId->expects($this->once())
       ->method('getValue')
       ->will($this->returnValue($payment_id));

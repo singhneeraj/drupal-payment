@@ -87,7 +87,7 @@ class PaymentMethodConfigurationManagerUnitTest extends UnitTestCase {
    */
   public function testCreateInstance() {
     $existing_plugin_id = 'payment_unavailable';
-    $non_existing_plugin_id = $this->randomName();
+    $non_existing_plugin_id = $this->randomMachineName();
     $this->factory->expects($this->at(0))
       ->method('createInstance')
       ->with($non_existing_plugin_id)

@@ -40,7 +40,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
     $this->math = $this->getMock('\Drupal\currency\Math\MathInterface');
 
     $configuration = array();
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
     $plugin_definition = array();
     $this->lineItem = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase')
       ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->math))
@@ -62,7 +62,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
     /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase $class_name */
     $class_name = get_class($this->lineItem);
 
-    $line_item = $class_name::create($container, array(), $this->randomName(), array());
+    $line_item = $class_name::create($container, array(), $this->randomMachineName(), array());
     $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase', $line_item);
   }
 
@@ -72,7 +72,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
    */
   public function testGetConfiguration() {
     $configuration = array(
-      $this->randomName() => mt_rand(),
+      $this->randomMachineName() => mt_rand(),
     );
     $return = $this->lineItem->setConfiguration($configuration);
     $this->assertNull($return);
@@ -103,7 +103,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
       ->will($this->returnValue($total_amount));
 
     $configuration = array();
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
     $plugin_definition = array();
     /** @var \Drupal\payment\Plugin\Payment\LineItem\Basic|\PHPUnit_Framework_MockObject_MockObject $line_item */
     $line_item = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase')
@@ -125,7 +125,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
    * @covers ::getName
    */
   public function testGetName() {
-    $name = $this->randomName();
+    $name = $this->randomMachineName();
     $this->assertSame($this->lineItem, $this->lineItem->setName($name));
     $this->assertSame($name, $this->lineItem->getName());
   }
@@ -167,7 +167,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
    */
   public function testBuildConfigurationForm() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $this->assertSame(array(), $this->lineItem->buildConfigurationForm($form, $form_state));
   }
 
@@ -176,7 +176,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
    */
   public function testValidateConfigurationForm() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $this->lineItem->validateConfigurationForm($form, $form_state);
   }
 
@@ -185,7 +185,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
    */
   public function testSubmitConfigurationForm() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $this->lineItem->submitConfigurationForm($form, $form_state);
   }
 

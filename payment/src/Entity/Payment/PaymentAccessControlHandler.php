@@ -2,13 +2,13 @@
 
 /**
  * @file
- * Definition of Drupal\payment\Entity\Payment\PaymentAccess.
+ * Definition of Drupal\payment\Entity\Payment\PaymentAccessControlHandler.
  */
 
 namespace Drupal\payment\Entity\Payment;
 
+use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityAccessController;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface;
@@ -16,9 +16,9 @@ use Drupal\payment\Plugin\Payment\Method\PaymentMethodRefundPaymentInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodUpdatePaymentStatusInterface;
 
 /**
- * Defines the default list controller for ConfigEntity objects.
+ * Provides an access control handler for payment entities.
  */
-class PaymentAccess extends EntityAccessController {
+class PaymentAccessControlHandler extends EntityAccessControlHandler {
 
   /**
    * {@inheritdoc}

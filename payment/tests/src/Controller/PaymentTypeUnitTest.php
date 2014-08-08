@@ -106,17 +106,17 @@ class PaymentTypeUnitTest extends UnitTestCase {
    * @covers ::configure
    */
   public function testConfigure() {
-    $bundle_exists = $this->randomName();
+    $bundle_exists = $this->randomMachineName();
     $bundle_exists_definition = array(
-      'configuration_form' => $this->randomName(),
+      'configuration_form' => $this->randomMachineName(),
     );
-    $bundle_exists_no_form = $this->randomName();
+    $bundle_exists_no_form = $this->randomMachineName();
     $bundle_exists_no_form_definition = array();
-    $bundle_no_exists = $this->randomName();
+    $bundle_no_exists = $this->randomMachineName();
     $bundle_no_exists_definition = NULL;
 
     $form_build = array(
-      '#type' => $this->randomName(),
+      '#type' => $this->randomMachineName(),
     );
     $this->formBuilder->expects($this->once())
       ->method('getForm')
@@ -149,8 +149,8 @@ class PaymentTypeUnitTest extends UnitTestCase {
    * @covers ::configureTitle
    */
   public function testConfigureTitle() {
-    $plugin_id = $this->randomName();
-    $label = $this->randomName();
+    $plugin_id = $this->randomMachineName();
+    $label = $this->randomMachineName();
     $definition = array(
       'label' => $label,
     );
@@ -169,18 +169,18 @@ class PaymentTypeUnitTest extends UnitTestCase {
   public function testListing() {
     $definitions = array(
       'foo' => array(
-        'label' => $this->randomName(),
-        'description' => $this->randomName(),
+        'label' => $this->randomMachineName(),
+        'description' => $this->randomMachineName(),
       ),
       'bar' => array(
-        'label' => $this->randomName(),
+        'label' => $this->randomMachineName(),
       ),
       'payment_unavailable' => array(),
     );
 
     $operations_foo = array(
       'baz' => array(
-        'title' => $this->randomName(),
+        'title' => $this->randomMachineName(),
       ),
     );
 

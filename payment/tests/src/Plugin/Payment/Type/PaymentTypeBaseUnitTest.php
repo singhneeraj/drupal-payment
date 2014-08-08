@@ -41,7 +41,7 @@ class PaymentTypeBaseUnitTest extends UnitTestCase {
     $this->eventDispatcher = $this->getMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
     $configuration = array();
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
     $plugin_definition = array();
     $this->paymentType = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Type\PaymentTypeBase')
       ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->eventDispatcher))
@@ -63,7 +63,7 @@ class PaymentTypeBaseUnitTest extends UnitTestCase {
     /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase $class_name */
     $class_name = get_class($this->paymentType);
 
-    $line_item = $class_name::create($container, array(), $this->randomName(), array());
+    $line_item = $class_name::create($container, array(), $this->randomMachineName(), array());
     $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\type\PaymentTypeBase', $line_item);
   }
 
@@ -87,7 +87,7 @@ class PaymentTypeBaseUnitTest extends UnitTestCase {
    */
   public function testGetConfiguration() {
     $configuration = array(
-      'foo' => $this->randomName(),
+      'foo' => $this->randomMachineName(),
     );
     $this->assertNull($this->paymentType->setConfiguration($configuration));
     $this->assertSame($configuration, $this->paymentType->getConfiguration());

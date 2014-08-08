@@ -7,6 +7,7 @@
 
 namespace Drupal\payment_reference\Element;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\payment\Entity\Payment;
 use Drupal\payment\Payment as PaymentServiceWrapper;
 use Drupal\payment_reference\PaymentReference as PaymentReferenceServiceWrapper;
@@ -19,7 +20,7 @@ class PaymentReference {
   /**
    * Implements form #process callback.
    */
-  public static function process(array $element, array &$form_state, array $form) {
+  public static function process(array $element, FormStateInterface $form_state, array $form) {
     // Validate the element's configuration.
     if (!is_string($element['#bundle'])) {
       throw new \InvalidArgumentException('#bundle must be a string, but ' . gettype($element['#bundle']) . ' was given.');

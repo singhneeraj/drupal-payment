@@ -7,6 +7,7 @@
 namespace Drupal\payment\Plugin\Payment\MethodSelector;
 
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
@@ -55,7 +56,7 @@ class PaymentSelect extends PaymentMethodSelectorBase {
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, array &$form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $available_payment_methods = $this->getAvailablePaymentMethods();
     if (count($available_payment_methods) == 0) {
       $callback_method = 'buildNoAvailablePaymentMethods';
@@ -83,11 +84,12 @@ class PaymentSelect extends PaymentMethodSelectorBase {
   /**
    * {@inheritdoc}
    */
-  public function validateConfigurationForm(array &$form, array &$form_state) {
-    $payment_method_id = NestedArray::getValue($form_state['values'], array_merge($form['container']['#parents'], array('select', 'payment_method_id')));
+  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
+    $values = $form_state->getValues();
+    $payment_method_id = NestedArray::getValue($values, array_merge($form['container']['#parents'], array('select', 'payment_method_id')));
     // If a (different) payment method was chosen, rebuild the form.
     if (!$this->getPaymentMethod() && $payment_method_id || $this->getPaymentMethod() && $payment_method_id != $this->getPaymentMethod()->getPluginId()) {
-      $form_state['rebuild'] = TRUE;
+      $form_state->setRebuild();
       // Keep track of all previously selected payment methods so their
       // configuration does not get lost.
       if (!isset($this->selectedPaymentMethods[$payment_method_id])) {
@@ -106,7 +108,7 @@ class PaymentSelect extends PaymentMethodSelectorBase {
   /**
    * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, array &$form_state) {
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     if ($this->getPaymentMethod()) {
       $this->getPaymentMethod()->submitConfigurationForm($form['container']['payment_method_form'], $form_state);
     }
@@ -115,8 +117,9 @@ class PaymentSelect extends PaymentMethodSelectorBase {
   /**
    * Implements form AJAX callback.
    */
-  public function ajaxSubmitConfigurationForm(array &$form, array &$form_state) {
-    $form_parents = array_slice($form_state['triggering_element']['#array_parents'], 0, -2);
+  public function ajaxSubmitConfigurationForm(array &$form, FormStateInterface $form_state) {
+    $triggering_element = $form_state->get('triggering_element');
+    $form_parents = array_slice($triggering_element['#array_parents'], 0, -2);
     $root_element = NestedArray::getValue($form, $form_parents);
 
     return $root_element['payment_method_form'];
@@ -125,18 +128,18 @@ class PaymentSelect extends PaymentMethodSelectorBase {
   /**
    * Implements form API's #submit.
    */
-  public function rebuildForm(array $form, array &$form_state) {
-    $form_state['rebuild'] = TRUE;
+  public function rebuildForm(array $form, FormStateInterface $form_state) {
+    $form_state->setRebuild();
   }
 
   /**
    * Builds the payment method configuration form elements.
    *
-   * @param array $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
    * @return array
    */
-  protected function buildPaymentMethodForm(array &$form_state) {
+  protected function buildPaymentMethodForm(FormStateInterface $form_state) {
     $element = array(
       '#id' => $this->getElementId($form_state),
       '#type' => 'container',
@@ -154,7 +157,7 @@ class PaymentSelect extends PaymentMethodSelectorBase {
    * Builds the form elements for when there are no available payment methods.
    *
    */
-  public function buildNoAvailablePaymentMethods(array $element, array &$form_state, array $form) {
+  public function buildNoAvailablePaymentMethods(array $element, FormStateInterface $form_state, array $form) {
     $element['select'] = array(
       '#tree' => TRUE,
     );
@@ -174,7 +177,7 @@ class PaymentSelect extends PaymentMethodSelectorBase {
    *
    * Builds the form elements for one payment method.
    */
-  public function buildOneAvailablePaymentMethod(array $element, array &$form_state, array $form) {
+  public function buildOneAvailablePaymentMethod(array $element, FormStateInterface $form_state, array $form) {
     $payment_method = reset($element['#available_payment_methods']);
 
     // Use the only available payment method if no other was configured
@@ -197,7 +200,7 @@ class PaymentSelect extends PaymentMethodSelectorBase {
    *
    * Builds the form elements for multiple payment methods.
    */
-  public function buildMultipleAvailablePaymentMethods(array $element, array &$form_state, array $form) {
+  public function buildMultipleAvailablePaymentMethods(array $element, FormStateInterface $form_state, array $form) {
     $payment_methods = $element['#available_payment_methods'];
 
     $element['select'] = $this->buildSelector($element, $form_state, $payment_methods);
@@ -211,7 +214,7 @@ class PaymentSelect extends PaymentMethodSelectorBase {
    *
    * @param array $root_element
    *   The plugin's root element.
-   * @param array $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form's state.
    * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface[] $payment_methods
    *   The available payment methods.
@@ -219,7 +222,7 @@ class PaymentSelect extends PaymentMethodSelectorBase {
    * @return array
    *   The selector's form elements.
    */
-  protected function buildSelector(array $root_element, array &$form_state, array $payment_methods) {
+  protected function buildSelector(array $root_element, FormStateInterface $form_state, array $payment_methods) {
     $payment_method_options = array();
     foreach ($payment_methods as $payment_method) {
       $payment_method_options[$payment_method->getPluginId()] = $payment_method->getPluginLabel();
@@ -260,16 +263,17 @@ class PaymentSelect extends PaymentMethodSelectorBase {
   /**
    * Retrieves the element's ID from the form's state.
    *
-   * @param array $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
    * @return string
    */
-  protected function getElementId(array &$form_state) {
-    if (!(isset($form_state[$this->getPluginId()]) && array_key_exists(spl_object_hash($this), $form_state[$this->getPluginId()]))) {
-      $form_state[$this->getPluginId()][spl_object_hash($this)]['element_id'] = drupal_html_id($this->getPluginId());
+  protected function getElementId(FormStateInterface $form_state) {
+    $form_state_data = $form_state->get($this->getPluginId());
+    if (!($form_state_data && array_key_exists(spl_object_hash($this), $form_state_data))) {
+      $form_state_data[spl_object_hash($this)]['element_id'] = drupal_html_id($this->getPluginId());
     }
 
-    return $form_state[$this->getPluginId()][spl_object_hash($this)]['element_id'];
+    return $form_state_data[spl_object_hash($this)]['element_id'];
   }
 
   /**

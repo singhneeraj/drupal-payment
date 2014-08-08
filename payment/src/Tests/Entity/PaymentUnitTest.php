@@ -111,7 +111,7 @@ class PaymentUnitTest extends KernelTestBase {
    */
   protected function testGetLineItem() {
     $line_item = $this->lineItemManager->createInstance('payment_basic');
-    $line_item->setName($this->randomName());
+    $line_item->setName($this->randomMachineName());
     $this->assertTrue($this->payment->setLineItem($line_item) instanceof PaymentInterface);
     $this->assertIdentical(spl_object_hash($this->payment->getLineItem($line_item->getName())), spl_object_hash($line_item));
   }
@@ -121,7 +121,7 @@ class PaymentUnitTest extends KernelTestBase {
    */
   protected function testUnsetLineItem() {
     $line_item = $this->lineItemManager->createInstance('payment_basic');
-    $name = $this->randomName();
+    $name = $this->randomMachineName();
     $line_item->setName($name);
     $this->payment->setLineItem($line_item);
     $this->assertEqual(spl_object_hash($this->payment), spl_object_hash($this->payment->unsetLineItem($name)));
@@ -133,9 +133,9 @@ class PaymentUnitTest extends KernelTestBase {
    */
   protected function testGetLineItems() {
     $line_item_1 = $this->lineItemManager->createInstance('payment_basic');
-    $line_item_1->setName($this->randomName());
+    $line_item_1->setName($this->randomMachineName());
     $line_item_2 = $this->lineItemManager->createInstance('payment_basic');
-    $line_item_2->setName($this->randomName());
+    $line_item_2->setName($this->randomMachineName());
     $this->assertTrue(spl_object_hash($this->payment->setLineItems(array($line_item_1, $line_item_2))), spl_object_hash($this->payment));
     $line_items = $this->payment->getLineItems();
     if ($this->assertTrue(is_array($line_items))) {
@@ -202,7 +202,7 @@ class PaymentUnitTest extends KernelTestBase {
     for ($i = 0; $i < 2; $i++) {
       /** @var \Drupal\payment\Plugin\Payment\LineItem\Basic $line_item */
       $line_item = $this->lineItemManager->createInstance('payment_basic');
-      $line_item->setName($this->randomName());
+      $line_item->setName($this->randomMachineName());
       $line_item->setAmount($amount);
       $line_item->setQuantity($quantity);
       $this->payment->setLineItem($line_item);

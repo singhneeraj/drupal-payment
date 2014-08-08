@@ -58,11 +58,11 @@ class PaymentQueuePaymentIdsAlterUnitTest extends UnitTestCase {
    * @covers ::__construct
    */
   public function setUp() {
-    $this->categoryId = $this->randomName();
+    $this->categoryId = $this->randomMachineName();
 
-    $this->ownerId = $this->randomName();
+    $this->ownerId = $this->randomMachineName();
 
-    $this->paymentIds = array($this->randomName());
+    $this->paymentIds = array($this->randomMachineName());
 
     $this->event = new PaymentQueuePaymentIdsAlter($this->queueId, $this->categoryId, $this->ownerId, $this->paymentIds);
   }
@@ -94,7 +94,7 @@ class PaymentQueuePaymentIdsAlterUnitTest extends UnitTestCase {
    */
   public function testGetPaymentIds() {
     $this->assertSame($this->paymentIds, $this->event->getPaymentIds());
-    $payment_ids = array($this->randomName());
+    $payment_ids = array($this->randomMachineName());
     $this->assertSame($this->event, $this->event->setPaymentIds($payment_ids));
     $this->assertSame($payment_ids, $this->event->getPaymentIds());
 

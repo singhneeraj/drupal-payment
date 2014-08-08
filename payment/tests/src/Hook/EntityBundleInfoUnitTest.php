@@ -55,8 +55,8 @@ class EntityBundleInfoUnitTest extends UnitTestCase {
    * @covers ::invoke
    */
   public function testInvoke() {
-    $payment_type_plugin_id = $this->randomName();
-    $payment_type_label = $this->randomName();
+    $payment_type_plugin_id = $this->randomMachineName();
+    $payment_type_label = $this->randomMachineName();
     $payment_type_definitions = array(
       $payment_type_plugin_id => array(
         'label' => $payment_type_label
@@ -66,8 +66,8 @@ class EntityBundleInfoUnitTest extends UnitTestCase {
       ->method('getDefinitions')
       ->will($this->returnValue($payment_type_definitions));
 
-    $payment_method_configuration_plugin_id = $this->randomName();
-    $payment_method_configuration_label = $this->randomName();
+    $payment_method_configuration_plugin_id = $this->randomMachineName();
+    $payment_method_configuration_label = $this->randomMachineName();
     $payment_method_configuration_definitions = array(
       $payment_method_configuration_plugin_id => array(
         'label' => $payment_method_configuration_label

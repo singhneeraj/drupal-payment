@@ -50,7 +50,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
 
     $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
-    $this->widget = new PaymentReference($this->randomName(), array(), $this->fieldDefinition, array(), array(), $this->currentUser);
+    $this->widget = new PaymentReference($this->randomMachineName(), array(), $this->fieldDefinition, array(), array(), $this->currentUser);
   }
 
   /**
@@ -71,7 +71,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       'third_party_settings' => array(),
     );
     $plugin_definition = array();
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
     $plugin = PaymentReference::create($container, $configuration, $plugin_id, $plugin_definition);
     $this->assertInstanceOf('\Drupal\payment_reference\Plugin\Field\FIeldWidget\PaymentReference', $plugin);
   }
@@ -80,9 +80,9 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    * @covers ::formElement
    */
   public function testFormElement() {
-    $entity_type_id = $this->randomName();
-    $bundle = $this->randomName();
-    $field_name = $this->randomName();
+    $entity_type_id = $this->randomMachineName();
+    $bundle = $this->randomMachineName();
+    $field_name = $this->randomMachineName();
     $user_id = mt_rand();
     $required = TRUE;
 
@@ -104,7 +104,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
     $line_items_data = array(
       array(
         'plugin_configuration' => array(),
-        'plugin_id' => $this->randomName(),
+        'plugin_id' => $this->randomMachineName(),
       ),
     );
     $map = array(
@@ -127,7 +127,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       ->will($this->returnValue($entity));
 
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $build = $this->widget->formElement($items, 3, array(), $form, $form_state);
     $expected_build = array(
       'payment_id' => array(

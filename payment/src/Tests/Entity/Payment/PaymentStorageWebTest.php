@@ -32,7 +32,7 @@ class PaymentStorageWebTest extends WebTestBase {
     $database = \Drupal::database();
     $user = $this->drupalCreateUser();
     $payment_type_configuration = array(
-      $this->randomName() => $this->randomName(),
+      $this->randomMachineName() => $this->randomMachineName(),
     );
     $payment_method = Payment::methodManager()->createInstance('payment_basic:no_payment_required');
 

@@ -7,7 +7,8 @@
 
 namespace Drupal\payment\Tests\Entity\PaymentStatus {
 
-use Drupal\payment\Entity\PaymentStatus\PaymentStatusForm;
+  use Drupal\Core\Form\FormState;
+  use Drupal\payment\Entity\PaymentStatus\PaymentStatusForm;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -105,21 +106,21 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
    * @covers ::form
    */
   public function testForm() {
-    $label = $this->randomName();
-    $id = $this->randomName();
+    $label = $this->randomMachineName();
+    $id = $this->randomMachineName();
     $is_new = FALSE;
-    $parent_id = $this->randomName();
-    $description = $this->randomName();
+    $parent_id = $this->randomMachineName();
+    $description = $this->randomMachineName();
 
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
     $language = $this->getMockBuilder('\Drupal\Core\Language\Language')
       ->disableOriginalConstructor()
       ->getMock();
 
     $options = array(
-      'foo' => $this->randomName(),
-      'bar' => $this->randomName(),
+      'foo' => $this->randomMachineName(),
+      'bar' => $this->randomMachineName(),
     );
 
     $this->paymentStatus->expects($this->any())
@@ -188,10 +189,10 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
    * @covers ::copyFormValuesToEntity
    */
   public function testCopyFormValuesToEntity() {
-    $description = $this->randomName();
-    $id = $this->randomName();
-    $label = $this->randomName();
-    $parent_id = $this->randomName();
+    $description = $this->randomMachineName();
+    $id = $this->randomMachineName();
+    $label = $this->randomMachineName();
+    $parent_id = $this->randomMachineName();
 
     $this->paymentStatus->expects($this->once())
       ->method('setDescription')
@@ -207,19 +208,17 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
       ->with($parent_id);
 
     $form = array();
-    $form_state = array(
-      'values' => array(
-        'description' => $description,
-        'id' => $id,
-        'label' => $label,
-        'parent_id' => $parent_id,
-      ),
-    );
+    // @todo Mock FormStateInterface once EntityForm no longer uses ArrayAccess.
+    $form_state = new FormState();
+    $form_state->addValue('description', $description);
+    $form_state->addValue('id', $id);
+    $form_state->addValue('label', $label);
+    $form_state->addValue('parent_id', $parent_id);
 
     $method = new \ReflectionMethod($this->form, 'copyFormValuesToEntity');
     $method->setAccessible(TRUE);
 
-    $method->invokeArgs($this->form, array($this->paymentStatus, $form, &$form_state));
+    $method->invokeArgs($this->form, array($this->paymentStatus, $form, $form_state));
   }
 
   /**
@@ -229,7 +228,7 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
     $method = new \ReflectionMethod($this->form, 'paymentStatusIdExists');
     $method->setAccessible(TRUE);
 
-    $payment_method_configuration_id = $this->randomName();
+    $payment_method_configuration_id = $this->randomMachineName();
 
     $this->paymentStatusStorage->expects($this->at(0))
       ->method('load')
@@ -248,7 +247,10 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
    * @covers ::save
    */
   public function testSave() {
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state->expects($this->once())
+      ->method('setRedirect')
+      ->with('payment.payment_status.list');
 
     /** @var \Drupal\payment\Entity\PaymentStatus\PaymentStatusForm|\PHPUnit_Framework_MockObject_MockObject $form */
     $form = $this->getMockBuilder('\Drupal\payment\Entity\PaymentStatus\PaymentStatusForm')
@@ -261,11 +263,6 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
       ->method('save');
 
     $form->save(array(), $form_state);
-    $this->assertArrayHasKey('redirect_route', $form_state);
-    /** @var \Drupal\Core\Url $url */
-    $url = $form_state['redirect_route'];
-    $this->assertInstanceOf('\Drupal\Core\Url', $url);
-    $this->assertSame('payment.payment_status.list', $url->getRouteName());
   }
 
 }

@@ -60,7 +60,7 @@ class PaymentFormWebTest extends WebTestBase {
     $this->paymentStorage = \Drupal::entityManager()->getStorage('payment');
 
     // Create the field and field instance.
-    $field_name = strtolower($this->randomName());
+    $field_name = strtolower($this->randomMachineName());
     entity_create('field_storage_config', array(
       'cardinality' => FieldStorageConfigInterface::CARDINALITY_UNLIMITED,
       'entity_type' => 'user',

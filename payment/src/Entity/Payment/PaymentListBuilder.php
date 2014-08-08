@@ -7,7 +7,7 @@
 
 namespace Drupal\payment\Entity\Payment;
 
-use Drupal\Core\Datetime\Date;
+use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -32,9 +32,9 @@ class PaymentListBuilder extends EntityListBuilder {
   /**
    * The date formatter.
    *
-   * @var \Drupal\Core\Datetime\Date
+   * @var \Drupal\Core\Datetime\DateFormatter
    */
-  protected $date;
+  protected $dateFormatter;
 
   /**
    * The request.
@@ -56,15 +56,15 @@ class PaymentListBuilder extends EntityListBuilder {
    *   The module handler.
    * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
    *   The request.
-   * @param \Drupal\Core\DateTime\Date $date
+   * @param \Drupal\Core\DateTime\DateFormatter $date_formatter
    *   The date formatter.
    * @param \Drupal\Core\Entity\EntityStorageInterface $currency_storage
    *   The currency storage.
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $payment_storage, TranslationInterface $string_translation, ModuleHandlerInterface $module_handler, RequestStack $request_stack, Date $date, EntityStorageInterface $currency_storage) {
+  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $payment_storage, TranslationInterface $string_translation, ModuleHandlerInterface $module_handler, RequestStack $request_stack, DateFormatter $date_formatter, EntityStorageInterface $currency_storage) {
     parent::__construct($entity_type, $payment_storage);
     $this->currencyStorage = $currency_storage;
-    $this->date = $date;
+    $this->dateFormatter = $date_formatter;
     $this->moduleHandler = $module_handler;
     $this->requestStack = $request_stack;
     $this->stringTranslation = $string_translation;
@@ -77,7 +77,7 @@ class PaymentListBuilder extends EntityListBuilder {
     /** @var \Drupal\Core\Entity\EntityManagerInterface $entity_manager */
     $entity_manager = $container->get('entity.manager');
 
-    return new static($entity_type, $entity_manager->getStorage('payment'), $container->get('string_translation'), $container->get('module_handler'), $container->get('request_stack'), $container->get('date'), $entity_manager->getStorage('currency'));
+    return new static($entity_type, $entity_manager->getStorage('payment'), $container->get('string_translation'), $container->get('module_handler'), $container->get('request_stack'), $container->get('date.formatter'), $entity_manager->getStorage('currency'));
   }
 
   /**
@@ -115,7 +115,7 @@ class PaymentListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $payment) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
-    $row['data']['updated'] = $this->date->format($payment->getChangedTime());
+    $row['data']['updated'] = $this->dateFormatter->format($payment->getChangedTime());
 
     $status_definition = $payment->getStatus()->getPluginDefinition();
     $row['data']['status'] = $status_definition['label'];

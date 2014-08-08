@@ -9,6 +9,7 @@ namespace Drupal\payment_form\Plugin\Payment\Type;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface;
@@ -70,7 +71,7 @@ class PaymentFormConfigurationForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->configFactory()->get('payment_form.payment_type');
 
     $form['payment_method_selector_id'] = array(
@@ -96,11 +97,12 @@ class PaymentFormConfigurationForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->configFactory()->get('payment_form.payment_type');
-    $config->set('payment_method_selector_id', $form_state['values']['payment_method_selector_id']);
-    $config->set('limit_allowed_payment_methods', empty($form_state['values']['allowed_payment_method_ids']));
-    $config->set('allowed_payment_method_ids', $form_state['values']['allowed_payment_method_ids']);
+    $values = $form_state->getValues();
+    $config->set('payment_method_selector_id', $values['payment_method_selector_id']);
+    $config->set('limit_allowed_payment_methods', empty($values['allowed_payment_method_ids']));
+    $config->set('allowed_payment_method_ids', $values['allowed_payment_method_ids']);
     $config->save();
     parent::submitForm($form, $form_state);
   }

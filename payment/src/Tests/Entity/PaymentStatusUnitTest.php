@@ -41,7 +41,7 @@ class PaymentStatusUnitTest extends KernelTestBase {
    * Tests id() and setId().
    */
   protected function testId() {
-    $id = strtolower($this->randomName());
+    $id = strtolower($this->randomMachineName());
     if ($this->assertTrue($this->status->setId($id) instanceof PaymentStatusInterface)) {
       $this->assertIdentical($this->status->id(), $id);
     }
@@ -61,7 +61,7 @@ class PaymentStatusUnitTest extends KernelTestBase {
    * Tests getParentId() and setParentId().
    */
   protected function testGetParentId() {
-    $id = strtolower($this->randomName());
+    $id = strtolower($this->randomMachineName());
     if ($this->assertTrue($this->status->setParentId($id) instanceof PaymentStatusInterface)) {
       $this->assertIdentical($this->status->getParentId(), $id);
     }

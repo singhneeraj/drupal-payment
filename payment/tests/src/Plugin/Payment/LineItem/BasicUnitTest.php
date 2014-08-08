@@ -25,13 +25,6 @@ class BasicUnitTest extends UnitTestCase {
   protected $database;
 
   /**
-   * The form builder used for testing.
-   *
-   * @var \Drupal\Core\Form\FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $formBuilder;
-
-  /**
    * The line item under test.
    *
    * @var \Drupal\payment\Plugin\Payment\LineItem\Basic
@@ -62,16 +55,14 @@ class BasicUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->formBuilder = $this->getMock('\Drupal\Core\Form\FormBuilderInterface');
-
     $this->math = $this->getMock('\Drupal\currency\Math\MathInterface');
 
     $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
     $configuration = array();
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
     $plugin_definition = array();
-    $this->lineItem = new Basic($configuration, $plugin_id, $plugin_definition, $this->math, $this->stringTranslation, $this->database, $this->formBuilder);
+    $this->lineItem = new Basic($configuration, $plugin_id, $plugin_definition, $this->math, $this->stringTranslation, $this->database);
   }
 
   /**
@@ -82,7 +73,6 @@ class BasicUnitTest extends UnitTestCase {
     $map = array(
       array('currency.math', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->math),
       array('database', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->database),
-      array('form_builder', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->formBuilder),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
     $container->expects($this->any())
@@ -91,7 +81,7 @@ class BasicUnitTest extends UnitTestCase {
 
     $configuration = array();
     $plugin_definition = array();
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
     $form = Basic::create($container, $configuration, $plugin_id, $plugin_definition);
     $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\LineItem\Basic', $form);
   }
@@ -126,7 +116,7 @@ class BasicUnitTest extends UnitTestCase {
    * @covers ::getCurrencyCode
    */
   public function testGetCurrencyCode() {
-    $currency_code = $this->randomName();
+    $currency_code = $this->randomMachineName();
     $this->assertSame($this->lineItem, $this->lineItem->setCurrencyCode($currency_code));
     $this->assertSame($currency_code, $this->lineItem->getCurrencyCode());
   }
@@ -136,7 +126,7 @@ class BasicUnitTest extends UnitTestCase {
    * @covers ::getDescription
    */
   public function testGetDescription() {
-    $description = $this->randomName();
+    $description = $this->randomMachineName();
     $this->assertSame($this->lineItem, $this->lineItem->setDescription($description));
     $this->assertSame($description, $this->lineItem->getDescription());
   }
@@ -146,7 +136,7 @@ class BasicUnitTest extends UnitTestCase {
    */
   public function testBuildConfigurationForm() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form_elements = $this->lineItem->buildConfigurationForm($form, $form_state);
     $this->assertInternalType('array', $form_elements);
   }
@@ -156,17 +146,19 @@ class BasicUnitTest extends UnitTestCase {
    */
   public function testSubmitConfigurationForm() {
     $amount = mt_rand();
-    $currency_code = $this->randomName(3);
-    $description = $this->randomName();
-    $name = $this->randomName();
+    $currency_code = $this->randomMachineName(3);
+    $description = $this->randomMachineName();
+    $name = $this->randomMachineName();
     $payment_id = mt_rand();
     $quantity = mt_rand();
 
     $form = array(
       '#parents' => array('foo', 'bar'),
     );
-    $form_state = array(
-      'values' => array(
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state->expects($this->atLeastOnce())
+      ->method('getValues')
+      ->willReturn(array(
         'foo' => array(
           'bar' => array(
             'amount' => array(
@@ -179,8 +171,7 @@ class BasicUnitTest extends UnitTestCase {
             'quantity' => $quantity,
           ),
         ),
-      ),
-    );
+      ));
     $this->lineItem->submitConfigurationForm($form, $form_state);
 
     $this->assertSame($amount, $this->lineItem->getAmount());

@@ -78,7 +78,7 @@ class ConfigOperationsProviderUnitTest extends UnitTestCase {
      * @covers ::getOperations
      */
     public function testGetOperations() {
-    $entity_id = $this->randomName();
+    $entity_id = $this->randomMachineName();
     $plugin_id = 'payment_config:' . $entity_id;
 
     $payment_status = $this->getMockBuilder('\Drupal\payment\Entity\PaymentStatus')
@@ -92,7 +92,7 @@ class ConfigOperationsProviderUnitTest extends UnitTestCase {
 
     $operations = array(
       'foo' => array(
-        'title' => $this->randomName(),
+        'title' => $this->randomMachineName(),
       ),
     );
     $this->paymentStatusListBuilder->expects($this->once())

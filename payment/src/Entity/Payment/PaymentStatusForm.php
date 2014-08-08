@@ -10,6 +10,7 @@ namespace Drupal\payment\Entity\Payment;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -78,7 +79,7 @@ class PaymentStatusForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function form(array $form, array &$form_state) {
+  public function form(array $form, FormStateInterface $form_state) {
     $limit_plugin_ids = NULL;
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->getEntity();
@@ -123,7 +124,7 @@ class PaymentStatusForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  protected function actions(array $form, array &$form_state) {
+  protected function actions(array $form, FormStateInterface $form_state) {
     $actions = parent::actions($form, $form_state);
     $actions = array($actions['submit']);
 
@@ -133,10 +134,11 @@ class PaymentStatusForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function submit(array $form, array &$form_state) {
-    $payment_status = $this->paymentStatusManager->createInstance($form_state['values']['plugin_id']);
+  public function submit(array $form, FormStateInterface $form_state) {
+    $values = $form_state->getValues();
+    $payment_status = $this->paymentStatusManager->createInstance($values['plugin_id']);
     /** @var \Drupal\Core\Datetime\DrupalDateTime $created */
-    $created = $form_state['values']['created'];
+    $created = $values['created'];
     $payment_status->setCreated($created->getTimestamp());
 
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
@@ -144,11 +146,6 @@ class PaymentStatusForm extends EntityForm {
     $payment->setStatus($payment_status);
     $payment->save();
 
-    $form_state['redirect_route'] = array(
-      'route_name' => 'payment.payment.view',
-      'route_parameters' => array(
-        'payment' => $payment->id(),
-      ),
-    );
+    $form_state->setRedirectUrl($payment->urlInfo());
   }
 }

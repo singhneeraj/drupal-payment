@@ -134,20 +134,20 @@ class PaymentStorageUnitTest extends UnitTestCase {
    * @covers ::mapToStorageRecord
    */
   public function testMapToStorageRecord() {
-    $bundle = $this->randomName();
-    $currency_code = $this->randomName();
-    $id = $this->randomName();
+    $bundle = $this->randomMachineName();
+    $currency_code = $this->randomMachineName();
+    $id = $this->randomMachineName();
     $first_payment_status_id = mt_rand();
     $last_payment_status_id = mt_rand();
     $owner_id = mt_rand();
-    $uuid = $this->randomName();
-    $payment_method_id = $this->randomName();
+    $uuid = $this->randomMachineName();
+    $payment_method_id = $this->randomMachineName();
     $payment_method_configuration = array(
-      'foo' => $this->randomName(),
+      'foo' => $this->randomMachineName(),
     );
-    $payment_type_id = $this->randomName();
+    $payment_type_id = $this->randomMachineName();
     $payment_type_configuration = array(
-      'foo' => $this->randomName(),
+      'foo' => $this->randomMachineName(),
     );
 
     $first_payment_status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');

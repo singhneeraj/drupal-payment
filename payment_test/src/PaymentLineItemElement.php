@@ -9,6 +9,7 @@ namespace Drupal\payment_test;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\payment\Element\PaymentLineItemsInput;
 use Drupal\payment\Tests\Generate;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -32,7 +33,7 @@ class PaymentLineItemElement implements ContainerInjectionInterface, FormInterfa
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state) {
     // Nest the element to make sure that works.
     $form['container']['line_item'] = array(
       '#cardinality' => 4,
@@ -50,13 +51,13 @@ class PaymentLineItemElement implements ContainerInjectionInterface, FormInterfa
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, array &$form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state) {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     $line_items_data = array();
     foreach (PaymentLineItemsInput::getLineItems($form['container']['line_item'], $form_state) as $line_item) {
       $line_items_data[] = array(

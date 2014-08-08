@@ -11,6 +11,7 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\payment\Tests\Generate;
 use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface;
@@ -70,7 +71,7 @@ class PaymentSelectPaymentMethodSelectorForm implements ContainerInjectionInterf
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state, $tree = FALSE) {
+  public function buildForm(array $form, FormStateInterface $form_state, $tree = FALSE) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->entityManager->getStorage('payment')->create(array(
       'bundle' => 'payment_unavailable',
@@ -110,7 +111,7 @@ class PaymentSelectPaymentMethodSelectorForm implements ContainerInjectionInterf
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, array &$form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state) {
     /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface $payment_method_selector */
     $payment_method_selector = $form_state['storage']['payment_method_selector'];
     $plugin_form = isset($form['tree']) ? $form['tree']['payment_method'] : $form['payment_method'];
@@ -120,7 +121,7 @@ class PaymentSelectPaymentMethodSelectorForm implements ContainerInjectionInterf
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface $payment_method_selector */
     $payment_method_selector = $form_state['storage']['payment_method_selector'];
     $plugin_form = isset($form['tree']) ? $form['tree']['payment_method'] : $form['payment_method'];

@@ -41,11 +41,11 @@ class PaymentStatusWebTest extends WebTestBase {
    * Tests listing.
    */
   protected function testList() {
-    $payment_status_id = strtolower($this->randomName());
+    $payment_status_id = strtolower($this->randomMachineName());
     /** @var \Drupal\payment\Entity\PaymentStatusInterface $status */
     $status = $this->paymentStatusStorage->create(array());
     $status->setId($payment_status_id)
-      ->setLabel($this->randomName())
+      ->setLabel($this->randomMachineName())
       ->save();
 
     $path = 'admin/config/services/payment/status';
@@ -84,7 +84,7 @@ class PaymentStatusWebTest extends WebTestBase {
     $this->assertResponse(200);
 
     // Test a valid submission.
-    $payment_status_id = strtolower($this->randomName());
+    $payment_status_id = strtolower($this->randomMachineName());
     $label = $this->randomString();
     $parent_id = 'payment_success';
     $description = $this->randomString();
@@ -135,7 +135,7 @@ class PaymentStatusWebTest extends WebTestBase {
    * Tests deleting a payment status.
    */
   protected function testDelete() {
-    $payment_status_id = strtolower($this->randomName());
+    $payment_status_id = strtolower($this->randomMachineName());
     /** @var \Drupal\payment\Entity\PaymentStatusInterface $status */
     $status = $this->paymentStatusStorage->create(array());
     $status->setId($payment_status_id)

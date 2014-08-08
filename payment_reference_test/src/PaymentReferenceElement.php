@@ -8,6 +8,7 @@
 namespace Drupal\payment_reference_test;
 
 use Drupal\Core\Form\FormInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\payment\Tests\Generate;
 
 /**
@@ -25,7 +26,7 @@ class PaymentReferenceElement implements FormInterface {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state) {
     $form['payment_reference'] = array(
       '#entity_type_id' => 'user',
       '#bundle' => 'user',
@@ -48,13 +49,13 @@ class PaymentReferenceElement implements FormInterface {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, array &$form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state) {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     \Drupal::state()->set('payment_reference_test_payment_reference_element', $form_state['values']['payment_reference']);
   }
 }

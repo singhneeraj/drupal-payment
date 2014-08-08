@@ -8,6 +8,7 @@
 namespace Drupal\payment_reference\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldItemList;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Provides a payment reference field item list.
@@ -20,20 +21,20 @@ class PaymentReferenceItemList extends FieldItemList {
   /**
    * {@inheritdoc}
    */
-  public function defaultValuesForm(array &$form, array &$form_state) {
+  public function defaultValuesForm(array &$form, FormStateInterface $form_state) {
     return array();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function defaultValuesFormValidate(array $element, array &$form, array &$form_state) {
+  public function defaultValuesFormValidate(array $element, array &$form, FormStateInterface $form_state) {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function defaultValuesFormSubmit(array $element, array &$form, array &$form_state) {
+  public function defaultValuesFormSubmit(array $element, array &$form, FormStateInterface $form_state) {
   }
 
 }

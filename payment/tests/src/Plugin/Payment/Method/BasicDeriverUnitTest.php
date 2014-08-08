@@ -79,16 +79,16 @@ class BasicDeriverUnitTest extends UnitTestCase {
    * @covers ::getDerivativeDefinitions
    */
   public function testGetDerivativeDefinitions() {
-    $id_enabled_basic = $this->randomName();
-    $id_disabled_basic = $this->randomName();
-    $brand_label = $this->randomName();
-    $message_text = $this->randomName();
-    $message_text_format = $this->randomName();
-    $execute_status_id = $this->randomName();
+    $id_enabled_basic = $this->randomMachineName();
+    $id_disabled_basic = $this->randomMachineName();
+    $brand_label = $this->randomMachineName();
+    $message_text = $this->randomMachineName();
+    $message_text_format = $this->randomMachineName();
+    $execute_status_id = $this->randomMachineName();
     $capture = TRUE;
-    $capture_status_id = $this->randomName();
+    $capture_status_id = $this->randomMachineName();
     $refund = TRUE;
-    $refund_status_id = $this->randomName();
+    $refund_status_id = $this->randomMachineName();
 
     $payment_method_enabled_basic = $this->getMock('\Drupal\payment\Entity\PaymentMethodConfigurationInterface');
     $payment_method_enabled_basic->expects($this->any())
@@ -142,7 +142,7 @@ class BasicDeriverUnitTest extends UnitTestCase {
       ->will($this->returnValue(TRUE));
     $payment_method_enabled_no_basic->expects($this->any())
       ->method('getPluginId')
-      ->will($this->returnValue($this->randomName()));
+      ->will($this->returnValue($this->randomMachineName()));
 
     $this->paymentMethodConfigurationStorage->expects($this->once())
       ->method('loadMultiple')
@@ -181,7 +181,7 @@ class BasicDeriverUnitTest extends UnitTestCase {
       ->with('payment_basic')
       ->will($this->returnValue($payment_method_plugin));
 
-    $class = $this->randomName();
+    $class = $this->randomMachineName();
     $derivatives = $this->deriver->getDerivativeDefinitions(array(
       'class' => $class,
     ));

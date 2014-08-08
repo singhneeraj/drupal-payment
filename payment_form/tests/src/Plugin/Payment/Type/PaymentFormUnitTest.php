@@ -93,7 +93,7 @@ class PaymentFormUnitTest extends UnitTestCase {
 
     $configuration = array();
     $plugin_definition = array();
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
     $plugin = PaymentForm::create($container, $configuration, $plugin_id, $plugin_definition);
     $this->assertInstanceOf('\Drupal\payment_form\Plugin\Payment\Type\PaymentForm', $plugin);
   }
@@ -103,7 +103,7 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @covers ::getEntityTypeId
    */
   public function testGetEntityTypeId() {
-    $id = $this->randomName();
+    $id = $this->randomMachineName();
     $this->assertSame($this->paymentType, $this->paymentType->setEntityTypeId($id));
     $this->assertSame($id, $this->paymentType->getEntityTypeId());
   }
@@ -113,7 +113,7 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @covers ::getBundle
    */
   public function testGetBundle() {
-    $bundle = $this->randomName();
+    $bundle = $this->randomMachineName();
     $this->assertSame($this->paymentType, $this->paymentType->setBundle($bundle));
     $this->assertSame($bundle, $this->paymentType->getBundle());
   }
@@ -123,7 +123,7 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @covers ::getFieldName
    */
   public function testGetFieldName() {
-    $name = $this->randomName();
+    $name = $this->randomMachineName();
     $this->assertSame($this->paymentType, $this->paymentType->setFieldName($name));
     $this->assertSame($name, $this->paymentType->getFieldName());
   }
@@ -136,10 +136,10 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @depends testGetFieldName
    */
   public function testPaymentDescription() {
-    $entity_type_id = $this->randomName();
-    $bundle = $this->randomName();
-    $field_name = $this->randomName();
-    $label = $this->randomName();
+    $entity_type_id = $this->randomMachineName();
+    $bundle = $this->randomMachineName();
+    $field_name = $this->randomMachineName();
+    $label = $this->randomMachineName();
     $field_definition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
     $field_definition->expects($this->atLeastOnce())
       ->method('getLabel')
@@ -165,8 +165,8 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @covers ::paymentDescription
    */
   public function testPaymentDescriptionWithNonExistingField() {
-    $entity_type_id = $this->randomName();
-    $bundle = $this->randomName();
+    $entity_type_id = $this->randomMachineName();
+    $bundle = $this->randomMachineName();
 
     $this->entityManager->expects($this->atLeastOnce())
       ->method('getFieldDefinitions')
@@ -184,7 +184,7 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @covers ::getDestinationUrl
    */
   public function testGetDestinationUrl() {
-    $destination_url = $this->randomName();
+    $destination_url = $this->randomMachineName();
     $this->assertSame(spl_object_hash($this->paymentType), spl_object_hash($this->paymentType->setDestinationUrl($destination_url)));
     $this->assertSame($destination_url, $this->paymentType->getDestinationUrl());
   }
@@ -202,7 +202,7 @@ class PaymentFormUnitTest extends UnitTestCase {
     $request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
       ->disableOriginalConstructor()
       ->getMock();
-    $request_type = $this->randomName();
+    $request_type = $this->randomMachineName();
     $response = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Response')
       ->disableOriginalConstructor()
       ->getMock();

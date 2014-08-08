@@ -74,8 +74,8 @@ class PaymentFormConfigurationFormUnitTest extends UnitTestCase {
     $this->configFactoryConfiguration = array(
       'payment_form.payment_type' => array(
         'limit_allowed_payment_methods' => TRUE,
-        'allowed_payment_method_ids' => array($this->randomName()),
-        'payment_method_selector_id' => $this->randomName(),
+        'allowed_payment_method_ids' => array($this->randomMachineName()),
+        'payment_method_selector_id' => $this->randomMachineName(),
       ),
     );
 
@@ -121,7 +121,7 @@ class PaymentFormConfigurationFormUnitTest extends UnitTestCase {
    */
   public function testBuildForm() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form = $this->form->buildForm($form, $form_state);
     $this->assertInternalType('array', $form);
   }
@@ -131,13 +131,14 @@ class PaymentFormConfigurationFormUnitTest extends UnitTestCase {
    */
   public function testSubmitForm() {
     $form = array();
-    $form_state = array(
-      'values' => array(
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state->expects($this->atLeastOnce())
+      ->method('getValues')
+      ->willReturn(array(
         'payment_method_selector_id' => $this->configFactoryConfiguration['payment_form.payment_type']['payment_method_selector_id'],
         'allowed_payment_method_ids' => $this->configFactoryConfiguration['payment_form.payment_type']['allowed_payment_method_ids'],
         'limit_allowed_payment_method' => !empty($this->configFactoryConfiguration['payment_form.payment_type']['payment_method_selector_id']),
-      ),
-    );
+      ));
     $this->form->submitForm($form, $form_state);
   }
 

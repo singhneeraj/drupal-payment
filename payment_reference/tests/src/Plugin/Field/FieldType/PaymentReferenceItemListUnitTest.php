@@ -39,7 +39,7 @@ class PaymentReferenceItemListUnitTest extends UnitTestCase {
    */
   public function testDefaultValuesForm() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     // We explicitly do not want form elements to configure a default value.
     $this->assertSame(array(), $this->itemList->defaultValuesForm($form, $form_state));
   }
@@ -50,7 +50,7 @@ class PaymentReferenceItemListUnitTest extends UnitTestCase {
   public function testDefaultValuesFormValidate() {
     $element = array();
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     // These methods do nothing, but make sure they do not cause errors either.
     $this->itemList->defaultValuesFormValidate($element, $form, $form_state);
   }
@@ -61,7 +61,7 @@ class PaymentReferenceItemListUnitTest extends UnitTestCase {
   public function testDefaultValuesFormSubmit() {
     $element = array();
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     // These methods do nothing, but make sure they do not cause errors either.
     $this->itemList->defaultValuesFormSubmit($element, $form, $form_state);
   }

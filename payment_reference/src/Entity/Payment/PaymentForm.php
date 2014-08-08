@@ -9,6 +9,7 @@ namespace Drupal\payment_reference\Entity\Payment;
 
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -52,7 +53,7 @@ class PaymentForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function form(array $form, array &$form_state) {
+  public function form(array $form, FormStateInterface $form_state) {
     $payment = $this->getEntity();
 
     $form['line_items'] = array(
@@ -85,20 +86,22 @@ class PaymentForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function validate(array $form, array &$form_state) {
+  public function validate(array $form, FormStateInterface $form_state) {
+    $storage = $form_state->get('storage');
     /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface $payment_method_selector */
-    $payment_method_selector = $form_state['storage']['payment_method_selector'];
+    $payment_method_selector = $storage['payment_method_selector'];
     $payment_method_selector->validateConfigurationForm($form['payment_method'], $form_state);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submit(array $form, array &$form_state) {
+  public function submit(array $form, FormStateInterface $form_state) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->getEntity();
+    $storage = $form_state->get('storage');
     /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface $payment_method_selector */
-    $payment_method_selector = $form_state['storage']['payment_method_selector'];
+    $payment_method_selector = $storage['payment_method_selector'];
     $payment_method_selector->submitConfigurationForm($form['payment_method'], $form_state);
     $payment->setPaymentMethod($payment_method_selector->getPaymentMethod());
     $payment->save();
@@ -108,7 +111,7 @@ class PaymentForm extends ContentEntityForm {
   /**
    * Returns an array of supported actions for the current entity form.
    */
-  protected function actions(array $form, array &$form_state) {
+  protected function actions(array $form, FormStateInterface $form_state) {
     // Only use the existing submit action.
     $actions = parent::actions($form, $form_state);
     $actions = array(

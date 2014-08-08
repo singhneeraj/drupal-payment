@@ -70,7 +70,7 @@ class QueueUnitTest extends UnitTestCase {
 
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
-    $this->queueId = $this->randomName();
+    $this->queueId = $this->randomMachineName();
 
     $this->queue = new Queue($this->queueId, $this->database, $this->eventDispatcher, $this->paymentStatusManager);
   }
@@ -89,9 +89,9 @@ class QueueUnitTest extends UnitTestCase {
    * @covers ::alterLoadedPaymentIds
    */
   public function testAlterLoadedPaymentIds() {
-    $category_id = $this->randomName();
-    $owner_id = $this->randomName();
-    $payment_ids = array($this->randomName());
+    $category_id = $this->randomMachineName();
+    $owner_id = $this->randomMachineName();
+    $payment_ids = array($this->randomMachineName());
 
     $this->eventDispatcher->expects($this->once())
       ->method('dispatch')
@@ -107,7 +107,7 @@ class QueueUnitTest extends UnitTestCase {
    */
   public function testClaimPayment() {
     $payment_id = mt_rand();
-    $acquisition_code = $this->randomName();
+    $acquisition_code = $this->randomMachineName();
 
     /** @var \Drupal\payment\Queue|\PHPUnit_Framework_MockObject_MockObject $queue */
     $queue = $this->getMockBuilder('\Drupal\payment\Queue')

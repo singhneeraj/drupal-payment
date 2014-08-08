@@ -103,7 +103,7 @@ class PaymentRefundFormUnitTest extends UnitTestCase {
    * @covers ::getCancelUrl
    */
   function testGetCancelUrl() {
-    $url = new Url($this->randomName());
+    $url = new Url($this->randomMachineName());
 
     $this->payment->expects($this->atLeastOnce())
       ->method('urlInfo')
@@ -121,7 +121,7 @@ class PaymentRefundFormUnitTest extends UnitTestCase {
     $payment_method->expects($this->once())
       ->method('refundPayment');
 
-    $url = new Url($this->randomName());
+    $url = new Url($this->randomMachineName());
 
     $this->payment->expects($this->atLeastOnce())
       ->method('getPaymentMethod')
@@ -132,10 +132,12 @@ class PaymentRefundFormUnitTest extends UnitTestCase {
       ->will($this->returnValue($url));
 
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state->expects($this->once())
+      ->method('setRedirectUrl')
+      ->with($url);
 
     $this->form->submit($form, $form_state);
-    $this->assertSame($url, $form_state['redirect_route']);
   }
 
 }

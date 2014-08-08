@@ -53,7 +53,7 @@ class UnavailableUnitTest extends UnitTestCase {
       ->will($this->returnArgument(0));
 
     $configuration = array();
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
     $plugin_definition = array();
     $this->paymentType = new Unavailable($configuration, $plugin_id, $plugin_definition, $this->eventDispatcher, $this->stringTranslation);
   }
@@ -73,7 +73,7 @@ class UnavailableUnitTest extends UnitTestCase {
 
     $configuration = array();
     $plugin_definition = array();
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
     $form = Unavailable::create($container, $configuration, $plugin_id, $plugin_definition);
     $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\Type\Unavailable', $form);
   }

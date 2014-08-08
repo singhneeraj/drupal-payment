@@ -17,7 +17,7 @@ use Drupal\user\UserInterface;
  * @ConfigEntityType(
  *   bundle_label = @Translation("Payment method type"),
  *   controllers = {
- *     "access" = "Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccess",
+ *     "access" = "Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccessControlHandler",
  *     "form" = {
  *       "default" = "Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm",
  *       "delete" = "Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationDeleteForm"

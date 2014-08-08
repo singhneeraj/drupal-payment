@@ -125,7 +125,7 @@ class PaymentReference extends ControllerBase implements ContainerInjectionInter
   public function payAccess(Request $request, $entity_type_id, $bundle, $field_name) {
     if ($this->fieldExists($entity_type_id, $bundle, $field_name)) {
       $field_definitions = $this->entityManager->getFieldDefinitions($entity_type_id, $bundle);
-      $access_controller = $this->entityManager->getAccessController('payment');
+      $access_controller = $this->entityManager->getAccessControlHandler('payment');
       $payment_ids = $this->queue->loadPaymentIds($entity_type_id . '.' . $field_name, $this->currentUser->id());
       // Only grant access if the current user does not already have payments
       // available for this instance, and they have the permission to create them.

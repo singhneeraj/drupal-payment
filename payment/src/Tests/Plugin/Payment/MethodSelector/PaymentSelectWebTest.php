@@ -31,8 +31,8 @@ class PaymentSelectWebTest extends WebTestBase {
   protected function createPaymentMethod() {
     $payment_method = Generate::createPaymentMethodConfiguration(2, 'payment_basic');
     $payment_method->setPluginConfiguration(array(
-      'brand_label' => $this->randomName(),
-      'message_text' => $this->randomName(),
+      'brand_label' => $this->randomMachineName(),
+      'message_text' => $this->randomMachineName(),
     ));
     $payment_method->save();
 

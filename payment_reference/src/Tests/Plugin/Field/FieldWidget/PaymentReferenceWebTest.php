@@ -27,7 +27,7 @@ class PaymentReferenceWebTest extends WebTestBase {
    */
   protected function testWidget() {
     // Create the field and field instance.
-    $field_name = strtolower($this->randomName());
+    $field_name = strtolower($this->randomMachineName());
     entity_create('field_storage_config', array(
       'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
       'entity_type' => 'user',

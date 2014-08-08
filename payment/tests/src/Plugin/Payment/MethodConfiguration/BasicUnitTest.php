@@ -77,7 +77,7 @@ class BasicUnitTest extends UnitTestCase {
 
     $configuration = array();
     $plugin_definition = array();
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
     $form = Basic::create($container, $configuration, $plugin_id, $plugin_definition);
     $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\MethodConfiguration\Basic', $form);
   }
@@ -101,7 +101,7 @@ class BasicUnitTest extends UnitTestCase {
    * @covers ::setExecuteStatusId
    */
   public function testGetExecuteStatusId() {
-    $status = $this->randomName();
+    $status = $this->randomMachineName();
     $this->assertSame($this->paymentMethodConfiguration, $this->paymentMethodConfiguration->setExecuteStatusId($status));
     $this->assertSame($status, $this->paymentMethodConfiguration->getExecuteStatusId());
   }
@@ -111,7 +111,7 @@ class BasicUnitTest extends UnitTestCase {
    * @covers ::setCaptureStatusId
    */
   public function testGetCaptureStatusId() {
-    $status = $this->randomName();
+    $status = $this->randomMachineName();
     $this->assertSame($this->paymentMethodConfiguration, $this->paymentMethodConfiguration->setCaptureStatusId($status));
     $this->assertSame($status, $this->paymentMethodConfiguration->getCaptureStatusId());
   }
@@ -131,7 +131,7 @@ class BasicUnitTest extends UnitTestCase {
    * @covers ::setRefundStatusId
    */
   public function testGetRefundStatusId() {
-    $status = $this->randomName();
+    $status = $this->randomMachineName();
     $this->assertSame($this->paymentMethodConfiguration, $this->paymentMethodConfiguration->setRefundStatusId($status));
     $this->assertSame($status, $this->paymentMethodConfiguration->getRefundStatusId());
   }
@@ -151,7 +151,7 @@ class BasicUnitTest extends UnitTestCase {
    */
   public function testBuildConfigurationForm() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $elements = $this->paymentMethodConfiguration->buildConfigurationForm($form, $form_state);
     $form['plugin_form']['#process'][] = array($this->paymentMethodConfiguration, 'processBuildConfigurationForm');
     $this->assertArrayHasKey('message', $elements);
@@ -165,12 +165,12 @@ class BasicUnitTest extends UnitTestCase {
   public function testProcessBuildConfigurationForm() {
     $definitions = array(
       array(
-        'id' => $this->randomName(),
-        'label' => $this->randomName(),
+        'id' => $this->randomMachineName(),
+        'label' => $this->randomMachineName(),
       ),
       array(
-        'id' => $this->randomName(),
-        'label' => $this->randomName(),
+        'id' => $this->randomMachineName(),
+        'label' => $this->randomMachineName(),
       ),
     );
     $this->paymentStatusManager->expects($this->atLeastOnce())
@@ -181,11 +181,11 @@ class BasicUnitTest extends UnitTestCase {
       '#parents' => array('foo', 'bar'),
     );
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
     $method = new \ReflectionMethod($this->paymentMethodConfiguration ,'processBuildConfigurationForm');
     $method->setAccessible(TRUE);
-    $elements = $method->invokeArgs($this->paymentMethodConfiguration, array(&$element, &$form_state, &$form));
+    $elements = $method->invokeArgs($this->paymentMethodConfiguration, array(&$element, $form_state, &$form));
     $this->assertInternalType('array', $elements);
     foreach (array('brand_label', 'execute', 'capture', 'refund') as $key) {
       $this->assertArrayHasKey($key, $elements);
@@ -197,13 +197,13 @@ class BasicUnitTest extends UnitTestCase {
    * @covers ::submitConfigurationForm
    */
   public function testSubmitConfigurationForm() {
-    $brand_label = $this->randomName();
-    $message = $this->randomName();
-    $execute_status_id = $this->randomName();
+    $brand_label = $this->randomMachineName();
+    $message = $this->randomMachineName();
+    $execute_status_id = $this->randomMachineName();
     $capture = TRUE;
-    $capture_status_id = $this->randomName();
+    $capture_status_id = $this->randomMachineName();
     $refund = TRUE;
-    $refund_status_id = $this->randomName();
+    $refund_status_id = $this->randomMachineName();
 
     $form = array(
       'message' => array(
@@ -215,8 +215,10 @@ class BasicUnitTest extends UnitTestCase {
         ),
       ),
     );
-    $form_state = array(
-      'values' => array(
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state->expects($this->atLeastOnce())
+      ->method('getValues')
+      ->willReturn(array(
         'foo' => array(
           'bar' => array(
             'brand_label' => $brand_label,
@@ -234,8 +236,7 @@ class BasicUnitTest extends UnitTestCase {
             ),
           ),
         ),
-      ),
-    );
+      ));
 
     $this->paymentMethodConfiguration->submitConfigurationForm($form, $form_state);
 
@@ -250,7 +251,7 @@ class BasicUnitTest extends UnitTestCase {
    * @covers ::setBrandLabel
    */
   public function testGetBrandLabel() {
-    $label = $this->randomName();
+    $label = $this->randomMachineName();
     $this->assertSame($this->paymentMethodConfiguration, $this->paymentMethodConfiguration->setBrandLabel($label));
     $this->assertSame($label, $this->paymentMethodConfiguration->getBrandLabel());
   }

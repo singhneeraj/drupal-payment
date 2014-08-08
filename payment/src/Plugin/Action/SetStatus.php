@@ -8,6 +8,7 @@
 namespace Drupal\payment\Plugin\Action;
 
 use Drupal\Core\Action\ConfigurableActionBase;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Entity\PaymentInterface;
@@ -81,7 +82,7 @@ class SetStatus extends ConfigurableActionBase implements ContainerFactoryPlugin
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, array &$form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form['payment_status_plugin_id'] = array(
       '#default_value' => $this->configuration['payment_status_plugin_id'],
       '#options' => $this->paymentStatusManager->options(),
@@ -96,8 +97,9 @@ class SetStatus extends ConfigurableActionBase implements ContainerFactoryPlugin
   /**
    * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, array &$form_state) {
-    $this->configuration['payment_status_plugin_id'] = $form_state['values']['payment_status_plugin_id'];
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+    $values = $form_state->getValues();
+    $this->configuration['payment_status_plugin_id'] = $values['payment_status_plugin_id'];
   }
 
 }

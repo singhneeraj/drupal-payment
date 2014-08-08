@@ -60,7 +60,7 @@ class QueueWebTest extends WebTestBase {
     $this->database = \Drupal::database();
     $this->paymentMethodManager = \Drupal::service('plugin.manager.payment.method');
     $this->paymentStatusManager = \Drupal::service('plugin.manager.payment.status');
-    $queue_id = $this->randomName();
+    $queue_id = $this->randomMachineName();
     $this->queue = new Queue($queue_id, $this->database, \Drupal::service('event_dispatcher'), $this->paymentStatusManager);
   }
 
@@ -68,8 +68,8 @@ class QueueWebTest extends WebTestBase {
    * Tests queue service.
    */
   function testQueue() {
-    $category_id_prefix = $this->randomName();
-    $category_id = $category_id_prefix . $this->randomName();
+    $category_id_prefix = $this->randomMachineName();
+    $category_id = $category_id_prefix . $this->randomMachineName();
     $payment = Generate::createPayment(2);
     $payment->setStatus($this->paymentStatusManager->createInstance('payment_success'));
     $payment->save();

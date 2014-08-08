@@ -7,7 +7,9 @@
 
 namespace Drupal\payment\Tests\Entity\Payment {
 
-use Drupal\payment\Entity\Payment\PaymentEditForm;
+  use Drupal\Core\Form\FormState;
+  use Drupal\Core\Url;
+  use Drupal\payment\Entity\Payment\PaymentEditForm;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -107,13 +109,15 @@ class PaymentEditFormUnitTest extends UnitTestCase {
    * @covers ::form
    */
   public function testForm() {
-    $form_state = array();
+    // @todo Mock FormStateInterface once ContentEntityForm no longer uses
+    //   ArrayAccess.
+    $form_state = new FormState();
 
     $this->form->setFormDisplay($this->formDisplay, $form_state);
 
-    $line_item_id_a = $this->randomName();
+    $line_item_id_a = $this->randomMachineName();
     $line_item_configuration_a = array(
-      'foo' => $this->randomName(),
+      'foo' => $this->randomMachineName(),
     );
     $line_item_a = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface');
     $line_item_a->expects($this->any())
@@ -122,9 +126,9 @@ class PaymentEditFormUnitTest extends UnitTestCase {
     $line_item_a->expects($this->any())
       ->method('getConfiguration')
       ->will($this->returnValue($line_item_configuration_a));
-    $line_item_id_b = $this->randomName();
+    $line_item_id_b = $this->randomMachineName();
     $line_item_configuration_b = array(
-      'bar' => $this->randomName(),
+      'bar' => $this->randomMachineName(),
     );
     $line_item_b = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface');
     $line_item_b->expects($this->any())
@@ -138,7 +142,7 @@ class PaymentEditFormUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $currency_code = $this->randomName();
+    $currency_code = $this->randomMachineName();
 
     $this->payment->expects($this->any())
       ->method('language')
@@ -151,8 +155,8 @@ class PaymentEditFormUnitTest extends UnitTestCase {
       ->will($this->returnValue(array($line_item_a, $line_item_b)));
 
     $currency_options = array(
-      'baz' => $this->randomName(),
-      'qux' => $this->randomName(),
+      'baz' => $this->randomMachineName(),
+      'qux' => $this->randomMachineName(),
     );
     $this->currencyFormHelper->expects($this->once())
       ->method('getCurrencyOptions')
@@ -184,7 +188,27 @@ class PaymentEditFormUnitTest extends UnitTestCase {
    * @covers ::save
    */
   public function testSave() {
-    $form_state = array();
+    $payment_type = $this->getMock('\Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface');
+
+    $url = new Url($this->randomMachineName());
+
+    $this->payment->expects($this->once())
+      ->method('save');
+    $this->payment->expects($this->any())
+      ->method('getPaymentType')
+      ->will($this->returnValue($payment_type));
+    $this->payment->expects($this->any())
+      ->method('urlInfo')
+      ->with('canonical')
+      ->willReturn($url);
+
+    // @todo Mock FormStateInterface.
+    $form_state = $this->getMockBuilder('\Drupal\Core\Form\FormState')
+      ->setMethods(array('setRedirectUrl'))
+      ->getMock();
+    $form_state->expects($this->once())
+      ->method('setRedirectUrl')
+      ->with($url);
 
     /** @var \Drupal\payment\Entity\Payment\PaymentEditForm|\PHPUnit_Framework_MockObject_MockObject $form */
     $form = $this->getMockBuilder('\Drupal\payment\Entity\Payment\PaymentEditForm')
@@ -194,20 +218,7 @@ class PaymentEditFormUnitTest extends UnitTestCase {
     $form->setFormDisplay($this->formDisplay, $form_state);
     $form->setEntity($this->payment);
 
-    $payment_type = $this->getMock('\Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface');
-
-    $this->payment->expects($this->once())
-      ->method('save');
-    $this->payment->expects($this->any())
-      ->method('getPaymentType')
-      ->will($this->returnValue($payment_type));
-
     $form->save(array(), $form_state);
-    $this->assertArrayHasKey('redirect_route', $form_state);
-    /** @var \Drupal\Core\Url $url */
-    $url = $form_state['redirect_route'];
-    $this->assertInstanceOf('\Drupal\Core\Url', $url);
-    $this->assertSame('payment.payment.view', $url->getRouteName());
   }
 
 }

@@ -54,9 +54,9 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
     $configuration = array();
-    $this->pluginId = $this->randomName();
+    $this->pluginId = $this->randomMachineName();
     $this->pluginDefinition = array(
-      'label' => $this->randomName(),
+      'label' => $this->randomMachineName(),
     );
     $this->status = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Status\PaymentStatusBase')
       ->setConstructorArgs(array($configuration, $this->pluginId, $this->pluginDefinition, $this->paymentStatusManager))
@@ -78,7 +78,7 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
     /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase $class_name */
     $class_name = get_class($this->status);
 
-    $line_item = $class_name::create($container, array(), $this->randomName(), array());
+    $line_item = $class_name::create($container, array(), $this->randomMachineName(), array());
     $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\Status\PaymentStatusBase', $line_item);
   }
 
@@ -107,7 +107,7 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
    */
   public function testGetConfiguration() {
     $configuration = array(
-      $this->randomName() => mt_rand(),
+      $this->randomMachineName() => mt_rand(),
     );
     $this->assertNull($this->status->setConfiguration($configuration));
     $this->assertSame($configuration, $this->status->getConfiguration());
@@ -147,7 +147,7 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
    * @covers ::getChildren
    */
   public function testGetChildren() {
-    $children = array($this->randomName());
+    $children = array($this->randomMachineName());
     $this->paymentStatusManager->expects($this->once())
       ->method('getChildren')
       ->with($this->pluginId)
@@ -159,7 +159,7 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
    * @covers ::getDescendants
    */
   public function testGetDescendants() {
-    $descendants = array($this->randomName());
+    $descendants = array($this->randomMachineName());
     $this->paymentStatusManager->expects($this->once())
       ->method('getDescendants')
       ->with($this->pluginId)
@@ -171,7 +171,7 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
    * @covers ::getAncestors
    */
   public function testGetAncestors() {
-    $ancestors = array($this->randomName());
+    $ancestors = array($this->randomMachineName());
     $this->paymentStatusManager->expects($this->once())
       ->method('getAncestors')
       ->with($this->pluginId)

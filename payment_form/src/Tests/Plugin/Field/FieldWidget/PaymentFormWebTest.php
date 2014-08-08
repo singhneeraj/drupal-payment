@@ -34,7 +34,7 @@ class PaymentFormWebTest extends WebTestBase {
     $this->drupalLogin($user);
 
     // Test the widget when setting a default field value.
-    $field_name = strtolower($this->randomName());
+    $field_name = strtolower($this->randomMachineName());
     $this->drupalPostForm('admin/config/people/accounts/fields', array(
       'fields[_add_new_field][label]' => $this->randomString(),
       'fields[_add_new_field][field_name]' => $field_name,

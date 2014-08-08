@@ -69,7 +69,7 @@ class PaymentSelectUnitTest extends UnitTestCase {
       ->method('translate')
       ->will($this->returnArgument(0));
 
-    $this->paymentMethodSelectorPluginId = $this->randomName();
+    $this->paymentMethodSelectorPluginId = $this->randomMachineName();
     $this->paymentMethodSelector = new PaymentSelect(array(), $this->paymentMethodSelectorPluginId, array(), $this->currentUser, $this->paymentMethodManager, $this->stringTranslation);
   }
 
@@ -95,14 +95,16 @@ class PaymentSelectUnitTest extends UnitTestCase {
    * @covers ::buildPaymentMethodForm
    */
   public function testBuildPaymentMethodForm() {
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+
     $payment_method_form = array(
-      '#type' => $this->randomName(),
+      '#type' => $this->randomMachineName(),
     );
 
     $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
     $payment_method->expects($this->once())
       ->method('buildConfigurationForm')
-      ->with(array(), $this->isType('array'))
+      ->with(array(), $form_state)
       ->will($this->returnValue($payment_method_form));
 
     $expected_build = array(
@@ -113,13 +115,11 @@ class PaymentSelectUnitTest extends UnitTestCase {
     $method = new \ReflectionMethod($this->paymentMethodSelector, 'buildPaymentMethodForm');
     $method->setAccessible(TRUE);
 
-    $form_state = array();
-
-    $build = $method->invoke($this->paymentMethodSelector, array(&$form_state));
+    $build = $method->invoke($this->paymentMethodSelector, $form_state);
     $this->assertEquals($expected_build, $build);
 
     $this->paymentMethodSelector->setPaymentMethod($payment_method);
-    $build = $method->invoke($this->paymentMethodSelector, array(&$form_state));
+    $build = $method->invoke($this->paymentMethodSelector, $form_state);
     $expected_build += $payment_method_form;
     $this->assertEquals($expected_build, $build);
   }
@@ -129,7 +129,7 @@ class PaymentSelectUnitTest extends UnitTestCase {
    */
   public function testBuildConfigurationFormWithoutAvailablePaymentMethods() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
@@ -161,7 +161,7 @@ class PaymentSelectUnitTest extends UnitTestCase {
    */
   public function testBuildConfigurationFormWithOneAvailablePaymentMethod() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
     $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
 
@@ -204,7 +204,7 @@ class PaymentSelectUnitTest extends UnitTestCase {
    */
   public function testBuildConfigurationFormWithMultipleAvailablePaymentMethods() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
     $payment_method_a = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
     $payment_method_b = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
@@ -250,11 +250,11 @@ class PaymentSelectUnitTest extends UnitTestCase {
     $form = array(
       'container' => array(
         'payment_method_form' => array(
-          $this->randomName() => array(),
+          $this->randomMachineName() => array(),
         ),
       ),
     );
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
     $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
     $payment_method->expects($this->once())
@@ -270,27 +270,14 @@ class PaymentSelectUnitTest extends UnitTestCase {
    * @covers ::validateConfigurationForm
    */
   public function testValidateConfigurationForm() {
-    $payment_method_id_a = $this->randomName();
-    $payment_method_id_b = $this->randomName();
+    $payment_method_id_a = $this->randomMachineName();
+    $payment_method_id_b = $this->randomMachineName();
 
     $form = array(
       'container' => array(
         '#parents' => array('foo', 'bar', 'container'),
         'payment_method_form' => array(
-          $this->randomName() => array(),
-        ),
-      ),
-    );
-    $form_state = array(
-      'values' => array(
-        'foo' => array(
-          'bar' => array(
-            'container' => array(
-              'select' => array(
-                'payment_method_id' => $payment_method_id_a,
-              ),
-            ),
-          ),
+          $this->randomMachineName() => array(),
         ),
       ),
     );
@@ -301,19 +288,13 @@ class PaymentSelectUnitTest extends UnitTestCase {
     $this->paymentMethodSelector->setPayment($payment);
 
     $payment_method_a = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
-    $payment_method_a->expects($this->once())
-      ->method('validateConfigurationForm')
-      ->with($form['container']['payment_method_form'], $form_state);
     $payment_method_a->expects($this->any())
       ->method('getPluginId')
       ->will($this->returnValue($payment_method_id_a));
-    $payment_method_a->expects($this->once())
-      ->method('setPayment')
-      ->with($payment);
     $payment_method_b = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
     $payment_method_b->expects($this->never())
       ->method('validateConfigurationForm');
-    $payment_method_a->expects($this->any())
+    $payment_method_b->expects($this->any())
       ->method('getPluginId')
       ->will($this->returnValue($payment_method_id_b));
 
@@ -326,34 +307,94 @@ class PaymentSelectUnitTest extends UnitTestCase {
       ->will($this->returnValueMap($map));
 
     // The payment method is set for the first time. The payment method form
-    // must not be validated, as there is no input for it yet,
+    // must not be validated, as there is no input for it yet.
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state->expects($this->atLeastOnce())
+      ->method('getValues')
+      ->willReturn(array(
+        'foo' => array(
+          'bar' => array(
+            'container' => array(
+              'select' => array(
+                'payment_method_id' => $payment_method_id_a,
+              ),
+            ),
+          ),
+        ),
+      ));
+    $form_state->expects($this->once())
+      ->method('setRebuild');
+    $payment_method_a->expects($this->once())
+      ->method('setPayment')
+      ->with($payment);
     $this->paymentMethodSelector->validateConfigurationForm($form, $form_state);
     $this->assertSame($payment_method_a, $this->paymentMethodSelector->getPaymentMethod());
-    $this->assertTrue($form_state['rebuild']);
-    unset($form_state['rebuild']);
 
     // The form is validated, but the payment method remains unchanged, and as
-    // such should validate its own form as wel.
+    // such should validate its own form as well.
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state->expects($this->atLeastOnce())
+      ->method('getValues')
+      ->willReturn(array(
+        'foo' => array(
+          'bar' => array(
+            'container' => array(
+              'select' => array(
+                'payment_method_id' => $payment_method_id_a,
+              ),
+            ),
+          ),
+        ),
+      ));
+    $form_state->expects($this->never())
+      ->method('setRebuild');
+    $payment_method_a->expects($this->once())
+      ->method('validateConfigurationForm')
+      ->with($form['container']['payment_method_form'], $form_state);
     $this->paymentMethodSelector->validateConfigurationForm($form, $form_state);
     $this->assertSame($payment_method_a, $this->paymentMethodSelector->getPaymentMethod());
-    $this->assertArrayNotHasKey('rebuild', $form_state);
-    unset($form_state['rebuild']);
 
     // The payment method is changed. The payment method form must not be
-    // validated, as there is no input for it yet,
-    $form_state['values']['foo']['bar']['container']['select']['payment_method_id'] = $payment_method_id_b;
+    // validated, as there is no input for it yet.
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state->expects($this->atLeastOnce())
+      ->method('getValues')
+      ->willReturn(array(
+        'foo' => array(
+          'bar' => array(
+            'container' => array(
+              'select' => array(
+                'payment_method_id' => $payment_method_id_b,
+              ),
+            ),
+          ),
+        ),
+      ));
+    $form_state->expects($this->once())
+      ->method('setRebuild');
     $this->paymentMethodSelector->validateConfigurationForm($form, $form_state);
     $this->assertSame($payment_method_b, $this->paymentMethodSelector->getPaymentMethod());
-    $this->assertTrue($form_state['rebuild']);
-    unset($form_state['rebuild']);
 
     // Change the payment method ID back to the original. No new plugin may be
     // instantiated, nor must the payment method form be validated.
-    $form_state['values']['foo']['bar']['container']['select']['payment_method_id'] = $payment_method_id_a;
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state->expects($this->atLeastOnce())
+      ->method('getValues')
+      ->willReturn(array(
+        'foo' => array(
+          'bar' => array(
+            'container' => array(
+              'select' => array(
+                'payment_method_id' => $payment_method_id_a,
+              ),
+            ),
+          ),
+        ),
+      ));
+    $form_state->expects($this->once())
+      ->method('setRebuild');
     $this->paymentMethodSelector->validateConfigurationForm($form, $form_state);
     $this->assertSame($payment_method_a, $this->paymentMethodSelector->getPaymentMethod());
-    $this->assertTrue($form_state['rebuild']);
-    unset($form_state['rebuild']);
   }
 
   /**
@@ -364,16 +405,18 @@ class PaymentSelectUnitTest extends UnitTestCase {
       'foo' => array(
         'bar' => array(
           'payment_method_form' => array(
-            $this->randomName() => array(),
+            $this->randomMachineName() => array(),
           ),
         ),
       ),
     );
-    $form_state = array(
-      'triggering_element' => array(
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state->expects($this->atLeastOnce())
+      ->method('get')
+      ->with('triggering_element')
+      ->willReturn(array(
         '#array_parents' => array('foo', 'bar', 'baz', 'qux'),
-      ),
-    );
+      ));
 
     $build = $this->paymentMethodSelector->ajaxSubmitConfigurationForm($form, $form_state);
     $this->assertSame($form['foo']['bar']['payment_method_form'], $build);
@@ -385,11 +428,11 @@ class PaymentSelectUnitTest extends UnitTestCase {
   public function testGetElementId() {
     $method = new \ReflectionMethod($this->paymentMethodSelector, 'getElementId');
     $method->setAccessible(TRUE);
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
-    $element_id = $method->invokeArgs($this->paymentMethodSelector, array(&$form_state));
+    $element_id = $method->invokeArgs($this->paymentMethodSelector, array($form_state));
     $this->assertInternalType('integer', strlen($element_id));
-    $this->assertSame($element_id, $method->invokeArgs($this->paymentMethodSelector, array(&$form_state)));
+    $this->assertSame($element_id, $method->invokeArgs($this->paymentMethodSelector, array($form_state)));
   }
 
   /**
@@ -405,8 +448,8 @@ class PaymentSelectUnitTest extends UnitTestCase {
     $get_element_id_method = new \ReflectionMethod($this->paymentMethodSelector, 'getElementId');
     $get_element_id_method->setAccessible(TRUE);
 
-    $payment_method_id = $this->randomName();
-    $payment_method_label = $this->randomName();
+    $payment_method_id = $this->randomMachineName();
+    $payment_method_label = $this->randomMachineName();
     $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
     $payment_method->expects($this->any())
       ->method('getPluginId')
@@ -418,10 +461,10 @@ class PaymentSelectUnitTest extends UnitTestCase {
     $this->paymentMethodSelector->setPaymentMethod($payment_method);
 
     $element = array(
-      '#name' => $this->randomName(),
+      '#name' => $this->randomMachineName(),
       '#parents' => array('foo', 'bar'),
     );
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $available_payment_methods = array($payment_method);
 
     $expected_build = array(
@@ -432,7 +475,7 @@ class PaymentSelectUnitTest extends UnitTestCase {
           'trigger_as' => array(
             'name' => $element['#name'] . '[select][change]',
           ),
-          'wrapper' => $get_element_id_method->invokeArgs($this->paymentMethodSelector, array(&$form_state)),
+          'wrapper' => $get_element_id_method->invokeArgs($this->paymentMethodSelector, array($form_state)),
         ),
         '#default_value' => $payment_method_id,
         '#empty_value' => 'select',
@@ -457,7 +500,7 @@ class PaymentSelectUnitTest extends UnitTestCase {
         '#value' => 'Choose payment method',
       ),
     );
-    $this->assertEquals($expected_build, $method->invokeArgs($this->paymentMethodSelector, array($element, &$form_state, $available_payment_methods)));
+    $this->assertEquals($expected_build, $method->invokeArgs($this->paymentMethodSelector, array($element, $form_state, $available_payment_methods)));
   }
 
   /**
@@ -465,11 +508,12 @@ class PaymentSelectUnitTest extends UnitTestCase {
    */
   public function testRebuildForm() {
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state->expects($this->once())
+      ->method('setRebuild')
+      ->with(TRUE);
 
     $this->paymentMethodSelector->rebuildForm($form, $form_state);
-    $this->assertArrayHasKey('rebuild', $form_state);
-    $this->assertTrue($form_state['rebuild']);
   }
 
   /**
@@ -477,7 +521,7 @@ class PaymentSelectUnitTest extends UnitTestCase {
    */
   public function testBuildNoAvailablePaymentMethods() {
     $element = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form = array();
 
     $expected_build = $element + array(
@@ -499,10 +543,10 @@ class PaymentSelectUnitTest extends UnitTestCase {
    * @covers ::buildOneAvailablePaymentMethod
    */
   public function testBuildOneAvailablePaymentMethod() {
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
 
     $payment_method_form = array(
-      '#type' => $this->randomName(),
+      '#type' => $this->randomMachineName(),
     );
 
     $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
@@ -516,9 +560,7 @@ class PaymentSelectUnitTest extends UnitTestCase {
     $element = array(
       '#available_payment_methods' => array($payment_method),
     );
-    $form_state = array(
-      'foo' => $this->randomName(),
-    );
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form = array();
 
 
@@ -548,17 +590,15 @@ class PaymentSelectUnitTest extends UnitTestCase {
     $element = array(
       '#available_payment_methods' => array($payment_method),
     );
-    $form_state = array(
-      'foo' => $this->randomName(),
-    );
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form = array();
 
     $payment_method_form = array(
-      '#type' => $this->randomName(),
+      '#type' => $this->randomMachineName(),
     );
 
     $selector = array(
-      '#type' => $this->randomName(),
+      '#type' => $this->randomMachineName(),
     );
 
     /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect|\PHPUnit_Framework_MockObject_MockObject $payment_method_selector */

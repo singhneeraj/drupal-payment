@@ -7,7 +7,8 @@
 
 namespace Drupal\payment\Tests\Entity\PaymentMethodConfiguration {
 
-use Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm;
+  use Drupal\Core\Form\FormState;
+  use Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -31,13 +32,6 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm
    */
   protected $form;
-
-  /**
-   * The form builder.
-   *
-   * @var \Drupal\Core\Form\FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $formBuilder;
 
   /**
    * The payment method configuration.
@@ -82,8 +76,6 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
   public function setUp() {
     $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
-    $this->formBuilder = $this->getMock('\Drupal\Core\Form\FormBuilderInterface');
-
     $this->userStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
 
     $this->paymentMethodConfigurationManager = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface');
@@ -99,7 +91,7 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
       ->method('translate')
       ->will($this->returnArgument(0));
 
-    $this->form = new PaymentMethodConfigurationForm($this->stringTranslation, $this->formBuilder, $this->currentUser, $this->userStorage, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationManager);
+    $this->form = new PaymentMethodConfigurationForm($this->stringTranslation, $this->currentUser, $this->userStorage, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationManager);
     $this->form->setEntity($this->paymentMethodConfiguration);
   }
 
@@ -120,7 +112,6 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
     $map = array(
       array('current_user', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->currentUser),
       array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $entity_manager),
-      array('form_builder', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->formBuilder),
       array('plugin.manager.payment.method_configuration', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodConfigurationManager),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
@@ -136,19 +127,19 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
    * @covers ::form
    */
   public function testForm() {
-    $owner_label = $this->randomName();
-    $payment_method_configuration_entity_id = $this->randomName();
+    $owner_label = $this->randomMachineName();
+    $payment_method_configuration_entity_id = $this->randomMachineName();
     $payment_method_configuration_entity_is_new = FALSE;
-    $payment_method_configuration_entity_label = $this->randomName();
+    $payment_method_configuration_entity_label = $this->randomMachineName();
     $payment_method_configuration_entity_status = TRUE;
     $payment_method_configuration_plugin_form = array(
-      '#type' => $this->randomName(),
+      '#type' => $this->randomMachineName(),
     );
-    $payment_method_configuration_plugin_id = $this->randomName();
+    $payment_method_configuration_plugin_id = $this->randomMachineName();
     $payment_method_configuration_plugin_configuration = array(
-      'foo' => $this->randomName(),
+      'foo' => $this->randomMachineName(),
     );
-    $payment_method_configuration_plugin_label = $this->randomName();
+    $payment_method_configuration_plugin_label = $this->randomMachineName();
     $payment_method_configuration_plugin_definition = array(
       'label' => $payment_method_configuration_plugin_label,
     );
@@ -165,13 +156,11 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
     $form = array(
       'plugin_form' => array(),
     );
-    $form_state = array(
-      'foo' => $this->randomName(),
-    );
+    $form_state = new FormState();
 
     $payment_method_configuration_plugin->expects($this->atLeastOnce())
       ->method('buildConfigurationForm')
-      ->with(array(), $this->isType('array'))
+      ->with(array(), $form_state)
       ->will($this->returnValue($payment_method_configuration_plugin_form));
 
     $this->paymentMethodConfigurationManager->expects($this->atLeastOnce())
@@ -263,11 +252,11 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
    * @covers ::copyFormValuesToEntity
    */
   public function testCopyFormValuesToEntity() {
-    $label = $this->randomName();
+    $label = $this->randomMachineName();
     $owner_id = mt_rand();
-    $owner_label = $this->randomName();
+    $owner_label = $this->randomMachineName();
     $plugin_configuration = array(
-      'bar' => $this->randomName(),
+      'bar' => $this->randomMachineName(),
     );
     $status = TRUE;
 
@@ -306,28 +295,40 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
       ->will($this->returnValue($plugin_configuration));
 
     $form = array();
-    $form_state = array(
-      'storage' => array(
-        'payment_method_configuration' => $plugin,
-      ),
-      'values' => array(
+    // @todo Mock FormStateInterface once EntityForm no longer uses ArrayAccess.
+    $form_state = $this->getMockBuilder('\Drupal\Core\Form\FormState')
+      ->setMethods(array('get', 'getValues'))
+      ->getMock();
+    $map = array(
+      array('payment_method_configuration', $plugin),
+      array('values', array(
         'label' => $label,
         'owner' => $owner_label,
         'status' => $status,
-      ),
+      )),
     );
+    $form_state->expects($this->atLeastOnce())
+      ->method('get')
+      ->willReturnMap($map);
+    $form_state->expects($this->atLeastOnce())
+      ->method('getValues')
+      ->willReturn(array(
+        'label' => $label,
+        'owner' => $owner_label,
+        'status' => $status,
+      ));
 
     $method = new \ReflectionMethod($this->form, 'copyFormValuesToEntity');
     $method->setAccessible(TRUE);
 
-    $method->invokeArgs($this->form, array($this->paymentMethodConfiguration, $form, &$form_state));
+    $method->invokeArgs($this->form, array($this->paymentMethodConfiguration, $form, $form_state));
   }
 
   /**
    * @covers ::paymentMethodConfigurationIdExists
    */
   public function testPaymentMethodConfigurationIdExists() {
-    $payment_method_configuration_id = $this->randomName();
+    $payment_method_configuration_id = $this->randomMachineName();
 
     $this->paymentMethodConfigurationStorage->expects($this->at(0))
       ->method('load')
@@ -346,7 +347,7 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
    * @covers ::validate
    */
   public function testValidateWithExistingOwner() {
-    $owner_label = $this->randomName();
+    $owner_label = $this->randomMachineName();
 
     $owner = $this->getMockBuilder('\Drupal\user\Entity\User')
       ->disableOriginalConstructor()
@@ -359,24 +360,30 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
       ))
       ->will($this->returnValue($owner));
 
-    $this->formBuilder->expects($this->never())
-      ->method('setError');
-
     $payment_method_configuration_plugin = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface');
 
     $form = array(
       'plugin_form' => array(
-        '#type' => $this->randomName(),
+        '#type' => $this->randomMachineName(),
       ),
     );
-    $form_state = array(
-      'storage' => array(
-        'payment_method_configuration' => $payment_method_configuration_plugin,
-      ),
-      'values' => array(
+    // @todo Mock FormStateInterface once EntityForm no longer uses ArrayAccess.
+    $form_state = $this->getMockBuilder('\Drupal\Core\Form\FormState')
+      ->setMethods(array('get', 'getValues'))
+      ->getMock();
+    $map = array(
+      array('payment_method_configuration', $payment_method_configuration_plugin),
+    );
+    $form_state->expects($this->any())
+      ->method('get')
+      ->willReturnMap($map);
+    $form_state->expects($this->atLeastOnce())
+      ->method('getValues')
+      ->willReturn(array(
         'owner' => $owner_label,
-      ),
-    );
+      ));
+    $form_state->expects($this->never())
+      ->method('setError');
 
     $payment_method_configuration_plugin->expects($this->once())
       ->method('validateConfigurationForm')
@@ -389,41 +396,46 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
    * @covers ::validate
    */
   public function testValidateWithoutExistingOwner() {
-    $owner_label = $this->randomName();
+    $owner_label = $this->randomMachineName();
 
     $this->userStorage->expects($this->once())
       ->method('loadByProperties')
       ->with(array(
         'name' => $owner_label,
       ))
-      ->will($this->returnValue(NULL));
+      ->willReturn(NULL);
 
     $payment_method_configuration_plugin = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface');
 
     $form = array(
       'owner' => array(
-        '#type' => $this->randomName(),
+        '#parents' => array('owner'),
+        '#type' => $this->randomMachineName(),
       ),
       'plugin_form' => array(
-        '#type' => $this->randomName(),
+        '#parents' => array('plugin_form'),
+        '#type' => $this->randomMachineName(),
       ),
     );
-    $form_state = array(
-      'storage' => array(
-        'payment_method_configuration' => $payment_method_configuration_plugin,
-      ),
-      'values' => array(
+    // @todo Mock FormStateInterface once EntityForm no longer uses ArrayAccess.
+    $form_state = $this->getMockBuilder('\Drupal\Core\Form\FormState')
+      ->setMethods(array('get', 'getValues'))
+      ->getMock();
+    $map = array(
+      array('payment_method_configuration', $payment_method_configuration_plugin),
+    );
+    $form_state->expects($this->any())
+      ->method('get')
+      ->willReturnMap($map);
+    $form_state->expects($this->atLeastOnce())
+      ->method('getValues')
+      ->willReturn(array(
         'owner' => $owner_label,
-      ),
-    );
+      ));
 
     $payment_method_configuration_plugin->expects($this->once())
       ->method('validateConfigurationForm')
       ->with($form['plugin_form'], $form_state);
-
-    $this->formBuilder->expects($this->once())
-      ->method('setError')
-      ->with($form['owner'], $form_state);
 
     $this->form->validate($form, $form_state);
   }
@@ -432,11 +444,14 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
    * @covers ::save
    */
   public function testSave() {
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state->expects($this->once())
+      ->method('setRedirect')
+      ->with('payment.payment_method_configuration.list');
 
     /** @var \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm|\PHPUnit_Framework_MockObject_MockObject $form */
     $form = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm')
-      ->setConstructorArgs(array($this->stringTranslation, $this->formBuilder, $this->currentUser, $this->userStorage, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationManager))
+      ->setConstructorArgs(array($this->stringTranslation, $this->currentUser, $this->userStorage, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationManager))
       ->setMethods(array('copyFormValuesToEntity'))
       ->getMock();
     $form->setEntity($this->paymentMethodConfiguration);
@@ -445,11 +460,6 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
       ->method('save');
 
     $form->save(array(), $form_state);
-    $this->assertArrayHasKey('redirect_route', $form_state);
-    /** @var \Drupal\Core\Url $url */
-    $url = $form_state['redirect_route'];
-    $this->assertInstanceOf('\Drupal\Core\Url', $url);
-    $this->assertSame('payment.payment_method_configuration.list', $url->getRouteName());
   }
 
   /**
@@ -458,7 +468,7 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
   public function testSubmit() {
     /** @var \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm|\PHPUnit_Framework_MockObject_MockObject $form_object */
     $form_object = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm')
-      ->setConstructorArgs(array($this->stringTranslation, $this->formBuilder, $this->currentUser, $this->userStorage, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationManager))
+      ->setConstructorArgs(array($this->stringTranslation, $this->currentUser, $this->userStorage, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationManager))
       ->setMethods(array('copyFormValuesToEntity'))
       ->getMock();
     $form_object->setEntity($this->paymentMethodConfiguration);
@@ -467,18 +477,23 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
 
     $form = array(
       'plugin_form' => array(
-        '#type' => $this->randomName(),
+        '#type' => $this->randomMachineName(),
       ),
     );
-    $form_state = array(
-      'storage' => array(
-        'payment_method_configuration' => $payment_method_configuration_plugin,
-      ),
+    // @todo Mock FormStateInterface once EntityForm no longer uses ArrayAccess.
+    $form_state = $this->getMockBuilder('\Drupal\Core\Form\FormState')
+      ->setMethods(array('get'))
+      ->getMock();
+    $map = array(
+      array('payment_method_configuration', $payment_method_configuration_plugin),
     );
+    $form_state->expects($this->any())
+      ->method('get')
+      ->willReturnMap($map);
 
     $payment_method_configuration_plugin->expects($this->once())
       ->method('submitConfigurationForm')
-      ->with($form['plugin_form'], $this->isType('array'));
+      ->with($form['plugin_form'], $form_state);
 
     $form_object->submit($form, $form_state);
   }

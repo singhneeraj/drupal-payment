@@ -51,7 +51,7 @@ class SetStatusUnitTest extends UnitTestCase {
 
     $configuration = array();
     $plugin_definition = array();
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
     $this->action = new SetStatus($configuration, $plugin_id, $plugin_definition, $this->stringTranslation, $this->paymentStatusManager);
   }
 
@@ -70,7 +70,7 @@ class SetStatusUnitTest extends UnitTestCase {
 
     $configuration = array();
     $plugin_definition = array();
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
     $form = SetStatus::create($container, $configuration, $plugin_id, $plugin_definition);
     $this->assertInstanceOf('\Drupal\payment\Plugin\Action\SetStatus', $form);
   }
@@ -92,7 +92,7 @@ class SetStatusUnitTest extends UnitTestCase {
       ->method('options');
 
     $form = array();
-    $form_state = array();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form = $this->action->buildConfigurationForm($form, $form_state);
     $this->assertInternalType('array', $form);
     $this->assertArrayHasKey('payment_status_plugin_id', $form);
@@ -103,13 +103,14 @@ class SetStatusUnitTest extends UnitTestCase {
    * @depends testBuildConfigurationForm
    */
   public function testSubmitConfigurationForm() {
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
     $form = array();
-    $form_state = array(
-      'values' => array(
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state->expects($this->atLeastOnce())
+      ->method('getValues')
+      ->willReturn(array(
         'payment_status_plugin_id' => $plugin_id,
-      ),
-    );
+      ));
     $this->action->submitConfigurationForm($form, $form_state);
     $configuration = $this->action->getConfiguration();
     $this->assertSame($plugin_id, $configuration['payment_status_plugin_id']);
@@ -119,7 +120,7 @@ class SetStatusUnitTest extends UnitTestCase {
    * @covers ::execute
    */
   public function testExecute() {
-    $plugin_id = $this->randomName();
+    $plugin_id = $this->randomMachineName();
 
     $status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
 

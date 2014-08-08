@@ -61,7 +61,7 @@ class BasicWebTest extends WebTestBase {
 
     // Test a non-integer quantity.
     $values =  array(
-      'line_item[quantity]' => $this->randomName(2),
+      'line_item[quantity]' => $this->randomMachineName(2),
     );
     $this->drupalPostForm('payment_test-plugin-payment-line_item-payment_basic', $values, t('Submit'));
     $this->assertFieldByXPath('//input[@name="line_item[quantity]" and contains(@class, "error")]');

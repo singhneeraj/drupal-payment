@@ -10,6 +10,7 @@ namespace Drupal\payment\Element;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\RemoveCommand;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\payment\Payment;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
@@ -27,7 +28,7 @@ class PaymentLineItemsInput {
   /**
    * Implements form #process callback.
    */
-  public static function process(array $element, array &$form_state, array $form) {
+  public static function process(array $element, FormStateInterface $form_state, array $form) {
     // Validate the element configuration.
     if ($element['#cardinality'] != self::CARDINALITY_UNLIMITED && count($element['#default_value']) > $element['#cardinality']) {
       throw new \InvalidArgumentException('The number of default line items can not be higher than the cardinality.');
@@ -124,7 +125,7 @@ class PaymentLineItemsInput {
   /**
    * Implements form #element_validate callback.
    */
-  public static function validate(array $element, array &$form_state, array &$form) {
+  public static function validate(array $element, FormStateInterface $form_state, array &$form) {
     // Reorder line items based on their weight elements.
     $line_items = array();
     $values = NestedArray::getValue($form_state['values'], $element['#parents']);
@@ -147,7 +148,7 @@ class PaymentLineItemsInput {
   /**
    * Implements form #submit callback.
    */
-  public static function addMoreSubmit(array &$form, array &$form_state) {
+  public static function addMoreSubmit(array &$form, FormStateInterface $form_state) {
     $parents = array_slice($form_state['triggering_element']['#array_parents'], 0, -2);
     $root_element = NestedArray::getValue($form, $parents);
     $values = NestedArray::getValue($form_state['values'], array_slice($form_state['triggering_element']['#parents'], 0, -2));
@@ -162,7 +163,7 @@ class PaymentLineItemsInput {
   /**
    * Implements form AJAX callback.
    */
-  public static function addMoreAjaxSubmit(array &$form, array &$form_state) {
+  public static function addMoreAjaxSubmit(array &$form, FormStateInterface $form_state) {
     $parents = array_slice($form_state['triggering_element']['#array_parents'], 0, -2);
     $root_element = NestedArray::getValue($form, $parents);
 
@@ -172,7 +173,7 @@ class PaymentLineItemsInput {
   /**
    * Implements form #submit callback.
    */
-  public static function deleteSubmit(array &$form, array &$form_state) {
+  public static function deleteSubmit(array &$form, FormStateInterface $form_state) {
     $root_element_parents  = array_slice($form_state['triggering_element']['#array_parents'], 0, -3);
     $root_element = NestedArray::getValue($form, $root_element_parents);
     $parents = $form_state['triggering_element']['#array_parents'];
@@ -191,7 +192,7 @@ class PaymentLineItemsInput {
   /**
    * Implements form AJAX callback.
    */
-  public static function deleteAjaxSubmit(array &$form, array &$form_state) {
+  public static function deleteAjaxSubmit(array &$form, FormStateInterface $form_state) {
     $root_element_parents  = array_slice($form_state['triggering_element']['#array_parents'], 0, -3);
     $root_element = NestedArray::getValue($form, $root_element_parents);
     $parents = $form_state['triggering_element']['#array_parents'];
@@ -206,13 +207,13 @@ class PaymentLineItemsInput {
    * Creates a unique line item name.
    *
    * @param array $element
-   * @param array $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    * @param string $name
    *   The preferred name.
    *
    * @return string
    */
-  protected static function createLineItemName(array $element, array &$form_state, $name) {
+  protected static function createLineItemName(array $element, FormStateInterface $form_state, $name) {
     $counter = NULL;
     while (static::lineItemExists($element, $form_state, $name . $counter)) {
       $counter++;
@@ -225,12 +226,12 @@ class PaymentLineItemsInput {
    * Checks if a line item name already exists.
    *
    * @param array $element
-   * @param array $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    * @param string $name
    *
    * @return bool
    */
-  protected static function lineItemExists(array $element, array &$form_state, $name) {
+  protected static function lineItemExists(array $element, FormStateInterface $form_state, $name) {
     foreach (static::getLineItems($element, $form_state) as $line_item) {
       if ($line_item->getName() == $name) {
         return TRUE;
@@ -243,10 +244,10 @@ class PaymentLineItemsInput {
    * Stores the line items in the form's state.
    *
    * @param array $element
-   * @param array $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    * @param \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[] $line_items
    */
-  protected static function setLineItems(array $element, array &$form_state, array $line_items) {
+  protected static function setLineItems(array $element, FormStateInterface $form_state, array $line_items) {
     $form_state['payment_line_item'][$element['#name']] = $line_items;
   }
 
@@ -254,11 +255,11 @@ class PaymentLineItemsInput {
    * Retrieves the line items from the form's state.
    *
    * @param array $element
-   * @param array $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
    * @return \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[]
    */
-  public static function getLineItems(array $element, array &$form_state) {
+  public static function getLineItems(array $element, FormStateInterface $form_state) {
     return $form_state['payment_line_item'][$element['#name']];
   }
 
@@ -266,11 +267,11 @@ class PaymentLineItemsInput {
    * Check if the form's state has been initialized for an element.
    *
    * @param array $element
-   * @param array $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
    * @return bool
    */
-  protected static function initializeLineItems(array $element, array &$form_state) {
+  protected static function initializeLineItems(array $element, FormStateInterface $form_state) {
     if (!(isset($form_state['payment_line_item']) && array_key_exists($element['#name'], $form_state['payment_line_item']))) {
       self::setLineItems($element, $form_state, $element['#default_value']);
     }

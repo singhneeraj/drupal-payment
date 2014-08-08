@@ -57,11 +57,11 @@ abstract class PaymentMethodBaseUnitTestBase extends UnitTestCase {
 
     $this->pluginDefinition = array(
       'active' => TRUE,
-      'message_text' => $this->randomName(),
-      'message_text_format' => $this->randomName(),
+      'message_text' => $this->randomMachineName(),
+      'message_text_format' => $this->randomMachineName(),
     );
 
-    $this->pluginId = $this->randomName();
+    $this->pluginId = $this->randomMachineName();
   }
 
 }
