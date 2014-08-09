@@ -130,7 +130,7 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
         'currency_code' => $values['currency_code'],
         'line_items_data' => $line_items_data,
       );
-      $form_state->addValue($element, $value);
+      $form_state->setValue($element, $value);
     }
   }
 
