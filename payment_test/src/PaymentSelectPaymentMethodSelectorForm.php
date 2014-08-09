@@ -77,14 +77,14 @@ class PaymentSelectPaymentMethodSelectorForm implements ContainerInjectionInterf
       'bundle' => 'payment_unavailable',
     ));
     $payment->setLineItems(Generate::createPaymentLineItems());
-    if (isset($form_state['storage']['payment_method_selector'])) {
-      $payment_method_selector = $form_state['storage']['payment_method_selector'];
+    if ($form_state->has('payment_method_selector')) {
+      $payment_method_selector = $form_state->get('payment_method_selector');
     }
     else {
       $payment_method_selector = $this->paymentMethodSelectorManager->createInstance('payment_select');
       $payment_method_selector->setPayment($payment);
       $payment_method_selector->setRequired();
-      $form_state['storage']['payment_method_selector'] = $payment_method_selector;
+      $form_state->set('payment_method_selector', $payment_method_selector);
     }
 
     $form['payment_method'] = $payment_method_selector->buildConfigurationForm(array(), $form_state);
@@ -113,7 +113,7 @@ class PaymentSelectPaymentMethodSelectorForm implements ContainerInjectionInterf
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface $payment_method_selector */
-    $payment_method_selector = $form_state['storage']['payment_method_selector'];
+    $payment_method_selector = $form_state->get('payment_method_selector');
     $plugin_form = isset($form['tree']) ? $form['tree']['payment_method'] : $form['payment_method'];
     $payment_method_selector->validateConfigurationForm($plugin_form, $form_state);
   }
@@ -123,7 +123,7 @@ class PaymentSelectPaymentMethodSelectorForm implements ContainerInjectionInterf
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface $payment_method_selector */
-    $payment_method_selector = $form_state['storage']['payment_method_selector'];
+    $payment_method_selector = $form_state->get('payment_method_selector');
     $plugin_form = isset($form['tree']) ? $form['tree']['payment_method'] : $form['payment_method'];
     $payment_method_selector->submitConfigurationForm($plugin_form, $form_state);
     \Drupal::state()->set('payment_test_method_form_element', $payment_method_selector->getPaymentMethod());

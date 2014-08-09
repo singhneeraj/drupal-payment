@@ -14,6 +14,7 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Url;
 use Drupal\payment\Entity\PaymentMethodConfigurationInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface;
@@ -156,14 +157,13 @@ class PaymentMethod extends ControllerBase implements AccessInterface {
     foreach ($definitions as $plugin_id => $definition) {
       $access = $access_controller->createAccess($plugin_id);
       if ($access) {
-        $href = $this->urlGenerator->getPathFromRoute('payment.payment_method_configuration.add', array(
-          'plugin_id' => $plugin_id,
-        ));
         $items[] = array(
           'title' => $definition['label'],
-          'link_path' => $href,
           'description' => $definition['description'],
           'localized_options' => array(),
+          'url' => new Url('payment.payment_method_configuration.add', array(
+              'plugin_id' => $plugin_id,
+            )),
         );
       }
     }

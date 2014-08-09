@@ -91,7 +91,7 @@ class PaymentEditForm extends ContentEntityForm {
   protected function copyFormValuesToEntity(EntityInterface $payment, array $form, FormStateInterface $form_state) {
     parent::copyFormValuesToEntity($payment, $form, $form_state);
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
-    $values = $form_state['values'];
+    $values = $form_state->getValues();
     $payment->setCurrencyCode($values['payment_currency_code']);
     foreach (PaymentLineItemsInput::getLineItems($form['payment_line_items'], $form_state) as $line_item) {
       $payment->setLineItem($line_item);

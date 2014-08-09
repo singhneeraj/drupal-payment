@@ -101,7 +101,7 @@ class PaymentStatusForm extends EntityForm {
   protected function copyFormValuesToEntity(EntityInterface $payment_status, array $form, FormStateInterface $form_state) {
     /** @var \Drupal\payment\Entity\PaymentStatusInterface $payment_status */
     parent::copyFormValuesToEntity($payment_status, $form, $form_state);
-    $values = $form_state['values'];
+    $values = $form_state->getValues();
     $payment_status->setId($values['id']);
     $payment_status->setLabel($values['label']);
     $payment_status->setParentId($values['parent_id']);

@@ -117,8 +117,10 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
     $add_more_button_form_parents = array_merge($element['#array_parents'], array('line_items', 'add_more', 'add'));
     // Only set the field settings as a value when it is not the "Add more"
     // button that has been clicked.
-    if ($form_state['triggering_element']['#array_parents'] != $add_more_button_form_parents) {
-      $values = NestedArray::getValue($form_state['values'], $element['#array_parents']);
+    $triggering_element = $form_state->get('triggering_element');
+    if ($triggering_element['#array_parents'] != $add_more_button_form_parents) {
+      $values = $form_state->getValues();
+      $values = NestedArray::getValue($values, $element['#array_parents']);
       $line_items_data = array();
       foreach (PaymentLineItemsInput::getLineItems($element['line_items'], $form_state) as $line_item) {
         $line_items_data[] = array(
@@ -130,7 +132,7 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
         'currency_code' => $values['currency_code'],
         'line_items_data' => $line_items_data,
       );
-      $form_state->setValue($element, $value);
+      $form_state->setValueForElement($element, $value);
     }
   }
 

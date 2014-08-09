@@ -128,7 +128,8 @@ class PaymentLineItemsInput {
   public static function validate(array $element, FormStateInterface $form_state, array &$form) {
     // Reorder line items based on their weight elements.
     $line_items = array();
-    $values = NestedArray::getValue($form_state['values'], $element['#parents']);
+    $values = $form_state->getValues();
+    $values = NestedArray::getValue($values, $element['#parents']);
     if ($values['line_items']) {
       foreach ($values['line_items'] as $name => $line_item_values) {
         $line_items[$name] = $line_item_values['weight'];
@@ -149,22 +150,25 @@ class PaymentLineItemsInput {
    * Implements form #submit callback.
    */
   public static function addMoreSubmit(array &$form, FormStateInterface $form_state) {
-    $parents = array_slice($form_state['triggering_element']['#array_parents'], 0, -2);
+    $triggering_element = $form_state->get('triggering_element');
+    $parents = array_slice($triggering_element['#array_parents'], 0, -2);
     $root_element = NestedArray::getValue($form, $parents);
-    $values = NestedArray::getValue($form_state['values'], array_slice($form_state['triggering_element']['#parents'], 0, -2));
+    $values = $form_state->getValues();
+    $values = NestedArray::getValue($values, array_slice($triggering_element['#parents'], 0, -2));
     $line_items = static::getLineItems($root_element, $form_state);
     $line_items[] = Payment::lineItemManager()
       ->createInstance($values['add_more']['type'])
       ->setName(static::createLineItemName($root_element, $form_state, $values['add_more']['type']));
     static::setLineItems($root_element, $form_state, $line_items);
-    $form_state['rebuild'] = TRUE;
+    $form_state->setRebuild();
   }
 
   /**
    * Implements form AJAX callback.
    */
   public static function addMoreAjaxSubmit(array &$form, FormStateInterface $form_state) {
-    $parents = array_slice($form_state['triggering_element']['#array_parents'], 0, -2);
+    $triggering_element = $form_state->get('triggering_element');
+    $parents = array_slice($triggering_element['#array_parents'], 0, -2);
     $root_element = NestedArray::getValue($form, $parents);
 
     return array_intersect_key($root_element, array_flip(Element::Children($root_element)));
@@ -174,9 +178,10 @@ class PaymentLineItemsInput {
    * Implements form #submit callback.
    */
   public static function deleteSubmit(array &$form, FormStateInterface $form_state) {
-    $root_element_parents  = array_slice($form_state['triggering_element']['#array_parents'], 0, -3);
+    $triggering_element = $form_state->get('triggering_element');
+    $root_element_parents  = array_slice($triggering_element['#array_parents'], 0, -3);
     $root_element = NestedArray::getValue($form, $root_element_parents);
-    $parents = $form_state['triggering_element']['#array_parents'];
+    $parents = $triggering_element['#array_parents'];
     $line_item_name = $parents[count($parents) - 2];
     /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[] $line_items */
     $line_items = array_values(static::getLineItems($root_element, $form_state));
@@ -186,16 +191,17 @@ class PaymentLineItemsInput {
       }
     }
     static::setLineItems($root_element, $form_state, $line_items);
-    $form_state['rebuild'] = TRUE;
+    $form_state->setRebuild();
   }
 
   /**
    * Implements form AJAX callback.
    */
   public static function deleteAjaxSubmit(array &$form, FormStateInterface $form_state) {
-    $root_element_parents  = array_slice($form_state['triggering_element']['#array_parents'], 0, -3);
+    $triggering_element = $form_state->get('triggering_element');
+    $root_element_parents  = array_slice($triggering_element['#array_parents'], 0, -3);
     $root_element = NestedArray::getValue($form, $root_element_parents);
-    $parents = $form_state['triggering_element']['#array_parents'];
+    $parents = $triggering_element['#array_parents'];
     $line_item_name = $parents[count($parents) - 2];
     $response = new AjaxResponse();
     $response->addCommand(new RemoveCommand('#' . $root_element['#id'] . ' .payment-line-item-name-' . $line_item_name));
@@ -248,7 +254,9 @@ class PaymentLineItemsInput {
    * @param \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[] $line_items
    */
   protected static function setLineItems(array $element, FormStateInterface $form_state, array $line_items) {
-    $form_state['payment_line_item'][$element['#name']] = $line_items;
+    $payment_line_item = $form_state->get('payment_line_item');
+    $payment_line_item[$element['#name']] = $line_items;
+    $form_state->set('payment_line_item', $payment_line_item);
   }
 
   /**
@@ -260,7 +268,9 @@ class PaymentLineItemsInput {
    * @return \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[]
    */
   public static function getLineItems(array $element, FormStateInterface $form_state) {
-    return $form_state['payment_line_item'][$element['#name']];
+    $payment_line_item = $form_state->get('payment_line_item');
+
+    return $payment_line_item[$element['#name']];
   }
 
   /**
@@ -272,7 +282,7 @@ class PaymentLineItemsInput {
    * @return bool
    */
   protected static function initializeLineItems(array $element, FormStateInterface $form_state) {
-    if (!(isset($form_state['payment_line_item']) && array_key_exists($element['#name'], $form_state['payment_line_item']))) {
+    if (!($form_state->get('payment_line_item') && array_key_exists($element['#name'], $form_state->get('payment_line_item')))) {
       self::setLineItems($element, $form_state, $element['#default_value']);
     }
   }

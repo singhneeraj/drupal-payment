@@ -139,7 +139,7 @@ class PaymentReference {
       ),
       '#name' => $element['#name'] . '_refresh',
     );
-    $form_state[$element['refresh']['#name']] = $element['#parents'];
+    $form_state->set($element['refresh']['#name'], $element['#parents']);
 
     return $element;
   }

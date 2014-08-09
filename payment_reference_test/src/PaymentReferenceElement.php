@@ -56,6 +56,6 @@ class PaymentReferenceElement implements FormInterface {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    \Drupal::state()->set('payment_reference_test_payment_reference_element', $form_state['values']['payment_reference']);
+    \Drupal::state()->set('payment_reference_test_payment_reference_element', $form_state->getValues()['payment_reference']);
   }
 }

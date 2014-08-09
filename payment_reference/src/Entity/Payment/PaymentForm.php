@@ -61,8 +61,8 @@ class PaymentForm extends ContentEntityForm {
       '#type' => 'payment_line_items_display',
     );
 
-    if (isset($form_state['storage']['payment_method_selector'])) {
-      $payment_method_selector = $form_state['storage']['payment_method_selector'];
+    if ($form_state->has('payment_method_selector')) {
+      $payment_method_selector = $form_state->get('payment_method_selector');
     }
     else {
       $config = $this->config('payment_reference.payment_type');
@@ -75,7 +75,7 @@ class PaymentForm extends ContentEntityForm {
       }
       $payment_method_selector->setPayment($payment);
       $payment_method_selector->setRequired();
-      $form_state['storage']['payment_method_selector'] = $payment_method_selector;
+      $form_state->set('payment_method_selector', $payment_method_selector);
     }
 
     $form['payment_method'] = $payment_method_selector->buildConfigurationForm(array(), $form_state, $payment);
