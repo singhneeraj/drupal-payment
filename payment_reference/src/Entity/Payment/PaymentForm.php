@@ -87,9 +87,8 @@ class PaymentForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function validate(array $form, FormStateInterface $form_state) {
-    $storage = $form_state->get('storage');
     /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface $payment_method_selector */
-    $payment_method_selector = $storage['payment_method_selector'];
+    $payment_method_selector = $form_state->get('payment_method_selector');
     $payment_method_selector->validateConfigurationForm($form['payment_method'], $form_state);
   }
 
@@ -99,9 +98,8 @@ class PaymentForm extends ContentEntityForm {
   public function submit(array $form, FormStateInterface $form_state) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->getEntity();
-    $storage = $form_state->get('storage');
     /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface $payment_method_selector */
-    $payment_method_selector = $storage['payment_method_selector'];
+    $payment_method_selector = $form_state->get('payment_method_selector');
     $payment_method_selector->submitConfigurationForm($form['payment_method'], $form_state);
     $payment->setPaymentMethod($payment_method_selector->getPaymentMethod());
     $payment->save();
