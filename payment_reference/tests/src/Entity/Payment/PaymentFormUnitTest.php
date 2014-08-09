@@ -195,10 +195,8 @@ class PaymentFormUnitTest extends UnitTestCase {
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form_state->expects($this->atLeastOnce())
       ->method('get')
-      ->with('storage')
-      ->willReturn(array(
-        'payment_method_selector' => $this->paymentMethodSelector,
-      ));
+      ->with('payment_method_selector')
+      ->willReturn($this->paymentMethodSelector);
 
     $this->paymentMethodSelector->expects($this->once())
       ->method('validateConfigurationForm')
@@ -219,10 +217,8 @@ class PaymentFormUnitTest extends UnitTestCase {
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form_state->expects($this->atLeastOnce())
       ->method('get')
-      ->with('storage')
-      ->willReturn(array(
-        'payment_method_selector' => $this->paymentMethodSelector,
-      ));
+      ->with('payment_method_selector')
+      ->willReturn($this->paymentMethodSelector);
 
     $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
 
