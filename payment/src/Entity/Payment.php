@@ -11,7 +11,7 @@ use Drupal\Component\Plugin\Discovery\CachedDiscoveryInterface;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Field\FieldDefinition;
+use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\payment\Event\PaymentEvents;
 use Drupal\payment\Event\PaymentStatusSet;
 use Drupal\payment\Payment as PaymentServiceWrapper;
@@ -380,25 +380,25 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
-    $fields['bundle'] = FieldDefinition::create('string')
+    $fields['bundle'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Payment type'))
       ->setReadOnly(TRUE);
-    $fields['currency'] = FieldDefinition::create('entity_reference')
+    $fields['currency'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Currency'))
       ->setDefaultValue(0)
       ->setSettings(array(
         'target_type' => 'currency',
       ));
-    $fields['id'] = FieldDefinition::create('integer')
+    $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Payment ID'))
       ->setReadOnly(TRUE);
-    $fields['owner'] = FieldDefinition::create('entity_reference')
+    $fields['owner'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Owner'))
       ->setDefaultValue(0)
       ->setSettings(array(
         'target_type' => 'user',
       ));
-    $fields['uuid'] = FieldDefinition::create('uuid')
+    $fields['uuid'] = BaseFieldDefinition::create('uuid')
       ->setLabel(t('Universally Unique ID'))
       ->setReadOnly(TRUE);
 
