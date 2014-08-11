@@ -79,6 +79,15 @@ class UnavailableUnitTest extends UnitTestCase {
   }
 
   /**
+   * @covers ::resumeContextAccess
+   */
+  public function testResumeContextAccess() {
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
+    $this->assertFalse($this->paymentType->resumeContextAccess($account));
+  }
+
+  /**
    * @covers ::doResumeContext
    * @expectedException \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    */

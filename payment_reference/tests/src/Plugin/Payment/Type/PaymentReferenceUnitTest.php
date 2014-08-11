@@ -219,9 +219,18 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   }
 
   /**
+   * @covers ::resumeContextAccess
+   */
+  public function testResumeContextAccess() {
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
+    $this->assertTrue($this->paymentType->resumeContextAccess($account));
+  }
+
+  /**
    * @covers ::doResumeContext
    */
-  public function testResumeContext() {
+  public function testDoResumeContext() {
     $url = 'http://example.com';
 
     $kernel = $this->getMock('\Symfony\Component\HttpKernel\HttpKernelInterface');

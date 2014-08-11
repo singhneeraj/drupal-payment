@@ -8,6 +8,7 @@ namespace Drupal\payment_form\Plugin\Payment\Type;
 
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -98,6 +99,13 @@ class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInter
       $event->setResponse($response);
     };
     $this->eventDispatcher->addListener(KernelEvents::RESPONSE, $listener, 999);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function resumeContextAccess(AccountInterface $account) {
+    return TRUE;
   }
 
   /**

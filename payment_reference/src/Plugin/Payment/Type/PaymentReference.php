@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -109,6 +110,13 @@ class PaymentReference extends PaymentTypeBase implements ContainerFactoryPlugin
       $event->setResponse($response);
     };
     $this->eventDispatcher->addListener(KernelEvents::RESPONSE, $listener, 999);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function resumeContextAccess(AccountInterface $account) {
+    return TRUE;
   }
 
   /**

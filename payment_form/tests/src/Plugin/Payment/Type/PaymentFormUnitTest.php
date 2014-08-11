@@ -190,10 +190,19 @@ class PaymentFormUnitTest extends UnitTestCase {
   }
 
   /**
+   * @covers ::resumeContextAccess
+   */
+  public function testResumeContextAccess() {
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
+    $this->assertTrue($this->paymentType->resumeContextAccess($account));
+  }
+
+  /**
    * @covers ::doResumeContext
    * @depends testGetDestinationUrl
    */
-  public function testResumeContext() {
+  public function testDoResumeContext() {
     $url = 'http://example.com';
 
     $this->paymentType->setDestinationUrl($url);

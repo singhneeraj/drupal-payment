@@ -8,6 +8,7 @@ namespace Drupal\payment\Plugin\Payment\Type;
 
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
 
 /**
@@ -42,7 +43,21 @@ interface PaymentTypeInterface extends PluginInspectionInterface, ConfigurablePl
   public function paymentDescription($language_code = NULL);
 
   /**
-   * Resumes the payer's context workflow.
+   * Checks if the payment type context can be resumed..
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *
+   * @return bool
+   *
+   * @see self::resumeContext
+   */
+  public function resumeContextAccess(AccountInterface $account);
+
+  /**
+   * Resumes the payment context's workflow.
+   *
+   * @see self::resumeContextAccess
    */
   public function resumeContext();
+
 }

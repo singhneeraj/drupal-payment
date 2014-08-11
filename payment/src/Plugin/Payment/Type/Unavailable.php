@@ -6,7 +6,7 @@
 
 namespace Drupal\payment\Plugin\Payment\Type;
 
-use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -31,8 +31,6 @@ class Unavailable extends PaymentTypeBase {
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   The module handler.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
@@ -48,6 +46,13 @@ class Unavailable extends PaymentTypeBase {
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static($configuration, $plugin_id, $plugin_definition, $container->get('event_dispatcher'), $container->get('string_translation'));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function resumeContextAccess(AccountInterface $account) {
+    return FALSE;
   }
 
   /**
