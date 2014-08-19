@@ -45,10 +45,10 @@ use Drupal\user\UserInterface;
  *     "uuid" = "uuid",
  *   },
  *   fieldable = TRUE,
+ *   field_ui_base_route = "payment.payment_type",
  *   id = "payment",
  *   label = @Translation("Payment"),
  *   links = {
- *     "admin-form" = "payment.payment_type",
  *     "canonical" = "payment.payment.view",
  *     "edit-form" = "payment.payment.edit",
  *     "delete-form" = "payment.payment.delete",
