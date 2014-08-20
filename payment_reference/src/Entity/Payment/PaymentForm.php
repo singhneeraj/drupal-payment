@@ -86,7 +86,7 @@ class PaymentForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function validate(array $form, FormStateInterface $form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state) {
     /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface $payment_method_selector */
     $payment_method_selector = $form_state->get('payment_method_selector');
     $payment_method_selector->validateConfigurationForm($form['payment_method'], $form_state);

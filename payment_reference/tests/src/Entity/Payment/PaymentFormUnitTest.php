@@ -184,9 +184,9 @@ class PaymentFormUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::validate
+   * @covers ::validateForm
    */
-  public function testValidate() {
+  public function testValidateForm() {
     $form = array(
       'payment_method' => array(
         '#type' => $this->randomMachineName(),
@@ -202,7 +202,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->method('validateConfigurationForm')
       ->with($form['payment_method'], $form_state);
 
-    $this->form->validate($form, $form_state);
+    $this->form->validateForm($form, $form_state);
   }
 
   /**
