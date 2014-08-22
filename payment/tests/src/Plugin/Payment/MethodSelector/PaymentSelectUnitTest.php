@@ -470,6 +470,7 @@ class PaymentSelectUnitTest extends UnitTestCase {
     $expected_build = array(
       'payment_method_id' => array(
         '#ajax' => array(
+          'callback' => array('Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect', 'ajaxSubmitConfigurationForm'),
           'effect' => 'fade',
           'event' => 'change',
           'trigger_as' => array(
@@ -488,7 +489,7 @@ class PaymentSelectUnitTest extends UnitTestCase {
       ),
       'change' => array(
         '#ajax' => array(
-          'callback' => array($this->paymentMethodSelector, 'ajaxSubmitConfigurationForm'),
+          'callback' => array('Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect', 'ajaxSubmitConfigurationForm'),
         ),
         '#attributes' => array(
           'class' => array('js-hide')

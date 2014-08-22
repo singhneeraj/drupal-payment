@@ -25,6 +25,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class PaymentSelect extends PaymentMethodSelectorBase {
 
   /**
+   * The form element ID.
+   *
+   * @see self::getElementId
+   *
+   * @var string
+   */
+  protected $elementId;
+
+  /**
    * The previously selected payment methods.
    *
    * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface[]
@@ -117,7 +126,7 @@ class PaymentSelect extends PaymentMethodSelectorBase {
   /**
    * Implements form AJAX callback.
    */
-  public function ajaxSubmitConfigurationForm(array &$form, FormStateInterface $form_state) {
+  public static function ajaxSubmitConfigurationForm(array &$form, FormStateInterface $form_state) {
     $triggering_element = $form_state->get('triggering_element');
     $form_parents = array_slice($triggering_element['#array_parents'], 0, -2);
     $root_element = NestedArray::getValue($form, $form_parents);
@@ -141,7 +150,7 @@ class PaymentSelect extends PaymentMethodSelectorBase {
    */
   protected function buildPaymentMethodForm(FormStateInterface $form_state) {
     $element = array(
-      '#id' => $this->getElementId($form_state),
+      '#id' => $this->getElementId(),
       '#type' => 'container',
     );
     if ($this->getPaymentMethod()) {
@@ -229,12 +238,13 @@ class PaymentSelect extends PaymentMethodSelectorBase {
     }
     $element['payment_method_id'] = array(
       '#ajax' => array(
+        'callback' => array(get_class(), 'ajaxSubmitConfigurationForm'),
         'effect' => 'fade',
         'event' => 'change',
         'trigger_as' => array(
           'name' => $root_element['#name'] . '[select][change]',
         ),
-        'wrapper' => $this->getElementId($form_state),
+        'wrapper' => $this->getElementId(),
       ),
       '#default_value' => is_null($this->getPaymentMethod()) ? NULL : $this->getPaymentMethod()->getPluginId(),
       '#empty_value' => 'select',
@@ -245,7 +255,7 @@ class PaymentSelect extends PaymentMethodSelectorBase {
     );
     $element['change'] = array(
       '#ajax' => array(
-        'callback' => array($this, 'ajaxSubmitConfigurationForm'),
+        'callback' => array(get_class(), 'ajaxSubmitConfigurationForm'),
       ),
       '#attributes' => array(
         'class' => array('js-hide')
@@ -263,17 +273,14 @@ class PaymentSelect extends PaymentMethodSelectorBase {
   /**
    * Retrieves the element's ID from the form's state.
    *
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *
    * @return string
    */
-  protected function getElementId(FormStateInterface $form_state) {
-    $form_state_data = $form_state->get($this->getPluginId());
-    if (!($form_state_data && array_key_exists(spl_object_hash($this), $form_state_data))) {
-      $form_state_data[spl_object_hash($this)]['element_id'] = drupal_html_id($this->getPluginId());
+  protected function getElementId() {
+    if (!$this->elementId) {
+      $this->elementId = drupal_html_id($this->getPluginId());
     }
 
-    return $form_state_data[spl_object_hash($this)]['element_id'];
+    return $this->elementId;
   }
 
   /**
