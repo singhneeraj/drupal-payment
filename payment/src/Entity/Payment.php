@@ -415,7 +415,8 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * Clones the instance.
    */
-  function __clone() {
+  public function __clone() {
+    parent::__clone();
     // Clone the payment type.
     $this->type = clone $this->type;
     $this->type->setPayment($this);
