@@ -26,7 +26,7 @@ use Drupal\user\UserInterface;
  * @ContentEntityType(
  *   base_table = "payment",
  *   bundle_label = @Translation("Payment type"),
- *   controllers = {
+ *   handlers = {
  *     "access" = "Drupal\payment\Entity\Payment\PaymentAccessControlHandler",
  *     "form" = {
  *       "delete" = "Drupal\payment\Entity\Payment\PaymentDeleteForm",

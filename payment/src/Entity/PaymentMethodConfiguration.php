@@ -16,7 +16,7 @@ use Drupal\user\UserInterface;
  *
  * @ConfigEntityType(
  *   bundle_label = @Translation("Payment method type"),
- *   controllers = {
+ *   handlers = {
  *     "access" = "Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccessControlHandler",
  *     "form" = {
  *       "default" = "Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm",

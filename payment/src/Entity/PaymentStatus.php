@@ -14,7 +14,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *
  * @ConfigEntityType(
  *   admin_permission = "payment.payment_status.administer",
- *   controllers = {
+ *   handlers = {
  *     "access" = "\Drupal\Core\Entity\EntityAccessControlHandler",
  *     "form" = {
  *       "default" = "Drupal\payment\Entity\PaymentStatus\PaymentStatusForm",
