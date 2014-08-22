@@ -156,7 +156,9 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function setLineItems(array $line_items) {
+    /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[] $line_items */
     foreach ($line_items as $line_item) {
+      $line_item->setPaymentId($this->id());
       $this->setLineItem($line_item);
     }
 
@@ -214,6 +216,10 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function setStatuses(array $statuses) {
+    /** @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface[] $statuses */
+    foreach ($statuses as $status) {
+      $status->setPaymentId($this->id());
+    }
     $this->statuses = array_values($statuses);
 
     return $this;
@@ -258,6 +264,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function setPaymentMethod(PluginPaymentMethodInterface $payment_method) {
+    $payment_method->setPayment($this);
     $this->method = $payment_method;
 
     return $this;
@@ -409,9 +416,28 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * Clones the instance.
    */
   function __clone() {
+    // Clone the payment type.
+    $this->type = clone $this->type;
+    $this->type->setPayment($this);
+
+    // Clone the payment method.
     if ($this->getPaymentMethod()) {
       $this->setPaymentMethod(clone $this->getPaymentMethod());
     }
-    $this->type = clone $this->getPaymentType();
+
+    // Clone the line items.
+    $cloned_line_items = array();
+    foreach ($this->getLineItems() as $line_item) {
+      $cloned_line_items[] = clone $line_item;
+    }
+    $this->setLineItems($cloned_line_items);
+
+    // Clone the payment statuses.
+    $cloned_statuses = array();
+    foreach ($this->getStatuses() as $status) {
+      $cloned_statuses[] = clone $status;
+    }
+    $this->setStatuses($cloned_statuses);
   }
+
 }
