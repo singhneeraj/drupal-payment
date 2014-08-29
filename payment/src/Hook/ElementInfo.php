@@ -36,7 +36,7 @@ class ElementInfo {
       '#default_value' => array(),
       '#element_validate' => array(array('\Drupal\payment\Element\PaymentLineItemsInput', 'validate')),
       '#input' => TRUE,
-      '#process' => array('form_process_container', array('\Drupal\payment\Element\PaymentLineItemsInput', 'process')),
+      '#process' => array(array('\Drupal\Core\Render\Element\Container', 'processContainer'), array('\Drupal\payment\Element\PaymentLineItemsInput', 'process')),
       '#tree' => TRUE,
       '#theme_wrappers' => array('container'),
       '#value' => array(),
