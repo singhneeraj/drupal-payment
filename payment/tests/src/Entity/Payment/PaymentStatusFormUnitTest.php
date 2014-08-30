@@ -291,7 +291,7 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
     $url = new Url($this->randomMachineName());
 
     $this->payment->expects($this->once())
-      ->method('setStatus')
+      ->method('setPaymentStatus')
       ->with($payment_status);
     $this->payment->expects($this->once())
       ->method('save');

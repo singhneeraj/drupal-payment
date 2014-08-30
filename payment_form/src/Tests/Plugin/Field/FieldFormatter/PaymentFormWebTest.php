@@ -118,7 +118,7 @@ class PaymentFormWebTest extends WebTestBase {
     $payment = $this->paymentStorage->load(1);
     if ($this->assertTrue((bool) $payment)) {
       $this->assertTrue($payment->getPaymentType() instanceof PaymentForm);
-      $this->assertIdentical($payment->getStatus()->getPluginId(), $this->executeStatusPluginId);
+      $this->assertIdentical($payment->getPaymentStatus()->getPluginId(), $this->executeStatusPluginId);
     }
   }
 }

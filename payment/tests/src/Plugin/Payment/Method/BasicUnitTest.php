@@ -137,7 +137,7 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
       ->method('getPaymentType')
       ->will($this->returnValue($payment_type));
     $payment->expects($this->once())
-      ->method('setStatus')
+      ->method('setPaymentStatus')
       ->with($payment_status);
 
     $this->paymentMethod->setPayment($payment);
@@ -165,7 +165,7 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
     $payment->expects($this->once())
       ->method('save');
     $payment->expects($this->once())
-      ->method('setStatus')
+      ->method('setPaymentStatus')
       ->with($payment_status);
 
     $this->paymentMethod->setPayment($payment);
@@ -202,7 +202,7 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
       ->disableOriginalConstructor()
       ->getMock();
     $payment->expects($this->any())
-      ->method('getStatus')
+      ->method('getPaymentStatus')
       ->will($this->returnValue($capture_payment_status));
 
     $this->paymentMethod->setPayment($payment);
@@ -246,7 +246,7 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
     $payment->expects($this->once())
       ->method('save');
     $payment->expects($this->once())
-      ->method('setStatus')
+      ->method('setPaymentStatus')
       ->with($payment_status);
 
     $this->paymentMethod->setPayment($payment);
@@ -278,7 +278,7 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
       ->disableOriginalConstructor()
       ->getMock();
     $payment->expects($this->any())
-      ->method('getStatus')
+      ->method('getPaymentStatus')
       ->will($this->returnValue($payment_status));
 
     $this->paymentMethod->setPayment($payment);

@@ -313,7 +313,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       ->with('view')
       ->will($this->returnValue(TRUE));
     $payment->expects($this->once())
-      ->method('getStatus')
+      ->method('getPaymentStatus')
       ->will($this->returnValue($payment_status));
 
     $this->controller->resumeContext($payment);

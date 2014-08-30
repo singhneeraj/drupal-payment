@@ -66,7 +66,7 @@ class SetStatus extends ConfigurableActionBase implements ContainerFactoryPlugin
   public function execute(PaymentInterface $payment = NULL) {
     if ($payment) {
       $status = $this->paymentStatusManager->createInstance($this->configuration['payment_status_plugin_id']);
-      $payment->setStatus($status);
+      $payment->setPaymentStatus($status);
     }
   }
 

@@ -112,7 +112,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function getChangedTime() {
-    return $this->getStatus()->getCreated();
+    return $this->getPaymentStatus()->getCreated();
   }
 
   /**
@@ -215,7 +215,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public function setStatuses(array $statuses) {
+  public function setPaymentStatuses(array $statuses) {
     /** @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface[] $statuses */
     foreach ($statuses as $status) {
       $status->setPayment($this);
@@ -228,11 +228,11 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public function setStatus(PluginPaymentStatusInterface $status, $notify = TRUE) {
-    $previous_status = $this->getStatus();
+  public function setPaymentStatus(PluginPaymentStatusInterface $status, $notify = TRUE) {
+    $previous_status = $this->getPaymentStatus();
     $status->setPayment($this);
     // Prevent duplicate statuses.
-    if (!$this->getStatus() || $this->getStatus()->getPluginId() != $status->getPluginId()) {
+    if (!$this->getPaymentStatus() || $this->getPaymentStatus()->getPluginId() != $status->getPluginId()) {
       $this->statuses[] = $status;
     }
     if ($notify) {
@@ -249,14 +249,14 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public function getStatuses() {
+  public function getPaymentStatuses() {
     return $this->statuses;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getStatus() {
+  public function getPaymentStatus() {
     return $this->statuses ? end($this->statuses) : NULL;
   }
 
@@ -330,11 +330,11 @@ class Payment extends ContentEntityBase implements PaymentInterface {
     $manager = PaymentServiceWrapper::statusManager();
     // Execute the payment.
     if ($this->getPaymentMethod()->executePaymentAccess(\Drupal::currentUser())) {
-      $this->setStatus($manager->createInstance('payment_pending'));
+      $this->setPaymentStatus($manager->createInstance('payment_pending'));
       $this->getPaymentMethod()->executePayment($this);
     }
     else {
-      $this->setStatus($manager->createInstance('payment_failed'));
+      $this->setPaymentStatus($manager->createInstance('payment_failed'));
       $this->getPaymentType()->resumeContext();
     }
   }
@@ -367,7 +367,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   public function postSave(EntityStorageInterface $storage, $update = TRUE) {
     /** @var \Drupal\payment\Entity\Payment\PaymentStorageInterface $storage */
     $storage->saveLineItems($this->getLineItems());
-    $storage->savePaymentStatuses($this->getStatuses());
+    $storage->savePaymentStatuses($this->getPaymentStatuses());
   }
 
   /**
@@ -431,10 +431,10 @@ class Payment extends ContentEntityBase implements PaymentInterface {
 
     // Clone the payment statuses.
     $cloned_statuses = array();
-    foreach ($this->getStatuses() as $status) {
+    foreach ($this->getPaymentStatuses() as $status) {
       $cloned_statuses[] = clone $status;
     }
-    $this->setStatuses($cloned_statuses);
+    $this->setPaymentStatuses($cloned_statuses);
   }
 
 }

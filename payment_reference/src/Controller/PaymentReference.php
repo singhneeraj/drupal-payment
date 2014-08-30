@@ -182,7 +182,7 @@ class PaymentReference extends ControllerBase implements ContainerInjectionInter
     $message = $this->t('You can now <span class="payment_reference-window-close">close this window</span>.');
     if ($payment->access('view')) {
       $message = $this->t('Your payment is %status.', array(
-        '%status' => $payment->getStatus()->getLabel(),
+        '%status' => $payment->getPaymentStatus()->getLabel(),
       )) . ' ' . $message;
     }
 

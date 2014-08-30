@@ -143,7 +143,7 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
    * {@inheritdoc}
    */
   protected function doExecutePayment() {
-    $this->getPayment()->setStatus($this->paymentStatusManager->createInstance($this->getExecuteStatusId()));
+    $this->getPayment()->setPaymentStatus($this->paymentStatusManager->createInstance($this->getExecuteStatusId()));
     $this->getPayment()->save();
     $this->getPayment()->getPaymentType()->resumeContext();
   }
@@ -152,7 +152,7 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
    * {@inheritdoc}
    */
   public function doCapturePayment() {
-    $this->getPayment()->setStatus($this->paymentStatusManager->createInstance($this->getCaptureStatusId()));
+    $this->getPayment()->setPaymentStatus($this->paymentStatusManager->createInstance($this->getCaptureStatusId()));
     $this->getPayment()->save();
   }
 
@@ -160,14 +160,14 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
    * {@inheritdoc}
    */
   public function doCapturePaymentAccess(AccountInterface $account) {
-    return $this->getCapture() && $this->getPayment()->getStatus()->getPluginId() == $this->getExecuteStatusId();
+    return $this->getCapture() && $this->getPayment()->getPaymentStatus()->getPluginId() == $this->getExecuteStatusId();
   }
 
   /**
    * {@inheritdoc}
    */
   public function doRefundPayment() {
-    $this->getPayment()->setStatus($this->paymentStatusManager->createInstance($this->getRefundStatusId()));
+    $this->getPayment()->setPaymentStatus($this->paymentStatusManager->createInstance($this->getRefundStatusId()));
     $this->getPayment()->save();
   }
 
@@ -175,7 +175,7 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
    * {@inheritdoc}
    */
   public function doRefundPaymentAccess(AccountInterface $account) {
-    return $this->getRefund() && $this->getPayment()->getStatus()->getPluginId() == $this->getCaptureStatusId();
+    return $this->getRefund() && $this->getPayment()->getPaymentStatus()->getPluginId() == $this->getCaptureStatusId();
   }
 
   /**

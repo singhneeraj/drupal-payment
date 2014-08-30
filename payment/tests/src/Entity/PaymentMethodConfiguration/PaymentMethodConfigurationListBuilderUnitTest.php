@@ -161,7 +161,7 @@ class PaymentMethodConfigurationListBuilderUnitTest extends UnitTestCase {
       ->method('getPluginId')
       ->will($this->returnValue($payment_method_configuration_plugin_id));
     $payment_method_configuration->expects($this->any())
-      ->method('getStatus')
+      ->method('getPaymentStatus')
       ->will($this->returnValue($payment_method_configuration_entity_status));
     $payment_method_configuration->expects($this->any())
       ->method('label')

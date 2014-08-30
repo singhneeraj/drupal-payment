@@ -101,7 +101,7 @@ class PaymentReference {
       $payment = Payment::load($payment_id);
       /** @var \Drupal\currency\Entity\CurrencyInterface $currency */
       $currency = entity_load('currency', $payment->getCurrencyCode());
-      $status = $payment->getStatus();
+      $status = $payment->getPaymentStatus();
       $status_definition = $status->getPluginDefinition();
       $element['payment'][0]['amount'] = array(
         '#markup' => $currency->formatAmount($payment->getAmount()),

@@ -143,7 +143,7 @@ class PaymentStatusForm extends EntityForm {
 
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->getEntity();
-    $payment->setStatus($payment_status);
+    $payment->setPaymentStatus($payment_status);
     $payment->save();
 
     $form_state->setRedirectUrl($payment->urlInfo());

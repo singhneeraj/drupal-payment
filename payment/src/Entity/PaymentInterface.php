@@ -113,7 +113,7 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
    *
    * @return \Drupal\payment\Entity\PaymentInterface
    */
-  public function setStatuses(array $statuses);
+  public function setPaymentStatuses(array $statuses);
 
   /**
    * Sets a status.
@@ -124,21 +124,22 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
    *
    * @return \Drupal\payment\Entity\PaymentInterface
    */
-  public function setStatus(PluginPaymentStatusInterface $status, $notify = TRUE);
+  public function setPaymentStatus(PluginPaymentStatusInterface $status, $notify = TRUE);
 
   /**
-   * Gets all statuses.
+   * Gets all payment statuses.
    *
-   * @return array
+   * @return \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface[]
+   *   The statuses are ordered by time with the newest last.
    */
-  public function getStatuses();
+  public function getPaymentStatuses();
 
   /**
-   * Gets the status.
+   * Gets the current payment status.
    *
    * @return \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface
    */
-  public function getStatus();
+  public function getPaymentStatus();
 
   /**
    * Gets the payment method plugin.

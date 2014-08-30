@@ -71,7 +71,7 @@ class DatabaseQueueWebTest extends WebTestBase {
     $category_id_prefix = $this->randomMachineName();
     $category_id = $category_id_prefix . $this->randomMachineName();
     $payment = Generate::createPayment(2);
-    $payment->setStatus($this->paymentStatusManager->createInstance('payment_success'));
+    $payment->setPaymentStatus($this->paymentStatusManager->createInstance('payment_success'));
     $payment->save();
 
     // Tests save().
@@ -100,7 +100,7 @@ class DatabaseQueueWebTest extends WebTestBase {
     // Save another payment to the queue, because acquiring the previous one
     // deleted it.
     $payment = Generate::createPayment(2);
-    $payment->setStatus($this->paymentStatusManager->createInstance('payment_success'));
+    $payment->setPaymentStatus($this->paymentStatusManager->createInstance('payment_success'));
     $payment->save();
     $this->queue->save($category_id, $payment->id());
 

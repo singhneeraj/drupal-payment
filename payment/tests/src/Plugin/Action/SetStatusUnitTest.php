@@ -133,7 +133,7 @@ class SetStatusUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
     $payment->expects($this->once())
-      ->method('setStatus')
+      ->method('setPaymentStatus')
       ->with($status);
 
     $this->action->setConfiguration(array(

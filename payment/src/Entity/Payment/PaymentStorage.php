@@ -95,7 +95,7 @@ class PaymentStorage extends ContentEntityDatabaseStorage implements PaymentStor
     $payment = parent::create($values);
     $status = $this->paymentStatusManager->createInstance('payment_created')
       ->setCreated(time());
-    $payment->setStatus($status);
+    $payment->setPaymentStatus($status);
 
     return $payment;
   }
@@ -146,8 +146,8 @@ class PaymentStorage extends ContentEntityDatabaseStorage implements PaymentStor
     $record->bundle = $payment->bundle();
     $record->currency_code = $payment->getCurrencyCode();
     $record->id = $payment->id();
-    $record->first_payment_status_id = current($payment->getStatuses())->getId();
-    $record->last_payment_status_id = $payment->getStatus()->getId();
+    $record->first_payment_status_id = current($payment->getPaymentStatuses())->getId();
+    $record->last_payment_status_id = $payment->getPaymentStatus()->getId();
     $record->owner_id = $payment->getOwnerId();
     $record->payment_method_configuration = serialize($payment->getPaymentMethod() ? $payment->getPaymentMethod()->getConfiguration() : array());
     $record->payment_method_id = $payment->getPaymentMethod() ? $payment->getPaymentMethod()->getPluginId() : NULL;
@@ -229,7 +229,7 @@ class PaymentStorage extends ContentEntityDatabaseStorage implements PaymentStor
       $statuses[$status->getPayment()->id()][] = $status;
     }
     foreach ($entities as $payment) {
-      $payment->setStatuses($statuses[$payment->id()]);
+      $payment->setPaymentStatuses($statuses[$payment->id()]);
     }
   }
 

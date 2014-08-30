@@ -70,7 +70,7 @@ class PaymentUnitTest extends KernelTestBase {
    */
   protected function testGetChangedTime() {
     $status = $this->statusManager->createInstance('payment_succes');
-    $this->payment->setStatus($status);
+    $this->payment->setPaymentStatus($status);
     $this->assertIdentical($this->payment->getChangedTime(), $status->getCreated());
   }
 
@@ -160,8 +160,8 @@ class PaymentUnitTest extends KernelTestBase {
    */
   protected function testGetStatus() {
     $status = $this->statusManager->createInstance('payment_pending');
-    $this->assertEqual(spl_object_hash($this->payment->setStatus($status, FALSE)), spl_object_hash($this->payment));
-    $this->assertEqual(spl_object_hash($this->payment->getStatus()), spl_object_hash($status));
+    $this->assertEqual(spl_object_hash($this->payment->setPaymentStatus($status, FALSE)), spl_object_hash($this->payment));
+    $this->assertEqual(spl_object_hash($this->payment->getPaymentStatus()), spl_object_hash($status));
   }
 
   /**
@@ -169,8 +169,8 @@ class PaymentUnitTest extends KernelTestBase {
    */
   protected function testGetStatuses() {
     $statuses = array($this->statusManager->createInstance('payment_pending'), $this->statusManager->createInstance('payment_failed'));
-    $this->assertEqual(spl_object_hash($this->payment->setStatuses($statuses)), spl_object_hash($this->payment));
-    $retrieved_statuses = $this->payment->getStatuses();
+    $this->assertEqual(spl_object_hash($this->payment->setPaymentStatuses($statuses)), spl_object_hash($this->payment));
+    $retrieved_statuses = $this->payment->getPaymentStatuses();
     $this->assertEqual(spl_object_hash(reset($retrieved_statuses)), spl_object_hash(reset($statuses)));
     $this->assertEqual(spl_object_hash(end($retrieved_statuses)), spl_object_hash(end($statuses)));
   }

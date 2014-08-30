@@ -194,10 +194,10 @@ class PaymentStorageUnitTest extends UnitTestCase {
       ->method('getPaymentType')
       ->will($this->returnValue($payment_type));
     $payment->expects($this->once())
-      ->method('getStatus')
+      ->method('getPaymentStatus')
       ->will($this->returnValue($last_payment_status));
     $payment->expects($this->once())
-      ->method('getStatuses')
+      ->method('getPaymentStatuses')
       ->will($this->returnValue(array($first_payment_status, $last_payment_status)));
     $payment->expects($this->atLeastOnce())
       ->method('id')

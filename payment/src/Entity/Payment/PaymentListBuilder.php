@@ -117,7 +117,7 @@ class PaymentListBuilder extends EntityListBuilder {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $row['data']['updated'] = $this->dateFormatter->format($payment->getChangedTime());
 
-    $status_definition = $payment->getStatus()->getPluginDefinition();
+    $status_definition = $payment->getPaymentStatus()->getPluginDefinition();
     $row['data']['status'] = $status_definition['label'];
 
     /** @var \Drupal\currency\Entity\CurrencyInterface $currency */

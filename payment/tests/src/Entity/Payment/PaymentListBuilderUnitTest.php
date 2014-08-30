@@ -231,7 +231,7 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
       ->method('getPaymentMethod')
       ->will($this->returnValue($payment_method));
     $payment->expects($this->any())
-      ->method('getStatus')
+      ->method('getPaymentStatus')
       ->will($this->returnValue($payment_status));
 
     $currency = $this->getMockBuilder('\Drupal\currency\Entity\Currency')

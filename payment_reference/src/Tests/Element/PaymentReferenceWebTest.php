@@ -60,7 +60,7 @@ class PaymentReferenceWebTest extends WebTestBase {
 
     // Test with a queued payment.
     $payment = Generate::createPayment(2);
-    $payment->setStatus(\Drupal::service('plugin.manager.payment.status')->createInstance('payment_success'));
+    $payment->setPaymentStatus(\Drupal::service('plugin.manager.payment.status')->createInstance('payment_success'));
     $payment->save();
     PaymentReference::queue()->save('user.user.' . $field_name, $payment->id());
     $this->drupalGet($path);

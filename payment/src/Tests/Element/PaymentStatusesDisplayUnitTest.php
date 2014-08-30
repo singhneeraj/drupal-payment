@@ -38,9 +38,9 @@ class PaymentStatusesDisplayUnitTest extends KernelTestBase {
     $status = Payment::statusManager()->createInstance('payment_failed');
     $status->setCreated(time());
     $payment = Generate::createPayment(2)
-      ->setStatus($status);
+      ->setPaymentStatus($status);
     $element = array(
-      '#statuses' => $payment->getStatuses(),
+      '#statuses' => $payment->getPaymentStatuses(),
       '#type' => 'payment_statuses_display',
     );
     $output = drupal_render($element);

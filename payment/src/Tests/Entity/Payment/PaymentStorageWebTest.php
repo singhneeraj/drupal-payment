@@ -49,7 +49,7 @@ class PaymentStorageWebTest extends WebTestBase {
     // Test saving a payment.
     $this->assertFalse($payment->id());
     // Set an extra status, so we can test for status IDs later.
-    $payment->setStatus(Payment::statusManager()->createInstance('payment_success'));
+    $payment->setPaymentStatus(Payment::statusManager()->createInstance('payment_success'));
     $payment->save();
     // @todo The ID should be an integer, but for some reason the entity field
     //   API returns a string.
@@ -69,7 +69,7 @@ class PaymentStorageWebTest extends WebTestBase {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment_loaded */
     $payment_loaded = entity_load_unchanged('payment', $payment->id());
     $this->assertEqual(count($payment_loaded->getLineItems()), count($payment->getLineItems()));
-    $this->assertEqual(count($payment_loaded->getStatuses()), count($payment->getStatuses()));
+    $this->assertEqual(count($payment_loaded->getPaymentStatuses()), count($payment->getPaymentStatuses()));
     $this->assertEqual($payment_loaded->getPaymentMethod()->getConfiguration(), $payment_method->getConfiguration());
     $this->assertEqual($payment_loaded->getPaymentType()->getConfiguration(), $payment_type_configuration);
 
