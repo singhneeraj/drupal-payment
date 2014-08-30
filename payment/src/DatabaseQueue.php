@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Queue.
+ * Contains \Drupal\payment\DatabaseQueue.
  */
 
 namespace Drupal\payment;
@@ -16,9 +16,9 @@ use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * The payment queue.
+ * Provides a database-based payment queue.
  */
-class Queue implements QueueInterface {
+class DatabaseQueue implements QueueInterface {
 
   /**
    * The database connection.

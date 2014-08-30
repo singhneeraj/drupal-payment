@@ -2,22 +2,22 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Tests\QueueWebTest.
+ * Contains \Drupal\payment\Tests\DatabaseQueueWebTest.
  */
 
 namespace Drupal\payment\Tests;
 
 
 use Drupal\payment\Tests\Generate;
-use Drupal\payment\Queue;
+use Drupal\payment\DatabaseQueue;
 use Drupal\simpletest\WebTestBase;
 
 /**
- * \Drupal\payment\Queue web test.
+ * \Drupal\payment\DatabaseQueue web test.
  *
  * @group Payment
  */
-class QueueWebTest extends WebTestBase {
+class DatabaseQueueWebTest extends WebTestBase {
 
   /**
    * The database connection.
@@ -43,7 +43,7 @@ class QueueWebTest extends WebTestBase {
   /**
    * The payment reference queue service under test.
    *
-   * @var \Drupal\payment\Queue
+   * @var \Drupal\payment\DatabaseQueue
    */
   protected $queue;
 
@@ -61,7 +61,7 @@ class QueueWebTest extends WebTestBase {
     $this->paymentMethodManager = \Drupal::service('plugin.manager.payment.method');
     $this->paymentStatusManager = \Drupal::service('plugin.manager.payment.status');
     $queue_id = $this->randomMachineName();
-    $this->queue = new Queue($queue_id, $this->database, \Drupal::service('event_dispatcher'), $this->paymentStatusManager);
+    $this->queue = new DatabaseQueue($queue_id, $this->database, \Drupal::service('event_dispatcher'), $this->paymentStatusManager);
   }
 
   /**

@@ -2,21 +2,21 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Tests\QueueUnitTest.
+ * Contains \Drupal\payment\Tests\DatabaseQueueUnitTest.
  */
 
 namespace Drupal\payment\Tests;
 
 use Drupal\payment\Event\PaymentEvents;
-use Drupal\payment\Queue;
+use Drupal\payment\DatabaseQueue;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * @coversDefaultClass \Drupal\payment\Queue
+ * @coversDefaultClass \Drupal\payment\DatabaseQueue
  *
  * @group Payment
  */
-class QueueUnitTest extends UnitTestCase {
+class DatabaseQueueUnitTest extends UnitTestCase {
 
   /**
    * The database connection.
@@ -42,7 +42,7 @@ class QueueUnitTest extends UnitTestCase {
   /**
    * The queue class under test.
    *
-   * @var \Drupal\payment\Queue
+   * @var \Drupal\payment\DatabaseQueue
    */
   protected $queue;
 
@@ -72,7 +72,7 @@ class QueueUnitTest extends UnitTestCase {
 
     $this->queueId = $this->randomMachineName();
 
-    $this->queue = new Queue($this->queueId, $this->database, $this->eventDispatcher, $this->paymentStatusManager);
+    $this->queue = new DatabaseQueue($this->queueId, $this->database, $this->eventDispatcher, $this->paymentStatusManager);
   }
 
   /**
@@ -109,8 +109,8 @@ class QueueUnitTest extends UnitTestCase {
     $payment_id = mt_rand();
     $acquisition_code = $this->randomMachineName();
 
-    /** @var \Drupal\payment\Queue|\PHPUnit_Framework_MockObject_MockObject $queue */
-    $queue = $this->getMockBuilder('\Drupal\payment\Queue')
+    /** @var \Drupal\payment\DatabaseQueue|\PHPUnit_Framework_MockObject_MockObject $queue */
+    $queue = $this->getMockBuilder('\Drupal\payment\DatabaseQueue')
       ->setConstructorArgs(array($this->queueId, $this->database, $this->eventDispatcher, $this->paymentStatusManager))
       ->setMethods(array('tryClaimPaymentOnce'))
       ->getMock();
