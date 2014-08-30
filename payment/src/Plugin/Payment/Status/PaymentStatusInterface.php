@@ -8,6 +8,7 @@ namespace Drupal\payment\plugin\payment\status;
 
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
+use Drupal\payment\Entity\PaymentInterface;
 
 /**
  * A payment status plugin.
@@ -33,20 +34,20 @@ interface PaymentStatusInterface extends PluginInspectionInterface, Configurable
   public function getCreated();
 
   /**
-   * Sets the ID of the payment this status is for.
+   * Sets the payment the status belongs to.
    *
-   * @param int $id
+   * @param \Drupal\payment\Entity\PaymentInterface $payment
    *
    * @return static
    */
-  public function setPaymentId($id);
+  public function setPayment(PaymentInterface $payment);
 
   /**
-   * Gets the ID of the payment this status is for.
+   * Gets the payment this status belongs to.
    *
-   * @param int
+   * @return \Drupal\payment\Entity\PaymentInterface
    */
-  public function getPaymentId();
+  public function getPayment();
 
   /**
    * Sets the ID.

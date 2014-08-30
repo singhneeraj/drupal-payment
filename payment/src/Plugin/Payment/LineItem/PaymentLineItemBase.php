@@ -10,6 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\currency\Math\MathInterface;
+use Drupal\payment\Entity\PaymentInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -23,6 +24,13 @@ abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItem
    * @var \Drupal\currency\Math\MathInterface
    */
   protected $math;
+
+  /**
+   * The payment this line item is for.
+   *
+   * @var \Drupal\payment\Entity\PaymentInterface
+   */
+  protected $payment;
 
   /**
    * Constructs a new class instance.
@@ -64,7 +72,6 @@ abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItem
       'amount' => 0,
       'currency_code' => '',
       'name' => NULL,
-      'payment_id' => NULL,
       'quantity' => 1,
     );
   }
@@ -86,17 +93,17 @@ abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItem
   /**
    * {@inheritdoc}
    */
-  public function setPaymentId($payment_id) {
-    $this->configuration['payment_id'] = $payment_id;
-
-    return $this;
+  public function getPayment() {
+    return $this->payment;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getPaymentId() {
-    return $this->configuration['payment_id'];
+  public function setPayment(PaymentInterface $payment) {
+    $this->payment = $payment;
+
+    return $this;
   }
 
   /**

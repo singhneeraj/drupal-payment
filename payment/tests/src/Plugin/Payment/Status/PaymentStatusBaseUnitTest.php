@@ -96,7 +96,6 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
     $expected_configuration = array(
       'created' => time(),
       'id' => 0,
-      'paymentId' => 0,
     );
     $this->assertSame($expected_configuration, $this->status->defaultConfiguration());
   }
@@ -124,13 +123,15 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::setPaymentId
-   * @covers ::getPaymentId
+   * @covers ::setPayment
+   * @covers ::getPayment
    */
-  public function testGetPaymentId() {
-    $created = mt_rand();
-    $this->assertSame($this->status, $this->status->setPaymentId($created));
-    $this->assertSame($created, $this->status->getPaymentId());
+  public function testGetPayment() {
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $this->assertSame($this->status, $this->status->setPayment($payment));
+    $this->assertSame($payment, $this->status->getPayment());
   }
 
   /**

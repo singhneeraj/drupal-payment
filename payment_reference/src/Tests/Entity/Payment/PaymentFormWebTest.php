@@ -27,6 +27,7 @@ class PaymentFormWebTest extends WebTestBase {
    * Tests the form.
    */
   protected function testForm() {
+
     // Create a user.
     $user = $this->drupalCreateUser(array('administer users'));
     $this->drupalLogin($user);
@@ -61,6 +62,7 @@ class PaymentFormWebTest extends WebTestBase {
 
     $path = '/payment_reference/pay/user/user/' . $field_name;
     $this->drupalGet($path);
+
     $this->drupalPostForm($path, array(), t('Pay'));
     // This actually tests the payment_reference payment type plugin, but it lets
     $this->assertUrl('payment_reference/resume/1');

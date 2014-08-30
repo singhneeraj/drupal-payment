@@ -17,10 +17,10 @@ interface PaymentStorageInterface extends EntityStorageInterface {
   /**
    * Loads payment line items.
    *
-   * @param array $ids
+   * @param int[] $ids
    *   Payment IDs.
    *
-   * @return array
+   * @return array[]
    *   Keys are payment IDs, values are arrays of which keys are line item names
    *   and values are \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface
    *   objects.
@@ -30,17 +30,14 @@ interface PaymentStorageInterface extends EntityStorageInterface {
   /**
    * Saves payment line items.
    *
-   * @param array $line_items
-   *   Keys are payment IDs, values are arrays of which keys are line item names
-   *   and values are \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface
-   *   objects.
+   * @param \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[] $line_items
    */
   public function saveLineItems(array $line_items);
 
   /**
    * Deletes payment line items.
    *
-   * @param array $ids
+   * @param string[] $ids
    *   Keys are payment IDs. Values are line item names.
    */
   public function deleteLineItems(array $ids);
@@ -48,10 +45,10 @@ interface PaymentStorageInterface extends EntityStorageInterface {
   /**
    * Loads payment statuses.
    *
-   * @param array $ids
+   * @param int[] $ids
    *   Payment IDs.
    *
-   * @return array
+   * @return array[]
    *   Keys are payment IDs, values are arrays of
    *   \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface objects.
    */
@@ -60,16 +57,14 @@ interface PaymentStorageInterface extends EntityStorageInterface {
   /**
    * Saves payment statuses.
    *
-   * @param array $statuses
-   *   Keys are payment IDs, values are arrays of
-   *   \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface objects.
+   * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface[] $statuses
    */
   public function savePaymentStatuses(array $statuses);
 
   /**
    * Deletes payment statuses.
    *
-   * @param array $ids
+   * @param int[] $ids
    *   Payment IDs.
    */
   public function deletePaymentStatuses(array $ids);

@@ -158,7 +158,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   public function setLineItems(array $line_items) {
     /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[] $line_items */
     foreach ($line_items as $line_item) {
-      $line_item->setPaymentId($this->id());
+      $line_item->setPayment($this);
       $this->setLineItem($line_item);
     }
 
@@ -169,7 +169,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function setLineItem(PaymentLineItemInterface $line_item) {
-    $line_item->setPaymentId($this->id());
+    $line_item->setPayment($this);
     $this->lineItems[$line_item->getName()] = $line_item;
 
     return $this;
@@ -218,7 +218,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   public function setStatuses(array $statuses) {
     /** @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface[] $statuses */
     foreach ($statuses as $status) {
-      $status->setPaymentId($this->id());
+      $status->setPayment($this);
     }
     $this->statuses = array_values($statuses);
 
@@ -230,7 +230,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    */
   public function setStatus(PluginPaymentStatusInterface $status, $notify = TRUE) {
     $previous_status = $this->getStatus();
-    $status->setPaymentId($this->id());
+    $status->setPayment($this);
     // Prevent duplicate statuses.
     if (!$this->getStatus() || $this->getStatus()->getPluginId() != $status->getPluginId()) {
       $this->statuses[] = $status;
@@ -366,12 +366,8 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    */
   public function postSave(EntityStorageInterface $storage, $update = TRUE) {
     /** @var \Drupal\payment\Entity\Payment\PaymentStorageInterface $storage */
-    $storage->saveLineItems(array(
-      $this->id() => $this->getLineItems(),
-    ));
-    $storage->savePaymentStatuses(array(
-      $this->id() => $this->getStatuses(),
-    ));
+    $storage->saveLineItems($this->getLineItems());
+    $storage->savePaymentStatuses($this->getStatuses());
   }
 
   /**

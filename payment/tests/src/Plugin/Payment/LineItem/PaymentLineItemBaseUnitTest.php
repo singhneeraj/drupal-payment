@@ -131,13 +131,15 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::setPaymentId
-   * @covers ::getPaymentId
+   * @covers ::setPayment
+   * @covers ::getPayment
    */
-  public function testGetPaymentId() {
-    $payment_id = mt_rand();
-    $this->assertSame($this->lineItem, $this->lineItem->setPaymentId($payment_id));
-    $this->assertSame($payment_id, $this->lineItem->getPaymentId());
+  public function testGetPayment() {
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $this->assertSame($this->lineItem, $this->lineItem->setPayment($payment));
+    $this->assertSame($payment, $this->lineItem->getPayment());
   }
 
   /**
@@ -155,7 +157,6 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
       'amount' => 0,
       'currency_code' => '',
       'name' => NULL,
-      'payment_id' => NULL,
       'quantity' => 1,
     );
 

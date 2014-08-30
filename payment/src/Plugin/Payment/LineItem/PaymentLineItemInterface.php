@@ -9,6 +9,7 @@ namespace Drupal\payment\Plugin\Payment\LineItem;
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
+use Drupal\payment\Entity\PaymentInterface;
 
 /**
  * A payment line item.
@@ -16,20 +17,20 @@ use Drupal\Core\Plugin\PluginFormInterface;
 interface PaymentLineItemInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface {
 
   /**
-   * Sets the ID of the payment the line item belongs to.
+   * Sets the payment the line item belongs to.
    *
-   * @param int $payment_id
+   * @param \Drupal\payment\Entity\PaymentInterface $payment
    *
    * @return static
    */
-  public function setPaymentId($payment_id);
+  public function setPayment(PaymentInterface $payment);
 
   /**
-   * Gets the ID of the payment this line item belongs to.
+   * Gets the payment this line item belongs to.
    *
-   * @return int
+   * @return \Drupal\payment\Entity\PaymentInterface
    */
-  public function getPaymentId();
+  public function getPayment();
 
   /**
    * Gets the amount.

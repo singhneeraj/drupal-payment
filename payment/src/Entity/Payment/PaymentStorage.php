@@ -164,13 +164,14 @@ class PaymentStorage extends ContentEntityDatabaseStorage implements PaymentStor
   public function loadLineItems(array $entities) {
     /** @var \Drupal\payment\Entity\PaymentInterface[] $entities */
     $result = $this->database->select('payment_line_item', 'pli')
-      ->fields('pli', array('plugin_configuration', 'plugin_id'))
+      ->fields('pli', array('payment_id', 'plugin_configuration', 'plugin_id'))
       ->condition('payment_id', array_keys($entities))
       ->execute();
     while ($line_item_data = $result->fetchAssoc()) {
       /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface $line_item */
       $line_item = $this->paymentLineItemManager->createInstance($line_item_data['plugin_id'], unserialize($line_item_data['plugin_configuration']));
-      $entities[$line_item->getPaymentId()]->setLineItem($line_item);
+      $line_item->setPayment($entities[$line_item_data['payment_id']]);
+      $entities[$line_item_data['payment_id']]->setLineItem($line_item);
     }
   }
 
@@ -178,26 +179,25 @@ class PaymentStorage extends ContentEntityDatabaseStorage implements PaymentStor
    * {@inheritdoc}
    */
   public function saveLineItems(array $line_items) {
-    $this->deleteLineItems(array_keys($line_items));
-    $query = $this->database->insert('payment_line_item')
-      ->fields(array('amount', 'amount_total', 'currency_code', 'name', 'payment_id', 'plugin_configuration', 'plugin_id', 'quantity'));
-    /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[] $entity_line_items */
-    foreach ($line_items as $payment_id => $entity_line_items) {
-      foreach ($entity_line_items as $line_item) {
-        $line_item->setPaymentId($payment_id);
+    /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[] $line_items */
+    if ($line_items) {
+      $this->deleteLineItems(array(reset($line_items)->getPayment()->id()));
+      $query = $this->database->insert('payment_line_item')
+        ->fields(array('amount', 'amount_total', 'currency_code', 'name', 'payment_id', 'plugin_configuration', 'plugin_id', 'quantity'));
+      foreach ($line_items as $line_item) {
         $query->values(array(
           'amount' => $line_item->getAmount(),
           'amount_total' => $line_item->getTotalAmount(),
           'currency_code' => $line_item->getCurrencyCode(),
           'name' => $line_item->getName(),
-          'payment_id' => $line_item->getPaymentId(),
+          'payment_id' => $line_item->getPayment()->id(),
           'plugin_configuration' => serialize($line_item->getConfiguration()),
           'plugin_id' => $line_item->getPluginId(),
           'quantity' => $line_item->getQuantity(),
         ));
       }
+      $query->execute();
     }
-    $query->execute();
   }
 
   /**
@@ -221,14 +221,12 @@ class PaymentStorage extends ContentEntityDatabaseStorage implements PaymentStor
       ->execute();
     $statuses= array_fill_keys(array_keys($entities), array());
     while ($status_data = $result->fetchAssoc()) {
-      $plugin_id = $status_data['plugin_id'];
-      /** @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface $status */
-      $status = $this->paymentStatusManager->createInstance($plugin_id);
+      $status = $this->paymentStatusManager->createInstance($status_data['plugin_id']);
       $status->setCreated((int) $status_data['created']);
       $status->setId((int) $status_data['id']);
-      $status->setPaymentId((int) $status_data['payment_id']);
+      $status->setPayment($entities[$status_data['payment_id']]);
 
-      $statuses[$status->getPaymentId()][] = $status;
+      $statuses[$status->getPayment()->id()][] = $status;
     }
     foreach ($entities as $payment) {
       $payment->setStatuses($statuses[$payment->id()]);
@@ -239,26 +237,26 @@ class PaymentStorage extends ContentEntityDatabaseStorage implements PaymentStor
    * {@inheritdoc}
    */
   public function savePaymentStatuses(array $statuses) {
-    /** @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface[] $entity_statuses */
-    foreach ($statuses as $payment_id => $entity_statuses) {
-      foreach ($entity_statuses as $status) {
+    /** @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface[] $statuses */
+    if ($statuses) {
+      foreach ($statuses as $status) {
         // Statuses cannot be edited, so only save the ones without an ID.
         if (!$status->getId()) {
-          $status->setPaymentId($payment_id);
           $record = array(
             'created' => $status->getCreated(),
-            'payment_id' => $status->getPaymentId(),
+            'payment_id' => $status->getPayment()->id(),
             'plugin_id' => $status->getPluginId(),
           );
           drupal_write_record('payment_status', $record);
           $status->setId($record['id']);
         }
       }
+      debug(reset($statuses)->getPayment()->id());
       $this->database->update('payment')
-        ->condition('id', $payment_id)
+        ->condition('id', reset($statuses)->getPayment()->id())
         ->fields(array(
-          'first_payment_status_id' => reset($entity_statuses)->getId(),
-          'last_payment_status_id' => end($entity_statuses)->getId(),
+          'first_payment_status_id' => reset($statuses)->getId(),
+          'last_payment_status_id' => end($statuses)->getId(),
         ))
         ->execute();
     }

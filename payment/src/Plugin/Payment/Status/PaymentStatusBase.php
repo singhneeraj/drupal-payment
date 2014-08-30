@@ -8,12 +8,20 @@ namespace Drupal\payment\Plugin\Payment\Status;
 
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\payment\Entity\PaymentInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A base payment status.
  */
 abstract class PaymentStatusBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentStatusInterface {
+
+  /**
+   * The payment this payment status is for.
+   *
+   * @var \Drupal\payment\Entity\PaymentInterface
+   */
+  protected $payment;
 
   /**
    * The payment status plugin manager.
@@ -60,7 +68,6 @@ abstract class PaymentStatusBase extends PluginBase implements ContainerFactoryP
     return array(
       'created' => time(),
       'id' => 0,
-      'paymentId' => 0,
     );
   }
 
@@ -97,17 +104,17 @@ abstract class PaymentStatusBase extends PluginBase implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
-  public function setPaymentId($paymentId) {
-    $this->configuration['paymentId'] = $paymentId;
-
-    return $this;
+  public function getPayment() {
+    return $this->payment;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getPaymentId() {
-    return $this->configuration['paymentId'];
+  public function setPayment(PaymentInterface $payment) {
+    $this->payment = $payment;
+
+    return $this;
   }
 
   /**

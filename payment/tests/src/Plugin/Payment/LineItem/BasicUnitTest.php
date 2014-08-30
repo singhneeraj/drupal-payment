@@ -94,7 +94,6 @@ class BasicUnitTest extends UnitTestCase {
       'amount' => 0,
       'currency_code' => '',
       'name' => NULL,
-      'payment_id' => NULL,
       'quantity' => 1,
       'description' => NULL,
     );
@@ -178,7 +177,6 @@ class BasicUnitTest extends UnitTestCase {
     $this->assertSame($currency_code, $this->lineItem->getCurrencyCode());
     $this->assertSame($description, $this->lineItem->getDescription());
     $this->assertSame($name, $this->lineItem->getName());
-    $this->assertSame($payment_id, $this->lineItem->getPaymentId());
     $this->assertSame($quantity, $this->lineItem->getQuantity());
   }
 

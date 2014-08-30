@@ -135,10 +135,6 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
       '#type' => 'value',
       '#value' => $this->getName(),
     );
-    $elements['payment_id'] = array(
-      '#type' => 'value',
-      '#value' => $this->getPaymentId(),
-    );
     $elements['amount'] = array(
       '#type' => 'currency_amount',
       '#title' => $this->t('Amount'),
@@ -182,7 +178,6 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
     $this->setCurrencyCode($values['amount']['currency_code']);
     $this->setDescription($values['description']);
     $this->setName($values['name']);
-    $this->setPaymentId($values['payment_id']);
     $this->setQuantity($values['quantity']);
   }
 
