@@ -142,6 +142,13 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
   /**
    * {@inheritdoc}
    */
+  public function isPaymentExecutionInterruptive() {
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function doExecutePayment() {
     $this->getPayment()->setPaymentStatus($this->paymentStatusManager->createInstance($this->getExecuteStatusId()));
     $this->getPayment()->save();

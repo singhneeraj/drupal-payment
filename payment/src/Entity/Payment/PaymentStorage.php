@@ -138,7 +138,7 @@ class PaymentStorage extends ContentEntityDatabaseStorage implements PaymentStor
   /**
    * {@inheritdoc}
    */
-  protected function mapToStorageRecord(ContentEntityInterface $entity, $table_key = 'base_table') {
+  protected function mapToStorageRecord(ContentEntityInterface $entity, $table_name = NULL) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $entity;
 

@@ -6,6 +6,7 @@
 
 namespace Drupal\payment_test\Plugin\Payment\Type;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeBase;
 
 /**
@@ -28,6 +29,14 @@ class PaymentTest extends PaymentTypeBase {
   /**
    * {@inheritdoc
    */
+  public function resumeContextAccess(AccountInterface $account) {
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc
+   */
   public function doResumeContext() {
   }
+
 }

@@ -178,6 +178,14 @@ abstract class PaymentMethodBase extends PluginBase implements AccessInterface, 
   /**
    * {@inheritdoc}
    */
+  public function isPaymentExecutionInterruptive() {
+    // To be on the safe side, we assume any payment method is interruptive.
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function executePaymentAccess(AccountInterface $account) {
     if (!$this->getPayment()) {
       throw new \LogicException('Trying to check access for a non-existing payment. A payment must be set trough self::setPayment() first.');

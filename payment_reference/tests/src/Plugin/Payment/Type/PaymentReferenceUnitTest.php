@@ -149,25 +149,6 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::getFieldId
-   *
-   * @depends testGetEntityTypeId
-   * @depends testGetBundle
-   * @depends testGetFieldName
-   */
-  public function testGetFieldId() {
-    $entity_type_id = $this->randomMachineName();
-    $bundle = $this->randomMachineName();
-    $field_name = $this->randomMachineName();
-
-    $this->paymentType->setEntityTypeId($entity_type_id);
-    $this->paymentType->setBundle($bundle);
-    $this->paymentType->setFieldName($field_name);
-
-    $this->assertSame("$entity_type_id.$bundle.$field_name", $this->paymentType->getFieldId());
-  }
-
-  /**
    * @covers ::paymentDescription
    *
    * @depends testGetEntityTypeId
@@ -220,18 +201,64 @@ class PaymentReferenceUnitTest extends UnitTestCase {
 
   /**
    * @covers ::resumeContextAccess
+   *
+   * @dataProvider providerTestResumeContextAccess
    */
-  public function testResumeContextAccess() {
+  public function testResumeContextAccess($expected, $payment_owner_id, $account_id) {
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account->expects($this->atLeastOnce())
+      ->method('id')
+      ->willReturn($account_id);
 
-    $this->assertTrue($this->paymentType->resumeContextAccess($account));
+    $this->payment->expects($this->atLeastOnce())
+      ->method('getOwnerId')
+      ->willReturn($payment_owner_id);
+
+    $this->assertSame($expected, $this->paymentType->resumeContextAccess($account));
+  }
+
+  /**
+   * Provides data to self::testResumeContextAccess().
+   */
+  public function providerTestResumeContextAccess() {
+    $id_a = mt_rand();
+    $id_b = mt_rand();
+
+    return array(
+      array(TRUE, $id_a, $id_a),
+      array(TRUE, $id_b, $id_b),
+      array(FALSE, $id_a, $id_b),
+    );
   }
 
   /**
    * @covers ::doResumeContext
    */
-  public function testDoResumeContext() {
+  public function testDoResumeContextWithoutInterruption() {
+    $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
+
+    $this->payment->expects($this->atLeastOnce())
+      ->method('getPaymentMethod')
+      ->will($this->returnValue($payment_method));
+
+    // Nothing should happen when the payment method is not interruptive.
+    $this->paymentType->resumeContext();
+  }
+
+  /**
+   * @covers ::doResumeContext
+   */
+  public function testDoResumeContextWithInterruption() {
     $url = 'http://example.com';
+
+    $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
+    $payment_method->expects($this->atLeastOnce())
+      ->method('isPaymentExecutionInterruptive')
+      ->will($this->returnValue(TRUE));
+
+    $this->payment->expects($this->atLeastOnce())
+      ->method('getPaymentMethod')
+      ->will($this->returnValue($payment_method));
 
     $kernel = $this->getMock('\Symfony\Component\HttpKernel\HttpKernelInterface');
     $request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')

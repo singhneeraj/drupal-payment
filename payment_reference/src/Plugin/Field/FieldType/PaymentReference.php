@@ -23,7 +23,7 @@ use Drupal\payment_reference\PaymentReference as PaymentReferenceServiceWrapper;
  * @FieldType(
  *   configurable = "true",
  *   constraints = {
- *     "ValidReference" = TRUE
+ *     "ValidReference" = {}
  *   },
  *   default_formatter = "entity_reference_label",
  *   default_widget = "payment_reference",
@@ -38,9 +38,10 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return parent::defaultSettings() + array(
+    return array(
+      'target_bundle' => 'payment_reference',
       'target_type' => 'payment',
-    );
+    ) + parent::defaultSettings();
   }
 
   /**
@@ -147,14 +148,31 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
    * {@inheritdoc}
    */
   public function preSave() {
-    $payment_id = $this->get('target_id')->getValue();
-    $queue = PaymentReferenceServiceWrapper::queue();
-    $acquisition_code = $queue->claimPayment($payment_id);
-    if ($acquisition_code !== FALSE) {
-      $queue->acquirePayment($payment_id, $acquisition_code);
+    $entity_type_id = $this->getFieldDefinition()->getFieldStorageDefinition()->getTargetEntityTypeId();
+    $entity_storage = \Drupal::entityManager()->getStorage($entity_type_id);
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $current_entity */
+    $current_entity = $this->getRoot();
+    $unchanged_payment_id = NULL;
+    if ($current_entity->id()) {
+      /** @var \Drupal\Core\Entity\ContentEntityInterface $unchanged_entity */
+      $unchanged_entity = $entity_storage->loadUnchanged($current_entity->id());
+      if ($unchanged_entity) {
+        $unchanged_payment_id = $unchanged_entity->get($this->getFieldDefinition()->getName())->get($this->name)->get('target_id')->getValue();
+      }
     }
-    else {
-      $this->get('target_id')->setValue(0);
+    $current_payment_id = $this->get('target_id')->getValue();
+
+    // Only claim the payment if the payment ID in this field has changed since
+    // the field's target entity was last saved or if the entity is new.
+    if (!$current_entity->id() || $current_payment_id != $unchanged_payment_id) {
+      $queue = PaymentReferenceServiceWrapper::queue();
+      $acquisition_code = $queue->claimPayment($current_payment_id);
+      if ($acquisition_code !== FALSE) {
+        $queue->acquirePayment($current_payment_id, $acquisition_code);
+      }
+      else {
+        $this->get('target_id')->setValue(0);
+      }
     }
   }
 

@@ -123,23 +123,4 @@ class PaymentReferenceUnitTest extends UnitTestCase {
     $this->assertSame(array(), $this->fieldType->settingsForm($form, $form_state, $has_data));
   }
 
-  /**
-   * @covers ::preSave
-   */
-  public function testPreSave() {
-    $payment_id = mt_rand();
-    $acquisition_code = $this->randomMachineName();
-    $this->targetId->expects($this->once())
-      ->method('getValue')
-      ->will($this->returnValue($payment_id));
-    $this->queue->expects($this->once())
-      ->method('claimPayment')
-      ->with($payment_id)
-      ->will($this->returnValue($acquisition_code));
-    $this->queue->expects($this->once())
-      ->method('acquirePayment')
-      ->with($payment_id, $acquisition_code);
-    $this->fieldType->preSave();
-  }
-
 }

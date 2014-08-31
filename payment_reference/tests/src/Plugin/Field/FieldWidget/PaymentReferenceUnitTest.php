@@ -20,6 +20,22 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class PaymentReferenceUnitTest extends UnitTestCase {
 
   /**
+   * The config factory used for testing.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $configFactory;
+
+  /**
+   * The configuration the config factory returns.
+   *
+   * @see self::setUp
+   *
+   * @var array
+   */
+  protected $configFactoryConfiguration = array();
+
+  /**
    * A user account used for testing.
    *
    * @var \Drupal\Core\Session\AccountInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -32,6 +48,13 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    * @var \Drupal\Core\Field\FieldDefinitionInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $fieldDefinition;
+
+  /**
+   * The payment reference factory used for testing.
+   *
+   * @var \Drupal\payment_reference\PaymentFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $paymentFactory;
 
   /**
    * The field widget plugin under test.
@@ -48,9 +71,21 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   protected function setUp() {
     $this->fieldDefinition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
 
+    $this->configFactoryConfiguration = array(
+      'payment_reference.payment_type' => array(
+        'limit_allowed_payment_methods' => TRUE,
+        'allowed_payment_method_ids' => array($this->randomMachineName()),
+        'payment_method_selector_id' => $this->randomMachineName(),
+      ),
+    );
+
+    $this->configFactory = $this->getConfigFactoryStub($this->configFactoryConfiguration);
+
     $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
-    $this->widget = new PaymentReference($this->randomMachineName(), array(), $this->fieldDefinition, array(), array(), $this->currentUser);
+    $this->paymentFactory = $this->getMock('\Drupal\payment_reference\PaymentFactoryInterface');
+
+    $this->widget = new PaymentReference($this->randomMachineName(), array(), $this->fieldDefinition, array(), array(), $this->configFactory, $this->currentUser, $this->paymentFactory);
   }
 
   /**
@@ -59,7 +94,9 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
+      array('config.factory', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->configFactory),
       array('current_user', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->currentUser),
+      array('payment_reference.payment_factory', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentFactory),
     );
     $container->expects($this->any())
       ->method('get')
@@ -73,7 +110,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
     $plugin_definition = array();
     $plugin_id = $this->randomMachineName();
     $plugin = PaymentReference::create($container, $configuration, $plugin_id, $plugin_definition);
-    $this->assertInstanceOf('\Drupal\payment_reference\Plugin\Field\FIeldWidget\PaymentReference', $plugin);
+    $this->assertInstanceOf('\Drupal\payment_reference\Plugin\Field\FieldWidget\PaymentReference', $plugin);
   }
 
   /**
@@ -100,20 +137,15 @@ class PaymentReferenceUnitTest extends UnitTestCase {
     $this->fieldDefinition->expects($this->once())
       ->method('isRequired')
       ->will($this->returnValue($required));
-    $currency_code = 'EUR';
-    $line_items_data = array(
-      array(
-        'plugin_configuration' => array(),
-        'plugin_id' => $this->randomMachineName(),
-      ),
-    );
-    $map = array(
-      array('currency_code', $currency_code),
-      array('line_items_data', $line_items_data),
-    );
-    $this->fieldDefinition->expects($this->exactly(2))
-      ->method('getSetting')
-      ->will($this->returnValueMap($map));
+
+    $payment = $this->getMockBuilder('\Drupal\payment\ENtity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $this->paymentFactory->expects($this->once())
+      ->method('createPayment')
+      ->with($this->fieldDefinition)
+      ->will($this->returnValue($payment));
 
     $this->currentUser->expects($this->exactly(1))
       ->method('id')
@@ -130,19 +162,39 @@ class PaymentReferenceUnitTest extends UnitTestCase {
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $build = $this->widget->formElement($items, 3, array(), $form, $form_state);
     $expected_build = array(
-      'payment_id' => array(
-        '#bundle' => $bundle,
+      'target_id' => array(
         '#default_value' => NULL,
-        '#entity_type_id' => $entity_type_id,
-        '#field_name' => $field_name,
-        '#owner_id' => (int) $user_id,
-        '#payment_line_items_data' => $line_items_data,
-        '#payment_currency_code' => $currency_code,
+        '#limit_allowed_payment_method_ids' => $this->configFactoryConfiguration['payment_reference.payment_type']['allowed_payment_method_ids'],
+        '#payment_method_selector_id' => $this->configFactoryConfiguration['payment_reference.payment_type']['payment_method_selector_id'],
+        '#prototype_payment' => $payment,
+        '#queue_category_id' => $entity_type_id . '.' . $bundle . '.' . $field_name,
+        '#queue_owner_id' => (int) $user_id,
         '#required' => $required,
         '#type' => 'payment_reference',
       ),
     );
     $this->assertSame($expected_build, $build);
+  }
+
+  /**
+   * @covers ::massageFormValues
+   */
+  public function testMassageFormValues() {
+    $field_name = $this->randomMachineName();
+    $payment_id = mt_rand();
+
+    $this->fieldDefinition->expects($this->atLeastOnce())
+      ->method('getName')
+      ->willReturn($field_name);
+
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form[$field_name]['widget']['target_id']['#value'] = $payment_id;
+    $values = array();
+
+    $expected_value = array(
+      'target_id' => $payment_id,
+    );
+    $this->assertSame($expected_value, $this->widget->massageFormValues($values, $form, $form_state));
   }
 
 }

@@ -7,7 +7,6 @@
 namespace Drupal\payment_reference\Plugin\Payment\Type;
 
 use Drupal\Core\Entity\EntityManagerInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -100,23 +99,28 @@ class PaymentReference extends PaymentTypeBase implements ContainerFactoryPlugin
    * {@inheritdoc}
    */
   protected function doResumeContext() {
-    $url = $this->urlGenerator->generateFromRoute('payment_reference.resume_context', array(
-      'payment' => $this->getPayment()->id(),
-    ), array(
-      'absolute' => TRUE,
-    ));
-    $response = new RedirectResponse($url);
-    $listener = function(FilterResponseEvent $event) use ($response) {
-      $event->setResponse($response);
-    };
-    $this->eventDispatcher->addListener(KernelEvents::RESPONSE, $listener, 999);
+    // If the payment method does not interrupt the payment type context, the
+    // payer is still in the original context and we do not need to redirect
+    // them back.
+    if ($this->getPayment()->getPaymentMethod()->isPaymentExecutionInterruptive()) {
+      $url = $this->urlGenerator->generateFromRoute('payment_reference.resume_context', array(
+        'payment' => $this->getPayment()->id(),
+      ), array(
+        'absolute' => TRUE,
+      ));
+      $response = new RedirectResponse($url);
+      $listener = function(FilterResponseEvent $event) use ($response) {
+        $event->setResponse($response);
+      };
+      $this->eventDispatcher->addListener(KernelEvents::RESPONSE, $listener, 999);
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function resumeContextAccess(AccountInterface $account) {
-    return TRUE;
+    return $this->getPayment()->getOwnerId() == $account->id();
   }
 
   /**
@@ -192,17 +196,6 @@ class PaymentReference extends PaymentTypeBase implements ContainerFactoryPlugin
    */
   public function getFieldName() {
     return $this->configuration['field_name'];
-  }
-
-  /**
-   * Gets the 'ID' of the field the payment was made for.
-   *
-   * The ID is formatted as "$entity_type_id.$bundle.$field_name".
-   *
-   * @return string
-   */
-  public function getFieldId() {
-    return $this->getEntityTypeId() . '.' . $this->getBundle() . '.' . $this->getFieldName();
   }
 
 }

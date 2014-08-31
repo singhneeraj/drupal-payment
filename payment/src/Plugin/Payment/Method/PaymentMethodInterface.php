@@ -49,6 +49,17 @@ interface PaymentMethodInterface extends PluginInspectionInterface, Configurable
   public function executePayment();
 
   /**
+   * Whether payment execution interrupts the payment type's context.
+   *
+   * If payment execution interrupts the context's workflow, this must return
+   * TRUE. An example of an interruption is when the payer must be redirected
+   * off-site.
+   *
+   * @return bool
+   */
+  public function isPaymentExecutionInterruptive();
+
+  /**
    * Gets the payment this payment method is for.
    *
    * @return \Drupal\payment\Entity\PaymentInterface

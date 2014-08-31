@@ -344,7 +344,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    */
   public static function preCreate(EntityStorageInterface $storage, array &$values) {
     $values += array(
-      'ownerId' => (int) \Drupal::currentUser()->id(),
+      'owner' => (int) \Drupal::currentUser()->id(),
     );
   }
 
@@ -354,7 +354,9 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   public static function postLoad(EntityStorageInterface $storage, array &$entities) {
     /** @var \Drupal\payment\Entity\PaymentInterface[] $entities */
     foreach ($entities as $payment) {
-      $payment->getPaymentMethod()->setPayment($payment);
+      if ($payment->getPaymentMethod()) {
+        $payment->getPaymentMethod()->setPayment($payment);
+      }
     }
     /** @var \Drupal\payment\Entity\Payment\PaymentStorageInterface $storage */
     $storage->loadLineItems($entities);
@@ -435,6 +437,20 @@ class Payment extends ContentEntityBase implements PaymentInterface {
       $cloned_statuses[] = clone $status;
     }
     $this->setPaymentStatuses($cloned_statuses);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createDuplicate() {
+    // @todo Remove this when https://www.drupal.org/node/2326377 is fixed.
+    $duplicate = parent::createDuplicate();
+
+    $duplicate->entityKeys = array(
+      'bundle' => $this->entityKeys['bundle'],
+    );
+
+    return $duplicate;
   }
 
 }

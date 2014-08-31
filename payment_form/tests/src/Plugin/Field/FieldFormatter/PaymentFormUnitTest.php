@@ -278,9 +278,8 @@ class PaymentFormUnitTest extends UnitTestCase {
       'token' => $this->randomMachineName(),
     );
 
-    $method = new \ReflectionMethod($this->fieldFormatter, 'viewElementsPostRenderCache');
-    $method->setAccessible(TRUE);
-    $this->assertSame($element, $method->invoke($this->fieldFormatter, $element, $context));
+    $field_formatter = $this->fieldFormatter;
+    $this->assertSame($element, $field_formatter::viewElementsPostRenderCache($element, $context));
   }
 
 }

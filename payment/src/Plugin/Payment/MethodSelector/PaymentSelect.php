@@ -79,9 +79,6 @@ class PaymentSelect extends PaymentMethodSelectorBase {
 
     $form['container'] = array(
       '#available_payment_methods' => $available_payment_methods,
-      // The element does not actually have input, but we need the #name
-      // property to be populated by form API.
-      '#input' => TRUE,
       '#process' => array(array($this, $callback_method)),
       '#tree' => TRUE,
       '#type' => 'container',
@@ -164,7 +161,6 @@ class PaymentSelect extends PaymentMethodSelectorBase {
    * Implements a form #process callback.
    *
    * Builds the form elements for when there are no available payment methods.
-   *
    */
   public function buildNoAvailablePaymentMethods(array $element, FormStateInterface $form_state, array $form) {
     $element['select'] = array(
@@ -236,13 +232,15 @@ class PaymentSelect extends PaymentMethodSelectorBase {
     foreach ($payment_methods as $payment_method) {
       $payment_method_options[$payment_method->getPluginId()] = $payment_method->getPluginLabel();
     }
+    $root_element_parents = $root_element['#parents'];
+    $change_button_name = array_shift($root_element_parents) . ($root_element_parents ? '[' . implode('][', $root_element_parents) . ']' : NULL) . '[select][change]';
     $element['payment_method_id'] = array(
       '#ajax' => array(
         'callback' => array(get_class(), 'ajaxSubmitConfigurationForm'),
         'effect' => 'fade',
         'event' => 'change',
         'trigger_as' => array(
-          'name' => $root_element['#name'] . '[select][change]',
+          'name' => $change_button_name,
         ),
         'wrapper' => $this->getElementId(),
       ),
@@ -261,7 +259,7 @@ class PaymentSelect extends PaymentMethodSelectorBase {
         'class' => array('js-hide')
       ),
       '#limit_validation_errors' => array(array_merge($root_element['#parents'], array('select', 'payment_method_id'))),
-      '#name' => $root_element['#name'] . '[select][change]',
+      '#name' => $change_button_name,
       '#submit' => array(array($this, 'rebuildForm')),
       '#type' => 'submit',
       '#value' => $this->t('Choose payment method'),

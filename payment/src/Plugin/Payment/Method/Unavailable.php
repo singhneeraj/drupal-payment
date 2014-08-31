@@ -72,6 +72,13 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
+  public function isPaymentExecutionInterruptive() {
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function executePaymentAccess(AccountInterface $account) {
     return FALSE;
   }

@@ -126,11 +126,24 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
    * @covers ::getPayment
    */
   public function testGetPayment() {
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+    $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
+
+    $payment_1 = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
-    $this->assertSame($this->paymentMethodSelectorPlugin, $this->paymentMethodSelectorPlugin->setPayment($payment));
-    $this->assertSame($payment, $this->paymentMethodSelectorPlugin->getPayment());
+    $payment_2 = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $payment_2->expects($this->atLeastOnce())
+      ->method('getPaymentMethod')
+      ->willReturn($payment_method);
+
+
+    $this->assertSame($this->paymentMethodSelectorPlugin, $this->paymentMethodSelectorPlugin->setPayment($payment_1));
+    $this->assertSame($payment_1, $this->paymentMethodSelectorPlugin->getPayment());
+    $this->paymentMethodSelectorPlugin->setPayment($payment_2);
+    $this->assertSame($payment_2, $this->paymentMethodSelectorPlugin->getPayment());
+    $this->assertSame($payment_method, $this->paymentMethodSelectorPlugin->getPaymentMethod());
   }
 
   /**

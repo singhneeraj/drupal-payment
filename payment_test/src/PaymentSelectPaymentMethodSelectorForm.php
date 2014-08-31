@@ -12,6 +12,7 @@ use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\payment\Entity\PaymentMethodConfiguration;
 use Drupal\payment\Tests\Generate;
 use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface;
@@ -84,6 +85,13 @@ class PaymentSelectPaymentMethodSelectorForm implements ContainerInjectionInterf
       $payment_method_selector = $this->paymentMethodSelectorManager->createInstance('payment_select');
       $payment_method_selector->setPayment($payment);
       $payment_method_selector->setRequired();
+      /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface[] $payment_method_configurations */
+      $payment_method_configurations = PaymentMethodConfiguration::loadMultiple();
+      $allowed_payment_method_ids = array();
+      foreach ($payment_method_configurations as $payment_method_configuration) {
+        $allowed_payment_method_ids[] = 'payment_basic:' . $payment_method_configuration->id();
+      }
+      $payment_method_selector->setAllowedPaymentMethods($allowed_payment_method_ids);
       $form_state->set('payment_method_selector', $payment_method_selector);
     }
 

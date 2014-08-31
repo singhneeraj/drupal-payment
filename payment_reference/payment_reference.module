@@ -16,36 +16,6 @@ use Drupal\payment_reference\PaymentReference;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
 /**
- * Implements hook_element_info().
- */
-function payment_reference_element_info() {
-  $elements['payment_reference'] = array(
-    // The bundle of the entity the element is used for.
-    '#bundle' => NULL,
-    // The ID of a payment as the default value.
-    '#default_value' => NULL,
-    // The ID of the entity type the element is used for.
-    '#entity_type_id' => NULL,
-    // The name of the field the element is used for.
-    '#field_name' => NULL,
-    '#input' => TRUE,
-    // The ID of the account that must own the payment.
-    '#owner_id' => NULL,
-    // Values are arrays with two keys:
-    // - plugin_id: the ID of the line item plugin instance.
-    // - plugin_configuration: the configuration of the line item plugin
-    //   instance.
-    '#payment_line_items_data' => array(),
-    '#payment_currency_code' => '',
-    '#process' => array(array('Drupal\payment_reference\Element\PaymentReference', 'process')),
-    '#theme_wrappers' => array('form_element'),
-    '#value_callback' => 'payment_reference_element_payment_reference_value',
-  );
-
-  return $elements;
-}
-
-/**
  * Implements hook_page_alter().
  */
 function payment_reference_page_alter(&$page) {
@@ -55,15 +25,6 @@ function payment_reference_page_alter(&$page) {
       $page[$skip_region]['#access'] = FALSE;
     }
   }
-}
-
-/**
- * Implements hook_entity_type_alter().
- */
-function payment_reference_entity_type_alter(&$entity_types) {
-  /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
-  $entity_type = $entity_types['payment'];
-  $entity_type->setFormClass('payment_reference', 'Drupal\payment_reference\Entity\Payment\PaymentForm');
 }
 
 /**
@@ -89,7 +50,7 @@ function payment_reference_payment_insert(PaymentInterface $payment) {
   if ($payment->bundle() == 'payment_reference') {
     /** @var \Drupal\payment_reference\Plugin\Payment\Type\PaymentReference $payment_type */
     $payment_type = $payment->getPaymentType();
-    PaymentReference::queue()->save($payment_type->getFieldId(), $payment->id());
+    PaymentReference::queue()->save($payment_type->getEntityTypeId() . '.' . $payment_type->getBundle() . '.' . $payment_type->getFieldName(), $payment->id());
   }
 }
 
@@ -106,18 +67,5 @@ function payment_reference_payment_delete(PaymentInterface $payment) {
 function payment_reference_entity_field_access($operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL) {
   if ($field_definition->getType() == 'payment_reference') {
     return (bool) $account->id();
-  }
-}
-
-/**
- * Implements form #value_callback callback.
- *
- * @todo Move this to \Drupal\payment_reference\Element\PaymentReference once
- * https://drupal.org/node/2040559 has been fixed.
- */
-function payment_reference_element_payment_reference_value(array $element, $input, \Drupal\Core\Form\FormStateInterface $form_state) {
-  $payment_ids = PaymentReference::queue()->loadPaymentIds($element['#entity_type_id'] . '.' . $element['#bundle'] . '.' . $element['#field_name'], $element['#owner_id']);
-  if ($payment_ids) {
-    return reset($payment_ids);
   }
 }

@@ -145,9 +145,6 @@ class PaymentSelectUnitTest extends UnitTestCase {
     $expected_build = array(
       'container' => array(
         '#available_payment_methods' => array(),
-        // The element does not actually have input, but we need the #name
-        // property to be populated by form API.
-        '#input' => TRUE,
         '#process' => array(array($this->paymentMethodSelector, 'buildNoAvailablePaymentMethods')),
         '#tree' => TRUE,
         '#type' => 'container',
@@ -188,9 +185,6 @@ class PaymentSelectUnitTest extends UnitTestCase {
     $expected_build = array(
       'container' => array(
         '#available_payment_methods' => array($payment_method),
-        // The element does not actually have input, but we need the #name
-        // property to be populated by form API.
-        '#input' => TRUE,
         '#process' => array(array($payment_method_selector, 'buildOneAvailablePaymentMethod')),
         '#tree' => TRUE,
         '#type' => 'container',
@@ -232,9 +226,6 @@ class PaymentSelectUnitTest extends UnitTestCase {
     $expected_build = array(
       'container' => array(
         '#available_payment_methods' => array($payment_method_a, $payment_method_b),
-        // The element does not actually have input, but we need the #name
-        // property to be populated by form API.
-        '#input' => TRUE,
         '#process' => array(array($payment_method_selector, 'buildMultipleAvailablePaymentMethods')),
         '#tree' => TRUE,
         '#type' => 'container',
@@ -461,7 +452,6 @@ class PaymentSelectUnitTest extends UnitTestCase {
     $this->paymentMethodSelector->setPaymentMethod($payment_method);
 
     $element = array(
-      '#name' => $this->randomMachineName(),
       '#parents' => array('foo', 'bar'),
     );
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
@@ -474,7 +464,7 @@ class PaymentSelectUnitTest extends UnitTestCase {
           'effect' => 'fade',
           'event' => 'change',
           'trigger_as' => array(
-            'name' => $element['#name'] . '[select][change]',
+            'name' => 'foo[bar][select][change]',
           ),
           'wrapper' => $get_element_id_method->invokeArgs($this->paymentMethodSelector, array($form_state)),
         ),
@@ -495,7 +485,7 @@ class PaymentSelectUnitTest extends UnitTestCase {
           'class' => array('js-hide')
         ),
         '#limit_validation_errors' => array(array('foo', 'bar', 'select', 'payment_method_id')),
-        '#name' => $element['#name'] . '[select][change]',
+        '#name' => 'foo[bar][select][change]',
         '#submit' => array(array($this->paymentMethodSelector, 'rebuildForm')),
         '#type' => 'submit',
         '#value' => 'Choose payment method',

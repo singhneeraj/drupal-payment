@@ -178,6 +178,9 @@ abstract class PaymentMethodSelectorBase extends PluginBase implements Container
    */
   public function setPayment(PaymentInterface $payment) {
     $this->payment = $payment;
+    if ($payment->getPaymentMethod()) {
+      $this->setPaymentMethod($payment->getPaymentMethod());
+    }
 
     return $this;
   }

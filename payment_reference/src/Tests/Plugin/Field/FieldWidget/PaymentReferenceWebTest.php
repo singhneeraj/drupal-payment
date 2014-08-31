@@ -8,6 +8,7 @@
 namespace Drupal\payment_reference\Tests\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\payment\Tests\Generate;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -49,13 +50,22 @@ class PaymentReferenceWebTest extends WebTestBase {
       ->setComponent($field_name, array())
       ->save();
 
-    $user = $this->drupalCreateUser();
+    $user = $this->drupalCreateUser(array('payment.payment.view.own'));
     $this->drupalLogin($user);
 
-    // Test the widget when creating an entity.
+    $payment_method = Generate::createPaymentMethodConfiguration(mt_rand(), 'payment_basic');
+    $payment_method->setPluginConfiguration(array(
+      'brand_label' => $this->randomMachineName(),
+      'execute_status_id' => 'payment_success',
+      'message_text' => $this->randomMachineName(),
+    ));
+    $payment_method->save();
+
+    // Test the widget when editing an entity.
     $this->drupalGet('user/' . $user->id() . '/edit');
-    $this->clickLink(t('Add a new payment'));
-    $this->assertUrl('/payment_reference/pay/user/user/' . $field_name);
-    $this->assertResponse('200');
+    $this->drupalPostForm(NULL, array(), t('Re-check available payments'));
+    $this->drupalPostForm(NULL, array(), t('Pay'));
+    $this->assertNoFieldByXPath('//input[@value="Pay"]');
+    $this->assertLinkByHref('payment/1');
   }
 }

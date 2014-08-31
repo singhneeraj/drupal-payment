@@ -29,4 +29,15 @@ class PaymentReferenceUnitTest extends UnitTestCase {
     $this->assertSame($queue, PaymentReference::queue());
   }
 
+  /**
+   * @covers ::factory
+   */
+  public function testFactory() {
+    $container = new Container();
+    $factory = $this->getMock('\Drupal\payment\FactoryInterface');
+    $container->set('payment_reference.payment_factory', $factory);
+    \Drupal::setContainer($container);
+    $this->assertSame($factory, PaymentReference::factory());
+  }
+
 }
