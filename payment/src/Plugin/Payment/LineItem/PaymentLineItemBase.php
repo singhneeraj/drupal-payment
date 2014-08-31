@@ -69,7 +69,6 @@ abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItem
    */
   public function defaultConfiguration() {
     return array(
-      'amount' => 0,
       'currency_code' => '',
       'name' => NULL,
       'quantity' => 1,

@@ -91,10 +91,10 @@ class BasicUnitTest extends UnitTestCase {
    */
   public function testDefaultConfiguration() {
     $configuration = array(
-      'amount' => 0,
       'currency_code' => '',
       'name' => NULL,
       'quantity' => 1,
+      'amount' => 0,
       'description' => NULL,
     );
     $this->assertSame($configuration, $this->lineItem->defaultConfiguration());

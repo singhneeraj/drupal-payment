@@ -66,6 +66,7 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
    */
   public function defaultConfiguration() {
     return parent::defaultConfiguration() + array(
+      'amount' => 0,
       'description' => NULL,
     );
   }
