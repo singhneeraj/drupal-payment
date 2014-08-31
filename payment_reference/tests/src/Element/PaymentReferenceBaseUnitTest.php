@@ -870,6 +870,37 @@ class PaymentReferenceBaseUnitTest extends UnitTestCase {
     $this->assertInternalType('array', $build);
     $this->assertInstanceOf('\Closure', $build['pay_button']['#ajax']['callback']);
     $this->assertInstanceOf('\Closure', $build['pay_button']['#submit'][0]);
+    $this->assertTrue(is_callable($build['pay_button']['#process'][0]));
+    $this->assertTrue(is_callable($build['pay_link']['#process'][0]));
+  }
+
+  /**
+   * @covers ::processMaxWeight
+   */
+  public function testProcessMaxWeight() {
+    $sibling_weight_1 = mt_rand();
+    $sibling_weight_2 = mt_rand();
+    $form = array(
+      'foo' => array(
+        'bar' => array(
+          'sibling_1' => array(
+            '#weight' => $sibling_weight_1,
+          ),
+          'sibling_2' => array(
+            '#weight' => $sibling_weight_2,
+          ),
+          'subject' => array(
+            '#array_parents' => array('foo', 'bar', 'subject'),
+          ),
+        ),
+      ),
+    );
+    $element = $form['foo']['bar']['subject'];
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+
+    $element_plugin = $this->element;
+    $element = $element_plugin::processMaxWeight($element, $form_state, $form);
+    $this->assertGreaterThan(max($sibling_weight_1, $sibling_weight_2), $element['#weight']);
   }
 
   /**

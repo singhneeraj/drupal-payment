@@ -45,16 +45,6 @@ class EntityExtraFieldInfo {
     $fields = array();
     foreach (array_keys($this->paymentTypeManager->getDefinitions()) as $plugin_id) {
       $fields['payment'][$plugin_id] = array(
-        'form' => array(
-          'payment_currency_code' => array(
-            'label' => $this->t('Currency code'),
-            'weight' => 0,
-          ),
-          'payment_line_items' => array(
-            'label' => $this->t('Line items'),
-            'weight' => 1,
-          ),
-        ),
         'display' => array(
           'method' => array(
             'label' => $this->t('Payment method label'),
@@ -66,10 +56,6 @@ class EntityExtraFieldInfo {
           ),
           'statuses' => array(
             'label' => $this->t('Status items'),
-            'weight' => 0,
-          ),
-          'links' => array(
-            'label' => $this->t('Links'),
             'weight' => 0,
           ),
         ),

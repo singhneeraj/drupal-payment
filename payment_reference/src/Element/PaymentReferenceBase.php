@@ -18,6 +18,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\Element\FormElementInterface;
+use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Routing\UrlGeneratorTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -31,8 +32,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Provides a base for payment reference elements.
+ *
+ * Modules that provide form elements that extend this class must also implement
+ * hook_entity_extra_field_info() to expose the line_items, payment_method,
+ * pay_button, and pay_link elements for the payment bundle the element plugin
+ * represents.
  */
-abstract class PaymentReferenceBase extends Element\FormElement implements FormElementInterface, ContainerFactoryPluginInterface {
+abstract class PaymentReferenceBase extends FormElement implements FormElementInterface, ContainerFactoryPluginInterface {
 
   /**
    * The number of seconds a payment should remain stored.
@@ -250,8 +256,10 @@ abstract class PaymentReferenceBase extends Element\FormElement implements FormE
     if ($this->hasTemporaryPayment($element, $form_state)) {
       $this->disableChildren($build['payment_method']);
     }
+    $this->getEntityFormDisplay($element, $form_state)->buildForm($payment_method_selector->getPayment(), $build, $form_state);
     $build['pay_link'] = $this->buildCompletePaymentLink($element, $form_state);
     $build['pay_link']['#access'] = $this->hasTemporaryPayment($element, $form_state);
+    $build['pay_link']['#process'] = array(array(get_class($this), 'processMaxWeight'));
     $plugin_id = $this->getPluginId();
     $build['pay_button'] = array(
       '#ajax' => array(
@@ -274,11 +282,24 @@ abstract class PaymentReferenceBase extends Element\FormElement implements FormE
       }),
       '#type' => 'submit',
       '#value' => $this->t('Pay'),
-      '#weight' => 999,
+      '#process' => array(array(get_class($this), 'processMaxWeight')),
     );
-    $this->getEntityFormDisplay($element, $form_state)->buildForm($payment_method_selector->getPayment(), $build, $form_state);
 
     return $build;
+  }
+
+  /**
+   * Implements form #process callback.
+   */
+  public static function processMaxWeight(array &$element, FormStateInterface $form_state, array $form) {
+    $parent_element = NestedArray::getValue($form, array_slice($element['#array_parents'], 0, -1));
+    $weights = array();
+    foreach (Element::children($parent_element) as $sibling_key) {
+      $weights[] = isset($parent_element[$sibling_key]['#weight']) ? $parent_element[$sibling_key]['#weight'] : 0;
+    }
+    $element['#weight'] = max($weights) + 1;
+
+    return $element;
   }
 
   /**

@@ -5,3 +5,6 @@ services:
   payment_reference.queue:
     arguments: ['payment_reference', '@database', '@event_dispatcher', '@plugin.manager.payment.status']
     class: Drupal\payment\DatabaseQueue
+  payment_reference.hook.entity_extra_field_info:
+    class: Drupal\payment_reference\Hook\EntityExtraFieldInfo
+    arguments: ['@string_translation']

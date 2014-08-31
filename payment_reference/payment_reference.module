@@ -28,6 +28,13 @@ function payment_reference_page_alter(&$page) {
 }
 
 /**
+ * Implements hook_entity_extra_field_info().
+ */
+function payment_reference_entity_extra_field_info() {
+  return \Drupal::service('payment_reference.hook.entity_extra_field_info')->invoke();
+}
+
+/**
  * Implements hook_ENTITY_TYPE_delete().
  */
 function payment_reference_field_config_delete(FieldStorageConfigInterface $field) {

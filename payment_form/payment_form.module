@@ -13,3 +13,10 @@ function payment_form_entity_type_alter(array &$entity_types) {
   $entity_type = $entity_types['payment'];
   $entity_type->setFormClass('payment_form', 'Drupal\payment_form\Entity\Payment\PaymentForm');
 }
+
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function payment_form_entity_extra_field_info() {
+  return \Drupal::service('payment_form.hook.entity_extra_field_info')->invoke();
+}
