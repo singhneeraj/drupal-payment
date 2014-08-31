@@ -11,6 +11,7 @@ use Drupal\Component\Utility\Random;
 use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\payment\Tests\Generate;
+use Drupal\payment_reference\PaymentReference;
 
 /**
  * Provides a form for testing the payment_reference element.
@@ -79,7 +80,10 @@ class PaymentReferenceElement implements FormInterface {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-
-    \Drupal::state()->set('payment_reference_test_payment_reference_element', $form['payment_reference']['#value']);
+    $payment_id = $form['payment_reference']['#value'];
+    $acquisition_code = PaymentReference::queue()->claimPayment($payment_id);
+    if ($acquisition_code && PaymentReference::queue()->acquirePayment($payment_id, $acquisition_code)) {
+      \Drupal::state()->set('payment_reference_test_payment_reference_element', $payment_id);
+    }
   }
 }

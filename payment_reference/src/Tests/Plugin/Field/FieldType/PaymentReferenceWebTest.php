@@ -8,6 +8,8 @@
 namespace Drupal\payment_reference\Tests\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\payment\Payment;
+use Drupal\payment\Tests\Generate;
 use Drupal\payment_reference\PaymentReference;
 use Drupal\simpletest\WebTestBase;
 
@@ -46,11 +48,11 @@ class PaymentReferenceWebTest extends WebTestBase {
       ),
     ))->save();
 
-    $payment = entity_create('payment', array(
-      'bundle' => 'payment_unavailable',
-    ));
+    $payment = Generate::createPayment(mt_rand());
+    $payment->setPaymentStatus(Payment::statusManager()->createInstance('payment_success'));
     $payment->save();
     PaymentReference::queue()->save('user.' . $field_name, $payment->id());
+    $this->assertEqual(PaymentReference::queue()->loadPaymentIds('user.' . $field_name, $payment->getOwnerId()), array($payment->id()));
 
     // Set a field value on an entity and test getting it.
     $user = entity_create('user', array(
@@ -64,6 +66,7 @@ class PaymentReferenceWebTest extends WebTestBase {
     $user->save();
     $user = entity_load_unchanged('user', $user->id());
     $this->assertEqual($user->{$field_name}[0]->target_id, $payment->id());
+    $this->assertEqual(PaymentReference::queue()->loadPaymentIds('user.' . $field_name, $payment->getOwnerId()), array());
   }
 
   /**

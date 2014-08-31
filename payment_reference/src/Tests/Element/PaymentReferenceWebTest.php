@@ -97,10 +97,6 @@ class PaymentReferenceWebTest extends WebTestBase {
     $this->assertTrue($payment instanceof PaymentInterface);
     $this->assertEqual($payment->get('quxfoobar')[0]->get('value')->getValue(), $text_field_value);
 
-    // Remove the payment from the queue.
-    // @todo Remove this when https://www.drupal.org/node/2327669 is fixed.
-    PaymentReference::queue()->deleteByPaymentId($payment_id);
-
     // Test with an interruptive payment method.
     $text_field_value = $this->randomMachineName();
     // @todo Once Behat is supported, test the behavior of opening a new window
