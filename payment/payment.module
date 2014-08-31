@@ -24,13 +24,6 @@ function payment_entity_extra_field_info() {
 }
 
 /**
- * Implements hook_element_info().
- */
-function payment_element_info() {
-  return \Drupal::service('payment.hook.element_info')->invoke();
-}
-
-/**
  * Implements hook_entity_bundle_info().
  */
 function payment_entity_bundle_info() {

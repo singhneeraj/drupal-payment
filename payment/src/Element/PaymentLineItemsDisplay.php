@@ -7,31 +7,93 @@
 
 namespace Drupal\payment\Element;
 
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Render\Element\FormElement;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Entity\PaymentInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides form callbacks for the payment_line_item form element.
+ * Provides an element to display payment line items.
+ *
+ * @RenderElement("payment_line_items_display")
  */
-class PaymentLineItemsDisplay {
+class PaymentLineItemsDisplay extends FormElement implements ContainerFactoryPluginInterface {
+
+  /**
+   * The currency storage.
+   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface
+   */
+  protected $currencyStorage;
+
+  /**
+   * Constructs a new instance.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   * @param \Drupal\Core\Entity\EntityStorageInterface $currency_storage
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, TranslationInterface $string_translation, EntityStorageInterface $currency_storage) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->currencyStorage = $currency_storage;
+    $this->stringTranslation = $string_translation;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    /** @var \Drupal\Core\Entity\EntityManagerInterface $entity_manager */
+    $entity_manager = $container->get('entity.manager');
+
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'), $entity_manager->getStorage('currency'));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getInfo() {
+    $plugin_id = $this->getPluginId();
+
+    return array(
+      // A \Drupal\payment\Entity\PaymentInterface object (required).
+      '#payment' => NULL,
+      '#pre_render' => array(function(array $element) use ($plugin_id) {
+        /** @var \Drupal\Component\Plugin\PluginManagerInterface $element_info_manager */
+        $element_info_manager = \Drupal::service('plugin.manager.element_info');
+        /** @var \Drupal\payment\Element\PaymentLineItemsDisplay $element_plugin */
+        $element_plugin = $element_info_manager->createInstance($plugin_id);
+
+        return $element_plugin->preRender($element);
+      }),
+    );
+  }
 
   /**
    * Implements form #pre_render callback.
    *
    * @throws \InvalidArgumentException
    */
-  public static function preRender(array $element) {
-    $payment = $element['#payment'];
-    if (!($payment instanceof PaymentInterface)) {
-      throw new \InvalidArgumentException('The payment does not implement \Drupal\payment\Entity\PaymentInterface..');
+  public function preRender(array $element) {
+    if (!isset($element['#payment']) || !($element['#payment'] instanceof PaymentInterface)) {
+      throw new \InvalidArgumentException('The payment does not implement \Drupal\payment\Entity\PaymentInterface.');
     }
+    $payment = $element['#payment'];
     $element['table'] = array(
-      '#empty' => t('There are no line items.'),
-      '#header' => array(t('Description'), t('Quantity'), t('Amount'), t('Total')),
+      '#empty' => $this->t('There are no line items.'),
+      '#header' => array($this->t('Description'), $this->t('Quantity'), $this->t('Amount'), $this->t('Total')),
       '#type' => 'table',
     );
     foreach ($payment->getLineItems() as $line_item) {
       /** @var \Drupal\currency\Entity\CurrencyInterface $currency */
-      $currency = entity_load('currency', $line_item->getCurrencyCode());
+      $currency = $this->currencyStorage->load($line_item->getCurrencyCode());
       $element['table']['line_item_' . $line_item->getName()] = array(
         '#attributes' => array(
           'class' => array(
@@ -66,7 +128,7 @@ class PaymentLineItemsDisplay {
         ),
       );
     }
-    $currency = entity_load('currency', $payment->getCurrencyCode());
+    $currency = $this->currencyStorage->load($payment->getCurrencyCode());
     $element['table']['payment_total'] = array(
       '#attributes' => array(
         'class' => array('payment-amount'),
@@ -76,7 +138,7 @@ class PaymentLineItemsDisplay {
           'class' => array('payment-amount-label'),
           'colspan' => 3,
         ),
-        '#markup' => t('Total amount'),
+        '#markup' => $this->t('Total amount'),
       ),
       'total' => array(
         '#attributes' => array(

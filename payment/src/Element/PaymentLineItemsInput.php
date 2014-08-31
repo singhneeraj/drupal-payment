@@ -16,7 +16,13 @@ use Drupal\payment\Payment;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
 
 /**
- * Provides form callbacks for the payment_line_items_input form element.
+ * Provides a payment line items configuration element.
+ *
+ * Use \Drupal\payment\Element\PaymentLineItemsInput::getLineItemsData() to get
+ * the 'return' value.
+ *
+ * @FormElement("payment_line_items_input")
+ *
  */
 class PaymentLineItemsInput {
 
@@ -24,6 +30,30 @@ class PaymentLineItemsInput {
    * An unlimited cardinality.
    */
   const CARDINALITY_UNLIMITED = -1;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getInfo() {
+    return array(
+      // The number of values this element allows, which must be at least as
+      // many as the number of line items in the default value. For unlimited
+      // values, use
+      // \Drupal\payment\Element\PaymentLineItemsInput::CARDINALITY_UNLIMITED.
+      '#cardinality' => self::CARDINALITY_UNLIMITED,
+      // Values are arrays with two keys:
+      // - plugin_id: the ID of the line item plugin instance.
+      // - plugin_configuration: the configuration of the line item plugin
+      //   instance.
+      '#default_value' => array(),
+      '#element_validate' => array(array(get_class($this), 'validate')),
+      '#input' => TRUE,
+      '#process' => array(array('\Drupal\Core\Render\Element\Container', 'processContainer'), array(get_class($this), 'process')),
+      '#tree' => TRUE,
+      '#theme_wrappers' => array('container'),
+      '#value' => array(),
+    );
+  }
 
   /**
    * Implements form #process callback.

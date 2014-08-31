@@ -29,8 +29,6 @@ services:
     arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@class_resolver']
     tags:
       - { name: plugin_manager_cache_clear}
-  payment.hook.element_info:
-    class: Drupal\payment\Hook\ElementInfo
   payment.hook.entity_crud:
     class: Drupal\payment\Hook\EntityCrud
     arguments: ['@plugin.manager.payment.method', '@plugin.manager.payment.status']
