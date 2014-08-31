@@ -251,7 +251,6 @@ class PaymentStorage extends ContentEntityDatabaseStorage implements PaymentStor
           $status->setId($record['id']);
         }
       }
-      debug(reset($statuses)->getPayment()->id());
       $this->database->update('payment')
         ->condition('id', reset($statuses)->getPayment()->id())
         ->fields(array(
