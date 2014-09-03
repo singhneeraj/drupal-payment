@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment_test\PaymentSelectPaymentMethodSelectorForm.
+ * Contains \Drupal\payment_test\AdvancedPaymentMethodSelectorBasePaymentMethodSelectorForm.
  */
 
 namespace Drupal\payment_test;
@@ -19,9 +19,9 @@ use Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a form to test the payment_select payment method selector plugin.
+ * Provides a form to test payment method selector plugins based on AdvancedPaymentMethodSelectorBase.
  */
-class PaymentSelectPaymentMethodSelectorForm implements ContainerInjectionInterface, FormInterface {
+class AdvancedPaymentMethodSelectorBasePaymentMethodSelectorForm implements ContainerInjectionInterface, FormInterface {
 
   use DependencySerializationTrait;
 
@@ -72,7 +72,7 @@ class PaymentSelectPaymentMethodSelectorForm implements ContainerInjectionInterf
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, $tree = FALSE) {
+  public function buildForm(array $form, FormStateInterface $form_state, $plugin_id = NULL, $tree = FALSE) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->entityManager->getStorage('payment')->create(array(
       'bundle' => 'payment_unavailable',
@@ -82,7 +82,7 @@ class PaymentSelectPaymentMethodSelectorForm implements ContainerInjectionInterf
       $payment_method_selector = $form_state->get('payment_method_selector');
     }
     else {
-      $payment_method_selector = $this->paymentMethodSelectorManager->createInstance('payment_select');
+      $payment_method_selector = $this->paymentMethodSelectorManager->createInstance($plugin_id);
       $payment_method_selector->setPayment($payment);
       $payment_method_selector->setRequired();
       /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface[] $payment_method_configurations */

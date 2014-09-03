@@ -49,7 +49,7 @@ class Pay extends ControllerBase implements ContainerInjectionInterface, AccessI
    *   The storage key with which the payment can be loaded.
    */
   public function execute($storage_key) {
-    $storage = $this->keyValueFactory->get('payment.payment_method_selector.payment_select');
+    $storage = $this->keyValueFactory->get('payment.payment_type.payment_reference');
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $storage->get($storage_key);
     $storage->delete($storage_key);
@@ -67,7 +67,7 @@ class Pay extends ControllerBase implements ContainerInjectionInterface, AccessI
    * @return string
    */
   public function access(Request $request, $storage_key) {
-    return $this->keyValueFactory->get('payment.payment_method_selector.payment_select')->has($storage_key) ? static::ALLOW : static::DENY;
+    return $this->keyValueFactory->get('payment.payment_type.payment_reference')->has($storage_key) ? static::ALLOW : static::DENY;
   }
 
 }

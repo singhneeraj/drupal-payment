@@ -1,3 +1,3 @@
-payment_method_selector_id: payment_select
+payment_method_selector_id: payment_select_list
 limit_allowed_payment_methods: false
 allowed_payment_method_ids: []

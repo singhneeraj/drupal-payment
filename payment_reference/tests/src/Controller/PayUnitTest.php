@@ -87,7 +87,7 @@ class PayUnitTest extends UnitTestCase {
 
     $this->keyValueFactory->expects($this->once())
       ->method('get')
-      ->with('payment.payment_method_selector.payment_select')
+      ->with('payment.payment_type.payment_reference')
       ->willReturn($storage);
 
     $this->controller->execute($storage_key);
@@ -109,7 +109,7 @@ class PayUnitTest extends UnitTestCase {
 
     $this->keyValueFactory->expects($this->once())
       ->method('get')
-      ->with('payment.payment_method_selector.payment_select')
+      ->with('payment.payment_type.payment_reference')
       ->willReturn($storage);
 
     $request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')

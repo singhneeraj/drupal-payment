@@ -83,7 +83,7 @@ class PaymentMethodSelectorManagerUnitTest extends UnitTestCase {
    * @covers ::createInstance
    */
   public function testCreateInstance() {
-    $existing_plugin_id = 'payment_select';
+    $existing_plugin_id = 'payment_select_list';
     $non_existing_plugin_id = $this->randomMachineName();
     $this->factory->expects($this->at(0))
       ->method('createInstance')

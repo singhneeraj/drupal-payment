@@ -5,10 +5,10 @@ payment_test.payment_line_item_element:
   requirements:
     _access: 'TRUE'
 
-payment_test.payment_method_selector.payment_select:
-  path: '/payment_test-payment_method_selector-payment_select/{tree}'
+payment_test.payment_method_selector.advanced_payment_method_selector_base:
+  path: '/payment_test-payment_method_selector-advanced_payment_method_selector_base/{plugin_id}/{tree}'
   defaults:
-    _form: '\Drupal\payment_test\PaymentSelectPaymentMethodSelectorForm'
+    _form: '\Drupal\payment_test\AdvancedPaymentMethodSelectorBasePaymentMethodSelectorForm'
     tree: 0
   requirements:
     _access: 'TRUE'

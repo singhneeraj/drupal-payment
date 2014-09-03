@@ -53,7 +53,7 @@ interface PaymentMethodSelectorInterface extends PluginInspectionInterface, Conf
   /**
    * Returns the IDs of allowed payment method plugins.
    *
-   * @return array|TRUE
+   * @return array|true
    *   An array of payment method plugin IDs or TRUE to allow all.
    */
   public function getAllowedPaymentMethods();

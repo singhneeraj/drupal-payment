@@ -2,12 +2,36 @@
 
 .payment-method-list .payment-method-disabled td,
 .payment-method-configuration-list .payment-method-configuration-disabled td {
-  color: #999;
+    color: #999;
 }
 
 .payment-method-list .payment-method-disabled td,
 .payment-method-configuration-list .payment-method-configuration-disabled td {
-  color: #999;
+    color: #999;
+}
+
+/* @end */
+
+/* @group payment_radios payment method selector */
+
+.payment-method-selector-payment-radios-selector {
+    float: left;
+    min-width: 200px;
+    width: 25%;
+}
+
+.payment-method-selector-payment-radios-payment-method-form {
+    float: left;
+    min-width: 400px;
+    width: 75%;
+}
+
+[dir="rtl"] .payment-method-selector-payment-radios-selector {
+    float: right; /* LTR */
+}
+
+[dir="rtl"] .payment-method-selector-payment-radios-payment-method-form {
+    float: right; /* LTR */
 }
 
 /* @end */

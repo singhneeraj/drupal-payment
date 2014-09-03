@@ -85,7 +85,7 @@ class PaymentReferenceWebTest extends WebTestBase {
     // Test with a non-interruptive payment method.
     $text_field_value = $this->randomMachineName();
     $this->drupalPostForm($path, array(
-      'payment_reference[container][payment_form][payment_method][container][select][payment_method_id]' => 'payment_test_uninterruptive',
+      'payment_reference[container][payment_form][payment_method][container][select][container][payment_method_id]' => 'payment_test_uninterruptive',
       'payment_reference[container][payment_form][quxfoobar][0][value]' => $text_field_value,
     ), t('Choose payment method'));
     $this->drupalPostForm(NULL, array(), t('Pay'));
@@ -102,7 +102,7 @@ class PaymentReferenceWebTest extends WebTestBase {
     // @todo Once Behat is supported, test the behavior of opening a new window
     //   and going back to the original form.
     $this->drupalPostForm($path, array(
-      'payment_reference[container][payment_form][payment_method][container][select][payment_method_id]' => 'payment_test_interruptive',
+      'payment_reference[container][payment_form][payment_method][container][select][container][payment_method_id]' => 'payment_test_interruptive',
       'payment_reference[container][payment_form][quxfoobar][0][value]' => $text_field_value,
     ), t('Choose payment method'));
     $this->drupalPostForm(NULL, array(), t('Pay'));

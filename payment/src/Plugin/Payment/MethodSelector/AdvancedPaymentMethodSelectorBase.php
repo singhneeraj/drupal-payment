@@ -1,11 +1,12 @@
 <?php
 
 /**
- * @file Contains \Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect.
+ * @file Contains \Drupal\payment\Plugin\Payment\MethodSelector\AdvancedPaymentMethodSelectorBase.
  */
 
 namespace Drupal\payment\Plugin\Payment\MethodSelector;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -15,14 +16,11 @@ use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a payment selector using a <select> element.
+ * Provides a default base for most payment method selectors.
  *
- * @PaymentMethodSelector(
- *   id = "payment_select",
- *   label = @Translation("Drop-down selector")
- * )
+ * This class takes care of everything, except the actual selection element.
  */
-class PaymentSelect extends PaymentMethodSelectorBase {
+abstract class AdvancedPaymentMethodSelectorBase extends PaymentMethodSelectorBase {
 
   /**
    * The form element ID.
@@ -78,6 +76,9 @@ class PaymentSelect extends PaymentMethodSelectorBase {
     }
 
     $form['container'] = array(
+      '#attributes' => array(
+        'class' => array('payment-method-selector-' . Html::getId($this->getPluginId())),
+      ),
       '#available_payment_methods' => $available_payment_methods,
       '#process' => array(array($this, $callback_method)),
       '#tree' => TRUE,
@@ -92,7 +93,7 @@ class PaymentSelect extends PaymentMethodSelectorBase {
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
-    $payment_method_id = NestedArray::getValue($values, array_merge($form['container']['#parents'], array('select', 'payment_method_id')));
+    $payment_method_id = NestedArray::getValue($values, array_merge($form['container']['#parents'], array('select', 'container', 'payment_method_id')));
     // If a (different) payment method was chosen, rebuild the form.
     if (!$this->getPaymentMethod() && $payment_method_id || $this->getPaymentMethod() && $payment_method_id != $this->getPaymentMethod()->getPluginId()) {
       $form_state->setRebuild();
@@ -121,21 +122,21 @@ class PaymentSelect extends PaymentMethodSelectorBase {
   }
 
   /**
-   * Implements form AJAX callback.
-   */
-  public static function ajaxSubmitConfigurationForm(array &$form, FormStateInterface $form_state) {
-    $triggering_element = $form_state->get('triggering_element');
-    $form_parents = array_slice($triggering_element['#array_parents'], 0, -2);
-    $root_element = NestedArray::getValue($form, $form_parents);
-
-    return $root_element['payment_method_form'];
-  }
-
-  /**
    * Implements form API's #submit.
    */
   public function rebuildForm(array $form, FormStateInterface $form_state) {
     $form_state->setRebuild();
+  }
+
+  /**
+   * Implements form AJAX callback.
+   */
+  public static function ajaxRebuildForm(array &$form, FormStateInterface $form_state) {
+    $triggering_element = $form_state->get('triggering_element');
+    $form_parents = array_slice($triggering_element['#array_parents'], 0, -3);
+    $root_element = NestedArray::getValue($form, $form_parents);
+
+    return $root_element['payment_method_form'];
   }
 
   /**
@@ -147,6 +148,9 @@ class PaymentSelect extends PaymentMethodSelectorBase {
    */
   protected function buildPaymentMethodForm(FormStateInterface $form_state) {
     $element = array(
+      '#attributes' => array(
+        'class' => array('payment-method-selector-' . Html::getId($this->getPluginId()) . '-payment-method-form'),
+      ),
       '#id' => $this->getElementId(),
       '#type' => 'container',
     );
@@ -163,10 +167,10 @@ class PaymentSelect extends PaymentMethodSelectorBase {
    * Builds the form elements for when there are no available payment methods.
    */
   public function buildNoAvailablePaymentMethods(array $element, FormStateInterface $form_state, array $form) {
-    $element['select'] = array(
-      '#tree' => TRUE,
+    $element['select']['container'] = array(
+      '#type' => 'container',
     );
-    $element['select']['payment_method_id'] = array(
+    $element['select']['container']['payment_method_id'] = array(
       '#type' => 'value',
       '#value' => NULL,
     );
@@ -191,7 +195,10 @@ class PaymentSelect extends PaymentMethodSelectorBase {
       $this->setPaymentMethod($payment_method);
     }
 
-    $element['select']['payment_method_id'] = array(
+    $element['select']['container'] = array(
+      '#type' => 'container',
+    );
+    $element['select']['container']['payment_method_id'] = array(
       '#type' => 'value',
       '#value' => $this->getPaymentMethod()->getPluginId(),
     );
@@ -228,32 +235,25 @@ class PaymentSelect extends PaymentMethodSelectorBase {
    *   The selector's form elements.
    */
   protected function buildSelector(array $root_element, FormStateInterface $form_state, array $payment_methods) {
-    $payment_method_options = array();
-    foreach ($payment_methods as $payment_method) {
-      $payment_method_options[$payment_method->getPluginId()] = $payment_method->getPluginLabel();
-    }
-    $root_element_parents = $root_element['#parents'];
-    $change_button_name = array_shift($root_element_parents) . ($root_element_parents ? '[' . implode('][', $root_element_parents) . ']' : NULL) . '[select][change]';
-    $element['payment_method_id'] = array(
-      '#ajax' => array(
-        'callback' => array(get_class(), 'ajaxSubmitConfigurationForm'),
-        'effect' => 'fade',
-        'event' => 'change',
-        'trigger_as' => array(
-          'name' => $change_button_name,
+    $build['container'] = array(
+      '#attached' => array(
+        'css' => array(
+          drupal_get_path('module', 'payment') . '/css/payment.css',
         ),
-        'wrapper' => $this->getElementId(),
       ),
-      '#default_value' => is_null($this->getPaymentMethod()) ? NULL : $this->getPaymentMethod()->getPluginId(),
-      '#empty_value' => 'select',
-      '#options' => $payment_method_options ,
-      '#required' => $this->isRequired(),
-      '#title' => $this->t('Payment method'),
-      '#type' => 'select',
+      '#attributes' => array(
+        'class' => array('payment-method-selector-' . Html::getId($this->getPluginId() . '-selector')),
+      ),
+      '#type' => 'container',
     );
-    $element['change'] = array(
+    $build['container']['payment_method_id'] = array(
+      '#markup' => 'This element must be overridden to provide the payment method ID.',
+    );
+    $root_element_parents = $root_element['#parents'];
+    $change_button_name = array_shift($root_element_parents) . ($root_element_parents ? '[' . implode('][', $root_element_parents) . ']' : NULL) . '[select][container][change]';
+    $build['container']['change'] = array(
       '#ajax' => array(
-        'callback' => array(get_class(), 'ajaxSubmitConfigurationForm'),
+        'callback' => array(get_class(), 'ajaxRebuildForm'),
       ),
       '#attributes' => array(
         'class' => array('js-hide')
@@ -265,7 +265,7 @@ class PaymentSelect extends PaymentMethodSelectorBase {
       '#value' => $this->t('Choose payment method'),
     );
 
-    return $element;
+    return $build;
   }
 
   /**

@@ -80,14 +80,26 @@ class PaymentFormConfigurationForm extends ConfigFormBase {
       '#title' => $this->t('Payment method selector'),
       '#type' => 'radios',
     );
-    // See \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface::getAllowedPaymentMethods().
+    $limit_allowed_payment_methods_id = drupal_html_id('limit_allowed_payment_methods');
+    $form['limit_allowed_payment_methods'] = array(
+      '#default_value' => $config->get('limit_allowed_payment_methods'),
+      '#id' => $limit_allowed_payment_methods_id,
+      '#title' => $this->t('Limit allowed payment methods'),
+      '#type' => 'checkbox',
+    );
     $allowed_payment_method_ids = $config->get('allowed_payment_method_ids');
     $form['allowed_payment_method_ids'] = array(
       '#default_value' => $allowed_payment_method_ids,
-      '#description' => $this->t('If no methods are selected, all methods are allowed.'),
       '#multiple' => TRUE,
       '#options' => $this->paymentMethodManager->options(),
-      '#title' => $this->t('Limit allowed payment methods'),
+      '#states' => array(
+        'visible' => array(
+          '#' . $limit_allowed_payment_methods_id => array(
+            'checked' => TRUE,
+          ),
+        ),
+      ),
+      '#title' => $this->t('Allowed payment methods'),
       '#type' => 'select',
     );
 
@@ -101,7 +113,7 @@ class PaymentFormConfigurationForm extends ConfigFormBase {
     $config = $this->configFactory()->get('payment_form.payment_type');
     $values = $form_state->getValues();
     $config->set('payment_method_selector_id', $values['payment_method_selector_id']);
-    $config->set('limit_allowed_payment_methods', empty($values['allowed_payment_method_ids']));
+    $config->set('limit_allowed_payment_methods', $values['limit_allowed_payment_methods']);
     $config->set('allowed_payment_method_ids', $values['allowed_payment_method_ids']);
     $config->save();
     parent::submitForm($form, $form_state);

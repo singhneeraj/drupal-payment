@@ -74,7 +74,7 @@ class PaymentReference extends PaymentReferenceBase {
     /** @var \Drupal\Core\KeyValueStore\KeyValueExpirableFactoryInterface $key_value_expirable */
     $key_value_expirable = $container->get('keyvalue.expirable');
 
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('request_stack'), $entity_manager->getStorage('payment'), $container->get('string_translation'), $container->get('date.formatter'), $container->get('link_generator'), $container->get('plugin.manager.payment.method_selector'), new Random(), $key_value_expirable->get('payment.payment_method_selector.payment_select'), $container->get('payment_reference.queue'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('request_stack'), $entity_manager->getStorage('payment'), $container->get('string_translation'), $container->get('date.formatter'), $container->get('link_generator'), $container->get('plugin.manager.payment.method_selector'), new Random(), $key_value_expirable->get('payment.payment_type.payment_reference'), $container->get('payment_reference.queue'));
   }
 
   /**

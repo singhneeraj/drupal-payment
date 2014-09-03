@@ -45,7 +45,7 @@ class PaymentMethodSelectorManager extends DefaultPluginManager implements Payme
       return parent::createInstance($plugin_id, $configuration);
     }
     catch (PluginException $e) {
-      return parent::createInstance('payment_select', $configuration);
+      return parent::createInstance('payment_select_list', $configuration);
     }
   }
 

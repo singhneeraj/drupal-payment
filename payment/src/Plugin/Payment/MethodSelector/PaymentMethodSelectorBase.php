@@ -83,7 +83,7 @@ abstract class PaymentMethodSelectorBase extends PluginBase implements Container
    */
   public function defaultConfiguration() {
     return array(
-      'allowed_payment_method_plugin_ids' => NULL,
+      'allowed_payment_method_plugin_ids' => TRUE,
       'required' => FALSE,
     );
   }
@@ -154,7 +154,7 @@ abstract class PaymentMethodSelectorBase extends PluginBase implements Container
   protected function getAvailablePaymentMethods() {
     $payment_methods = array();
     foreach (array_keys($this->paymentMethodManager->getDefinitions()) as $plugin_id) {
-      if (is_null($this->getAllowedPaymentMethods()) || in_array($plugin_id, $this->getAllowedPaymentMethods())) {
+      if ($this->getAllowedPaymentMethods() === TRUE || in_array($plugin_id, $this->getAllowedPaymentMethods())) {
         $payment_method = $this->paymentMethodManager->createInstance($plugin_id);
         $payment_method->setPayment($this->getPayment());
         if ($payment_method->executePaymentAccess($this->currentUser)) {

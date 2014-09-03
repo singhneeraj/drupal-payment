@@ -137,7 +137,7 @@ class PaymentFormConfigurationFormUnitTest extends UnitTestCase {
       ->willReturn(array(
         'payment_method_selector_id' => $this->configFactoryConfiguration['payment_form.payment_type']['payment_method_selector_id'],
         'allowed_payment_method_ids' => $this->configFactoryConfiguration['payment_form.payment_type']['allowed_payment_method_ids'],
-        'limit_allowed_payment_method' => !empty($this->configFactoryConfiguration['payment_form.payment_type']['payment_method_selector_id']),
+        'limit_allowed_payment_methods' => $this->configFactoryConfiguration['payment_form.payment_type']['limit_allowed_payment_methods'],
       ));
     $this->form->submitForm($form, $form_state);
   }
@@ -148,6 +148,9 @@ class PaymentFormConfigurationFormUnitTest extends UnitTestCase {
 
 namespace {
 
+if (!function_exists('drupal_html_id')) {
+  function drupal_html_id() {}
+}
 if (!function_exists('drupal_set_message')) {
   function drupal_set_message() {
   }

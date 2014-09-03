@@ -3,21 +3,21 @@
 /**
  * @file
  * Contains
- * \Drupal\payment\Tests\Plugin\Payment\MethodSelector\PaymentSelectUnitTest.
+ * \Drupal\payment\Tests\Plugin\Payment\MethodSelector\AdvancedPaymentMethodSelectorBaseUnitTest.
  */
 
 namespace Drupal\payment\Tests\Plugin\Payment\MethodSelector {
 
-use Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect;
-use Drupal\Tests\UnitTestCase;
+  use Drupal\Component\Utility\Html;
+  use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @coversDefaultClass \Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\MethodSelector\AdvancedPaymentMethodSelectorBase
  *
  * @group Payment
  */
-class PaymentSelectUnitTest extends UnitTestCase {
+class AdvancedPaymentMethodSelectorBaseUnitTest extends UnitTestCase {
 
   /**
    * The current user used for testing.
@@ -36,7 +36,7 @@ class PaymentSelectUnitTest extends UnitTestCase {
   /**
    * The payment method selector plugin under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect
+   * @var \Drupal\payment\Plugin\Payment\MethodSelector\AdvancedPaymentMethodSelectorBase|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentMethodSelector;
 
@@ -70,7 +70,9 @@ class PaymentSelectUnitTest extends UnitTestCase {
       ->will($this->returnArgument(0));
 
     $this->paymentMethodSelectorPluginId = $this->randomMachineName();
-    $this->paymentMethodSelector = new PaymentSelect(array(), $this->paymentMethodSelectorPluginId, array(), $this->currentUser, $this->paymentMethodManager, $this->stringTranslation);
+    $this->paymentMethodSelector = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodSelector\AdvancedPaymentMethodSelectorBase')
+      ->setConstructorArgs(array(array(), $this->paymentMethodSelectorPluginId, array(), $this->currentUser, $this->paymentMethodManager, $this->stringTranslation))
+      ->getMockForAbstractClass();
   }
 
   /**
@@ -87,8 +89,10 @@ class PaymentSelectUnitTest extends UnitTestCase {
       ->method('get')
       ->will($this->returnValueMap($map));
 
-    $plugin = PaymentSelect::create($container, array(), $this->paymentMethodSelectorPluginId, array());
-    $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect', $plugin);
+    /** @var \Drupal\payment\Plugin\Payment\MethodSelector\AdvancedPaymentMethodSelectorBase $class */
+    $class = get_class($this->paymentMethodSelector);
+    $plugin = $class::create($container, array(), $this->paymentMethodSelectorPluginId, array());
+    $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\MethodSelector\AdvancedPaymentMethodSelectorBase', $plugin);
   }
 
   /**
@@ -98,7 +102,7 @@ class PaymentSelectUnitTest extends UnitTestCase {
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
     $payment_method_form = array(
-      '#type' => $this->randomMachineName(),
+      '#foo' => $this->randomMachineName(),
     );
 
     $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
@@ -107,21 +111,17 @@ class PaymentSelectUnitTest extends UnitTestCase {
       ->with(array(), $form_state)
       ->will($this->returnValue($payment_method_form));
 
-    $expected_build = array(
-      '#id' => NULL,
-      '#type' => 'container',
-    );
 
     $method = new \ReflectionMethod($this->paymentMethodSelector, 'buildPaymentMethodForm');
     $method->setAccessible(TRUE);
 
     $build = $method->invoke($this->paymentMethodSelector, $form_state);
-    $this->assertEquals($expected_build, $build);
+    $this->assertSame('container', $build['#type']);
 
     $this->paymentMethodSelector->setPaymentMethod($payment_method);
     $build = $method->invoke($this->paymentMethodSelector, $form_state);
-    $expected_build += $payment_method_form;
-    $this->assertEquals($expected_build, $build);
+    $this->assertSame('container', $build['#type']);
+    $this->assertSame($payment_method_form['#foo'], $build['#foo']);
   }
 
   /**
@@ -144,6 +144,9 @@ class PaymentSelectUnitTest extends UnitTestCase {
 
     $expected_build = array(
       'container' => array(
+        '#attributes' => array(
+          'class' => array('payment-method-selector-' . Html::getId($this->paymentMethodSelectorPluginId)),
+        ),
         '#available_payment_methods' => array(),
         '#process' => array(array($this->paymentMethodSelector, 'buildNoAvailablePaymentMethods')),
         '#tree' => TRUE,
@@ -162,11 +165,11 @@ class PaymentSelectUnitTest extends UnitTestCase {
 
     $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
 
-    /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect|\PHPUnit_Framework_MockObject_MockObject $payment_method_selector */
-    $payment_method_selector = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect')
+    /** @var \Drupal\payment\Plugin\Payment\MethodSelector\AdvancedPaymentMethodSelectorBase|\PHPUnit_Framework_MockObject_MockObject $payment_method_selector */
+    $payment_method_selector = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodSelector\AdvancedPaymentMethodSelectorBase')
       ->setMethods(array('getAvailablePaymentMethods'))
       ->setConstructorArgs(array(array(), $this->paymentMethodSelectorPluginId, array(), $this->currentUser, $this->paymentMethodManager, $this->stringTranslation))
-      ->getMock();
+      ->getMockForAbstractClass();
     $payment_method_selector->expects($this->once())
       ->method('getAvailablePaymentMethods')
       ->will($this->returnValue(array($payment_method)));
@@ -184,6 +187,9 @@ class PaymentSelectUnitTest extends UnitTestCase {
 
     $expected_build = array(
       'container' => array(
+        '#attributes' => array(
+          'class' => array('payment-method-selector-' . Html::getId($this->paymentMethodSelectorPluginId)),
+        ),
         '#available_payment_methods' => array($payment_method),
         '#process' => array(array($payment_method_selector, 'buildOneAvailablePaymentMethod')),
         '#tree' => TRUE,
@@ -203,11 +209,11 @@ class PaymentSelectUnitTest extends UnitTestCase {
     $payment_method_a = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
     $payment_method_b = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
 
-    /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect|\PHPUnit_Framework_MockObject_MockObject $payment_method_selector */
-    $payment_method_selector = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect')
+    /** @var \Drupal\payment\Plugin\Payment\MethodSelector\AdvancedPaymentMethodSelectorBase|\PHPUnit_Framework_MockObject_MockObject $payment_method_selector */
+    $payment_method_selector = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodSelector\AdvancedPaymentMethodSelectorBase')
       ->setMethods(array('getAvailablePaymentMethods'))
       ->setConstructorArgs(array(array(), $this->paymentMethodSelectorPluginId, array(), $this->currentUser, $this->paymentMethodManager, $this->stringTranslation))
-      ->getMock();
+      ->getMockForAbstractClass();
     $payment_method_selector->expects($this->once())
       ->method('getAvailablePaymentMethods')
       ->will($this->returnValue(array($payment_method_a, $payment_method_b)));
@@ -225,6 +231,9 @@ class PaymentSelectUnitTest extends UnitTestCase {
 
     $expected_build = array(
       'container' => array(
+        '#attributes' => array(
+          'class' => array('payment-method-selector-' . Html::getId($this->paymentMethodSelectorPluginId)),
+        ),
         '#available_payment_methods' => array($payment_method_a, $payment_method_b),
         '#process' => array(array($payment_method_selector, 'buildMultipleAvailablePaymentMethods')),
         '#tree' => TRUE,
@@ -307,7 +316,9 @@ class PaymentSelectUnitTest extends UnitTestCase {
           'bar' => array(
             'container' => array(
               'select' => array(
-                'payment_method_id' => $payment_method_id_a,
+                'container' => array(
+                  'payment_method_id' => $payment_method_id_a,
+                ),
               ),
             ),
           ),
@@ -331,7 +342,9 @@ class PaymentSelectUnitTest extends UnitTestCase {
           'bar' => array(
             'container' => array(
               'select' => array(
-                'payment_method_id' => $payment_method_id_a,
+                'container' => array(
+                  'payment_method_id' => $payment_method_id_a,
+                ),
               ),
             ),
           ),
@@ -355,7 +368,9 @@ class PaymentSelectUnitTest extends UnitTestCase {
           'bar' => array(
             'container' => array(
               'select' => array(
-                'payment_method_id' => $payment_method_id_b,
+                'container' => array(
+                  'payment_method_id' => $payment_method_id_b,
+                ),
               ),
             ),
           ),
@@ -376,7 +391,9 @@ class PaymentSelectUnitTest extends UnitTestCase {
           'bar' => array(
             'container' => array(
               'select' => array(
-                'payment_method_id' => $payment_method_id_a,
+                'container' => array(
+                  'payment_method_id' => $payment_method_id_a,
+                ),
               ),
             ),
           ),
@@ -389,14 +406,23 @@ class PaymentSelectUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::ajaxSubmitConfigurationForm
+   * @covers ::ajaxRebuildForm
    */
-  public function testAjaxSubmitConfigurationForm() {
+  public function testAjaxRebuildForm() {
     $form = array(
       'foo' => array(
         'bar' => array(
-          'payment_method_form' => array(
-            $this->randomMachineName() => array(),
+          'container' => array(
+            'select' => array(
+              'container' => array(
+                'change' => array(
+                  '#array_parents' => array('foo', 'bar', 'container', 'select', 'container', 'change'),
+                ),
+              ),
+            ),
+            'payment_method_form' => array(
+              $this->randomMachineName() => array(),
+            ),
           ),
         ),
       ),
@@ -405,12 +431,10 @@ class PaymentSelectUnitTest extends UnitTestCase {
     $form_state->expects($this->atLeastOnce())
       ->method('get')
       ->with('triggering_element')
-      ->willReturn(array(
-        '#array_parents' => array('foo', 'bar', 'baz', 'qux'),
-      ));
+      ->willReturn($form['foo']['bar']['container']['select']['container']['change']);
 
-    $build = $this->paymentMethodSelector->ajaxSubmitConfigurationForm($form, $form_state);
-    $this->assertSame($form['foo']['bar']['payment_method_form'], $build);
+    $build = $this->paymentMethodSelector->ajaxRebuildForm($form, $form_state);
+    $this->assertSame($form['foo']['bar']['container']['payment_method_form'], $build);
   }
 
   /**
@@ -424,74 +448,6 @@ class PaymentSelectUnitTest extends UnitTestCase {
     $element_id = $method->invokeArgs($this->paymentMethodSelector, array($form_state));
     $this->assertInternalType('integer', strlen($element_id));
     $this->assertSame($element_id, $method->invokeArgs($this->paymentMethodSelector, array($form_state)));
-  }
-
-  /**
-   * @covers ::buildSelector
-   */
-  public function testBuildSelector() {
-    $this->stringTranslation->expects($this->any())
-      ->method('translate')
-      ->will($this->returnArgument(0));
-
-    $method = new \ReflectionMethod($this->paymentMethodSelector, 'buildSelector');
-    $method->setAccessible(TRUE);
-    $get_element_id_method = new \ReflectionMethod($this->paymentMethodSelector, 'getElementId');
-    $get_element_id_method->setAccessible(TRUE);
-
-    $payment_method_id = $this->randomMachineName();
-    $payment_method_label = $this->randomMachineName();
-    $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
-    $payment_method->expects($this->any())
-      ->method('getPluginId')
-      ->will($this->returnValue($payment_method_id));
-    $payment_method->expects($this->any())
-      ->method('getPluginLabel')
-      ->will($this->returnValue($payment_method_label));
-
-    $this->paymentMethodSelector->setPaymentMethod($payment_method);
-
-    $element = array(
-      '#parents' => array('foo', 'bar'),
-    );
-    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
-    $available_payment_methods = array($payment_method);
-
-    $expected_build = array(
-      'payment_method_id' => array(
-        '#ajax' => array(
-          'callback' => array('Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect', 'ajaxSubmitConfigurationForm'),
-          'effect' => 'fade',
-          'event' => 'change',
-          'trigger_as' => array(
-            'name' => 'foo[bar][select][change]',
-          ),
-          'wrapper' => $get_element_id_method->invokeArgs($this->paymentMethodSelector, array($form_state)),
-        ),
-        '#default_value' => $payment_method_id,
-        '#empty_value' => 'select',
-        '#options' => array(
-          $payment_method_id => $payment_method_label,
-        ) ,
-        '#required' => FALSE,
-        '#title' => 'Payment method',
-        '#type' => 'select',
-      ),
-      'change' => array(
-        '#ajax' => array(
-          'callback' => array('Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect', 'ajaxSubmitConfigurationForm'),
-        ),
-        '#attributes' => array(
-          'class' => array('js-hide')
-        ),
-        '#limit_validation_errors' => array(array('foo', 'bar', 'select', 'payment_method_id')),
-        '#name' => 'foo[bar][select][change]',
-        '#submit' => array(array($this->paymentMethodSelector, 'rebuildForm')),
-        '#type' => 'submit',
-        '#value' => 'Choose payment method',
-      ),
-    );
-    $this->assertEquals($expected_build, $method->invokeArgs($this->paymentMethodSelector, array($element, $form_state, $available_payment_methods)));
   }
 
   /**
@@ -517,13 +473,15 @@ class PaymentSelectUnitTest extends UnitTestCase {
 
     $expected_build = $element + array(
       'select' => array(
-        '#tree' => TRUE,
-        'payment_method_id' => array(
-          '#type' => 'value',
-          '#value' => NULL,
-        ),
         'message' => array(
           '#markup' => 'There are no available payment methods.',
+        ),
+        'container' => array(
+          '#type' => 'container',
+          'payment_method_id' => array(
+            '#type' => 'value',
+            '#value' => NULL,
+          ),
         ),
       ),
     );
@@ -558,12 +516,18 @@ class PaymentSelectUnitTest extends UnitTestCase {
     $expected_build = array(
       '#available_payment_methods' => array($payment_method),
       'select' => array(
-        'payment_method_id' => array(
-          '#type' => 'value',
-          '#value' => $plugin_id,
+        'container' => array(
+          '#type' => 'container',
+          'payment_method_id' => array(
+            '#type' => 'value',
+            '#value' => $plugin_id,
+          ),
         ),
       ),
       'payment_method_form' => array(
+        '#attributes' => array(
+          'class' => array('payment-method-selector-' . Html::getId($this->paymentMethodSelectorPluginId) . '-payment-method-form'),
+        ),
         '#type' => 'container',
       ) + $payment_method_form,
     );
@@ -592,11 +556,11 @@ class PaymentSelectUnitTest extends UnitTestCase {
       '#type' => $this->randomMachineName(),
     );
 
-    /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect|\PHPUnit_Framework_MockObject_MockObject $payment_method_selector */
-    $payment_method_selector = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentSelect')
+    /** @var \Drupal\payment\Plugin\Payment\MethodSelector\AdvancedPaymentMethodSelectorBase|\PHPUnit_Framework_MockObject_MockObject $payment_method_selector */
+    $payment_method_selector = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodSelector\AdvancedPaymentMethodSelectorBase')
       ->setMethods(array('buildPaymentMethodForm', 'buildSelector'))
       ->setConstructorArgs(array(array(), $this->paymentMethodSelectorPluginId, array(), $this->currentUser, $this->paymentMethodManager, $this->stringTranslation))
-      ->getMock();
+      ->getMockForAbstractClass();
     $payment_method_selector->expects($this->once())
       ->method('buildPaymentMethodForm')
       ->with($form_state)
@@ -625,12 +589,65 @@ class PaymentSelectUnitTest extends UnitTestCase {
     $this->assertSame($payment_method, $this->paymentMethodSelector->getPaymentMethod());
   }
 
+  /**
+   * @covers ::buildSelector
+   */
+  public function testBuildSelector() {
+    $this->stringTranslation->expects($this->any())
+      ->method('translate')
+      ->will($this->returnArgument(0));
+
+    $method = new \ReflectionMethod($this->paymentMethodSelector, 'buildSelector');
+    $method->setAccessible(TRUE);
+    $get_element_id_method = new \ReflectionMethod($this->paymentMethodSelector, 'getElementId');
+    $get_element_id_method->setAccessible(TRUE);
+
+    $payment_method_id = $this->randomMachineName();
+    $payment_method_label = $this->randomMachineName();
+    $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
+    $payment_method->expects($this->any())
+      ->method('getPluginId')
+      ->will($this->returnValue($payment_method_id));
+    $payment_method->expects($this->any())
+      ->method('getPluginLabel')
+      ->will($this->returnValue($payment_method_label));
+
+    $this->paymentMethodSelector->setPaymentMethod($payment_method);
+
+    $element = array(
+      '#parents' => array('foo', 'bar'),
+    );
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $available_payment_methods = array($payment_method);
+
+    $expected_build_change = array(
+      '#ajax' => array(
+        'callback' => array('Drupal\payment\Plugin\Payment\MethodSelector\AdvancedPaymentMethodSelectorBase', 'ajaxRebuildForm'),
+      ),
+      '#attributes' => array(
+        'class' => array('js-hide')
+      ),
+      '#limit_validation_errors' => array(array('foo', 'bar', 'select', 'payment_method_id')),
+      '#name' => 'foo[bar][select][container][change]',
+      '#submit' => array(array($this->paymentMethodSelector, 'rebuildForm')),
+      '#type' => 'submit',
+      '#value' => 'Choose payment method',
+    );
+    $build = $method->invokeArgs($this->paymentMethodSelector, array($element, $form_state, $available_payment_methods));
+    $this->assertArrayHasKey('payment_method_id', $build['container']);
+    $this->assertEquals($expected_build_change, $build['container']['change']);
+    $this->assertSame('container', $build['container']['#type']);
+  }
+
 }
 
 }
 
 namespace {
 
+  if (!function_exists('drupal_get_path')) {
+    function drupal_get_path() {}
+  }
   if (!function_exists('drupal_html_id')) {
     function drupal_html_id() {}
   }

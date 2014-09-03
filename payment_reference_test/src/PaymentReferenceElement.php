@@ -54,7 +54,7 @@ class PaymentReferenceElement implements FormInterface {
       $form_state->set($key, $prototype_payment);
     }
     $form['payment_reference'] = array(
-      '#payment_method_selector_id' => 'payment_select',
+      '#payment_method_selector_id' => 'payment_select_list',
       '#prototype_payment' => $prototype_payment,
       '#queue_category_id' => $payment_type->getEntityTypeId() . '.' . $payment_type->getBundle(). '.' . $payment_type->getFieldName(),
       '#queue_owner_id' => 2,

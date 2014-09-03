@@ -83,7 +83,7 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
     $configuration = $this->paymentMethodSelectorPlugin->defaultConfiguration();
     $this->assertInternalType('array', $configuration);
     $this->assertArrayHasKey('allowed_payment_method_plugin_ids', $configuration);
-    $this->assertNull($configuration['allowed_payment_method_plugin_ids']);
+    $this->assertTrue($configuration['allowed_payment_method_plugin_ids']);
   }
 
   /**

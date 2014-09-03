@@ -137,7 +137,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
     $key_value_expirable = $this->getMock('\Drupal\Core\KeyValueStore\KeyValueExpirableFactoryInterface');
     $key_value_expirable->expects($this->once())
       ->method('get')
-      ->with('payment.payment_method_selector.payment_select')
+      ->with('payment.payment_type.payment_reference')
       ->willReturn($this->temporaryPaymentStorage);
 
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
