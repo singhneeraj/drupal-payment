@@ -24,7 +24,7 @@ use Drupal\Core\Routing\UrlGeneratorTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Utility\LinkGeneratorInterface;
-use Drupal\entity\Entity\EntityFormDisplay;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\payment\Entity\Payment;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface;
