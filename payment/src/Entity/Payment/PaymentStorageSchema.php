@@ -76,10 +76,10 @@ class PaymentStorageSchema extends SqlContentEntityStorageSchema {
           'last_payment_status_id' => 'id',
         ),
       ),
-      'owner_id' => array(
+      'owner' => array(
         'table' => 'user',
         'columns' => array(
-          'owner_id' => 'uid',
+          'owner' => 'uid',
         ),
       ),
     );

@@ -195,14 +195,14 @@ class DatabaseQueue implements QueueInterface {
    * {@inheritdoc}
    */
   function loadPaymentIds($category_id, $owner_id) {
-    $query = $this->database->select('payment_queue', 'pr');
-    $query->addJoin('INNER', 'payment', 'p', 'p.id = pr.payment_id');
+    $query = $this->database->select('payment_queue', 'pq');
+    $query->addJoin('INNER', 'payment', 'p', 'p.id = pq.payment_id');
     $query->addJoin('INNER', 'payment_status', 'ps', 'p.last_payment_status_id = ps.id');
-    $query->fields('pr', array('payment_id'))
-      ->condition('pr.category_id', $category_id)
+    $query->fields('pq', array('payment_id'))
+      ->condition('pq.category_id', $category_id)
       ->condition('ps.plugin_id', array_merge($this->paymentStatusManager->getDescendants('payment_success'), array('payment_success')))
-      ->condition('p.owner_id', $owner_id)
-      ->condition('pr.queue_id', $this->queueId);
+      ->condition('p.owner', $owner_id)
+      ->condition('pq.queue_id', $this->queueId);
 
     $payment_ids = $query->execute()->fetchCol();
 

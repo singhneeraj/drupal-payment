@@ -213,9 +213,9 @@ class PaymentStorageUnitTest extends UnitTestCase {
     $this->assertInstanceOf('\stdClass', $record);
     $this->assertSame($uuid, $record->uuid);
     $this->assertSame($id, $record->id);
-    $this->assertSame($currency_code, $record->currency_code);
+    $this->assertSame($currency_code, $record->currency);
     $this->assertSame($bundle, $record->bundle);
-    $this->assertSame($owner_id, $record->owner_id);
+    $this->assertSame($owner_id, $record->owner);
     $this->assertSame($first_payment_status_id, $record->first_payment_status_id);
     $this->assertSame($last_payment_status_id, $record->last_payment_status_id);
     $this->assertSame($payment_method_id, $record->payment_method_id);
