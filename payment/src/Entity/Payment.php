@@ -38,6 +38,7 @@ use Drupal\user\UserInterface;
  *     "list_builder" = "Drupal\payment\Entity\Payment\PaymentListBuilder",
  *     "view_builder" = "Drupal\payment\Entity\Payment\PaymentViewBuilder",
  *     "storage" = "Drupal\payment\Entity\Payment\PaymentStorage",
+ *     "storage_schema" = "Drupal\payment\Entity\Payment\PaymentStorageSchema",
  *   },
  *   entity_keys = {
  *     "bundle" = "bundle",

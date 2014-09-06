@@ -122,9 +122,9 @@ class PaymentStorage extends ContentEntityDatabaseStorage implements PaymentStor
       $payment_method = $record->payment_method_id ? $this->paymentMethodManager->createInstance($record->payment_method_id, unserialize($record->payment_method_configuration)) : NULL;
       $payment_type = $this->paymentTypeManager->createInstance($record->payment_type_id, unserialize($record->payment_type_configuration));
       $records[$id] = (object) array(
-        'currency' => $record->currency_code,
+        'currency' => $record->currency,
         'id' => (int) $record->id,
-        'owner' => (int) $record->owner_id,
+        'owner' => (int) $record->owner,
         'method' => $payment_method,
         'type' => $payment_type,
         'bundle' => $payment_type->getPluginId(),
@@ -144,11 +144,11 @@ class PaymentStorage extends ContentEntityDatabaseStorage implements PaymentStor
 
     $record = new \stdClass();
     $record->bundle = $payment->bundle();
-    $record->currency_code = $payment->getCurrencyCode();
+    $record->currency = $payment->getCurrencyCode();
     $record->id = $payment->id();
     $record->first_payment_status_id = current($payment->getPaymentStatuses())->getId();
     $record->last_payment_status_id = $payment->getPaymentStatus()->getId();
-    $record->owner_id = $payment->getOwnerId();
+    $record->owner = $payment->getOwnerId();
     $record->payment_method_configuration = serialize($payment->getPaymentMethod() ? $payment->getPaymentMethod()->getConfiguration() : array());
     $record->payment_method_id = $payment->getPaymentMethod() ? $payment->getPaymentMethod()->getPluginId() : NULL;
     $record->payment_type_configuration = serialize($payment->getPaymentType()->getConfiguration());
@@ -268,101 +268,6 @@ class PaymentStorage extends ContentEntityDatabaseStorage implements PaymentStor
     $this->database->delete('payment_status')
       ->condition('payment_id', $ids)
       ->execute();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getSchema() {
-    $schema['payment'] = array(
-      'fields' => array(
-        'currency_code' => array(
-          'type' => 'varchar',
-          'length' => 3,
-          'default' => 'XXX',
-          'not null' => TRUE,
-        ),
-        'bundle' => array(
-          'type' => 'varchar',
-          'length' => 255,
-          'not null' => TRUE,
-        ),
-        'id' => array(
-          'type' => 'serial',
-        ),
-        'first_payment_status_id' => array(
-          'description' => "The {payment_status_item}.id of this payment's first status item.",
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'default' => 0,
-          'not null' => TRUE,
-        ),
-        'last_payment_status_id' => array(
-          'description' => "The {payment_status_item}.id of this payment's most recent status item.",
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'default' => 0,
-          'not null' => TRUE,
-        ),
-        'owner_id' => array(
-          'description' => 'The {users}.uid this payment belongs to.',
-          'type' => 'int',
-          'not null' => TRUE,
-          'default' => 0,
-        ),
-        'payment_method_configuration' => array(
-          'type' => 'blob',
-          'not null' => TRUE,
-          'serialize' => TRUE,
-        ),
-        'payment_method_id' => array(
-          'type' => 'varchar',
-          'length' => 255,
-        ),
-        'payment_type_configuration' => array(
-          'type' => 'blob',
-          'not null' => TRUE,
-          'serialize' => TRUE,
-        ),
-        'payment_type_id' => array(
-          'type' => 'varchar',
-          'length' => 255,
-        ),
-        'uuid' => array(
-          'description' => 'Unique Key: Universally unique identifier for this entity.',
-          'type' => 'varchar',
-          'length' => 128,
-          'not null' => FALSE,
-        ),
-      ),
-      'foreign keys' => array(
-        'first_payment_status_id' => array(
-          'table' => 'payment_status_item',
-          'columns' => array(
-            'first_payment_status_id' => 'id',
-          ),
-        ),
-        'last_payment_status_id' => array(
-          'table' => 'payment_status_item',
-          'columns' => array(
-            'last_payment_status_id' => 'id',
-          ),
-        ),
-        'owner_id' => array(
-          'table' => 'user',
-          'columns' => array(
-            'owner_id' => 'uid',
-          ),
-        ),
-      ),
-      'indexes' => array(
-        'id' => array('id'),
-        'uuid' => array('uuid'),
-      ),
-      'primary key' => array('id'),
-    );
-
-    return $schema;
   }
 
 }
