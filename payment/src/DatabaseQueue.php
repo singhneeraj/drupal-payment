@@ -21,6 +21,13 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class DatabaseQueue implements QueueInterface {
 
   /**
+   * The IDs of the payment statuses available payments can have.
+   *
+   * @var string[]
+   */
+  protected $allowedPaymentStatusIds = array('payment_success');
+
+  /**
    * The database connection.
    *
    * @var \Drupal\Core\Database\Connection
@@ -105,6 +112,30 @@ class DatabaseQueue implements QueueInterface {
    */
   public function getClaimExpirationPeriod() {
     return $this->claimExpirationPeriod;
+  }
+
+  /**
+   * Sets the allowed payment statuses.
+   *
+   * @param string[] $allowed_payment_status_ids
+   *   The IDs of the payment statuses available payments can have.
+   *
+   * @return $this
+   */
+  public function setAllowedPaymentStatusIds(array $allowed_payment_status_ids) {
+    $this->allowedPaymentStatusIds = $allowed_payment_status_ids;
+
+    return $this;
+  }
+
+  /**
+   * Gets the allowed payment statuses.
+   *
+   * @return string[]
+   *   The IDs of the payment statuses available payments can have.
+   */
+  public function getAllowedPaymentStatusIds() {
+    return $this->allowedPaymentStatusIds;
   }
 
   /**
@@ -195,12 +226,19 @@ class DatabaseQueue implements QueueInterface {
    * {@inheritdoc}
    */
   function loadPaymentIds($category_id, $owner_id) {
+    $allowed_payment_status_ids = array();
+    foreach ($this->getAllowedPaymentStatusIds() as $payment_status_id) {
+      $allowed_payment_status_ids = array_merge($allowed_payment_status_ids, array($payment_status_id), $this->paymentStatusManager->getDescendants($payment_status_id));
+    }
+    if (empty($allowed_payment_status_ids)) {
+      throw new \RuntimeException('There are no allowed payment statuses. Use self::setAllowedPaymentStatusIds() to set the allowed payment statuses.');
+    }
     $query = $this->database->select('payment_queue', 'pq');
     $query->addJoin('INNER', 'payment', 'p', 'p.id = pq.payment_id');
     $query->addJoin('INNER', 'payment_status', 'ps', 'p.last_payment_status_id = ps.id');
     $query->fields('pq', array('payment_id'))
       ->condition('pq.category_id', $category_id)
-      ->condition('ps.plugin_id', array_merge($this->paymentStatusManager->getDescendants('payment_success'), array('payment_success')))
+      ->condition('ps.plugin_id', $allowed_payment_status_ids)
       ->condition('p.owner', $owner_id)
       ->condition('pq.queue_id', $this->queueId);
 

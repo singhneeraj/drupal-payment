@@ -86,6 +86,16 @@ class DatabaseQueueUnitTest extends UnitTestCase {
   }
 
   /**
+   * @covers ::getAllowedPaymentStatusIds
+   * @covers ::setAllowedPaymentStatusIds
+   */
+  public function testGetAllowedPaymentStatusIds() {
+    $allowed_payment_status_ids = array($this->randomMachineName(), $this->randomMachineName());
+    $this->assertSame($this->queue, $this->queue->setAllowedPaymentStatusIds($allowed_payment_status_ids));
+    $this->assertSame($allowed_payment_status_ids, $this->queue->getAllowedPaymentStatusIds());
+  }
+
+  /**
    * @covers ::alterLoadedPaymentIds
    */
   public function testAlterLoadedPaymentIds() {
