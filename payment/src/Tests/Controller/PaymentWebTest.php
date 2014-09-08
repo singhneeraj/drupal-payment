@@ -86,7 +86,7 @@ class PaymentWebTest extends WebTestBase {
     $path = 'payment/' . $payment->id() . '/delete';
     $this->drupalGet($path);
     $this->assertResponse('403');
-    $this->drupalLogin($this->drupalCreateUser(array('payment.payment.delete.any')));
+    $this->drupalLogin($this->drupalCreateUser(array('payment.payment.delete.any', 'payment.payment.view.any')));
     $this->drupalGet($path);
     if ($this->assertResponse('200')) {
       $this->clickLink(t('Cancel'));

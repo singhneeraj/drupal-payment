@@ -48,7 +48,7 @@ class PaymentStorageSchemaUnitTest extends UnitTestCase {
   /**
    * The storage handler.
    *
-   * @var \Drupal\Core\Entity\ContentEntityDatabaseStorage|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\Entity\Sql\SqlContentEntityStorage|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $storage;
 
@@ -87,7 +87,7 @@ class PaymentStorageSchemaUnitTest extends UnitTestCase {
       ->method('id')
       ->willReturn($entity_type_id);
 
-    $this->storage = $this->getMockBuilder('\Drupal\Core\Entity\ContentEntityDatabaseStorage')
+    $this->storage = $this->getMockBuilder('\Drupal\Core\Entity\Sql\SqlContentEntityStorage')
       ->disableOriginalConstructor()
       ->getMock();
 
