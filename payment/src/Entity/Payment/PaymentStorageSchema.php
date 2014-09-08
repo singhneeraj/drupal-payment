@@ -8,7 +8,7 @@
 namespace Drupal\payment\Entity\Payment;
 
 use Drupal\Core\Entity\ContentEntityTypeInterface;
-use Drupal\Core\Entity\Schema\SqlContentEntityStorageSchema;
+use Drupal\Core\Entity\Sql\SqlContentEntityStorageSchema;
 
 /**
  * Provides a payment storage schema handler.
