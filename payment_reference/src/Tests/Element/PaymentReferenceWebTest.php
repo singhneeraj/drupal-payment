@@ -41,7 +41,7 @@ class PaymentReferenceWebTest extends WebTestBase {
       'name' => $payment_reference_field_name,
       'type' => 'payment_reference',
     ))->save();
-    entity_create('field_instance_config', array(
+    entity_create('field_config', array(
       'bundle' => 'user',
       'entity_type' => 'user',
       'field_name' => $payment_reference_field_name,
@@ -59,7 +59,7 @@ class PaymentReferenceWebTest extends WebTestBase {
       'name' => $payment_field_name,
       'type' => 'text',
     ))->save();
-    entity_create('field_instance_config', array(
+    entity_create('field_config', array(
       'bundle' => 'payment_reference',
       'entity_type' => 'payment',
       'field_name' => $payment_field_name,

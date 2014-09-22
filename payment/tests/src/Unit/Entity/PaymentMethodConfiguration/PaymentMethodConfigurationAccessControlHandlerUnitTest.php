@@ -9,6 +9,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration;
 
 use Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccessControlHandler;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccessControlHandler
@@ -25,11 +26,44 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
   protected $accessControlHandler;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $moduleHandler;
+
+  /**
    * {@inheritdoc}
+   *
+   * @covers ::__construct
    */
   public function setUp() {
     $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
-    $this->accessControlHandler = new PaymentMethodConfigurationAccessControlHandler($entity_type);
+
+    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
+    $this->moduleHandler->expects($this->any())
+      ->method('invokeAll')
+      ->willReturn(array());
+
+    $this->accessControlHandler = new PaymentMethodConfigurationAccessControlHandler($entity_type, $this->moduleHandler);
+  }
+
+  /**
+   * @covers ::createInstance
+   */
+  public function testCreateInstance() {
+    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $map = array(
+      array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
+    );
+    $container->expects($this->any())
+      ->method('get')
+      ->will($this->returnValueMap($map));
+
+    $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
+
+    $handler = PaymentMethodConfigurationAccessControlHandler::createInstance($container, $entity_type);
+    $this->assertInstanceOf('\Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccessControlHandler', $handler);
   }
 
   /**
@@ -45,11 +79,14 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
     $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
       ->disableOriginalConstructor()
       ->getMock();
+    $payment_method->expects($this->any())
+      ->method('getCacheTag')
+      ->willReturn(array('payment_method_configuration' => array(1)));
 
     $class = new \ReflectionClass($this->accessControlHandler);
     $method = $class->getMethod('checkAccess');
     $method->setAccessible(TRUE);
-    $this->assertFalse($method->invokeArgs($this->accessControlHandler, array($payment_method, $operation, $language_code, $account)));
+    $this->assertFalse($method->invokeArgs($this->accessControlHandler, array($payment_method, $operation, $language_code, $account))->isAllowed());
   }
 
   /**
@@ -59,18 +96,24 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
     $operation = $this->randomMachineName();
     $language_code = $this->randomMachineName();
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
-    $account->expects($this->once())
+    $map = array(
+      array('payment.payment_method_configuration.' . $operation . '.any', TRUE),
+      array('payment.payment_method_configuration.' . $operation . '.own', FALSE),
+    );
+    $account->expects($this->any())
       ->method('hasPermission')
-      ->with('payment.payment_method_configuration.' . $operation . '.any')
-      ->will($this->returnValue(TRUE));
+      ->will($this->returnValueMap($map));
     $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
       ->disableOriginalConstructor()
       ->getMock();
+    $payment_method->expects($this->any())
+      ->method('getCacheTag')
+      ->willReturn(array('payment_method_configuration' => array(1)));
 
     $class = new \ReflectionClass($this->accessControlHandler);
     $method = $class->getMethod('checkAccess');
     $method->setAccessible(TRUE);
-    $this->assertTrue($method->invokeArgs($this->accessControlHandler, array($payment_method, $operation, $language_code, $account)));
+    $this->assertTrue($method->invokeArgs($this->accessControlHandler, array($payment_method, $operation, $language_code, $account))->isAllowed());
   }
 
   /**
@@ -100,152 +143,165 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
     $payment_method->expects($this->at(1))
       ->method('getOwnerId')
       ->will($this->returnValue($owner_id + 1));
+    $payment_method->expects($this->any())
+      ->method('getCacheTag')
+      ->willReturn(array('payment_method_configuration' => array(1)));
 
     $class = new \ReflectionClass($this->accessControlHandler);
     $method = $class->getMethod('checkAccess');
     $method->setAccessible(TRUE);
-    $this->assertTrue($method->invokeArgs($this->accessControlHandler, array($payment_method, $operation, $language_code, $account)));
-    $this->assertFalse($method->invokeArgs($this->accessControlHandler, array($payment_method, $operation, $language_code, $account)));
+    $this->assertTrue($method->invokeArgs($this->accessControlHandler, array($payment_method, $operation, $language_code, $account))->isAllowed());
+    $this->assertFalse($method->invokeArgs($this->accessControlHandler, array($payment_method, $operation, $language_code, $account))->isAllowed());
   }
 
   /**
    * @covers ::checkAccess
+   *
+   * @dataProvider providerTestCheckAccessEnable
    */
-  public function testCheckAccessEnable() {
+  public function testCheckAccessEnable($expected, $payment_method_configuration_status, $has_update_permission) {
     $operation = 'enable';
     $language_code = $this->randomMachineName();
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
-    $account->expects($this->any())
+    $map = array(
+      array('payment.payment_method_configuration.update.any', $has_update_permission),
+      array('payment.payment_method_configuration.update.own', FALSE),
+    );
+    $account->expects($this->atLeastOnce())
       ->method('hasPermission')
-      ->will($this->returnValue(FALSE));
-    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
+      ->willReturnMap($map);
+    $payment_method_configuration = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
       ->disableOriginalConstructor()
       ->getMock();
-    // Enabled.
-    $payment_method->expects($this->at(0))
+    $payment_method_configuration->expects($this->atLeastOnce())
       ->method('status')
-      ->will($this->returnValue(TRUE));
-    // Disabled, with permission.
-    $payment_method->expects($this->at(1))
-      ->method('status')
-      ->will($this->returnValue(FALSE));
-    $payment_method->expects($this->at(2))
-      ->method('access')
-      ->with('update', $account)
-      ->will($this->returnValue(TRUE));
-    // Disabled, without permission.
-    $payment_method->expects($this->at(3))
-      ->method('status')
-      ->will($this->returnValue(FALSE));
-    $payment_method->expects($this->at(4))
-      ->method('access')
-      ->with('update', $account)
-      ->will($this->returnValue(FALSE));
+      ->will($this->returnValue($payment_method_configuration_status));
+    $payment_method_configuration->expects($this->atLeastOnce())
+      ->method('getCacheTag')
+      ->willReturn(array(
+        'payment_method_configuration' => array(1),
+      ));
 
     $class = new \ReflectionClass($this->accessControlHandler);
     $method = $class->getMethod('checkAccess');
     $method->setAccessible(TRUE);
-    // Enabled.
-    $this->assertFalse($method->invokeArgs($this->accessControlHandler, array($payment_method, $operation, $language_code, $account)));
-    // Disabled, with permission.
-    $this->assertTrue($method->invokeArgs($this->accessControlHandler, array($payment_method, $operation, $language_code, $account)));
-    // Disabled, without permission.
-    $this->assertFalse($method->invokeArgs($this->accessControlHandler, array($payment_method, $operation, $language_code, $account)));
+    $this->assertSame($expected, $method->invokeArgs($this->accessControlHandler, array($payment_method_configuration, $operation, $language_code, $account))->isAllowed());
+
+  }
+
+  /**
+   * Provides data to self::testCheckAccessEnable().
+   */
+  public function providerTestCheckAccessEnable() {
+    return array(
+      // Enabled with permission.
+      array(FALSE, TRUE, TRUE),
+      // Disabled with permission.
+      array(TRUE, FALSE, TRUE),
+      // Disabled without permission.
+      array(FALSE, FALSE, FALSE),
+    );
   }
 
   /**
    * @covers ::checkAccess
+   *
+   * @dataProvider providerTestCheckAccessDisable
    */
-  public function testCheckAccessDisable() {
+  public function testCheckAccessDisable($expected, $payment_method_configuration_status, $has_update_permission) {
     $operation = 'disable';
     $language_code = $this->randomMachineName();
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
-    $account->expects($this->any())
+    $map = array(
+      array('payment.payment_method_configuration.update.any', $has_update_permission),
+      array('payment.payment_method_configuration.update.own', FALSE),
+    );
+    $account->expects($this->atLeastOnce())
       ->method('hasPermission')
-      ->will($this->returnValue(FALSE));
-    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
+      ->willReturnMap($map);
+    $payment_method_configuration = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
       ->disableOriginalConstructor()
       ->getMock();
-    // Disabled.
-    $payment_method->expects($this->at(0))
+    $payment_method_configuration->expects($this->atLeastOnce())
       ->method('status')
-      ->will($this->returnValue(FALSE));
-    // Enabled, with permission.
-    $payment_method->expects($this->at(1))
-      ->method('status')
-      ->will($this->returnValue(TRUE));
-    $payment_method->expects($this->at(2))
-      ->method('access')
-      ->with('update', $account)
-      ->will($this->returnValue(TRUE));
-    // Enabled, without permission.
-    $payment_method->expects($this->at(3))
-      ->method('status')
-      ->will($this->returnValue(TRUE));
-    $payment_method->expects($this->at(4))
-      ->method('access')
-      ->with('update', $account)
-      ->will($this->returnValue(FALSE));
+      ->will($this->returnValue($payment_method_configuration_status));
+    $payment_method_configuration->expects($this->atLeastOnce())
+      ->method('getCacheTag')
+      ->willReturn(array(
+        'payment_method_configuration' => array(1),
+      ));
 
     $class = new \ReflectionClass($this->accessControlHandler);
     $method = $class->getMethod('checkAccess');
     $method->setAccessible(TRUE);
-    // Disabled.
-    $this->assertFalse($method->invokeArgs($this->accessControlHandler, array($payment_method, $operation, $language_code, $account)));
-    // Enabled, with permission.
-    $this->assertTrue($method->invokeArgs($this->accessControlHandler, array($payment_method, $operation, $language_code, $account)));
-    // Enabled, without permission.
-    $this->assertFalse($method->invokeArgs($this->accessControlHandler, array($payment_method, $operation, $language_code, $account)));
+    $this->assertSame($expected, $method->invokeArgs($this->accessControlHandler, array($payment_method_configuration, $operation, $language_code, $account))->isAllowed());
+
+  }
+
+  /**
+   * Provides data to self::testCheckAccessDisable().
+   */
+  public function providerTestCheckAccessDisable() {
+    return array(
+      // Disabled with permission.
+      array(FALSE, FALSE, TRUE),
+      // Enabled with permission.
+      array(TRUE, TRUE, TRUE),
+      // Enabled without permission.
+      array(FALSE, TRUE, FALSE),
+    );
   }
 
   /**
    * @covers ::checkAccess
+   *
+   * @dataProvider providerTestCheckAccessDuplicate
    */
-  public function testCheckAccessDuplicate() {
+  public function testCheckAccessDuplicate($expected, $has_create_permission, $has_view_permission) {
     $operation = 'duplicate';
     $language_code = $this->randomMachineName();
+    $bundle = $this->randomMachineName();
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $map = array(
+      array('payment.payment_method_configuration.create.' . $bundle, $has_create_permission),
+      array('payment.payment_method_configuration.view.any', $has_view_permission),
+    );
     $account->expects($this->any())
       ->method('hasPermission')
-      ->will($this->returnValue(FALSE));
-    $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
-    $access_controller = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccessControlHandler')
-      ->setConstructorArgs(array($entity_type))
-      ->setMethods(array('createAccess'))
-      ->getMock();
-    $payment_method = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
+      ->willReturnMap($map);
+    $payment_method_configuration = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
       ->disableOriginalConstructor()
       ->getMock();
-    // No create access.
-    $access_controller->expects($this->at(0))
-      ->method('createAccess')
-      ->will($this->returnValue(FALSE));
-    // Create access, with view permission.
-    $access_controller->expects($this->at(1))
-      ->method('createAccess')
-      ->will($this->returnValue(TRUE));
-    $payment_method->expects($this->at(2))
-      ->method('access')
-      ->with('view', $account)
-      ->will($this->returnValue(TRUE));
-    // Create access, without view permission.
-    $access_controller->expects($this->at(2))
-      ->method('createAccess')
-      ->will($this->returnValue(TRUE));
-    $payment_method->expects($this->at(4))
-      ->method('access')
-      ->with('view', $account)
-      ->will($this->returnValue(FALSE));
+    $payment_method_configuration->expects($this->atLeastOnce())
+      ->method('bundle')
+      ->will($this->returnValue($bundle));
+    $payment_method_configuration->expects($this->atLeastOnce())
+      ->method('getCacheTag')
+      ->willReturn(array(
+        'payment_method_configuration' => array(1),
+      ));
 
-    $class = new \ReflectionClass($access_controller);
+    $class = new \ReflectionClass($this->accessControlHandler);
     $method = $class->getMethod('checkAccess');
     $method->setAccessible(TRUE);
-    // No create access.
-    $this->assertFalse($method->invokeArgs($access_controller, array($payment_method, $operation, $language_code, $account)));
-    // Create access, with view permission.
-    $this->assertTrue($method->invokeArgs($access_controller, array($payment_method, $operation, $language_code, $account)));
-    // Create access, without view permission.
-    $this->assertFalse($method->invokeArgs($access_controller, array($payment_method, $operation, $language_code, $account)));
+    $this->assertSame($expected, $method->invokeArgs($this->accessControlHandler, array($payment_method_configuration, $operation, $language_code, $account))->isAllowed());
+
+  }
+
+  /**
+   * Provides data to self::testCheckAccessDuplicate().
+   */
+  public function providerTestCheckAccessDuplicate() {
+    return array(
+      // No create access.
+      array(FALSE, FALSE, TRUE),
+      // Create access, with view permission.
+      array(TRUE, TRUE, TRUE),
+      // Create access, without view permission.
+      array(FALSE, TRUE, FALSE),
+      // No access.
+      array(FALSE, FALSE, FALSE),
+    );
   }
 
   /**
@@ -263,7 +319,7 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
     $class = new \ReflectionClass($this->accessControlHandler);
     $method = $class->getMethod('checkCreateAccess');
     $method->setAccessible(TRUE);
-    $this->assertTrue($method->invokeArgs($this->accessControlHandler, array($account, $context, $bundle)));
+    $this->assertTrue($method->invokeArgs($this->accessControlHandler, array($account, $context, $bundle))->isAllowed());
   }
 
   /**

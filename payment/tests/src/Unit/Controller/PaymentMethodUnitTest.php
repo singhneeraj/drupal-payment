@@ -6,9 +6,8 @@
  */
 
 namespace Drupal\Tests\payment\Unit\Controller {
-
-use Drupal\Core\Access\AccessInterface;
-use Drupal\payment\Controller\PaymentMethod;
+  use Drupal\Core\Access\AccessResult;
+  use Drupal\payment\Controller\PaymentMethod;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -63,6 +62,13 @@ class PaymentMethodUnitTest extends UnitTestCase {
   protected $paymentMethodManager;
 
   /**
+   * The request stack.
+   *
+   * @var \Symfony\Component\HttpFoundation\RequestStack|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $requestStack;
+
+  /**
    * The string translator.
    *
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -92,6 +98,10 @@ class PaymentMethodUnitTest extends UnitTestCase {
 
     $this->paymentMethodManager = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface');
 
+    $this->requestStack = $this->getMockBuilder('\Symfony\Component\HttpFoundation\RequestStack')
+      ->disableOriginalConstructor()
+      ->getMock();
+
     $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
     $this->urlGenerator = $this->getMock('\Drupal\Core\Routing\UrlGeneratorInterface');
@@ -99,7 +109,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
       ->method('generateFromRoute')
       ->will($this->returnValue('http://example.com'));
 
-    $this->controller = new PaymentMethod($this->stringTranslation, $this->entityManager, $this->paymentMethodManager, $this->paymentMethodConfigurationManager, $this->entityFormBuilder, $this->urlGenerator, $this->currentUser);
+    $this->controller = new PaymentMethod($this->requestStack, $this->stringTranslation, $this->entityManager, $this->paymentMethodManager, $this->paymentMethodConfigurationManager, $this->entityFormBuilder, $this->urlGenerator, $this->currentUser);
   }
 
   /**
@@ -113,6 +123,7 @@ class PaymentMethodUnitTest extends UnitTestCase {
       array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager),
       array('plugin.manager.payment.method', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodManager),
       array('plugin.manager.payment.method_configuration', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodConfigurationManager),
+      array('request_stack', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->requestStack),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
       array('url_generator', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->urlGenerator),
     );
@@ -202,26 +213,24 @@ class PaymentMethodUnitTest extends UnitTestCase {
     $access_controller = $this->getMock('\Drupal\Core\Entity\EntityAccessControlHandlerInterface');
     $access_controller->expects($this->at(0))
       ->method('createAccess')
-      ->with('foo', $this->currentUser)
-      ->will($this->returnValue(TRUE));
+      ->with('foo', $this->currentUser, array(), TRUE)
+      ->will($this->returnValue(AccessResult::allowed()));
     $access_controller->expects($this->at(1))
       ->method('createAccess')
-      ->with('foo', $this->currentUser)
-      ->will($this->returnValue(FALSE));
+      ->with('foo', $this->currentUser, array(), TRUE)
+      ->will($this->returnValue(AccessResult::forbidden()));
     $access_controller->expects($this->at(2))
       ->method('createAccess')
-      ->with('bar', $this->currentUser)
-      ->will($this->returnValue(FALSE));
+      ->with('bar', $this->currentUser, array(), TRUE)
+      ->will($this->returnValue(AccessResult::forbidden()));
 
     $this->entityManager->expects($this->exactly(2))
       ->method('getAccessControlHandler')
       ->with('payment_method_configuration')
       ->will($this->returnValue($access_controller));
 
-    $request = new Request();
-
-    $this->assertSame(AccessInterface::ALLOW, $this->controller->selectAccess($request));
-    $this->assertSame(AccessInterface::DENY, $this->controller->selectAccess($request));
+    $this->assertTrue($this->controller->selectAccess()->isAllowed());
+    $this->assertFalse($this->controller->selectAccess()->isAllowed());
   }
 
   /**
@@ -260,23 +269,27 @@ class PaymentMethodUnitTest extends UnitTestCase {
     $request = new Request();
     $request->attributes->set('plugin_id', $plugin_id);
 
+    $this->requestStack->expects($this->atLeastOnce())
+      ->method('getCurrentRequest')
+      ->willReturn($request);
+
     $access_controller = $this->getMock('\Drupal\Core\Entity\EntityAccessControlHandlerInterface');
     $access_controller->expects($this->at(0))
       ->method('createAccess')
-      ->with($plugin_id, $this->currentUser)
-      ->will($this->returnValue(TRUE));
+      ->with($plugin_id, $this->currentUser, array(), TRUE)
+      ->will($this->returnValue(AccessResult::allowed()));
     $access_controller->expects($this->at(1))
       ->method('createAccess')
-      ->with($plugin_id, $this->currentUser)
-      ->will($this->returnValue(FALSE));
+      ->with($plugin_id, $this->currentUser, array(), TRUE)
+      ->will($this->returnValue(AccessResult::forbidden()));
 
     $this->entityManager->expects($this->exactly(2))
       ->method('getAccessControlHandler')
       ->with('payment_method_configuration')
       ->will($this->returnValue($access_controller));
 
-    $this->assertSame(AccessInterface::ALLOW, $this->controller->addAccess($request));
-    $this->assertSame(AccessInterface::DENY, $this->controller->addAccess($request));
+    $this->assertTrue($this->controller->addAccess($request)->isAllowed());
+    $this->assertFalse($this->controller->addAccess($request)->isAllowed());
   }
 
   /**

@@ -14,6 +14,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\payment\Payment;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
+use Drupal\Core\Render\Element\ElementInterface;
+use Drupal\Core\Render\Element\RenderElement;
 
 /**
  * Provides a payment line items configuration element.
@@ -24,7 +26,7 @@ use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
  * @FormElement("payment_line_items_input")
  *
  */
-class PaymentLineItemsInput {
+class PaymentLineItemsInput extends RenderElement implements ElementInterface {
 
   /**
    * An unlimited cardinality.
@@ -180,7 +182,7 @@ class PaymentLineItemsInput {
    * Implements form #submit callback.
    */
   public static function addMoreSubmit(array &$form, FormStateInterface $form_state) {
-    $triggering_element = $form_state->get('triggering_element');
+    $triggering_element = $form_state->getTriggeringElement();
     $parents = array_slice($triggering_element['#array_parents'], 0, -2);
     $root_element = NestedArray::getValue($form, $parents);
     $values = $form_state->getValues();
@@ -197,7 +199,7 @@ class PaymentLineItemsInput {
    * Implements form AJAX callback.
    */
   public static function addMoreAjaxSubmit(array &$form, FormStateInterface $form_state) {
-    $triggering_element = $form_state->get('triggering_element');
+    $triggering_element = $form_state->getTriggeringElement();
     $parents = array_slice($triggering_element['#array_parents'], 0, -2);
     $root_element = NestedArray::getValue($form, $parents);
 
@@ -208,7 +210,7 @@ class PaymentLineItemsInput {
    * Implements form #submit callback.
    */
   public static function deleteSubmit(array &$form, FormStateInterface $form_state) {
-    $triggering_element = $form_state->get('triggering_element');
+    $triggering_element = $form_state->getTriggeringElement();
     $root_element_parents  = array_slice($triggering_element['#array_parents'], 0, -3);
     $root_element = NestedArray::getValue($form, $root_element_parents);
     $parents = $triggering_element['#array_parents'];
@@ -228,7 +230,7 @@ class PaymentLineItemsInput {
    * Implements form AJAX callback.
    */
   public static function deleteAjaxSubmit(array &$form, FormStateInterface $form_state) {
-    $triggering_element = $form_state->get('triggering_element');
+    $triggering_element = $form_state->getTriggeringElement();
     $root_element_parents  = array_slice($triggering_element['#array_parents'], 0, -3);
     $root_element = NestedArray::getValue($form, $root_element_parents);
     $parents = $triggering_element['#array_parents'];

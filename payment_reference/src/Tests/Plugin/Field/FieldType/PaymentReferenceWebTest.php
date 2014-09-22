@@ -38,7 +38,7 @@ class PaymentReferenceWebTest extends WebTestBase {
       'type' => 'payment_reference',
     ))->save();
 
-    entity_create('field_instance_config', array(
+    entity_create('field_config', array(
       'bundle' => 'user',
       'entity_type' => 'user',
       'field_name' => $field_name,
@@ -88,22 +88,22 @@ class PaymentReferenceWebTest extends WebTestBase {
     ), t('Save'));
     $this->drupalPostForm(NULL, array(), t('Save field settings'));
     $this->drupalPostForm(NULL, array(
-      'instance[settings][line_items][add_more][type]' => 'payment_basic',
+      'field[settings][line_items][add_more][type]' => 'payment_basic',
     ), t('Add a line item'));
     $this->drupalPostForm(NULL, array(
-      'instance[settings][currency_code]' => $currency_code,
-      'instance[settings][line_items][line_items][payment_basic][plugin_form][amount][amount]' => $amount,
-      'instance[settings][line_items][line_items][payment_basic][plugin_form][amount][currency_code]' => $currency_code,
-      'instance[settings][line_items][line_items][payment_basic][plugin_form][description]' => $description,
-      'instance[settings][line_items][line_items][payment_basic][plugin_form][quantity]' => $quantity,
+      'field[settings][currency_code]' => $currency_code,
+      'field[settings][line_items][line_items][payment_basic][plugin_form][amount][amount]' => $amount,
+      'field[settings][line_items][line_items][payment_basic][plugin_form][amount][currency_code]' => $currency_code,
+      'field[settings][line_items][line_items][payment_basic][plugin_form][description]' => $description,
+      'field[settings][line_items][line_items][payment_basic][plugin_form][quantity]' => $quantity,
     ), t('Save settings'));
     $this->assertResponse(200);
 
     // Re-load the page and test that the values are picked up.
     $this->drupalGet('admin/config/people/accounts/fields/user.user.field_' . $field_id);
-    $this->assertFieldByName('instance[settings][line_items][line_items][payment_basic][plugin_form][amount][currency_code]', $currency_code);
-    $this->assertFieldByName('instance[settings][line_items][line_items][payment_basic][plugin_form][amount][amount]', $amount);
-    $this->assertFieldByName('instance[settings][line_items][line_items][payment_basic][plugin_form][description]', $description);
-    $this->assertFieldByName('instance[settings][line_items][line_items][payment_basic][plugin_form][quantity]', $quantity);
+    $this->assertFieldByName('field[settings][line_items][line_items][payment_basic][plugin_form][amount][currency_code]', $currency_code);
+    $this->assertFieldByName('field[settings][line_items][line_items][payment_basic][plugin_form][amount][amount]', $amount);
+    $this->assertFieldByName('field[settings][line_items][line_items][payment_basic][plugin_form][description]', $description);
+    $this->assertFieldByName('field[settings][line_items][line_items][payment_basic][plugin_form][quantity]', $quantity);
   }
 }

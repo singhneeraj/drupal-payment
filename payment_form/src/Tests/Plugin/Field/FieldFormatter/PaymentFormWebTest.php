@@ -67,7 +67,7 @@ class PaymentFormWebTest extends WebTestBase {
       'name' => $field_name,
       'type' => 'payment_form',
     ))->save();
-    entity_create('field_instance_config', array(
+    entity_create('field_config', array(
       'bundle' => 'user',
       'entity_type' => 'user',
       'field_name' => $field_name,

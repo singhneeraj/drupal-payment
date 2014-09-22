@@ -5,12 +5,13 @@
  *   Hook implementations and general functions.
  */
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\field\FieldConfigInterface;
 use Drupal\field\FieldStorageConfigInterface;
-use Drupal\field\FieldInstanceConfigInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment_reference\PaymentReference;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
@@ -37,17 +38,17 @@ function payment_reference_entity_extra_field_info() {
 /**
  * Implements hook_ENTITY_TYPE_delete().
  */
-function payment_reference_field_config_delete(FieldStorageConfigInterface $field) {
-  if ($field->getType() == 'payment_reference') {
-    PaymentReference::queue()->deleteByCategoryIdPrefix($field->id());
+function payment_reference_field_storage_config_delete(FieldStorageConfigInterface $field_storage_config) {
+  if ($field_storage_config->getType() == 'payment_reference') {
+    PaymentReference::queue()->deleteByCategoryIdPrefix($field_storage_config->id());
   }
 }
 
 /**
  * Implements hook_ENTITY_TYPE_delete().
  */
-function payment_reference_field_instance_config_delete(FieldInstanceConfigInterface $field_instance_config) {
-  PaymentReference::queue()->deleteByCategoryId($field_instance_config->id());
+function payment_reference_field_config_delete(FieldConfigInterface $field_config) {
+  PaymentReference::queue()->deleteByCategoryId($field_config->id());
 }
 
 /**
@@ -72,7 +73,10 @@ function payment_reference_payment_delete(PaymentInterface $payment) {
  * Implements hook_entity_field_access().
  */
 function payment_reference_entity_field_access($operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL) {
-  if ($field_definition->getType() == 'payment_reference') {
-    return (bool) $account->id();
+  if ($field_definition->getType() == 'payment_reference' && !$account->isAuthenticated()) {
+    return AccessResult::forbidden()->cachePerRole();
   }
+
+  // No opinion.
+  return AccessResult::create();
 }

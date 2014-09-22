@@ -351,12 +351,9 @@ class PaymentReferenceBaseUnitTest extends UnitTestCase {
       ),
     );
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
-    $map = array(
-      array('triggering_element', $form['foo']['bar']['container']['payment_form']['pay']),
-    );
     $form_state->expects($this->atLeastOnce())
-      ->method('get')
-      ->willReturnMap($map);
+      ->method('getTriggeringElement')
+      ->willReturn($form['foo']['bar']['container']['payment_form']['pay']);
     $form_state->expects($this->once())
       ->method('setRebuild')
       ->with(TRUE);
@@ -479,12 +476,14 @@ class PaymentReferenceBaseUnitTest extends UnitTestCase {
     );
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $map = array(
-      array('triggering_element', $form['foo']['bar']['container']['payment_form']['pay']),
       array('payment_reference.element.payment_reference.payment_method_selector.' . $form['foo']['bar']['#name'], $payment_method_selector),
     );
     $form_state->expects($this->atLeastOnce())
       ->method('get')
       ->willReturnMap($map);
+    $form_state->expects($this->atLeastOnce())
+      ->method('getTriggeringElement')
+      ->willReturn($form['foo']['bar']['container']['payment_form']['pay']);
 
     $response = $this->element->ajaxPay($form, $form_state);
     $this->assertInstanceOf('\Drupal\Core\Ajax\AjaxResponse', $response);
@@ -532,8 +531,7 @@ class PaymentReferenceBaseUnitTest extends UnitTestCase {
     );
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form_state->expects($this->once())
-      ->method('get')
-      ->with('triggering_element')
+      ->method('getTriggeringElement')
       ->willReturn($form['foo']['bar']['container']['refresh']);
 
     $response = $this->element->ajaxRefresh($form, $form_state);

@@ -6,7 +6,6 @@
 
 namespace Drupal\payment\Plugin\Payment\Method;
 
-use Drupal\Core\Access\AccessInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -30,7 +29,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *   form.
  * - message_text_format: The ID of the text format to format message_text with.
  */
-abstract class PaymentMethodBase extends PluginBase implements AccessInterface, ContainerFactoryPluginInterface, PaymentMethodInterface, PaymentMethodCapturePaymentInterface, PaymentMethodRefundPaymentInterface {
+abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentMethodInterface, PaymentMethodCapturePaymentInterface, PaymentMethodRefundPaymentInterface {
 
   /**
    * The event dispatcher.

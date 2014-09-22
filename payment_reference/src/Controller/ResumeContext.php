@@ -7,7 +7,7 @@
 
 namespace Drupal\payment_reference\Controller;
 
-use Drupal\Core\Access\AccessInterface;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Handles the "resume context" route.
  */
-class ResumeContext extends ControllerBase implements ContainerInjectionInterface, AccessInterface {
+class ResumeContext extends ControllerBase implements ContainerInjectionInterface {
 
   /**
    * Constructs a new instance.
@@ -78,13 +78,12 @@ class ResumeContext extends ControllerBase implements ContainerInjectionInterfac
   /**
    * Checks if the user has access to resume a payment's context.
    *
-   * @param \Symfony\Component\HttpFoundation\Request $request
    * @param \Drupal\payment\Entity\PaymentInterface $payment
    *
-   * @return string
+   * @return \Drupal\Core\Access\AccessResultInterface
    */
-  public function access(Request $request, PaymentInterface $payment) {
-    return $payment->getPaymentType()->resumeContextAccess($this->currentUser) ? static::ALLOW : static::DENY;
+  public function access(PaymentInterface $payment) {
+    return AccessResult::allowedIf($payment->getPaymentType()->resumeContextAccess($this->currentUser));
   }
 
 }

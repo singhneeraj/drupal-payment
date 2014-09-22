@@ -132,7 +132,7 @@ abstract class AdvancedPaymentMethodSelectorBase extends PaymentMethodSelectorBa
    * Implements form AJAX callback.
    */
   public static function ajaxRebuildForm(array &$form, FormStateInterface $form_state) {
-    $triggering_element = $form_state->get('triggering_element');
+    $triggering_element = $form_state->getTriggeringElement();
     $form_parents = array_slice($triggering_element['#array_parents'], 0, -3);
     $root_element = NestedArray::getValue($form, $form_parents);
 

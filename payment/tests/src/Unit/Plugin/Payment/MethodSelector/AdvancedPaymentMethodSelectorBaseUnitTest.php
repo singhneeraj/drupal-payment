@@ -429,8 +429,7 @@ class AdvancedPaymentMethodSelectorBaseUnitTest extends UnitTestCase {
     );
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form_state->expects($this->atLeastOnce())
-      ->method('get')
-      ->with('triggering_element')
+      ->method('getTriggeringElement')
       ->willReturn($form['foo']['bar']['container']['select']['container']['change']);
 
     $build = $this->paymentMethodSelector->ajaxRebuildForm($form, $form_state);

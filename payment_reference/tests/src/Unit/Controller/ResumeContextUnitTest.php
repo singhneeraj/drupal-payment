@@ -7,7 +7,6 @@
 
 namespace Drupal\Tests\payment_reference\Unit\Controller {
 
-use Drupal\Core\Access\AccessInterface;
 use Drupal\payment_reference\Controller\ResumeContext;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -125,11 +124,7 @@ class ResumeContextUnitTest extends UnitTestCase {
       ->method('getPaymentType')
       ->willReturn($payment_type);
 
-    $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
-      ->disableOriginalConstructor()
-      ->getMock();
-
-    $this->assertSame($expected, $this->controller->access($request, $payment));
+    $this->assertSame($expected, $this->controller->access($payment)->isAllowed());
   }
 
   /**
@@ -137,8 +132,8 @@ class ResumeContextUnitTest extends UnitTestCase {
    */
   public function providerTestAccess() {
     return array(
-      array(AccessInterface::ALLOW, TRUE),
-      array(AccessInterface::DENY, FALSE),
+      array(TRUE, TRUE),
+      array(FALSE, FALSE),
     );
   }
 

@@ -453,7 +453,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
    * Implements form submit handler.
    */
   public function pay(array $form, FormStateInterface $form_state) {
-    $triggering_element = $form_state->get('triggering_element');
+    $triggering_element = $form_state->getTriggeringElement();
     $root_element_parents = array_slice($triggering_element['#array_parents'], 0, -3);
     $root_element = NestedArray::getValue($form, $root_element_parents);
 
@@ -489,7 +489,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
    * Implements form AJAX callback.
    */
   public function ajaxPay(array &$form, FormStateInterface $form_state) {
-    $triggering_element = $form_state->get('triggering_element');
+    $triggering_element = $form_state->getTriggeringElement();
     $root_element_parents = array_slice($triggering_element['#array_parents'], 0, -3);
     $root_element = NestedArray::getValue($form, $root_element_parents);
 
@@ -515,7 +515,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
    * Implements form AJAX callback.
    */
   public function ajaxRefresh(array &$form, FormStateInterface $form_state) {
-    $triggering_element = $form_state->get('triggering_element');
+    $triggering_element = $form_state->getTriggeringElement();
     $root_element_parents = array_slice($triggering_element['#array_parents'], 0, -2);
     $root_element = NestedArray::getValue($form, $root_element_parents);
 

@@ -7,7 +7,7 @@
 
 namespace Drupal\payment\Controller;
 
-use Drupal\Core\Access\AccessInterface;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
@@ -20,12 +20,12 @@ use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Returns responses for payment method routes.
  */
-class PaymentMethod extends ControllerBase implements AccessInterface {
+class PaymentMethod extends ControllerBase {
 
   /**
    * The payment method configuration plugin manager.
@@ -42,8 +42,16 @@ class PaymentMethod extends ControllerBase implements AccessInterface {
   protected $paymentMethodManager;
 
   /**
+   * The request stack.
+   *
+   * @var \Symfony\Component\HttpFoundation\RequestStack
+   */
+  protected $requestStack;
+
+  /**
    * Constructs a new class instance.
    *
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translator.
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
@@ -53,12 +61,13 @@ class PaymentMethod extends ControllerBase implements AccessInterface {
    * @param \Drupal\Core\Routing\UrlGeneratorInterface $url_generator
    * @param \Drupal\Core\Session\AccountInterface $current_user
    */
-  public function __construct(TranslationInterface $string_translation, EntityManagerInterface $entity_manager, PaymentMethodManagerInterface $payment_method_manager, PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager, EntityFormBuilderInterface $entity_form_builder, UrlGeneratorInterface $url_generator, AccountInterface $current_user) {
+  public function __construct(RequestStack $request_stack, TranslationInterface $string_translation, EntityManagerInterface $entity_manager, PaymentMethodManagerInterface $payment_method_manager, PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager, EntityFormBuilderInterface $entity_form_builder, UrlGeneratorInterface $url_generator, AccountInterface $current_user) {
     $this->currentUser = $current_user;
     $this->entityManager = $entity_manager;
     $this->entityFormBuilder = $entity_form_builder;
     $this->paymentMethodManager = $payment_method_manager;
     $this->paymentMethodConfigurationManager = $payment_method_configuration_manager;
+    $this->requestStack = $request_stack;
     $this->stringTranslation = $string_translation;
     $this->urlGenerator = $url_generator;
   }
@@ -67,7 +76,7 @@ class PaymentMethod extends ControllerBase implements AccessInterface {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('string_translation'), $container->get('entity.manager'), $container->get('plugin.manager.payment.method'), $container->get('plugin.manager.payment.method_configuration'), $container->get('entity.form_builder'), $container->get('url_generator'), $container->get('current_user'));
+    return new static($container->get('request_stack'), $container->get('string_translation'), $container->get('entity.manager'), $container->get('plugin.manager.payment.method'), $container->get('plugin.manager.payment.method_configuration'), $container->get('entity.form_builder'), $container->get('url_generator'), $container->get('current_user'));
   }
 
   /**
@@ -177,22 +186,21 @@ class PaymentMethod extends ControllerBase implements AccessInterface {
   /**
    * Checks access to self::select().
    *
-   * @param \Symfony\Component\HttpFoundation\Request $request
-   *   The request object.
-   *
-   * @return string
-   *   self::ALLOW, self::DENY, or self::KILL.
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
    */
-  public function selectAccess(Request $request) {
+  public function selectAccess() {
     $definitions = $this->paymentMethodConfigurationManager->getDefinitions();
     unset($definitions['payment_unavailable']);
     $access_controller = $this->entityManager->getAccessControlHandler('payment_method_configuration');
+    $access_result = AccessResult::create();
     foreach (array_keys($definitions) as $plugin_id) {
-      if ($access_controller->createAccess($plugin_id, $this->currentUser)) {
-        return static::ALLOW;
+      $access_result = $access_controller->createAccess($plugin_id, $this->currentUser, array(), TRUE);
+      if ($access_result->isAllowed()) {
+        return $access_result;
       }
     }
-    return static::DENY;
+    return $access_result;
   }
 
   /**
@@ -228,16 +236,13 @@ class PaymentMethod extends ControllerBase implements AccessInterface {
   /**
    * Checks access to self::add().
    *
-   * @param \Symfony\Component\HttpFoundation\Request $request
-   *   The request object.
-   *
-   * @return string
-   *   self::ALLOW, self::DENY, or self::KILL.
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
    */
-  public function addAccess(Request $request) {
-    $plugin_id = $request->attributes->get('plugin_id');
+  public function addAccess() {
+    $plugin_id = $this->requestStack->getCurrentRequest()->attributes->get('plugin_id');
 
-    return $this->entityManager->getAccessControlHandler('payment_method_configuration')->createAccess($plugin_id, $this->currentUser) ? self::ALLOW : self::DENY;
+    return $this->entityManager->getAccessControlHandler('payment_method_configuration')->createAccess($plugin_id, $this->currentUser, array(), TRUE);
   }
 
   /**

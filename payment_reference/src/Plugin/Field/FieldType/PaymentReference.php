@@ -10,7 +10,6 @@ namespace Drupal\payment_reference\Plugin\Field\FieldType;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\currency\Entity\Currency;
 use Drupal\entity_reference\ConfigurableEntityReferenceItem;
 use Drupal\payment\Element\PaymentLineItemsInput;
@@ -37,18 +36,18 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
   /**
    * {@inheritdoc}
    */
-  public static function defaultSettings() {
+  public static function defaultStorageSettings() {
     return array(
       'target_bundle' => 'payment_reference',
       'target_type' => 'payment',
-    ) + parent::defaultSettings();
+    ) + parent::defaultStorageSettings();
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function defaultInstanceSettings() {
-    return parent::defaultInstanceSettings() + array(
+  public static function defaultFieldSettings() {
+    return parent::defaultFieldSettings() + array(
       'currency_code' => '',
       'line_items_data' => array(),
     );
@@ -83,11 +82,11 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
   /**
    * {@inheritdoc}
    */
-  public function instanceSettingsForm(array $form, FormStateInterface $form_state) {
+  public function fieldSettingsForm(array $form, FormStateInterface $form_state) {
     /** @var \Drupal\currency\FormHelperInterface $form_helper */
     $form_helper = \Drupal::service('currency.form_helper');
 
-    $form['#element_validate'] = array(get_class() . '::instanceSettingsFormValidate');
+    $form['#element_validate'] = array(get_class() . '::fieldSettingsFormValidate');
     $form['currency_code'] = array(
       '#empty_value' => '',
       '#type' => 'select',
@@ -114,11 +113,11 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
   /**
    * Implements #element_validate callback for self::instanceSettingsForm().
    */
-  public static function instanceSettingsFormValidate(array $element, FormStateInterface $form_state) {
+  public static function fieldSettingsFormValidate(array $element, FormStateInterface $form_state) {
     $add_more_button_form_parents = array_merge($element['#array_parents'], array('line_items', 'add_more', 'add'));
     // Only set the field settings as a value when it is not the "Add more"
     // button that has been clicked.
-    $triggering_element = $form_state->get('triggering_element');
+    $triggering_element = $form_state->getTriggeringElement();
     if ($triggering_element['#array_parents'] != $add_more_button_form_parents) {
       $values = $form_state->getValues();
       $values = NestedArray::getValue($values, $element['#array_parents']);
@@ -140,7 +139,7 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array &$form, FormStateInterface $form_state, $has_data) {
+  public function storageSettingsForm(array &$form, FormStateInterface $form_state, $has_data) {
     return array();
   }
 

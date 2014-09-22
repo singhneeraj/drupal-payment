@@ -81,18 +81,18 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::defaultSettings
+   * @covers ::defaultStorageSettings
    */
-  public function testDefaultSettings() {
-    $settings = $this->fieldType->defaultSettings();
+  public function testDefaultStorageSettings() {
+    $settings = $this->fieldType->defaultStorageSettings();
     $this->assertInternalType('array', $settings);
   }
 
   /**
-   * @covers ::defaultInstanceSettings
+   * @covers ::defaultFieldSettings
    */
-  public function testDefaultInstanceSettings() {
-    $settings = $this->fieldType->defaultInstanceSettings();
+  public function testDefaultFieldSettings() {
+    $settings = $this->fieldType->defaultFieldSettings();
     $this->assertInternalType('array', $settings);
   }
 
