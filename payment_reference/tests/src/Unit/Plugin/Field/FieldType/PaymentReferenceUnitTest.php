@@ -114,13 +114,13 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::settingsForm
+   * @covers ::storageSettingsForm
    */
-  public function testSettingsForm() {
+  public function testStorageSettingsForm() {
     $form = array();
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $has_data = TRUE;
-    $this->assertSame(array(), $this->fieldType->settingsForm($form, $form_state, $has_data));
+    $this->assertSame(array(), $this->fieldType->storageSettingsForm($form, $form_state, $has_data));
   }
 
 }
