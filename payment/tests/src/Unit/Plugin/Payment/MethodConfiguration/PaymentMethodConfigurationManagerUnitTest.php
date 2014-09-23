@@ -83,22 +83,12 @@ class PaymentMethodConfigurationManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::createInstance
+   * @covers ::getFallbackPluginId
    */
-  public function testCreateInstance() {
-    $existing_plugin_id = 'payment_unavailable';
-    $non_existing_plugin_id = $this->randomMachineName();
-    $this->factory->expects($this->at(0))
-      ->method('createInstance')
-      ->with($non_existing_plugin_id)
-      ->will($this->throwException(new PluginException()));
-    $this->factory->expects($this->at(1))
-      ->method('createInstance')
-      ->with($existing_plugin_id);
-    $this->factory->expects($this->at(2))
-      ->method('createInstance')
-      ->with($existing_plugin_id);
-    $this->manager->createInstance($non_existing_plugin_id);
-    $this->manager->createInstance($existing_plugin_id);
+  public function testGetFallbackPluginId() {
+    $plugin_id = $this->randomMachineName();
+    $plugin_configuration = array($this->randomMachineName());
+    $this->assertInternalType('string', $this->manager->getFallbackPluginId($plugin_id, $plugin_configuration));
   }
+
 }

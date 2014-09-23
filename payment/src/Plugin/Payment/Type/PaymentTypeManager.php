@@ -7,6 +7,7 @@
 namespace Drupal\payment\Plugin\Payment\Type;
 
 use Drupal\Component\Plugin\Exception\PluginException;
+use Drupal\Component\Plugin\FallbackPluginManagerInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -19,7 +20,7 @@ use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait;
  *
  * @see \Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface
  */
-class PaymentTypeManager extends DefaultPluginManager implements PaymentTypeManagerInterface {
+class PaymentTypeManager extends DefaultPluginManager implements PaymentTypeManagerInterface, FallbackPluginManagerInterface {
 
   use OperationsProviderPluginManagerTrait;
 
@@ -46,13 +47,8 @@ class PaymentTypeManager extends DefaultPluginManager implements PaymentTypeMana
   /**
    * {@inheritdoc}
    */
-  public function createInstance($plugin_id, array $configuration = array()) {
-    // If a plugin is missing, use the default.
-    try {
-      return parent::createInstance($plugin_id, $configuration);
-    }
-    catch (PluginException $e) {
-      return parent::createInstance('payment_unavailable', $configuration);
-    }
+  public function getFallbackPluginId($plugin_id, array $configuration = array()) {
+    return 'payment_unavailable';
   }
+
 }

@@ -7,6 +7,7 @@
 namespace Drupal\payment\Plugin\Payment\MethodSelector;
 
 use Drupal\Component\Plugin\Exception\PluginException;
+use Drupal\Component\Plugin\FallbackPluginManagerInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
@@ -16,7 +17,7 @@ use Drupal\Core\Plugin\DefaultPluginManager;
  *
  * @see \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface
  */
-class PaymentMethodSelectorManager extends DefaultPluginManager implements PaymentMethodSelectorManagerInterface {
+class PaymentMethodSelectorManager extends DefaultPluginManager implements PaymentMethodSelectorManagerInterface, FallbackPluginManagerInterface {
 
   /**
    * Constructs a new class instance.
@@ -38,14 +39,8 @@ class PaymentMethodSelectorManager extends DefaultPluginManager implements Payme
   /**
    * {@inheritdoc}
    */
-  public function createInstance($plugin_id, array $configuration = array()) {
-    // If a plugin is missing, use the default.
-    try {
-      return parent::createInstance($plugin_id, $configuration);
-    }
-    catch (PluginException $e) {
-      return parent::createInstance('payment_select_list', $configuration);
-    }
+  public function getFallbackPluginId($plugin_id, array $configuration = array()) {
+    return 'payment_select_list';
   }
 
   /**

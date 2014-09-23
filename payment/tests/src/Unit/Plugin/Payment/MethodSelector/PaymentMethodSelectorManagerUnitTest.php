@@ -80,23 +80,12 @@ class PaymentMethodSelectorManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::createInstance
+   * @covers ::getFallbackPluginId
    */
-  public function testCreateInstance() {
-    $existing_plugin_id = 'payment_select_list';
-    $non_existing_plugin_id = $this->randomMachineName();
-    $this->factory->expects($this->at(0))
-      ->method('createInstance')
-      ->with($non_existing_plugin_id)
-      ->will($this->throwException(new PluginException()));
-    $this->factory->expects($this->at(1))
-      ->method('createInstance')
-      ->with($existing_plugin_id);
-    $this->factory->expects($this->at(2))
-      ->method('createInstance')
-      ->with($existing_plugin_id);
-    $this->paymentMethodSelectorManager->createInstance($non_existing_plugin_id);
-    $this->paymentMethodSelectorManager->createInstance($existing_plugin_id);
+  public function testGetFallbackPluginId() {
+    $plugin_id = $this->randomMachineName();
+    $plugin_configuration = array($this->randomMachineName());
+    $this->assertInternalType('string', $this->paymentMethodSelectorManager->getFallbackPluginId($plugin_id, $plugin_configuration));
   }
 
   /**
