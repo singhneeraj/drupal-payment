@@ -78,5 +78,5 @@ function payment_reference_entity_field_access($operation, FieldDefinitionInterf
   }
 
   // No opinion.
-  return AccessResult::create();
+  return AccessResult::neutral();
 }
