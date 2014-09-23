@@ -2,20 +2,21 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\payment\Unit\Hook\PermissionUnitTest.
+ * Contains \Drupal\Tests\payment\Unit\PermissionsUnitTest.
  */
 
-namespace Drupal\Tests\payment\Unit\Hook;
+namespace Drupal\Tests\payment\Unit;
 
-use Drupal\payment\Hook\Permission;
+use Drupal\payment\Permissions;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @coversDefaultClass \Drupal\payment\Hook\Permission
+ * @coversDefaultClass \Drupal\payment\Permissions
  *
  * @group Payment
  */
-class PermissionUnitTest extends UnitTestCase {
+class PermissionsUnitTest extends UnitTestCase {
 
   /**
    * The payment method configuration manager used for testing.
@@ -27,7 +28,7 @@ class PermissionUnitTest extends UnitTestCase {
   /**
    * The service under test.
    *
-   * @var \Drupal\payment\Hook\Permission.
+   * @var \Drupal\payment\Permissions.
    */
   protected $service;
 
@@ -48,11 +49,28 @@ class PermissionUnitTest extends UnitTestCase {
 
     $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
-    $this->service = new Permission($this->stringTranslation, $this->paymentMethodConfigurationManager);
+    $this->service = new Permissions($this->stringTranslation, $this->paymentMethodConfigurationManager);
   }
 
   /**
-   * @covers ::invoke
+   * @covers ::create
+   */
+  function testCreate() {
+    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $map = array(
+      array('plugin.manager.payment.method_configuration', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodConfigurationManager),
+      array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
+    );
+    $container->expects($this->any())
+      ->method('get')
+      ->will($this->returnValueMap($map));
+
+    $instance = Permissions::create($container);
+    $this->assertInstanceOf('\Drupal\payment\Permissions', $instance);
+  }
+
+  /**
+   * @covers ::getPermissions
    */
   public function testInvoke() {
     $payment_method_configuration_plugin_id = $this->randomMachineName();
@@ -66,7 +84,7 @@ class PermissionUnitTest extends UnitTestCase {
       ->method('getDefinitions')
       ->will($this->returnValue($payment_method_configuration_definitions));
 
-    $permissions = $this->service->invoke();
+    $permissions = $this->service->getPermissions();
     $this->assertInternalType('array', $permissions);
     foreach ($permissions as $permission) {
       $this->assertInternalType('array', $permission);

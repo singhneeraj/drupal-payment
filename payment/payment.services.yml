@@ -32,9 +32,6 @@ services:
   payment.hook.entity_crud:
     class: Drupal\payment\Hook\EntityCrud
     arguments: ['@plugin.manager.payment.method', '@plugin.manager.payment.status']
-  payment.hook.permission:
-    class: Drupal\payment\Hook\Permission
-    arguments: ['@string_translation', '@plugin.manager.payment.method_configuration']
   payment.hook.entity_extra_field_info:
     class: Drupal\payment\Hook\EntityExtraFieldInfo
     arguments: ['@string_translation', '@plugin.manager.payment.type']

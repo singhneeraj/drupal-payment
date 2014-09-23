@@ -8,15 +8,6 @@
 use Drupal\Core\Entity\EntityInterface;
 
 /**
- * Implements hook_permission().
- *
- * @see \Drupal\payment\PaymentMethodAccessControlHandler
- */
-function payment_permission() {
-  return \Drupal::service('payment.hook.permission')->invoke();
-}
-
-/**
  * Implements hook_entity_extra_field_info().
  */
 function payment_entity_extra_field_info() {
