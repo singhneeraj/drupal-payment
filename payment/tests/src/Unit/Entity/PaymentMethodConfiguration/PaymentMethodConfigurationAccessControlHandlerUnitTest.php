@@ -81,7 +81,7 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
       ->getMock();
     $payment_method->expects($this->any())
       ->method('getCacheTag')
-      ->willReturn(array('payment_method_configuration' => array(1)));
+      ->willReturn(array('payment_method_configuration'));
 
     $class = new \ReflectionClass($this->accessControlHandler);
     $method = $class->getMethod('checkAccess');
@@ -108,7 +108,7 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
       ->getMock();
     $payment_method->expects($this->any())
       ->method('getCacheTag')
-      ->willReturn(array('payment_method_configuration' => array(1)));
+      ->willReturn(array('payment_method_configuration'));
 
     $class = new \ReflectionClass($this->accessControlHandler);
     $method = $class->getMethod('checkAccess');
@@ -145,7 +145,7 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
       ->will($this->returnValue($owner_id + 1));
     $payment_method->expects($this->any())
       ->method('getCacheTag')
-      ->willReturn(array('payment_method_configuration' => array(1)));
+      ->willReturn(array('payment_method_configuration'));
 
     $class = new \ReflectionClass($this->accessControlHandler);
     $method = $class->getMethod('checkAccess');
@@ -178,9 +178,7 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
       ->will($this->returnValue($payment_method_configuration_status));
     $payment_method_configuration->expects($this->atLeastOnce())
       ->method('getCacheTag')
-      ->willReturn(array(
-        'payment_method_configuration' => array(1),
-      ));
+      ->willReturn(array('payment_method_configuration'));
 
     $class = new \ReflectionClass($this->accessControlHandler);
     $method = $class->getMethod('checkAccess');
@@ -227,9 +225,7 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
       ->will($this->returnValue($payment_method_configuration_status));
     $payment_method_configuration->expects($this->atLeastOnce())
       ->method('getCacheTag')
-      ->willReturn(array(
-        'payment_method_configuration' => array(1),
-      ));
+      ->willReturn(array('payment_method_configuration'));
 
     $class = new \ReflectionClass($this->accessControlHandler);
     $method = $class->getMethod('checkAccess');
@@ -277,9 +273,7 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
       ->will($this->returnValue($bundle));
     $payment_method_configuration->expects($this->atLeastOnce())
       ->method('getCacheTag')
-      ->willReturn(array(
-        'payment_method_configuration' => array(1),
-      ));
+      ->willReturn(array('payment_method_configuration'));
 
     $class = new \ReflectionClass($this->accessControlHandler);
     $method = $class->getMethod('checkAccess');
@@ -336,4 +330,5 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
     $method->setAccessible(TRUE);
     $this->assertNull($method->invokeArgs($this->accessControlHandler, array($cache_id, $operation, $language_code, $account)));
   }
+
 }
