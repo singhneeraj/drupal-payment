@@ -355,10 +355,10 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
       ->method('access')
       ->will($this->returnValueMap($map));
     $map = array(
-      array('canonical', $url_canonical),
-      array('update-status-form', $url_update_status_form),
-      array('capture-form', $url_capture_form),
-      array('refund-form', $url_refund_form),
+      array('canonical', [], $url_canonical),
+      array('update-status-form', [], $url_update_status_form),
+      array('capture-form', [], $url_capture_form),
+      array('refund-form', [], $url_refund_form),
     );
     $payment->expects($this->any())
       ->method('urlInfo')

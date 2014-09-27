@@ -259,7 +259,7 @@ class PaymentMethodConfigurationListBuilderUnitTest extends UnitTestCase {
       ->method('access')
       ->will($this->returnValueMap($map));
     $map = array(
-      array('duplicate-form', $url_duplicate_form),
+      array('duplicate-form', [], $url_duplicate_form),
     );
     $payment->expects($this->any())
       ->method('urlInfo')
