@@ -309,37 +309,37 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    * @return bool
    */
   protected function executePaymentAccessCurrency(AccountInterface $account) {
-    $currencies = $this->getSupportedCurrencies();
+    $supported_currencies = $this->getSupportedCurrencies();
     $payment_currency_code = $this->getPayment()->getCurrencyCode();
     $payment_amount = $this->getPayment()->getAmount();
     // If all currencies are allowed, grant access.
-    if ($currencies === TRUE) {
+    if ($supported_currencies === TRUE) {
       return TRUE;
     }
     // If the payment's currency is not specified, access is denied.
-    if (!isset($currencies[$payment_currency_code])) {
-      return FALSE;
+    foreach ($supported_currencies as $supported_currency) {
+      if ($supported_currency->getCurrencyCode() != $payment_currency_code) {
+        continue;
+      }
+      // Confirm the payment amount is higher than the supported minimum.
+      elseif ($supported_currency->getMinimumAmount() && $payment_amount < $supported_currency->getMinimumAmount()) {
+        return FALSE;
+      }
+      // Confirm the payment amount does not exceed the maximum.
+      elseif ($supported_currency->getMaximumAmount() && $payment_amount > $supported_currency->getMaximumAmount()) {
+        return FALSE;
+      }
+      else {
+        return TRUE;
+      }
     }
-    // Confirm the payment amount is higher than the supported minimum.
-    elseif (isset($currencies[$payment_currency_code]['minimum']) && $payment_amount < $currencies[$payment_currency_code]['minimum']) {
-      return FALSE;
-    }
-    // Confirm the payment amount does not exceed the maximum.
-    elseif (isset($currencies[$payment_currency_code]['maximum']) && $payment_amount > $currencies[$payment_currency_code]['maximum']) {
-      return FALSE;
-    }
-    return TRUE;
+    return FALSE;
   }
 
   /**
    * Returns the supported currencies.
    *
-   * @return array|true
-   *   Keys are ISO 4217 currency codes. Values are arrays with two keys:
-   *   - minimum (optional): The minimum amount in this currency that is
-   *     supported.
-   *   - maximum (optional): The maximum amount in this currency that is
-   *     supported.
+   * @return \Drupal\payment\Plugin\Payment\Method\SupportedCurrencyInterface[]|true
    *   Return TRUE to allow all currencies and amounts.
    */
   abstract protected function getSupportedCurrencies();

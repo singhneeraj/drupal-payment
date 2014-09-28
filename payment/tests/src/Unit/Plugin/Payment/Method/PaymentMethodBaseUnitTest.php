@@ -9,7 +9,9 @@ namespace Drupal\Tests\payment\Unit\Plugin\Payment\Method {
 
 use Drupal\payment\Event\PaymentEvents;
 use Drupal\payment\Event\PaymentExecuteAccess;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+  use Drupal\payment\Plugin\Payment\Method\SupportedCurrency;
+  use Drupal\payment\Plugin\Payment\Method\SupportedCurrencyInterface;
+  use Symfony\Component\DependencyInjection\ContainerInterface;
 
   /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase
@@ -442,15 +444,15 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
       ->getMock();
     $payment->expects($this->atLeastOnce())
       ->method('getAmount')
-      ->will($this->returnValue($payment_amount));
+      ->willReturn($payment_amount);
     $payment->expects($this->atLeastOnce())
       ->method('getCurrencyCode')
-      ->will($this->returnValue($payment_currency_code));
+      ->willReturn($payment_currency_code);
 
     $this->plugin->setPayment($payment);
     $this->plugin->expects($this->atLeastOnce())
       ->method('getSupportedCurrencies')
-      ->will($this->returnValue($supported_currencies));
+      ->willReturn($supported_currencies);
 
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
@@ -468,31 +470,14 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
       // All currencies are allowed.
       array(TRUE, TRUE, $this->randomMachineName(), mt_rand()),
       // The payment currency is allowed. No amount limitations.
-      array(TRUE, array(
-        'ABC' => array(),
-      ), 'ABC', mt_rand()),
+      array(TRUE, array(new SupportedCurrency('ABC')), 'ABC', mt_rand()),
       // The payment currency is allowed with amount limitations.
-      array(TRUE, array(
-        'ABC' => array(
-          'minimum' => 1,
-          'maximum' => 3,
-        ),
-      ), 'ABC', 2),
+      array(TRUE, array(new SupportedCurrency('ABC', 1, 3)), 'ABC', 2),
       // The payment currency is not allowed.
-      array(FALSE, array(
-        'ABC' => array(),
-      ), 'XXX', mt_rand()),
+      array(FALSE, array(new SupportedCurrency('ABC')), 'XXX', mt_rand()),
       // The payment currency is not allowed because of amount limitations.
-      array(FALSE, array(
-        'ABC' => array(
-          'minimum' => 2,
-        ),
-      ), 'ABC', 1),
-      array(FALSE, array(
-        'ABC' => array(
-          'maximum' => 1,
-        ),
-      ), 'ABC', 2),
+      array(FALSE, array(new SupportedCurrency('ABC', 2)), 'ABC', 1),
+      array(FALSE, array(new SupportedCurrency('ABC', NULL, 1)), 'ABC', 2),
     );
   }
 
