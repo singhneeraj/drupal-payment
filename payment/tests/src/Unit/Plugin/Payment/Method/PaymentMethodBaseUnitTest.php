@@ -7,7 +7,10 @@
 
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\Method {
 
-use Drupal\payment\Event\PaymentEvents;
+  use Drupal\Core\Access\AccessResultAllowed;
+  use Drupal\Core\Access\AccessResultForbidden;
+  use Drupal\Core\Access\AccessResultNeutral;
+  use Drupal\payment\Event\PaymentEvents;
 use Drupal\payment\Event\PaymentExecuteAccess;
   use Drupal\payment\Plugin\Payment\Method\SupportedCurrency;
   use Drupal\payment\Plugin\Payment\Method\SupportedCurrencyInterface;
@@ -391,7 +394,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
    *
    * @dataProvider providerTestExecutePaymentAccessEvent
    */
-  public function dtestExecutePaymentAccessEvent($expected, $event_results) {
+  public function  testExecutePaymentAccessEvent($expected, $event_result) {
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
@@ -403,16 +406,14 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $this->eventDispatcher->expects($this->once())
       ->method('dispatch')
       ->with(PaymentEvents::PAYMENT_EXECUTE_ACCESS, $this->isInstanceOf('\Drupal\payment\Event\PaymentExecuteAccess'))
-      ->will($this->returnCallback(function($type, PaymentExecuteAccess $event) use ($event_results) {
-        foreach ($event_results as $event_result) {
-          $event->setAccessResult($event_result);
-        }
+      ->will($this->returnCallback(function($type, PaymentExecuteAccess $event) use ($event_result) {
+        $event->setAccessResult($event_result);
       }));
 
     $method = new \ReflectionMethod($this->plugin, 'executePaymentAccessEvent');
     $method->setAccessible(TRUE);
 
-    $this->assertSame($expected, $method->invoke($this->plugin, $account));
+    $this->assertSame($expected, $method->invoke($this->plugin, $account)->isAllowed());
   }
 
   /**
@@ -420,16 +421,12 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
    */
   public function providerTestExecutePaymentAccessEvent() {
     return array(
-      // No access results.
-      array(TRUE, array()),
-      // Some access results, all positive.
-      array(TRUE, array(AccessInterface::ALLOW)),
-      // Both ALLOW and DENY, but no KILL, so access is granted.
-      array(TRUE, array(AccessInterface::ALLOW, AccessInterface::DENY)),
-      // Various combinations of access denied.
-      array(FALSE, array(AccessInterface::DENY)),
-      array(FALSE, array(AccessInterface::KILL)),
-      array(FALSE, array(AccessInterface::KILL, AccessInterface::ALLOW)),
+      // Access allowed.
+      array(TRUE, new AccessResultAllowed()),
+      // Access forbidden.
+      array(FALSE, new AccessResultForbidden()),
+      // Access neutral.
+      array(FALSE, new AccessResultNeutral()),
     );
   }
 

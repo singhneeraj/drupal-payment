@@ -7,6 +7,9 @@
 
 namespace Drupal\Tests\payment\Unit\Event;
 
+use Drupal\Core\Access\AccessResultAllowed;
+use Drupal\Core\Access\AccessResultForbidden;
+use Drupal\Core\Access\AccessResultNeutral;
 use Drupal\payment\Event\PaymentExecuteAccess;
 use Drupal\Tests\UnitTestCase;
 
@@ -87,10 +90,30 @@ class PaymentExecuteAccessUnitTest extends UnitTestCase {
    * @covers ::getAccessResults
    * @covers ::setAccessResult
    */
-  public function testGetAccessResults() {
-    $result = $this->randomMachineName();
+  public function testGetAccessResultsAllowed() {
+    $result = new AccessResultAllowed();
     $this->assertSame($this->event, $this->event->setAccessResult($result));
-    $this->assertSame(array($result), $this->event->getAccessResults());
+    $this->assertTrue($this->event->getAccessResult()->isAllowed());
+  }
+
+  /**
+   * @covers ::getAccessResults
+   * @covers ::setAccessResult
+   */
+  public function testGetAccessResultsForbidden() {
+    $result = new AccessResultForbidden();
+    $this->assertSame($this->event, $this->event->setAccessResult($result));
+    $this->assertFalse($this->event->getAccessResult()->isAllowed());
+  }
+
+  /**
+   * @covers ::getAccessResults
+   * @covers ::setAccessResult
+   */
+  public function testGetAccessResultsNeutral() {
+    $result = new AccessResultNeutral();
+    $this->assertSame($this->event, $this->event->setAccessResult($result));
+    $this->assertFalse($this->event->getAccessResult()->isAllowed());
   }
 
 }

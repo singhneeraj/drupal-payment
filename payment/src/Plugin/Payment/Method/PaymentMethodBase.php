@@ -351,15 +351,13 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *
-   * @return bool
+   * @return \Drupal\Core\Access\AccessResultInterface
    */
   protected function executePaymentAccessEvent(AccountInterface $account) {
     $event = new PaymentExecuteAccess($this->getPayment(), $this, $account);
     $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_EXECUTE_ACCESS, $event);
-    $access_results = $event->getAccessResults();
 
-    // If there are no results, grant access.
-    return empty($access_results) || in_array(self::ALLOW, $access_results, TRUE) && !in_array(self::KILL, $access_results, TRUE);
+    return $event->getAccessResult();
   }
 
   /**

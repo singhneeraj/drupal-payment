@@ -7,6 +7,8 @@
 
 namespace Drupal\payment\Event;
 
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Access\AccessResultNeutral;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
@@ -21,12 +23,11 @@ use Symfony\Component\EventDispatcher\Event;
 class PaymentExecuteAccess extends Event {
 
   /**
-   * The access check results.
+   * The access check result.
    *
-   * @var string[]
-   *   An array with self::ALLOW, self::DENY, or self::KILL.
+   * @var \Drupal\Core\Access\AccessResultInterface
    */
-  protected $accessResults = array();
+  protected $accessResult;
 
   /**
    * The account to check access for.
@@ -59,6 +60,7 @@ class PaymentExecuteAccess extends Event {
    * @param \Drupal\Core\Session\AccountInterface
    */
   public function __construct(PaymentInterface $payment, PaymentMethodInterface $payment_method, AccountInterface $account) {
+    $this->accessResult = new AccessResultNeutral();
     $this->payment = $payment;
     $this->paymentMethod = $payment_method;
     $this->account = $account;
@@ -95,25 +97,23 @@ class PaymentExecuteAccess extends Event {
   }
 
   /**
-   * Gets the access check results.
+   * Gets the access check result.
    *
-   * @return string[]
-   *   An array with self::ALLOW, self::DENY, or self::KILL.
+   * @return \Drupal\Core\Access\AccessResultInterface
    */
-  public function getAccessResults() {
-    return $this->accessResults;
+  public function getAccessResult() {
+    return $this->accessResult;
   }
 
   /**
    * Sets an access check result.
    *
-   * @param string
-   *   self::ALLOW, self::DENY, or self::KILL.
+   * @param \Drupal\Core\Access\AccessResultInterface
    *
    * @return $this
    */
-  public function setAccessResult($access_result) {
-    $this->accessResults[] = $access_result;
+  public function setAccessResult(AccessResultInterface $access_result) {
+    $this->accessResult = $this->accessResult->orIf($access_result);
 
     return $this;
   }
