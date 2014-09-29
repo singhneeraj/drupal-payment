@@ -56,7 +56,7 @@ class PaymentFactory implements PaymentFactoryInterface {
     /** @var \Drupal\payment_reference\Plugin\Payment\Type\PaymentReference $payment_type */
     $payment_type = $payment->getPaymentType();
     $payment_type->setEntityTypeId($field_definition->getFieldStorageDefinition()->getTargetEntityTypeId());
-    $payment_type->setBundle($field_definition->getBundle());
+    $payment_type->setBundle($field_definition->getTargetBundle());
     $payment_type->setFieldName($field_definition->getName());
     $payment->setCurrencyCode($field_definition->getSetting('currency_code'));
     foreach ($field_definition->getSetting('line_items_data') as $line_item_data) {

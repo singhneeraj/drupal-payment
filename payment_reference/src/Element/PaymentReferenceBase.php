@@ -23,6 +23,7 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Routing\UrlGeneratorTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Url;
 use Drupal\Core\Utility\LinkGeneratorInterface;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\payment\Entity\Payment;
@@ -468,13 +469,13 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     if ($payment_method->isPaymentExecutionInterruptive()) {
       $this->setTemporaryPayment($root_element, $form_state, $payment);
       if (!$this->requestStack->getCurrentRequest()->isXmlHttpRequest()) {
-        $link = $this->linkGenerator->generate($this->t('Complete payment (opens in a new window).'), 'payment_reference.pay', array(
+        $link = $this->linkGenerator->generate($this->t('Complete payment (opens in a new window).'), new Url('payment_reference.pay', array(
           'storage_key' => $this->getTemporaryPaymentStorageKey($root_element, $form_state),
         ), array(
           'attributes' => array(
             'target' => '_blank',
           ),
-        ));
+        )));
         drupal_set_message($link);
       }
     }

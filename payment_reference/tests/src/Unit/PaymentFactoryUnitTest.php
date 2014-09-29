@@ -114,7 +114,7 @@ class PaymentFactoryUnitTest extends UnitTestCase {
 
     $field_definition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
     $field_definition->expects($this->once())
-      ->method('getBundle')
+      ->method('getTargetBundle')
       ->willReturn($bundle);
     $field_definition->expects($this->once())
       ->method('getFieldStorageDefinition')
