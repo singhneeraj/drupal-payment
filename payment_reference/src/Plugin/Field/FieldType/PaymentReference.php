@@ -150,7 +150,7 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
     $entity_type_id = $this->getFieldDefinition()->getFieldStorageDefinition()->getTargetEntityTypeId();
     $entity_storage = \Drupal::entityManager()->getStorage($entity_type_id);
     /** @var \Drupal\Core\Entity\ContentEntityInterface $current_entity */
-    $current_entity = $this->getRoot();
+    $current_entity = $this->getEntity();
     $unchanged_payment_id = NULL;
     if ($current_entity->id()) {
       /** @var \Drupal\Core\Entity\ContentEntityInterface $unchanged_entity */

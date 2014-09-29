@@ -38,7 +38,7 @@ class PaymentReferenceWebTest extends WebTestBase {
     entity_create('field_storage_config', array(
       'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
       'entity_type' => 'user',
-      'name' => $payment_reference_field_name,
+      'field_name' => $payment_reference_field_name,
       'type' => 'payment_reference',
     ))->save();
     entity_create('field_config', array(
@@ -56,7 +56,7 @@ class PaymentReferenceWebTest extends WebTestBase {
     entity_create('field_storage_config', array(
       'cardinality' => 1,
       'entity_type' => 'payment',
-      'name' => $payment_field_name,
+      'field_name' => $payment_field_name,
       'type' => 'text',
     ))->save();
     entity_create('field_config', array(

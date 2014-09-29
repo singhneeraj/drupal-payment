@@ -33,7 +33,7 @@ class PaymentFormWebTest extends WebTestBase {
     entity_create('field_storage_config', array(
       'cardinality' => FieldStorageConfigInterface::CARDINALITY_UNLIMITED,
       'entity_type' => 'user',
-      'name' => $field_name,
+      'field_name' => $field_name,
       'type' => 'payment_form',
     ))->save();
 
