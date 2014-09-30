@@ -32,7 +32,6 @@ use Drupal\user\UserInterface;
  *     "uuid" = "uuid",
  *     "status" = "status"
  *   },
- *   fieldable = FALSE,
  *   id = "payment_method_configuration",
  *   label = @Translation("Payment method configuration"),
  *   links = {

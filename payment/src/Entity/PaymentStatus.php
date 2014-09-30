@@ -28,7 +28,6 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "label" = "label",
  *     "uuid" = "uuid"
  *   },
- *   fieldable = FALSE,
  *   id = "payment_status",
  *   label = @Translation("Payment status"),
  *   links = {

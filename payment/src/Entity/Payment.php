@@ -45,7 +45,6 @@ use Drupal\user\UserInterface;
  *     "id" = "id",
  *     "uuid" = "uuid",
  *   },
- *   fieldable = TRUE,
  *   field_ui_base_route = "payment.payment_type",
  *   id = "payment",
  *   label = @Translation("Payment"),
