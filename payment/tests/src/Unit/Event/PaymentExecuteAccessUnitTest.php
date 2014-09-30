@@ -87,30 +87,30 @@ class PaymentExecuteAccessUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::getAccessResults
+   * @covers ::getAccessResult
    * @covers ::setAccessResult
    */
-  public function testGetAccessResultsAllowed() {
+  public function testGetAccessResultAllowed() {
     $result = new AccessResultAllowed();
     $this->assertSame($this->event, $this->event->setAccessResult($result));
     $this->assertTrue($this->event->getAccessResult()->isAllowed());
   }
 
   /**
-   * @covers ::getAccessResults
+   * @covers ::getAccessResult
    * @covers ::setAccessResult
    */
-  public function testGetAccessResultsForbidden() {
+  public function testGetAccessResultForbidden() {
     $result = new AccessResultForbidden();
     $this->assertSame($this->event, $this->event->setAccessResult($result));
     $this->assertFalse($this->event->getAccessResult()->isAllowed());
   }
 
   /**
-   * @covers ::getAccessResults
+   * @covers ::getAccessResult
    * @covers ::setAccessResult
    */
-  public function testGetAccessResultsNeutral() {
+  public function testGetAccessResultNeutral() {
     $result = new AccessResultNeutral();
     $this->assertSame($this->event, $this->event->setAccessResult($result));
     $this->assertFalse($this->event->getAccessResult()->isAllowed());
