@@ -79,7 +79,7 @@ interface PaymentLineItemInterface extends PluginInspectionInterface, Configurab
   /**
    * Sets the quantity.
    *
-   * @param int $quantity
+   * @param int|float $quantity
    *
    * @return static
    */
@@ -88,7 +88,7 @@ interface PaymentLineItemInterface extends PluginInspectionInterface, Configurab
   /**
    * Gets the quantity.
    *
-   * @return int
+   * @return int|float
    */
   public function getQuantity();
 

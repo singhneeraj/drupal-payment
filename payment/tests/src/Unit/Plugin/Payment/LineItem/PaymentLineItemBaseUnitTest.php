@@ -84,7 +84,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
    * @covers ::getQuantity
    */
   public function testGetQuantity() {
-    $quantity = 7;
+    $quantity = 7.7;
     $this->assertSame($this->lineItem, $this->lineItem->setQuantity($quantity));
     $this->assertSame($quantity, $this->lineItem->getQuantity());
   }
