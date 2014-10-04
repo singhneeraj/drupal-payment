@@ -439,18 +439,4 @@ class Payment extends ContentEntityBase implements PaymentInterface {
     $this->setPaymentStatuses($cloned_statuses);
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function createDuplicate() {
-    // @todo Remove this when https://www.drupal.org/node/2326377 is fixed.
-    $duplicate = parent::createDuplicate();
-
-    $duplicate->entityKeys = array(
-      'bundle' => $this->entityKeys['bundle'],
-    );
-
-    return $duplicate;
-  }
-
 }
