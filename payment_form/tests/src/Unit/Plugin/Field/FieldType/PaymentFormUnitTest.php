@@ -61,13 +61,14 @@ class PaymentFormUnitTest extends UnitTestCase {
   /**
    * @covers ::instanceSettingsForm
    */
-  public function testInstanceSettingsForm() {
+  public function testFieldSettingsForm() {
     $this->fieldType->expects($this->once())
       ->method('getSetting')
       ->with('currency_code');
     $form = array();
+    /** @var \Drupal\Core\Form\FormStateInterface $form_state */
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
-    $this->assertInternalType('array', $this->fieldType->instanceSettingsForm($form, $form_state));
+    $this->assertInternalType('array', $this->fieldType->fieldSettingsForm($form, $form_state));
   }
 
   /**
@@ -79,16 +80,6 @@ class PaymentFormUnitTest extends UnitTestCase {
     $this->assertInternalType('array', $schema);
     $this->assertArrayHasKey('plugin_configuration', $schema['columns']);
     $this->assertArrayHasKey('plugin_id', $schema['columns']);
-  }
-
-  /**
-   * @covers ::getPropertyDefinitions
-   */
-  public function testGetPropertyDefinitions() {
-    $definitions = $this->fieldType->getPropertyDefinitions();
-    $this->assertInternalType('array', $definitions);
-    $this->assertArrayHasKey('plugin_configuration', $definitions);
-    $this->assertArrayHasKey('plugin_id', $definitions);
   }
 
 }

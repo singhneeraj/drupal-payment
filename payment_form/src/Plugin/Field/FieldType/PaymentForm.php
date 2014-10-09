@@ -40,11 +40,11 @@ class PaymentForm extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
-  public function instanceSettingsForm(array $form, FormStateInterface $form_state) {
+  public function fieldSettingsForm(array $form, FormStateInterface $form_state) {
     /** @var \Drupal\currency\FormHelperInterface $form_helper */
     $form_helper = \Drupal::service('currency.form_helper');
 
-    $form['currency_code'] = array(
+    $element['currency_code'] = array(
       '#type' => 'select',
       '#title' => $this->t('Payment currency'),
       '#options' => $form_helper->getCurrencyOptions(),
@@ -52,7 +52,7 @@ class PaymentForm extends FieldItemBase {
       '#required' => TRUE,
     );
 
-    return $form;
+    return $element;
   }
 
   /**
@@ -79,25 +79,7 @@ class PaymentForm extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
-  public function getPropertyDefinitions() {
-    if (!isset(static::$propertyDefinitions)) {
-      static::$propertyDefinitions['plugin_configuration'] = DataDefinition::create('any')
-        ->setLabel($this->t('Plugin configuration'))
-        ->setRequired(TRUE);
-      static::$propertyDefinitions['plugin_id'] = DataDefinition::create('string')
-        ->setLabel($this->t('Plugin ID'))
-        ->setRequired(TRUE);
-    }
-
-    return static::$propertyDefinitions;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_storage_definition) {
-    // @todo Find out the difference between this method and
-    //   $this->getPropertyDefinitions().
     // @todo Find out how to test this method, as it cannot use t() or
     //   self::t().
     $definitions = array();

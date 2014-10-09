@@ -86,8 +86,8 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
     /** @var \Drupal\currency\FormHelperInterface $form_helper */
     $form_helper = \Drupal::service('currency.form_helper');
 
-    $form['#element_validate'] = array(get_class() . '::fieldSettingsFormValidate');
-    $form['currency_code'] = array(
+    $element['#element_validate'] = array(get_class() . '::fieldSettingsFormValidate');
+    $element['currency_code'] = array(
       '#empty_value' => '',
       '#type' => 'select',
       '#title' => $this->t('Payment currency'),
@@ -99,7 +99,7 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
     foreach ($this->getSetting('line_items_data') as $line_item_data) {
       $line_items[] = Payment::lineItemManager()->createInstance($line_item_data['plugin_id'], $line_item_data['plugin_configuration']);
     }
-    $form['line_items'] = array(
+    $element['line_items'] = array(
       '#type' => 'payment_line_items_input',
       '#title' => $this->t('Line items'),
       '#default_value' => $line_items,
@@ -107,7 +107,7 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
       '#currency_code' => '',
     );
 
-    return $form;
+    return $element;
   }
 
   /**
