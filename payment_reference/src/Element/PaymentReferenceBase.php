@@ -426,10 +426,9 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
           'class' => array('button', 'payment_reference-complete-payment-link'),
           'target' => '_blank',
         ),
-        '#route_name' => 'payment_reference.pay',
-        '#route_parameters' => array(
+        '#url' => new Url('payment_reference.pay', array(
           'storage_key' => $this->getTemporaryPaymentStorageKey($element, $form_state),
-        ),
+        )),
         '#title' => $this->t('Complete payment'),
         '#type' => 'link',
       );

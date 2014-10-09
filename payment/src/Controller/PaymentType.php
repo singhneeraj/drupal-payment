@@ -12,6 +12,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Url;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -76,10 +77,9 @@ class PaymentType extends ControllerBase {
 
       // Add the payment type's global configuration operation.
       $operations['configure'] = array(
-        'route_name' => 'payment.payment_type',
-        'route_parameters' => array(
+        'url' => new Url('payment.payment_type', array(
           'bundle' => $plugin_id,
-        ),
+        )),
         'title' => $this->t('Configure'),
       );
 
@@ -88,28 +88,25 @@ class PaymentType extends ControllerBase {
         if ($this->currentUser->hasPermission('administer payment fields')) {
           $operations['manage-fields'] = array(
             'title' => $this->t('Manage fields'),
-            'route_name' => 'field_ui.overview_payment',
-            'route_parameters' => array(
+            'url' => new Url('field_ui.overview_payment', array(
               'bundle' => $plugin_id,
-            ),
+            )),
           );
         }
         if ($this->currentUser->hasPermission('administer payment form display')) {
           $operations['manage-form-display'] = array(
             'title' => $this->t('Manage form display'),
-            'route_name' => 'field_ui.form_display_overview_payment',
-            'route_parameters' => array(
+            'url' => new Url('field_ui.form_display_overview_payment', array(
               'bundle' => $plugin_id,
-            ),
+            )),
           );
         }
         if ($this->currentUser->hasPermission('administer payment display')) {
           $operations['manage-display'] = array(
             'title' => $this->t('Manage display'),
-            'route_name' => 'field_ui.display_overview_payment',
-            'route_parameters' => array(
+            'url' => new Url('field_ui.display_overview_payment', array(
               'bundle' => $plugin_id,
-            ),
+            )),
           );
         }
       }
