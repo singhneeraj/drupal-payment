@@ -121,7 +121,8 @@ class PaymentMethodConfigurationListBuilder extends ConfigEntityListBuilder {
       $operations['duplicate'] = array(
         'title' => $this->t('Duplicate'),
         'weight' => 99,
-      ) + $entity->urlInfo('duplicate-form')->toArray();
+        'url' => $entity->urlInfo('duplicate-form'),
+      );
     }
 
     return $operations;

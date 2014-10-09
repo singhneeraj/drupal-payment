@@ -270,12 +270,15 @@ class PaymentMethodConfigurationListBuilderUnitTest extends UnitTestCase {
       'duplicate' => array(
         'title' => 'Duplicate',
         'weight' => 99,
-        'route_name' => $url_duplicate_form->getRouteName(),
-        'route_parameters' => array(),
-        'options' => array(),
       ),
     );
-    $this->assertSame($expected_operations, $operations);
+    $this->assertEmpty(array_diff_key($expected_operations, $operations));
+    $this->assertEmpty(array_diff_key($operations, $expected_operations));
+    foreach ($operations as $name => $operation) {
+      $this->assertInstanceof('\Drupal\Core\Url', $operation['url']);
+      unset($operation['url']);
+      $this->assertSame($expected_operations[$name], $operation);
+    }
   }
 
 }

@@ -378,9 +378,6 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
       'view' => array(
         'title' => 'View',
         'weight' => -10,
-        'route_name' => $url_canonical->getRouteName(),
-        'route_parameters' => array(),
-        'options' => array(),
       ),
       'update_status' => array(
         'title' => 'Update status',
@@ -391,9 +388,6 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
         'query' => array(
           'destination' => $destination,
         ),
-        'route_name' => $url_update_status_form->getRouteName(),
-        'route_parameters' => array(),
-        'options' => array(),
       ),
       'capture' => array(
         'title' => 'Capture',
@@ -404,9 +398,6 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
         'query' => array(
           'destination' => $destination,
         ),
-        'route_name' => $url_capture_form->getRouteName(),
-        'route_parameters' => array(),
-        'options' => array(),
       ),
       'refund' => array(
         'title' => 'Refund',
@@ -417,12 +408,15 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
         'query' => array(
           'destination' => $destination,
         ),
-        'route_name' => $url_refund_form->getRouteName(),
-        'route_parameters' => array(),
-        'options' => array(),
       ),
     );
-    $this->assertSame($expected_operations, $operations);
+    $this->assertEmpty(array_diff_key($expected_operations, $operations));
+    $this->assertEmpty(array_diff_key($operations, $expected_operations));
+    foreach ($operations as $name => $operation) {
+      $this->assertInstanceof('\Drupal\Core\Url', $operation['url']);
+      unset($operation['url']);
+      $this->assertSame($expected_operations[$name], $operation);
+    }
   }
 
 }

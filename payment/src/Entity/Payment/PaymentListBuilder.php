@@ -150,7 +150,8 @@ class PaymentListBuilder extends EntityListBuilder {
       $operations['view'] = array(
         'title' => $this->t('View'),
         'weight' => -10,
-      ) + $entity->urlInfo()->toArray();
+        'url' => $entity->urlInfo(),
+      );
     }
     if ($entity->access('update_status')) {
       $operations['update_status'] = array(
@@ -162,7 +163,8 @@ class PaymentListBuilder extends EntityListBuilder {
         'query' => array(
           'destination' => $this->requestStack->getCurrentRequest()->attributes->get('_system_path'),
         ),
-      ) + $entity->urlInfo('update-status-form')->toArray();
+        'url' => $entity->urlInfo('update-status-form'),
+      );
     }
     if ($entity->access('capture')) {
       $operations['capture'] = array(
@@ -174,7 +176,8 @@ class PaymentListBuilder extends EntityListBuilder {
           'query' => array(
             'destination' => $this->requestStack->getCurrentRequest()->attributes->get('_system_path'),
           ),
-        ) + $entity->urlInfo('capture-form')->toArray();
+          'url' => $entity->urlInfo('capture-form'),
+        );
     }
     if ($entity->access('refund')) {
       $operations['refund'] = array(
@@ -186,7 +189,8 @@ class PaymentListBuilder extends EntityListBuilder {
           'query' => array(
             'destination' => $this->requestStack->getCurrentRequest()->attributes->get('_system_path'),
           ),
-        ) + $entity->urlInfo('refund-form')->toArray();
+          'url' => $entity->urlInfo('refund-form'),
+        );
     }
 
     return $operations;
