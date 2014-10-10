@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\payment\Unit\Controller;
 
+use Drupal\Core\Url;
 use Drupal\payment\Controller\PaymentType;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -231,32 +232,28 @@ class PaymentTypeUnitTest extends UnitTestCase {
         'operations' => array(
           '#links' => $operations_foo + array(
             'configure' => array(
-              'route_name' => 'payment.payment_type',
-              'route_parameters' => array(
+              'url' => new Url('payment.payment_type', array(
                 'bundle' => 'foo',
-              ),
+              )),
               'title' => 'Configure',
             ),
             'manage-fields' => array(
               'title' => 'Manage fields',
-              'route_name' => 'field_ui.overview_payment',
-              'route_parameters' => array(
+              'url' => new Url('field_ui.overview_payment', array(
                 'bundle' => 'foo',
-              ),
+              )),
             ),
             'manage-form-display' => array(
               'title' => 'Manage form display',
-              'route_name' => 'field_ui.form_display_overview_payment',
-              'route_parameters' => array(
+              'url' => new Url('field_ui.form_display_overview_payment', array(
                 'bundle' => 'foo',
-              ),
+              )),
             ),
             'manage-display' => array(
               'title' => 'Manage display',
-              'route_name' => 'field_ui.display_overview_payment',
-              'route_parameters' => array(
+              'url' => new Url('field_ui.display_overview_payment', array(
                 'bundle' => 'foo',
-              ),
+              )),
             ),
           ),
           '#type' => 'operations',
@@ -272,39 +269,35 @@ class PaymentTypeUnitTest extends UnitTestCase {
         'operations' => array(
           '#links' => array(
             'configure' => array(
-              'route_name' => 'payment.payment_type',
-              'route_parameters' => array(
+              'url' => new Url('payment.payment_type', array(
                 'bundle' => 'bar',
-              ),
+              )),
               'title' => 'Configure',
             ),
             'manage-fields' => array(
               'title' => 'Manage fields',
-              'route_name' => 'field_ui.overview_payment',
-              'route_parameters' => array(
+              'url' => new Url('field_ui.overview_payment', array(
                 'bundle' => 'bar',
-              ),
+              )),
             ),
             'manage-form-display' => array(
               'title' => 'Manage form display',
-              'route_name' => 'field_ui.form_display_overview_payment',
-              'route_parameters' => array(
+              'url' => new Url('field_ui.form_display_overview_payment', array(
                 'bundle' => 'bar',
-              ),
+              )),
             ),
             'manage-display' => array(
               'title' => 'Manage display',
-              'route_name' => 'field_ui.display_overview_payment',
-              'route_parameters' => array(
+              'url' => new Url('field_ui.display_overview_payment', array(
                 'bundle' => 'bar',
-              ),
+              )),
             ),
           ),
           '#type' => 'operations',
         ),
       ),
     );
-    $this->assertSame($expected_build, $build);
+    $this->assertEquals($expected_build, $build);
   }
 
 }
