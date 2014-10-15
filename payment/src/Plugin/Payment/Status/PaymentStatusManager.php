@@ -6,13 +6,16 @@
 
 namespace Drupal\payment\Plugin\Payment\Status;
 
-use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Component\Plugin\FallbackPluginManagerInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\Core\Plugin\Discovery\ContainerDerivativeDiscoveryDecorator;
+use Drupal\Core\Plugin\Discovery\YamlDiscovery;
+use Drupal\Core\Plugin\Factory\ContainerFactory;
+use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\StringTranslation\TranslationWrapper;
 use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait;
 
 /**
@@ -25,23 +28,55 @@ class PaymentStatusManager extends DefaultPluginManager implements PaymentStatus
   use OperationsProviderPluginManagerTrait;
 
   /**
-   * Constructs a new class instance.
+   * The string translator.
    *
-   * @param \Traversable $namespaces
-   *   An object that implements \Traversable which contains the root paths
-   *   keyed by the corresponding namespace to look for plugin implementations.
+   * @var \Drupal\Core\StringTranslation\TranslationInterface
+   */
+  protected $stringTranslation;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaults = array(
+    // The plugin ID. Set by the plugin system based on the top-level YAML key.
+    'id' => NULL,
+    // The plugin ID of the parent status (required).
+    'parent_id' => NULL,
+    // The human-readable plugin label (optional).
+    'label' => NULL,
+    // The human-readable plugin description (optional).
+    'description' => NULL,
+    // The name of the class that provides plugin operations. The class must
+    // implement \Drupal\payment\Plugin\Payment\OperationsProviderInterface and
+    // may implement
+    // \Drupal\Core\DependencyInjection\ContainerInjectionInterface.
+    'operations_provider' => NULL,
+    // The default plugin class name. Any class must implement
+    // \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface.
+    'class' => 'Drupal\payment\Plugin\Payment\Status\DefaultPaymentStatus',
+  );
+
+  /**
+   * Constructs a new instance.
+   *
    * @param \Drupal\Core\Cache\CacheBackendInterface $cache_backend
    *   Cache backend instance to use.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler to invoke the alter hook with.
    * @param \Drupal\Core\DependencyInjection\ClassResolverInterface $class_resolver
    *   The class_resolver.
+   * @var \Drupal\Core\StringTranslation\TranslationInterface
+   *   The string translator.
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, ClassResolverInterface $class_resolver) {
-    parent::__construct('Plugin/Payment/Status', $namespaces, $module_handler, '\Drupal\payment\plugin\payment\status\PaymentStatusInterface', '\Drupal\payment\Annotations\PaymentStatus');
+  public function __construct(CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, ClassResolverInterface $class_resolver, TranslationInterface $string_translation) {
     $this->alterInfo('payment_status');
     $this->setCacheBackend($cache_backend, 'payment_status');
     $this->classResolver = $class_resolver;
+    $this->discovery = new YamlDiscovery('payment.status', $module_handler->getModuleDirectories());
+    $this->discovery = new ContainerDerivativeDiscoveryDecorator($this->discovery);
+    $this->factory = new ContainerFactory($this, 'Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
+    $this->moduleHandler = $module_handler;
+    $this->stringTranslation = $string_translation;
   }
 
   /**
@@ -49,6 +84,18 @@ class PaymentStatusManager extends DefaultPluginManager implements PaymentStatus
    */
   public function getFallbackPluginId($plugin_id, array $configuration = array()) {
     return 'payment_unknown';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function processDefinition(&$definition, $plugin_id) {
+    parent::processDefinition($definition, $plugin_id);
+    foreach (['description', 'label'] as $key) {
+      if (isset($definition[$key])) {
+        $definition[$key] = (new TranslationWrapper($definition[$key]))->setStringTranslation($this->stringTranslation);
+      }
+    }
   }
 
   /**

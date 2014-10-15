@@ -7,12 +7,9 @@
 
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\Status;
 
-use Drupal\Component\Plugin\Exception\PluginException;
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\StringTranslation\TranslationWrapper;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManager;
 use Drupal\Tests\UnitTestCase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Zend\Stdlib\ArrayObject;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Status\PaymentStatusManager
@@ -64,6 +61,13 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
   public $paymentStatusManager;
 
   /**
+   * The string translator.
+   *
+   * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $stringTranslation;
+
+  /**
    * {@inheritdoc}
    *
    * @covers ::__construct
@@ -76,12 +80,15 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
     $this->factory = $this->getMock('\Drupal\Component\Plugin\Factory\FactoryInterface');
 
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
+    $this->moduleHandler->expects($this->atLeastOnce())
+      ->method('getModuleDirectories')
+      ->willReturn([]);
 
     $this->cache = $this->getMock('\Drupal\Core\Cache\CacheBackendInterface');
 
-    $namespaces = new ArrayObject();
+    $this->stringTranslation = $this->getStringTranslationStub();
 
-    $this->paymentStatusManager = new PaymentStatusManager($namespaces, $this->cache, $this->moduleHandler, $this->classResolver);
+    $this->paymentStatusManager = new PaymentStatusManager($this->cache, $this->moduleHandler, $this->classResolver, $this->stringTranslation);
     $property = new \ReflectionProperty($this->paymentStatusManager, 'discovery');
     $property->setAccessible(TRUE);
     $property->setValue($this->paymentStatusManager, $this->discovery);
@@ -103,18 +110,25 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
    * @covers ::getDefinitions
    */
   public function testGetDefinitions() {
-    $definitions = array(
+    $discovery_definitions = array(
       'foo' => array(
+        'id' => NULL,
+        'parent_id' => NULL,
         'label' => $this->randomMachineName(),
+        'description' => NULL,
+        'operations_provider' => NULL,
+        'class' => 'Drupal\payment\Plugin\Payment\Status\DefaultPaymentStatus',
       ),
     );
+    $manager_definitions = $discovery_definitions;
+    $manager_definitions['foo']['label'] = (new TranslationWrapper($manager_definitions['foo']['label']))->setStringTranslation($this->stringTranslation);
     $this->discovery->expects($this->once())
       ->method('getDefinitions')
-      ->will($this->returnValue($definitions));
+      ->will($this->returnValue($discovery_definitions));
     $this->moduleHandler->expects($this->once())
       ->method('alter')
       ->with('payment_status');
-    $this->assertSame($definitions, $this->paymentStatusManager->getDefinitions());
+    $this->assertEquals($manager_definitions, $this->paymentStatusManager->getDefinitions());
   }
 
   /**
