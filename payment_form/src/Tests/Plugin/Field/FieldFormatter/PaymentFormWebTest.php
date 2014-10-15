@@ -59,6 +59,10 @@ class PaymentFormWebTest extends WebTestBase {
     parent::setUp();
     $this->paymentStorage = \Drupal::entityManager()->getStorage('payment');
 
+    /** @var \Drupal\currency\ConfigImporterInterface $config_importer */
+    $config_importer = \Drupal::service('currency.config_importer');
+    $config_importer->importCurrency('EUR');
+
     // Create the field and field instance.
     $field_name = strtolower($this->randomMachineName());
     entity_create('field_storage_config', array(

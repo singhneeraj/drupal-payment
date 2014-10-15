@@ -24,6 +24,17 @@ class PaymentReferenceWebTest extends WebTestBase {
   public static $modules = array('payment', 'payment_reference');
 
   /**
+   * {@inheritdoc}
+   */
+  public function setUp() {
+    parent::setUp();
+
+    /** @var \Drupal\currency\ConfigImporterInterface $config_importer */
+    $config_importer = \Drupal::service('currency.config_importer');
+    $config_importer->importCurrency('EUR');
+  }
+
+  /**
    * Tests the widget.
    */
   protected function testWidget() {

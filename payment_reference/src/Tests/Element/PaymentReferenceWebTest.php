@@ -33,6 +33,10 @@ class PaymentReferenceWebTest extends WebTestBase {
     $user = $this->drupalCreateUser();
     $this->drupalLogin($user);
 
+    /** @var \Drupal\currency\ConfigImporterInterface $config_importer */
+    $config_importer = \Drupal::service('currency.config_importer');
+    $config_importer->importCurrency('EUR');
+
     // Create the payment reference field and field instance.
     $payment_reference_field_name = 'foobarbaz';
     entity_create('field_storage_config', array(

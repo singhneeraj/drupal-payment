@@ -27,8 +27,9 @@ class PaymentFormWebTest extends WebTestBase {
    * Tests the widget.
    */
   protected function testWidget() {
-    $user_storage = \Drupal::entityManager()->getStorage('user');
-    $line_item_manager = Payment::lineItemManager();
+    /** @var \Drupal\currency\ConfigImporterInterface $config_importer */
+    $config_importer = \Drupal::service('currency.config_importer');
+    $config_importer->importCurrency('EUR');
 
     $user = $this->drupalCreateUser(array('administer user fields'));
     $this->drupalLogin($user);
