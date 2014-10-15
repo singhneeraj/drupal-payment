@@ -53,6 +53,9 @@ class Generate {
     $payment = entity_create('payment', array(
       'bundle' => 'payment_unavailable',
     ));
+    /** @var \Drupal\currency\ConfigImporterInterface $config_importer */
+    $config_importer = \Drupal::service('currency.config_importer');
+    $config_importer->importCurrency('EUR');
     $payment->setCurrencyCode('EUR')
       ->setPaymentMethod($payment_method)
       ->setOwnerId($uid)
@@ -68,6 +71,11 @@ class Generate {
    */
   static function createPaymentLineItems() {
     $line_item_manager = Payment::lineItemManager();
+    /** @var \Drupal\currency\ConfigImporterInterface $config_importer */
+    $config_importer = \Drupal::service('currency.config_importer');
+    $config_importer->importCurrency('NLG');
+    $config_importer->importCurrency('JPY');
+    $config_importer->importCurrency('MGA');
     $line_items = array(
       $line_item_manager->createInstance('payment_basic', array())
         ->setName('foo')
