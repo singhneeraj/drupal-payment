@@ -111,7 +111,7 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
   }
 
   /**
-   * Implements #element_validate callback for self::instanceSettingsForm().
+   * Implements #element_validate callback for self::fieldSettingsForm().
    */
   public static function fieldSettingsFormValidate(array $element, FormStateInterface $form_state) {
     $add_more_button_form_parents = array_merge($element['#array_parents'], array('line_items', 'add_more', 'add'));

@@ -59,7 +59,7 @@ class PaymentFormUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::instanceSettingsForm
+   * @covers ::fieldSettingsForm
    */
   public function testFieldSettingsForm() {
     $this->fieldType->expects($this->once())
