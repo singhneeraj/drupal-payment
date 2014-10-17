@@ -8,12 +8,13 @@
 namespace Drupal\payment\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
+use Drupal\Core\Config\Entity\ThirdPartySettingsInterface;
 use Drupal\user\EntityOwnerInterface;
 
 /**
  * Defines payment method configurations.
  */
-interface PaymentMethodConfigurationInterface extends ConfigEntityInterface, EntityOwnerInterface {
+interface PaymentMethodConfigurationInterface extends ConfigEntityInterface, EntityOwnerInterface, ThirdPartySettingsInterface {
 
   /**
    * Sets the payment method configuration ID.

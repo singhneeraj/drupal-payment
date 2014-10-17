@@ -106,4 +106,12 @@ class PaymentMethodConfigurationUnitTest extends KernelTestBase {
     $this->assertTrue($this->paymentMethodConfiguration->setUuid($uuid) instanceof PaymentMethodConfigurationInterface);
     $this->assertIdentical($this->paymentMethodConfiguration->uuid(), $uuid);
   }
+
+  /**
+   * Tests the third party settings implementation.
+   */
+  function testThirdPartySettings() {
+    $this->assertTrue(in_array('Drupal\Core\Config\Entity\ThirdPartySettingsTrait', class_uses($this->paymentMethodConfiguration)));
+  }
+
 }

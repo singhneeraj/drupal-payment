@@ -8,6 +8,7 @@
 namespace Drupal\payment\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\Core\Config\Entity\ThirdPartySettingsTrait;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\user\UserInterface;
 
@@ -46,6 +47,8 @@ use Drupal\user\UserInterface;
  * )
  */
 class PaymentMethodConfiguration extends ConfigEntityBase implements PaymentMethodConfigurationInterface {
+
+  use ThirdPartySettingsTrait;
 
   /**
    * The entity's unique machine name.
