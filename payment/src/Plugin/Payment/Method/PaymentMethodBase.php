@@ -6,6 +6,7 @@
 
 namespace Drupal\payment\Plugin\Payment\Method;
 
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -39,6 +40,13 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
   protected $eventDispatcher;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * The payment this payment method is for.
    *
    * @var \Drupal\payment\Entity\PaymentInterface
@@ -61,15 +69,18 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher.
    * @param \Drupal\Core\Utility\Token $token
    *   The token API.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, EventDispatcherInterface $event_dispatcher, Token $token) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler, EventDispatcherInterface $event_dispatcher, Token $token) {
     $configuration += $this->defaultConfiguration();
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->eventDispatcher = $event_dispatcher;
+    $this->moduleHandler = $module_handler;
     $this->token = $token;
   }
 
@@ -77,7 +88,7 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('event_dispatcher'), $container->get('token'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('module_handler'), $container->get('event_dispatcher'), $container->get('token'));
   }
 
   /**
@@ -146,18 +157,24 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    // Do not use the module handler, as we only need check_markup() anyway,
-    $message = function_exists('check_markup') ? check_markup($this->getMessageText(), $this->getMessageTextFormat()) : $this->getMessageText();
-    $message = $this->token->replace($message, array(
+    $message_text = $this->token->replace($this->getMessageText(), array(
       'payment' => $this->getPayment(),
     ), array(
       'clear' => TRUE,
     ));
-    $elements = array();
-    $elements['message'] = array(
-      '#type' => 'markup',
-      '#markup' => $message,
-    );
+    if ($this->moduleHandler->moduleExists('filter')) {
+      $elements['message'] = array(
+        '#type' => 'processed_text',
+        '#text' => $message_text,
+        '#format' => $this->getMessageTextFormat(),
+      );
+    }
+    else {
+      $elements['message'] = array(
+        '#type' => 'markup',
+        '#markup' => $message_text,
+      );
+    }
 
     return $elements;
   }

@@ -5,7 +5,7 @@
  * Contains \Drupal\Tests\payment\Unit\Plugin\Payment\Method\PaymentMethodBaseUnitTest.
  */
 
-namespace Drupal\Tests\payment\Unit\Plugin\Payment\Method {
+namespace Drupal\Tests\payment\Unit\Plugin\Payment\Method;
 
   use Drupal\Core\Access\AccessResultAllowed;
   use Drupal\Core\Access\AccessResultForbidden;
@@ -24,6 +24,13 @@ use Drupal\payment\Event\PaymentExecuteAccess;
 class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $moduleHandler;
+
+  /**
    * The payment method plugin under test.
    *
    * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase|\PHPUnit_Framework_MockObject_MockObject
@@ -40,8 +47,10 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
 
     $this->pluginDefinition['label'] = $this->randomMachineName();
 
+    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
+
     $this->plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\PaymentMethodBase')
-      ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->eventDispatcher, $this->token))
+      ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token))
       ->getMockForAbstractClass();
   }
 
@@ -52,6 +61,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
       array('event_dispatcher', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->eventDispatcher),
+      array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
       array('token', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->token),
     );
     $container->expects($this->any())
@@ -216,7 +226,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $this->pluginDefinition['active'] = $active;
     /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase|\PHPUnit_Framework_MockObject_MockObject $payment_method */
     $payment_method = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\PaymentMethodBase')
-      ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->eventDispatcher, $this->token))
+      ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token))
       ->setMethods(array('executePaymentAccessCurrency', 'executePaymentAccessEvent', 'doExecutePaymentAccess'))
       ->getMockForAbstractClass();
     $payment_method->expects($this->any())
@@ -484,15 +494,5 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
   public function testGetPluginLabel() {
     $this->assertSame($this->pluginDefinition['label'], $this->plugin->getPluginLabel());
   }
-
-}
-
-}
-
-namespace {
-
-if (!function_exists('check_markup')) {
-  function check_markup(){}
-}
 
 }

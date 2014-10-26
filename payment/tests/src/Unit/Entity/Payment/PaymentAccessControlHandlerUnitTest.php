@@ -68,7 +68,7 @@ class PaymentAccessControlHandlerUnitTest extends UnitTestCase {
       ->will($this->returnValue($payment_method));
 
     $payment->expects($this->any())
-      ->method('getCacheTag')
+      ->method('getCacheTags')
       ->willReturn(array('payment'));
 
     $method = new \ReflectionMethod($this->accessControlHandler, 'checkAccess');
@@ -122,7 +122,7 @@ class PaymentAccessControlHandlerUnitTest extends UnitTestCase {
       ->will($this->returnValue($payment_method));
 
     $payment->expects($this->any())
-      ->method('getCacheTag')
+      ->method('getCacheTags')
       ->willReturn(array('payment'));
 
     $method = new \ReflectionMethod($this->accessControlHandler, 'checkAccess');
@@ -174,7 +174,7 @@ class PaymentAccessControlHandlerUnitTest extends UnitTestCase {
       ->method('getPaymentMethod')
       ->will($this->returnValue($payment_method));
     $payment->expects($this->any())
-      ->method('getCacheTag')
+      ->method('getCacheTags')
       ->willReturn(array('payment'));
 
     $class = new \ReflectionClass($this->accessControlHandler);
@@ -228,7 +228,7 @@ class PaymentAccessControlHandlerUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
     $payment->expects($this->any())
-      ->method('getCacheTag')
+      ->method('getCacheTags')
       ->willReturn(array('payment'));
 
     $class = new \ReflectionClass($this->accessControlHandler);
@@ -258,7 +258,7 @@ class PaymentAccessControlHandlerUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
     $payment->expects($this->any())
-      ->method('getCacheTag')
+      ->method('getCacheTags')
       ->willReturn(array('payment'));
 
     $class = new \ReflectionClass($this->accessControlHandler);
@@ -296,7 +296,7 @@ class PaymentAccessControlHandlerUnitTest extends UnitTestCase {
       ->method('getOwnerId')
       ->will($this->returnValue($owner_id + 1));
     $payment->expects($this->any())
-      ->method('getCacheTag')
+      ->method('getCacheTags')
       ->willReturn(array('payment'));
 
     $class = new \ReflectionClass($this->accessControlHandler);

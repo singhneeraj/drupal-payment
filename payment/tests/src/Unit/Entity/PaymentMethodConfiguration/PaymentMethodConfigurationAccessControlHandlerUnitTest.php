@@ -80,7 +80,7 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
       ->disableOriginalConstructor()
       ->getMock();
     $payment_method->expects($this->any())
-      ->method('getCacheTag')
+      ->method('getCacheTags')
       ->willReturn(array('payment_method_configuration'));
 
     $class = new \ReflectionClass($this->accessControlHandler);
@@ -107,7 +107,7 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
       ->disableOriginalConstructor()
       ->getMock();
     $payment_method->expects($this->any())
-      ->method('getCacheTag')
+      ->method('getCacheTags')
       ->willReturn(array('payment_method_configuration'));
 
     $class = new \ReflectionClass($this->accessControlHandler);
@@ -144,7 +144,7 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
       ->method('getOwnerId')
       ->will($this->returnValue($owner_id + 1));
     $payment_method->expects($this->any())
-      ->method('getCacheTag')
+      ->method('getCacheTags')
       ->willReturn(array('payment_method_configuration'));
 
     $class = new \ReflectionClass($this->accessControlHandler);
@@ -177,7 +177,7 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
       ->method('status')
       ->will($this->returnValue($payment_method_configuration_status));
     $payment_method_configuration->expects($this->atLeastOnce())
-      ->method('getCacheTag')
+      ->method('getCacheTags')
       ->willReturn(array('payment_method_configuration'));
 
     $class = new \ReflectionClass($this->accessControlHandler);
@@ -224,7 +224,7 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
       ->method('status')
       ->will($this->returnValue($payment_method_configuration_status));
     $payment_method_configuration->expects($this->atLeastOnce())
-      ->method('getCacheTag')
+      ->method('getCacheTags')
       ->willReturn(array('payment_method_configuration'));
 
     $class = new \ReflectionClass($this->accessControlHandler);
@@ -272,7 +272,7 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
       ->method('bundle')
       ->will($this->returnValue($bundle));
     $payment_method_configuration->expects($this->atLeastOnce())
-      ->method('getCacheTag')
+      ->method('getCacheTags')
       ->willReturn(array('payment_method_configuration'));
 
     $class = new \ReflectionClass($this->accessControlHandler);

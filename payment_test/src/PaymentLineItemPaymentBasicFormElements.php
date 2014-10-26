@@ -65,6 +65,6 @@ class PaymentLineItemPaymentBasicFormElements implements ContainerInjectionInter
     /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface $line_item */
     $line_item = $form_state->get('payment_line_item');
     $line_item->submitConfigurationForm($form['line_item'], $form_state);
-    $form_state->setRedirect('user.page');
+    $form_state->setRedirect('user.login');
   }
 }

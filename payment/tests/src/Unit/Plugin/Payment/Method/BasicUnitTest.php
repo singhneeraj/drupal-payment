@@ -18,6 +18,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $moduleHandler;
+
+  /**
    * The payment method plugin under test.
    *
    * @var \Drupal\payment\Plugin\Payment\Method\Basic
@@ -48,9 +55,11 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
       'refund_status_id' => $this->randomMachineName(),
     );
 
+    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
+
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
-    $this->paymentMethod = new Basic(array(), '', $this->pluginDefinition, $this->eventDispatcher, $this->token, $this->paymentStatusManager);
+    $this->paymentMethod = new Basic(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager);
   }
 
   /**
@@ -60,6 +69,7 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
       array('event_dispatcher', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->eventDispatcher),
+      array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
       array('plugin.manager.payment.status', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentStatusManager),
       array('token', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->token),
     );
@@ -186,7 +196,7 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
     $this->pluginDefinition['capture'] = $capture;
     $this->pluginDefinition['capture_status_id'] = $capture_status_id;
 
-    $this->paymentMethod = new Basic(array(), '', $this->pluginDefinition, $this->eventDispatcher, $this->token, $this->paymentStatusManager);
+    $this->paymentMethod = new Basic(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager);
 
     $capture_payment_status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
     $capture_payment_status->expects($this->any())
@@ -267,7 +277,7 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
     $this->pluginDefinition['refund'] = $refund;
     $this->pluginDefinition['refund_status_id'] = $refund_status_id;
 
-    $this->paymentMethod = new Basic(array(), '', $this->pluginDefinition, $this->eventDispatcher, $this->token, $this->paymentStatusManager);
+    $this->paymentMethod = new Basic(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager);
 
     $payment_status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
     $payment_status->expects($this->any())
