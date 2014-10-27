@@ -59,6 +59,7 @@ class PaymentLineItemElement implements ContainerInjectionInterface, FormInterfa
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $line_items_data = array();
+    /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface $line_item */
     foreach (PaymentLineItemsInput::getLineItems($form['container']['line_item'], $form_state) as $line_item) {
       $line_items_data[] = array(
         'plugin_id' => $line_item->getPluginId(),

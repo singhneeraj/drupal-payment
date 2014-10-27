@@ -100,7 +100,7 @@ class PaymentReferenceWebTest extends WebTestBase {
     $this->drupalPostForm(NULL, array(), t('Save field settings'));
     $this->drupalPostForm(NULL, array(
       'field[settings][line_items][add_more][type]' => 'payment_basic',
-    ), t('Add a line item'));
+    ), t('Add and configure a new line item'));
     $this->drupalPostForm(NULL, array(
       'field[settings][currency_code]' => $currency_code,
       'field[settings][line_items][line_items][payment_basic][plugin_form][amount][amount]' => $amount,

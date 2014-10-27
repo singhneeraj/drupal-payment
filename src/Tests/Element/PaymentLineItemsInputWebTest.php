@@ -65,9 +65,6 @@ class PaymentLineItemsInputWebTest extends WebTestBase {
 
   /**
    * Tests the element.
-   *
-   * @todo Test deleting a line item once WebTestBase::drupalPostAjax() supports
-   *   testing RemoveCommand.
    */
   protected function testElement() {
     $state = \Drupal::state();
@@ -85,7 +82,7 @@ class PaymentLineItemsInputWebTest extends WebTestBase {
     // Add a line item through a regular submission.
     $this->drupalPostForm(NULL, array(
       'line_item[add_more][type]' => $type,
-    ), t('Add a line item'));
+    ), t('Add and configure a new line item'));
     $this->assertLineItemElements(array_merge($names, array($type)));
     $this->assertAddMore(FALSE);
 
@@ -117,29 +114,6 @@ class PaymentLineItemsInputWebTest extends WebTestBase {
       }
       // Check that the first line item is now the last.
       $this->assertEqual(end($line_items)->getName(), reset($names));
-    }
-
-    // Add a line item through an AJAX submission.
-    $this->drupalPostAjaxForm('payment_test-element-payment-line-item', array(
-      'line_item[add_more][type]' => $type,
-    ), array(
-      'op' => t('Add a line item'),
-    ));
-    $this->assertLineItemElements(array_merge($names, array($type)));
-    $this->assertAddMore(FALSE);
-
-    // Test the element's value through an AJAX submission.
-    $this->drupalPostForm(NULL, array(
-      'line_item[line_items][payment_basic][plugin_form][description]' => $this->randomString(),
-    ), t('Submit'));
-    $value = $state->get('payment_test_line_item_form_element');
-    if ($this->assertTrue(is_array($value))) {
-      $this->assertEqual(count($value), count($names) + 1);
-      foreach ($value as $line_item_data) {
-        $this->assertTrue(isset($line_item_data['plugin_configuration']));
-        $this->assertTrue(is_array($line_item_data['plugin_configuration']));
-        $this->assertTrue(isset($line_item_data['plugin_id']));
-      }
     }
   }
 }

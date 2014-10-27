@@ -117,7 +117,8 @@ class PaymentForm extends WidgetBase implements ContainerFactoryPluginInterface 
     $element = NestedArray::getValue($form, array_merge(array_slice($values['array_parents'], count($form['#array_parents'])), array('line_items')));
 
     $line_items_data = array();
-    foreach (PaymentLineItemsInput::getLineItems($element, $form_state) as $line_item) {
+    /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface $line_item */
+    foreach ($element['#value'] as $line_item) {
       $line_items_data[] = array(
         'plugin_id' => $line_item->getPluginId(),
         'plugin_configuration' => $line_item->getConfiguration(),

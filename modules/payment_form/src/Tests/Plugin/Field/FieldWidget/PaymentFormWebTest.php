@@ -42,7 +42,7 @@ class PaymentFormWebTest extends WebTestBase {
       'fields[_add_new_field][type]' => 'payment_form',
     ), t('Save'));
     $this->drupalPostForm(NULL, array(), t('Save field settings'));
-    $this->drupalPostForm(NULL, array(), t('Add a line item'));
+    $this->drupalPostForm(NULL, array(), t('Add and configure a new line item'));
     $this->drupalPostForm(NULL, array(
       'default_value_input[field_' . $field_name . '][line_items][line_items][payment_basic][plugin_form][description]' => $this->randomString(),
     ), t('Save settings'));
@@ -55,7 +55,7 @@ class PaymentFormWebTest extends WebTestBase {
     // Test the widget when creating an entity.
     $this->drupalPostForm('user/' . $user->id() . '/edit', array(
       'field_' . $field_name . '[line_items][add_more][type]' => 'payment_basic',
-    ), t('Add a line item'));
+    ), t('Add and configure a new line item'));
     $description = $this->randomString();
     $this->drupalPostForm(NULL, array(
       'field_' . $field_name . '[line_items][line_items][payment_basic][plugin_form][amount][amount]' => '9,87',
