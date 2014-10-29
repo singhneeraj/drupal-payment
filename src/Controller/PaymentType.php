@@ -146,7 +146,9 @@ class PaymentType extends ControllerBase {
       return $this->formBuilder->getForm($definition['configuration_form']);
     }
     else {
-      return $this->t('This payment type has no configuration.');
+      return array(
+        '#markup' => $this->t('This payment type has no configuration.'),
+      );
     }
   }
 
