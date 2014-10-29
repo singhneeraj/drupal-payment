@@ -12,37 +12,8 @@ php:
 env:
   - PATH=$PATH:/home/travis/.composer/vendor/bin
 
-mysql:
-  database: drupal
-  username: root
-  encoding: utf8
-
 install:
-  # Update package managers.
-  - sudo apt-get update
   - composer self-update
-
-  # Install Apache.
-  - sudo apt-get install apache2 libapache2-mod-fastcgi
-
-  # Enable php-fpm.
-  - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
-  - sudo a2enmod rewrite actions fastcgi alias
-  - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
-
-  # Configure Apache virtual hosts.
-  - sudo cp -f travis/apache_virtual_hosts.txt /etc/apache2/sites-available/default
-  - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)/../drupal?g" --in-place /etc/apache2/sites-available/default
-
-  # Make sure all Apache configuration takes effect.
-  - sudo service apache2 restart
-  - curl -v "http://localhost"
-
-  # Download Drush.
-  - composer global require drush/drush:dev-master --prefer-source
-  - cd /home/travis/.composer/vendor/drush/drush
-  - drush version
 
   # Download Drupal core.
   - cd $TRAVIS_BUILD_DIR/..
@@ -60,29 +31,9 @@ install:
   # Copy Payment into Drupal core.
   - cp -Rv $TRAVIS_BUILD_DIR $TRAVIS_BUILD_DIR/../drupal/modules/
 
-before_script:
-  # Set sendmail so drush doesn't throw an error during site install.
-  - echo "sendmail_path='true'" >> `php --ini | grep "Loaded Configuration" | awk '{print $4}'`
-
 script:
   # Run PHPUnit tests and submit code coverage statistics.
   - cd $TRAVIS_BUILD_DIR/../drupal/core
   - mkdir -p build/logs
   - vendor/bin/phpunit -c ../modules/payment/phpunit.xml.dist --bootstrap ../core/tests/bootstrap.php --verbose --debug --coverage-clover build/logs/clover.xml || exit 1
   - php vendor/bin/coveralls -v -c ../modules/payment/.coveralls.yml
-
-  # Install Drupal core.
-  - cd $TRAVIS_BUILD_DIR/../drupal
-  - drush -v site-install minimal --db-url=mysql://root:@localhost/drupal --yes
-  - phpenv rehash
-
-  # Enable Simpletest and run Simpletest tests.
-  - drush en --yes simpletest
-  - drush cr
-  - cd $TRAVIS_BUILD_DIR/../drupal
-  - php core/scripts/run-tests.sh --verbose --color --concurrency 4 --php `which php` --url http://localhost "Payment" "Payment Form Field" "Payment Reference Field" | tee /tmp/test.txt
-  # Simpletest does not exit with code 0 on success, so we will need to analyze
-  # the output to ascertain whether the tests passed.
-  - TEST_EXIT=${PIPESTATUS[0]}
-  - TEST_SIMPLETEST=$(! egrep -i "([0-9]+ fails)|(PHP Fatal error)|([0-9]+ exceptions)" /tmp/test.txt > /dev/null)$?
-  - if [ $TEST_EXIT -eq 0 ] && [ $TEST_SIMPLETEST -eq 0 ]; then exit 0; else exit 1; fi
