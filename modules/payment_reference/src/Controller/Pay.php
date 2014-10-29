@@ -47,6 +47,9 @@ class Pay extends ControllerBase implements ContainerInjectionInterface {
    *
    * @param string $storage_key
    *   The storage key with which the payment can be loaded.
+   *
+   * @return mixed[]
+   *   A render array.
    */
   public function execute($storage_key) {
     $storage = $this->keyValueFactory->get('payment.payment_type.payment_reference');

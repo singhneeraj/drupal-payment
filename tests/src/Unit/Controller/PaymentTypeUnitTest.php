@@ -139,7 +139,7 @@ class PaymentTypeUnitTest extends UnitTestCase {
 
     // Test with a bundle of a plugin without a form.
     $build = $this->controller->configure($bundle_exists_no_form);
-    $this->assertInternalType('string', $build);
+    $this->assertInternalType('array', $build);
 
     // Test with a non-existing bundle.
     $this->setExpectedException('\Symfony\Component\HttpKernel\Exception\NotFoundHttpException');
