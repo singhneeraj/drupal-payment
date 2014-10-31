@@ -16,15 +16,15 @@
   </testsuites>
   <!-- Filter for coverage reports. -->
   <filter>
-    <blacklist>
-      <directory>./src/Tests</directory>
-      <directory>./tests</directory>
-      <directory>./modules/payment_form/src/Tests</directory>
-      <directory>./modules/payment_form/tests/src</directory>
-      <directory>./modules/payment_reference/src/Tests</directory>
-      <directory>./modules/payment_reference/tests</directory>
-      <directory>./modules/payment_test</directory>
-      <directory>./modules/payment_reference_test</directory>
-    </blacklist>
+    <whitelist processUncoveredFilesFromWhitelist="true">
+        <directory>./src</directory>
+        <directory>./modules/payment_form/src</directory>
+        <directory>./modules/payment_reference/src</directory>
+      <exclude>
+        <directory>./src/Tests</directory>
+        <directory>./modules/payment_form/src/Tests</directory>
+        <directory>./modules/payment_reference/src/Tests</directory>
+      </exclude>
+    </whitelist>
   </filter>
 </phpunit>
