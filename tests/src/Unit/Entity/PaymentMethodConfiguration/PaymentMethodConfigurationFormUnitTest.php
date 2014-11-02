@@ -10,7 +10,8 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
   use Drupal\Core\Form\FormState;
   use Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm;
 use Drupal\Tests\UnitTestCase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+  use Symfony\Component\DependencyInjection\ContainerBuilder;
+  use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm
@@ -32,6 +33,13 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm
    */
   protected $form;
+
+  /**
+   * The form validator.
+   *
+   * @var \Drupal\Core\Form\FormValidatorInterface
+   */
+  protected $formValidator;
 
   /**
    * The payment method configuration.
@@ -76,6 +84,8 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
   public function setUp() {
     $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
+    $this->formValidator = $this->getMock('\Drupal\Core\Form\FormValidatorInterface');
+
     $this->userStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
 
     $this->paymentMethodConfigurationManager = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface');
@@ -90,6 +100,10 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
     $this->stringTranslation->expects($this->any())
       ->method('translate')
       ->will($this->returnArgument(0));
+
+    $container = new ContainerBuilder();
+    $container->set('form_validator', $this->formValidator);
+    \Drupal::setContainer($container);
 
     $this->form = new PaymentMethodConfigurationForm($this->stringTranslation, $this->currentUser, $this->userStorage, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationManager);
     $this->form->setEntity($this->paymentMethodConfiguration);
@@ -506,9 +520,6 @@ namespace {
 
 if (!function_exists('drupal_set_message')) {
   function drupal_set_message() {}
-}
-if (!function_exists('form_execute_handlers')) {
-  function form_execute_handlers() {}
 }
 if (!function_exists('form_state_values_clean')) {
   function form_state_values_clean() {}
