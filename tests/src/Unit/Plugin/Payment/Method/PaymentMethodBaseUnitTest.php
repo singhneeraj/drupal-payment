@@ -144,9 +144,16 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
 
   /**
    * @covers ::buildConfigurationForm
+   *
+   * @dataProvider providerTestBuildConfigurationForm
    */
-  public function testBuildConfigurationForm() {
-    $form = array();
+  public function testBuildConfigurationForm($filter_exists) {
+    $this->moduleHandler->expects($this->atLeastOnce())
+      ->method('moduleExists')
+      ->with('filter')
+      ->willReturn($filter_exists);
+
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
@@ -155,6 +162,16 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $this->assertInternalType('array', $elements);
     $this->assertArrayHasKey('message', $elements);
     $this->assertInternalType('array', $elements['message']);
+  }
+
+  /**
+   * Provides data to self::testBuildConfigurationForm().
+   */
+  public function providerTestBuildConfigurationForm() {
+    return [
+      [TRUE],
+      [FALSE],
+    ];
   }
 
   /**
@@ -173,6 +190,13 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $form = array();
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $this->plugin->submitConfigurationForm($form, $form_state);
+  }
+
+  /**
+   * @covers ::isPaymentExecutionInterruptive
+   */
+  public function testIsPaymentExecutionInterruptive() {
+    $this->assertInternalType('bool', $this->plugin->isPaymentExecutionInterruptive());
   }
 
   /**

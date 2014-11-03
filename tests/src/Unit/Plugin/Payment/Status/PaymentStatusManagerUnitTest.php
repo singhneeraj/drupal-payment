@@ -108,6 +108,7 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
 
   /**
    * @covers ::getDefinitions
+   * @covers ::processDefinition
    */
   public function testGetDefinitions() {
     $discovery_definitions = array(

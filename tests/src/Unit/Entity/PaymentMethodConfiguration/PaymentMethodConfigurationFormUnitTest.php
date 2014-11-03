@@ -23,7 +23,7 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
   /**
    * The current user.
    *
-   * @var \Drupal\Core\Session\AccountInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\user\UserInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $currentUser;
 
@@ -82,7 +82,7 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
    * @covers ::__construct
    */
   public function setUp() {
-    $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $this->currentUser = $this->getMock('\Drupal\user\UserInterface');
 
     $this->formValidator = $this->getMock('\Drupal\Core\Form\FormValidatorInterface');
 
@@ -139,9 +139,14 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
 
   /**
    * @covers ::form
+   *
+   * @dataProvider providerTestForm
    */
-  public function testForm() {
+  public function testForm($has_owner) {
     $owner_label = $this->randomMachineName();
+
+    $current_user_label = $this->randomMachineName();
+
     $payment_method_configuration_entity_id = $this->randomMachineName();
     $payment_method_configuration_entity_is_new = FALSE;
     $payment_method_configuration_entity_label = $this->randomMachineName();
@@ -161,9 +166,13 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
     $owner = $this->getMockBuilder('\Drupal\user\Entity\User')
       ->disableOriginalConstructor()
       ->getMock();
-    $owner->expects($this->any())
+    $owner->expects($has_owner ? $this->atLeastOnce() : $this->never())
       ->method('label')
-      ->will($this->returnValue($owner_label));
+      ->willReturn($owner_label);
+
+    $this->currentUser->expects($has_owner ? $this->never() : $this->atLeastOnce())
+      ->method('label')
+      ->willReturn($current_user_label);
 
     $payment_method_configuration_plugin = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface');
 
@@ -185,10 +194,10 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->paymentMethodConfiguration->expects($this->any())
+    $this->paymentMethodConfiguration->expects($this->atLeastOnce())
       ->method('getOwner')
-      ->will($this->returnValue($owner));
-    $this->paymentMethodConfiguration->expects($this->any())
+      ->willReturn($has_owner ? $owner : NULL);
+    $this->paymentMethodConfiguration->expects($this->atLeastOnce())
       ->method('getPluginConfiguration')
       ->will($this->returnValue($payment_method_configuration_plugin_configuration));
     $this->paymentMethodConfiguration->expects($this->any())
@@ -250,7 +259,7 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
       'owner' => array(
         '#type' => 'textfield',
         '#title' => 'Owner',
-        '#default_value' => $owner_label,
+        '#default_value' => $has_owner ? $owner_label : $current_user_label,
         '#maxlength' => 255,
         '#autocomplete_route_name' => 'user.autocomplete',
         '#required' => TRUE,
@@ -260,6 +269,16 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
         ) + $payment_method_configuration_plugin_form,
     );
     $this->assertEquals($expected_build, $build);
+  }
+
+  /**
+   * Provides data to self::testForm().
+   */
+  public function providerTestForm() {
+    return [
+      [TRUE],
+      [FALSE],
+    ];
   }
 
   /**

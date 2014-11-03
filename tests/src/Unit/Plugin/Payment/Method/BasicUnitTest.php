@@ -124,6 +124,13 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
   }
 
   /**
+   * @covers ::isPaymentExecutionInterruptive
+   */
+  public function testIsPaymentExecutionInterruptive() {
+    $this->assertInternalType('bool', $this->paymentMethod->isPaymentExecutionInterruptive());
+  }
+
+  /**
    * @covers ::doExecutePayment
    */
   public function testDoExecutePayment() {
