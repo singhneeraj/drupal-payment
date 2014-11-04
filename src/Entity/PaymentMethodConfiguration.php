@@ -9,8 +9,11 @@ namespace Drupal\payment\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Config\Entity\ThirdPartySettingsTrait;
+use Drupal\Core\Config\TypedConfigManagerInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\user\UserInterface;
+use Drupal\user\UserStorageInterface;
 
 /**
  * Defines a payment method configuration entity.
@@ -51,6 +54,13 @@ class PaymentMethodConfiguration extends ConfigEntityBase implements PaymentMeth
   use ThirdPartySettingsTrait;
 
   /**
+   * The entity manager.
+   *
+   * @var \Drupal\Core\Entity\EntityManagerInterface
+   */
+  protected $entityManager;
+
+  /**
    * The entity's unique machine name.
    *
    * @var string
@@ -76,7 +86,7 @@ class PaymentMethodConfiguration extends ConfigEntityBase implements PaymentMeth
    *
    * @var array
    */
-  protected $pluginConfiguration = array();
+  protected $pluginConfiguration = [];
 
   /**
    * The bundle, which is the ID of the entity's payment method plugin.
@@ -84,6 +94,20 @@ class PaymentMethodConfiguration extends ConfigEntityBase implements PaymentMeth
    * @var integer
    */
   protected $pluginId;
+
+  /**
+   * The typed config manager.
+   *
+   * @var \Drupal\Core\Config\TypedConfigManagerInterface
+   */
+  protected $typedConfigManager;
+
+  /**
+   * The user storage.
+   *
+   * @var \Drupal\user\UserStorageInterface
+   */
+  protected $userStorage;
 
   /**
    * The entity's UUID.
@@ -142,7 +166,7 @@ class PaymentMethodConfiguration extends ConfigEntityBase implements PaymentMeth
    * {@inheritdoc}
    */
   public function getOwner() {
-    return \Drupal::entityManager()->getStorage('user')->load($this->getOwnerId());
+    return $this->getUserStorage()->load($this->getOwnerId());
   }
 
   /**
@@ -199,8 +223,83 @@ class PaymentMethodConfiguration extends ConfigEntityBase implements PaymentMeth
    * {@inheritdoc}
    */
   public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
-    $values += array(
+    $values += [
       'ownerId' => (int) \Drupal::currentUser()->id(),
-    );
+    ];
   }
+
+  /**
+   * Sets the entity manager.
+   *
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   *
+   * @return $this
+   */
+  public function setEntityManager(EntityManagerInterface $entity_manager) {
+    $this->entityManager = $entity_manager;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function entityManager() {
+    if (!$this->entityManager) {
+      $this->entityManager = parent::entityManager();
+    }
+
+    return $this->entityManager;
+  }
+
+  /**
+   * Sets the typed config.
+   *
+   * @param \Drupal\Core\Config\TypedConfigManagerInterface $typed_config_manager
+   *
+   * @return $this
+   */
+  public function setTypedConfig(TypedConfigManagerInterface $typed_config_manager) {
+    $this->typedConfigManager = $typed_config_manager;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getTypedConfig() {
+    if (!$this->typedConfigManager) {
+      $this->typedConfigManager = parent::getTypedConfig();
+    }
+
+    return $this->typedConfigManager;
+  }
+
+  /**
+   * Sets the user storage.
+   *
+   * @param \Drupal\user\UserStorageInterface $user_storage
+   *
+   * @return $this
+   */
+  public function setUserStorage(UserStorageInterface $user_storage) {
+    $this->userStorage = $user_storage;
+
+    return $this;
+  }
+
+  /**
+   * Gets the user storage.
+   *
+   * @return \Drupal\user\UserStorageInterface
+   */
+  protected function getUserStorage() {
+    if (!$this->userStorage) {
+      $this->userStorage = $this->entityManager()->getStorage('currency');
+    }
+
+    return $this->userStorage;
+  }
+
 }

@@ -8,6 +8,8 @@
 namespace Drupal\payment\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\Core\Config\TypedConfigManagerInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
 
 /**
  * Defines a payment status entity.
@@ -48,6 +50,13 @@ class PaymentStatus extends ConfigEntityBase implements PaymentStatusInterface {
   protected $description;
 
   /**
+   * The entity manager.
+   *
+   * @var \Drupal\Core\Entity\EntityManagerInterface
+   */
+  protected $entityManager;
+
+  /**
    * The entity's unique machine name.
    *
    * @var string
@@ -67,6 +76,13 @@ class PaymentStatus extends ConfigEntityBase implements PaymentStatusInterface {
    * @var string
    */
   protected $parentId;
+
+  /**
+   * The typed config manager.
+   *
+   * @var \Drupal\Core\Config\TypedConfigManagerInterface
+   */
+  protected $typedConfigManager;
 
   /**
    * The entity's UUID.
@@ -137,4 +153,53 @@ class PaymentStatus extends ConfigEntityBase implements PaymentStatusInterface {
 
     return $properties;
   }
+
+  /**
+   * Sets the entity manager.
+   *
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   *
+   * @return $this
+   */
+  public function setEntityManager(EntityManagerInterface $entity_manager) {
+    $this->entityManager = $entity_manager;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function entityManager() {
+    if (!$this->entityManager) {
+      $this->entityManager = parent::entityManager();
+    }
+
+    return $this->entityManager;
+  }
+
+  /**
+   * Sets the typed config.
+   *
+   * @param \Drupal\Core\Config\TypedConfigManagerInterface $typed_config_manager
+   *
+   * @return $this
+   */
+  public function setTypedConfig(TypedConfigManagerInterface $typed_config_manager) {
+    $this->typedConfigManager = $typed_config_manager;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getTypedConfig() {
+    if (!$this->typedConfigManager) {
+      $this->typedConfigManager = parent::getTypedConfig();
+    }
+
+    return $this->typedConfigManager;
+  }
+
 }
