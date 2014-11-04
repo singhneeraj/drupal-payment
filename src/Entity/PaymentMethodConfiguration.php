@@ -296,7 +296,7 @@ class PaymentMethodConfiguration extends ConfigEntityBase implements PaymentMeth
    */
   protected function getUserStorage() {
     if (!$this->userStorage) {
-      $this->userStorage = $this->entityManager()->getStorage('currency');
+      $this->userStorage = $this->entityManager()->getStorage('user');
     }
 
     return $this->userStorage;
