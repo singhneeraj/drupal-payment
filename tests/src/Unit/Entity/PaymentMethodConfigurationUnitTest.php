@@ -5,7 +5,7 @@
  * Contains \Drupal\Tests\payment\Entity\PaymentMethodConfigurationUnitTest.
  */
 
-namespace Drupal\Tests\payment\Entity;
+namespace Drupal\Tests\Unit\payment\Entity;
 
 use Drupal\payment\Entity\PaymentMethodConfiguration;
 use Drupal\Tests\UnitTestCase;
