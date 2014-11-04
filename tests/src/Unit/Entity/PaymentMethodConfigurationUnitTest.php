@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\Unit\payment\Entity\PaymentMethodConfigurationUnitTest.
+ * Contains \Drupal\Tests\payment\Unit\Entity\PaymentMethodConfigurationUnitTest.
  */
 
-namespace Drupal\Tests\Unit\payment\Entity;
+namespace Drupal\Tests\payment\Unit\Entity;
 
 use Drupal\payment\Entity\PaymentMethodConfiguration;
 use Drupal\Tests\UnitTestCase;

@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\Unit\payment\Entity\PaymentStatusUnitTest.
+ * Contains \Drupal\Tests\payment\Unit\Entity\PaymentStatusUnitTest.
  */
 
-namespace Drupal\Tests\Unit\payment\Entity;
+namespace Drupal\Tests\payment\Unit\Entity;
 
 use Drupal\payment\Entity\PaymentStatus;
 use Drupal\Tests\UnitTestCase;
