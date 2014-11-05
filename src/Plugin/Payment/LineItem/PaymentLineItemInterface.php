@@ -35,7 +35,8 @@ interface PaymentLineItemInterface extends PluginInspectionInterface, Configurab
   /**
    * Gets the amount.
    *
-   * @return float
+   * @return float|int|string
+   *   A numeric value.
    */
   public function getAmount();
 

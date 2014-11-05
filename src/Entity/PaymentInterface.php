@@ -160,7 +160,8 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
   /**
    * Gets the payment amount.
    *
-   * @return float
+   * @return float|int|string
+   *   A numeric value.
    */
   public function getAmount();
 }
