@@ -151,7 +151,6 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
    */
   public function elementValidate(array &$element, FormStateInterface $form_state, array &$form) {
     $payment_method_selector = $this->getPaymentMethodSelector($element, $form_state);
-
     $payment_method_selector->validateConfigurationForm($element['container']['payment_form']['payment_method'], $form_state);
     $entity_form_display = $this->getEntityFormDisplay($element, $form_state);
     $entity_form_display->extractFormValues($payment_method_selector->getPayment(), $element['container']['payment_form'], $form_state);
@@ -162,11 +161,9 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
    * Implements form #process callback.
    */
   public function process(array &$element, FormStateInterface $form_state, array $form) {
-    $plugin_id = $this->getPluginId();
-
     // Set internal configuration.
     $element['#available_payment_id'] = NULL;
-    $element['#element_validate'] = [[get_class($this), 'istantiate#elementValidate#' . $this->getPluginId()]];
+    $element['#element_validate'] = [[$this, 'elementValidate']];
     $element['#theme_wrappers'] = array('form_element');
     $element['#tree'] = TRUE;
 
