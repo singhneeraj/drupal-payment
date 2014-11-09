@@ -18,6 +18,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\currency\FormElementCallbackTrait;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -29,6 +30,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  */
 class PaymentLineItemsInput extends FormElement implements ContainerFactoryPluginInterface {
+
+  use FormElementCallbackTrait;
 
   /**
    * An unlimited cardinality.
@@ -85,14 +88,7 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
       '#default_value' => array(),
       // A \Drupal\payment\Entity\PaymentInterface object (optional).
       '#payment' => NULL,
-      '#process' => array(function(array $element, FormStateInterface $form_state, array $form) use ($plugin_id) {
-        /** @var \Drupal\Component\Plugin\PluginManagerInterface $element_info_manager */
-        $element_info_manager = \Drupal::service('plugin.manager.element_info');
-        /** @var \Drupal\payment_reference\Element\PaymentReferenceBase $element_plugin */
-        $element_plugin = $element_info_manager->createInstance($plugin_id);
-
-        return $element_plugin->process($element, $form_state, $form);
-      }),
+      '#process' => [[get_class($this), 'instantiate#process#' . $plugin_id]],
     );
   }
 

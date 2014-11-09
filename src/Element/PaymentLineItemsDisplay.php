@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\currency\FormElementCallbackTrait;
 use Drupal\payment\Entity\PaymentInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -20,6 +21,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @RenderElement("payment_line_items_display")
  */
 class PaymentLineItemsDisplay extends FormElement implements ContainerFactoryPluginInterface {
+
+  use FormElementCallbackTrait;
 
   /**
    * The currency storage.
@@ -65,14 +68,7 @@ class PaymentLineItemsDisplay extends FormElement implements ContainerFactoryPlu
     return array(
       // A \Drupal\payment\Entity\PaymentInterface object (required).
       '#payment' => NULL,
-      '#pre_render' => array(function(array $element) use ($plugin_id) {
-        /** @var \Drupal\Component\Plugin\PluginManagerInterface $element_info_manager */
-        $element_info_manager = \Drupal::service('plugin.manager.element_info');
-        /** @var \Drupal\payment\Element\PaymentLineItemsDisplay $element_plugin */
-        $element_plugin = $element_info_manager->createInstance($plugin_id);
-
-        return $element_plugin->preRender($element);
-      }),
+      '#pre_render' => [[get_class($this), 'instantiate#pre_render#' . $plugin_id]],
     );
   }
 
