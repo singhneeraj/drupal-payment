@@ -138,9 +138,7 @@ class PaymentEditFormUnitTest extends UnitTestCase {
       ->method('getConfiguration')
       ->will($this->returnValue($line_item_configuration_b));
 
-    $language = $this->getMockBuilder('\Drupal\Core\Language\Language')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $language = $this->getMock('\Drupal\Core\Language\LanguageInterface');
 
     $currency_code = $this->randomMachineName();
 

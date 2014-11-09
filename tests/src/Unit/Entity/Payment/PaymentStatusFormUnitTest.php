@@ -7,9 +7,8 @@
 
 namespace Drupal\Tests\payment\Unit\Entity\Payment {
 
-use Drupal\Core\Language\Language;
-  use Drupal\Core\Url;
-  use Drupal\payment\Entity\Payment\PaymentStatusForm;
+use Drupal\Core\Url;
+use Drupal\payment\Entity\Payment\PaymentStatusForm;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodUpdatePaymentStatusInterface;
 use Drupal\Tests\UnitTestCase;
@@ -133,9 +132,7 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
       ->method('get')
       ->will($this->returnValueMap($map));
 
-    $language = $this->getMockBuilder('\Drupal\Core\Language\Language')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $language = $this->getMock('\Drupal\Core\Language\LanguageInterface');
 
     $this->languageManager->expects($this->any())
       ->method('getCurrentLanguage')
@@ -160,7 +157,7 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
       ->with('datetime')
       ->will($this->returnValue(TRUE));
 
-    $language = new Language();
+    $language = $this->getMock('\Drupal\Core\Language\LanguageInterface');
 
     $payment_method = $this->getMock('\Drupal\Tests\payment\Unit\Entity\Payment\PaymentStatusFormUnitTestDummyPaymentMethodUpdateStatusInterface');
     $payment_method->expects($this->once())
@@ -207,7 +204,7 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
     $this->urlGenerator->expects($this->never())
       ->method('generateFromRoute');
 
-    $language = new Language();
+    $language = $this->getMock('\Drupal\Core\Language\LanguageInterface');
 
     $this->payment->expects($this->any())
       ->method('language')
@@ -246,7 +243,7 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
       ->method('generateFromRoute')
       ->with('system.modules_list');
 
-    $language = new Language();
+    $language = $this->getMock('\Drupal\Core\Language\LanguageInterface');
 
     $this->payment->expects($this->any())
       ->method('language')

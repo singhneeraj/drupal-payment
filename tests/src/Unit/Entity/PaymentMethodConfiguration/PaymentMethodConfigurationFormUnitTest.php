@@ -190,9 +190,7 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
       ->method('getDefinition')
       ->will($this->returnValue($payment_method_configuration_plugin_definition));
 
-    $language = $this->getMockBuilder('\Drupal\Core\Language\Language')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $language = $this->getMock('\Drupal\Core\Language\LanguageInterface');
 
     $this->paymentMethodConfiguration->expects($this->atLeastOnce())
       ->method('getOwner')

@@ -114,9 +114,7 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
 
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
-    $language = $this->getMockBuilder('\Drupal\Core\Language\Language')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $language = $this->getMock('\Drupal\Core\Language\LanguageInterface');
 
     $options = array(
       'foo' => $this->randomMachineName(),
