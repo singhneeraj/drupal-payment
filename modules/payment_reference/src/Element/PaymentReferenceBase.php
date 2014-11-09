@@ -166,7 +166,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
 
     // Set internal configuration.
     $element['#available_payment_id'] = NULL;
-    $element['#element_validate'] = [[get_class($this), 'elementValidate']];
+    $element['#element_validate'] = [[get_class($this), 'istantiate#elementValidate#' . $this->getPluginId()]];
     $element['#theme_wrappers'] = array('form_element');
     $element['#tree'] = TRUE;
 
