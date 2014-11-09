@@ -20,12 +20,11 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\Element\FormElementInterface;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\Render\Element;
-use Drupal\Core\Routing\UrlGeneratorTrait;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Utility\LinkGeneratorInterface;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\currency\FormElementCallbackTrait;
 use Drupal\payment\Entity\Payment;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface;
@@ -40,6 +39,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * represents.
  */
 abstract class PaymentReferenceBase extends FormElement implements FormElementInterface, ContainerFactoryPluginInterface {
+
+  use FormElementCallbackTrait;
 
   /**
    * The number of seconds a payment should remain stored.
@@ -132,14 +133,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
       '#limit_allowed_payment_method_ids' => NULL,
       // The ID of the payment method selector plugin to use.
       '#payment_method_selector_id' => NULL,
-      '#process' => array(function(array $element, FormStateInterface $form_state, array $form) use ($plugin_id) {
-        /** @var \Drupal\Component\Plugin\PluginManagerInterface $element_info_manager */
-        $element_info_manager = \Drupal::service('plugin.manager.element_info');
-        /** @var \Drupal\payment_reference\Element\PaymentReferenceBase $element_plugin */
-        $element_plugin = $element_info_manager->createInstance($plugin_id);
-
-        return $element_plugin->process($element, $form_state, $form);
-      }),
+      '#process' => [[get_class($this), 'instantiate#process#' . $plugin_id]],
       // The payment that must be made if none are available in the queue yet. It
       // must be an instance of \Drupal\payment\Entity\PaymentInterface.
       '#prototype_payment' => NULL,
@@ -153,6 +147,18 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
   }
 
   /**
+   * Implements form API's element_validate callback.
+   */
+  public function elementValidate(array &$element, FormStateInterface $form_state, array &$form) {
+    $payment_method_selector = $this->getPaymentMethodSelector($element, $form_state);
+
+    $payment_method_selector->validateConfigurationForm($element['container']['payment_form']['payment_method'], $form_state);
+    $entity_form_display = $this->getEntityFormDisplay($element, $form_state);
+    $entity_form_display->extractFormValues($payment_method_selector->getPayment(), $element['container']['payment_form'], $form_state);
+    $entity_form_display->validateFormValues($payment_method_selector->getPayment(), $element['container']['payment_form'], $form_state);
+  }
+
+  /**
    * Implements form #process callback.
    */
   public function process(array &$element, FormStateInterface $form_state, array $form) {
@@ -160,19 +166,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
 
     // Set internal configuration.
     $element['#available_payment_id'] = NULL;
-    $element['#element_validate'] = array(function(array &$element, FormStateInterface $form_state, array &$form) use ($plugin_id) {
-      /** @var \Drupal\Component\Plugin\PluginManagerInterface $element_info_manager */
-      $element_info_manager = \Drupal::service('plugin.manager.element_info');
-      /** @var \Drupal\payment_reference\Element\PaymentReferenceBase $element_plugin */
-      $element_plugin = $element_info_manager->createInstance($plugin_id);
-
-      $payment_method_selector = $element_plugin->getPaymentMethodSelector($element, $form_state);
-
-      $payment_method_selector->validateConfigurationForm($element['container']['payment_form']['payment_method'], $form_state);
-      $entity_form_display = $element_plugin->getEntityFormDisplay($element, $form_state);
-      $entity_form_display->extractFormValues($payment_method_selector->getPayment(), $element['container']['payment_form'], $form_state);
-      $entity_form_display->validateFormValues($payment_method_selector->getPayment(), $element['container']['payment_form'], $form_state);
-    });
+    $element['#element_validate'] = [[get_class($this), 'elementValidate']];
     $element['#theme_wrappers'] = array('form_element');
     $element['#tree'] = TRUE;
 

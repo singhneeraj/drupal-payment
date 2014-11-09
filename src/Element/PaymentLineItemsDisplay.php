@@ -68,7 +68,7 @@ class PaymentLineItemsDisplay extends FormElement implements ContainerFactoryPlu
     return array(
       // A \Drupal\payment\Entity\PaymentInterface object (required).
       '#payment' => NULL,
-      '#pre_render' => [[get_class($this), 'instantiate#pre_render#' . $plugin_id]],
+      '#pre_render' => [[get_class($this), 'instantiate#preRender#' . $plugin_id]],
     );
   }
 

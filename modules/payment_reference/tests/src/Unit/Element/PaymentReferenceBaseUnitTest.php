@@ -146,7 +146,7 @@ class PaymentReferenceBaseUnitTest extends UnitTestCase {
   public function testGetInfo() {
     $info = $this->element->getInfo();
     $this->assertInternalType('array', $info);
-    $this->assertInstanceOf('\Closure', $info['#process'][0]);
+    $this->assertTrue(is_callable($info['#process'][0]));
   }
 
   /**
@@ -963,7 +963,7 @@ class PaymentReferenceBaseUnitTest extends UnitTestCase {
       ->willReturn($this->paymentQueue);
 
     $build = $this->element->process($element, $form_state, $form);
-    $this->assertInstanceOf('\Closure', $build['#element_validate'][0]);
+    $this->assertTrue(is_callable($build['#element_validate'][0]));
     $this->assertTrue($build['#tree']);
     unset($build['container']['payment_form']['#access']);
     $this->assertSame($payment_form, $build['container']['payment_form']);
