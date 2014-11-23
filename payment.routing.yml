@@ -1,7 +1,7 @@
 payment.admin:
   path: '/admin/config/services/payment'
   defaults:
-    _content: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
     _title: Payment
   requirements:
     _permission: 'access administration pages'
@@ -74,7 +74,7 @@ payment.payment.delete:
 payment.payment_method.list:
   path: '/admin/config/services/payment/method'
   defaults:
-    _content: '\Drupal\payment\Controller\PaymentMethod::listPlugins'
+    _controller: '\Drupal\payment\Controller\PaymentMethod::listPlugins'
     _title: 'Payment methods'
   requirements:
     _permission: 'payment.payment_method_configuration.view.any'
@@ -90,7 +90,7 @@ payment.payment_method_configuration.list:
 payment.payment_method_configuration.select:
   path: '/admin/config/services/payment/method/configuration-add'
   defaults:
-    _content: '\Drupal\payment\Controller\PaymentMethod::select'
+    _controller: '\Drupal\payment\Controller\PaymentMethod::select'
     _title: 'Add payment method configuration'
   requirements:
     _custom_access: '\Drupal\payment\Controller\PaymentMethod::selectAccess'
@@ -98,7 +98,7 @@ payment.payment_method_configuration.select:
 payment.payment_method_configuration.add:
   path: '/admin/config/services/payment/method/configuration-add/{plugin_id}'
   defaults:
-    _content: '\Drupal\payment\Controller\PaymentMethod::add'
+    _controller: '\Drupal\payment\Controller\PaymentMethod::add'
     _title_callback: '\Drupal\payment\Controller\PaymentMethod::addTitle'
   requirements:
     _custom_access: '\Drupal\payment\Controller\PaymentMethod::addAccess'
@@ -114,7 +114,7 @@ payment.payment_method_configuration.edit:
 payment.payment_method_configuration.enable:
   path: '/admin/config/services/payment/method/configuration/{payment_method_configuration}/enable'
   defaults:
-    _content: '\Drupal\payment\Controller\PaymentMethod::enable'
+    _controller: '\Drupal\payment\Controller\PaymentMethod::enable'
   requirements:
     _entity_access: 'payment_method_configuration.enable'
     _csrf_token: 'TRUE'
@@ -122,7 +122,7 @@ payment.payment_method_configuration.enable:
 payment.payment_method_configuration.disable:
   path: '/admin/config/services/payment/method/configuration/{payment_method_configuration}/disable'
   defaults:
-    _content: '\Drupal\payment\Controller\PaymentMethod::disable'
+    _controller: '\Drupal\payment\Controller\PaymentMethod::disable'
   requirements:
     _entity_access: 'payment_method_configuration.disable'
     _csrf_token: 'TRUE'
@@ -137,7 +137,7 @@ payment.payment_method_configuration.delete:
 payment.payment_method_configuration.duplicate:
   path: '/admin/config/services/payment/method/configuration/{payment_method_configuration}/duplicate'
   defaults:
-    _content: '\Drupal\payment\Controller\PaymentMethod::duplicate'
+    _controller: '\Drupal\payment\Controller\PaymentMethod::duplicate'
     _title_callback: '\Drupal\payment\Controller\PaymentMethod::duplicateTitle'
   requirements:
     _entity_access: 'payment_method_configuration.duplicate'
@@ -145,7 +145,7 @@ payment.payment_method_configuration.duplicate:
 payment.payment_status.list:
   path: '/admin/config/services/payment/status'
   defaults:
-    _content: '\Drupal\payment\Controller\PaymentStatus::listing'
+    _controller: '\Drupal\payment\Controller\PaymentStatus::listing'
     _title: 'Payment statuses'
   requirements:
     _permission: 'payment.payment_status.administer'
@@ -153,7 +153,7 @@ payment.payment_status.list:
 payment.payment_status.add:
   path: '/admin/config/services/payment/status/add'
   defaults:
-    _content: '\Drupal\payment\Controller\PaymentStatus::add'
+    _controller: '\Drupal\payment\Controller\PaymentStatus::add'
     _title: 'Add a payment status'
   requirements:
     _permission: 'payment.payment_status.administer'
@@ -176,7 +176,7 @@ payment.payment_status.delete:
 payment.payment_type.list:
   path: '/admin/config/services/payment/type'
   defaults:
-    _content: '\Drupal\payment\Controller\PaymentType::listing'
+    _controller: '\Drupal\payment\Controller\PaymentType::listing'
     _title: Payment types
   requirements:
     _permission: 'payment.payment_type.administer'
@@ -184,7 +184,7 @@ payment.payment_type.list:
 payment.payment_type:
   path: '/admin/config/services/payment/type/{bundle}'
   defaults:
-    _content: '\Drupal\payment\Controller\PaymentType::configure'
+    _controller: '\Drupal\payment\Controller\PaymentType::configure'
     _title_callback: '\Drupal\payment\Controller\PaymentType::configureTitle'
   requirements:
     _permission: 'payment.payment_type.administer'
