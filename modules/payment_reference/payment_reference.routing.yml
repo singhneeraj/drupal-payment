@@ -1,14 +1,14 @@
 payment_reference.pay:
   path: '/payment_reference/pay/{storage_key}'
   defaults:
-    _content: '\Drupal\payment_reference\Controller\Pay::execute'
+    _controller: '\Drupal\payment_reference\Controller\Pay::execute'
   requirements:
     _custom_access: '\Drupal\payment_reference\Controller\Pay::access'
     _csrf_token: 'TRUE'
 payment_reference.resume_context:
   path: '/payment_reference/resume/{payment}'
   defaults:
-    _content: '\Drupal\payment_reference\Controller\ResumeContext::execute'
+    _controller: '\Drupal\payment_reference\Controller\ResumeContext::execute'
     _title_callback: '\Drupal\payment_reference\Controller\ResumeContext::title'
   requirements:
     _custom_access: '\Drupal\payment_reference\Controller\ResumeContext::access'

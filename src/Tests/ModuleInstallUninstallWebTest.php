@@ -26,8 +26,10 @@ class ModuleInstallUninstallWebTest extends WebTestBase {
    * Test installation and uninstallation.
    */
   protected function testInstallationAndUninstallation() {
-    $handler = \Drupal::moduleHandler();
-    $this->assertTrue($handler->moduleExists('payment'));
+    /** @var \Drupal\Core\Extension\ModuleInstallerInterface $module_installer */
+    $module_installer = \Drupal::service('module_installer');
+    $module_handler = \Drupal::moduleHandler();
+    $this->assertTrue($module_handler->moduleExists('payment'));
 
     // Test default configuration.
     $names = array('collect_on_delivery', 'no_payment_required');
@@ -36,7 +38,7 @@ class ModuleInstallUninstallWebTest extends WebTestBase {
       $this->assertTrue($payment_method instanceof PaymentMethodConfigurationInterface);
     }
 
-    $handler->uninstall(array('payment'));
-    $this->assertFalse($handler->moduleExists('payment'));
+    $module_installer->uninstall(array('payment'));
+    $this->assertFalse($module_handler->moduleExists('payment'));
   }
 }
