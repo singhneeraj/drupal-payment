@@ -66,3 +66,11 @@ payment.payment_status.*:
     uuid:
       type: string
       label: UUID
+
+field.field_settings.payment_form:
+  type: mapping
+  label: 'Payment form field settings'
+  mapping:
+    currency_code:
+      type: string
+      label: 'The currency code'

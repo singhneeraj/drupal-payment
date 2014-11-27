@@ -81,6 +81,7 @@ class PaymentLineItemsDisplay extends FormElement implements ContainerFactoryPlu
     if (!isset($element['#payment']) || !($element['#payment'] instanceof PaymentInterface)) {
       throw new \InvalidArgumentException('The payment does not implement \Drupal\payment\Entity\PaymentInterface.');
     }
+    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $element['#payment'];
     $element['table'] = array(
       '#empty' => $this->t('There are no line items.'),

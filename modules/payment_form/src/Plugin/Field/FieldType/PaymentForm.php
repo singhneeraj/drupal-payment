@@ -20,9 +20,6 @@ use Drupal\currency\Entity\Currency;
  *   default_widget = "payment_form",
  *   default_formatter = "payment_form",
  *   id = "payment_form",
- *   instance_settings = {
- *     "currency_code" = null
- *   },
  *   label = @Translation("Payment form")
  * )
  */
@@ -36,6 +33,15 @@ class PaymentForm extends FieldItemBase {
    * @var array
    */
   static $propertyDefinitions;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function defaultFieldSettings() {
+    return [
+      'currency_code' => 'XXX',
+    ];
+  }
 
   /**
    * {@inheritdoc}
