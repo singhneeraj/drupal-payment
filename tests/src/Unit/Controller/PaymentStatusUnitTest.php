@@ -5,7 +5,7 @@
  * Contains \Drupal\Tests\payment\Unit\Controller\PaymentStatusUnitTest.
  */
 
-namespace Drupal\Tests\payment\Unit\Controller {
+namespace Drupal\Tests\payment\Unit\Controller;
 
 use Drupal\payment\Controller\PaymentStatus;
 use Drupal\Tests\UnitTestCase;
@@ -47,6 +47,13 @@ class PaymentStatusUnitTest extends UnitTestCase {
   protected $paymentStatusStorage;
 
   /**
+   * The renderer.
+   *
+   * @var \Drupal\Core\Render\RendererInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $renderer;
+
+  /**
    * The string translator.
    *
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -65,9 +72,11 @@ class PaymentStatusUnitTest extends UnitTestCase {
 
     $this->paymentStatusStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
 
+    $this->renderer = $this->getMock('\Drupal\Core\Render\RendererInterface');
+
     $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
-    $this->controller = new PaymentStatus($this->stringTranslation, $this->entityFormBuilder, $this->paymentStatusManager, $this->paymentStatusStorage);
+    $this->controller = new PaymentStatus($this->stringTranslation, $this->entityFormBuilder, $this->renderer, $this->paymentStatusManager, $this->paymentStatusStorage);
   }
 
   /**
@@ -85,6 +94,7 @@ class PaymentStatusUnitTest extends UnitTestCase {
       array('entity.form_builder', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityFormBuilder),
       array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $entity_manager),
       array('plugin.manager.payment.status', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentStatusManager),
+      array('renderer', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->renderer),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
     $container->expects($this->any())
@@ -229,16 +239,6 @@ class PaymentStatusUnitTest extends UnitTestCase {
       ),
     );
     $this->assertSame($expected, $build);
-  }
-
-}
-
-}
-
-namespace {
-
-  if (!function_exists('drupal_render')) {
-    function drupal_render() {}
   }
 
 }

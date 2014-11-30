@@ -9,6 +9,7 @@
 namespace Drupal\Tests\payment_form\Unit\Plugin\Field\FieldFormatter {
 
   use Drupal\Core\DependencyInjection\Container;
+  use Drupal\Core\DependencyInjection\ContainerBuilder;
   use Drupal\payment_form\Plugin\Field\FieldFormatter\PaymentForm;
 use Drupal\Tests\UnitTestCase;
 
@@ -55,6 +56,13 @@ class PaymentFormUnitTest extends UnitTestCase {
   protected $paymentLineItemManager;
 
   /**
+   * The renderer.
+   *
+   * @var \Drupal\Core\Render\RendererInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $renderer;
+
+  /**
    * The request used for testing.
    *
    * @var \Symfony\Component\HttpFoundation\Request|\PHPUnit_Framework_MockObject_MockObject
@@ -81,6 +89,8 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->getMock();
 
     $this->fieldDefinition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
+
+    $this->renderer = $this->getMock('\Drupal\Core\Render\RendererInterface');
 
     $this->request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
       ->disableOriginalConstructor()
@@ -259,6 +269,7 @@ class PaymentFormUnitTest extends UnitTestCase {
     $container->set('entity.form_builder', $this->entityFormBuilder);
     $container->set('entity.manager', $this->entityManager);
     $container->set('plugin.manager.payment.line_item', $this->paymentLineItemManager);
+    $container->set('renderer', $this->renderer);
     $container->set('request_stack', $this->requestStack);
     \Drupal::setContainer($container);
 
@@ -288,9 +299,6 @@ class PaymentFormUnitTest extends UnitTestCase {
 
 namespace {
 
-if (!function_exists('drupal_render')) {
-  function drupal_render() {}
-}
 if (!function_exists('drupal_render_cache_generate_placeholder')) {
   function drupal_render_cache_generate_placeholder() {}
 }

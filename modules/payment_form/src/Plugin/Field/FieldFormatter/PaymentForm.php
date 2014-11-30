@@ -85,7 +85,9 @@ class PaymentForm extends FormatterBase {
     $placeholder = drupal_render_cache_generate_placeholder(__METHOD__, $context, $context['token']);
 
     $build = $entity_form_builder->getForm($payment, 'payment_form');
-    $element['#markup'] = str_replace($placeholder, drupal_render($build), $element['#markup']);
+    /** @var \Drupal\Core\Render\RendererInterface $renderer */
+    $renderer = \Drupal::service('renderer');
+    $element['#markup'] = str_replace($placeholder, $renderer->render($build), $element['#markup']);
 
     return $element;
   }

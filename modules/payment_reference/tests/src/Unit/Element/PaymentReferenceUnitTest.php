@@ -62,6 +62,13 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   protected $paymentStorage;
 
   /**
+   * The renderer.
+   *
+   * @var \Drupal\Core\Render\RendererInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $renderer;
+
+  /**
    * The request stack.
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack|\PHPUnit_Framework_MockObject_MockObject
@@ -107,6 +114,8 @@ class PaymentReferenceUnitTest extends UnitTestCase {
 
     $this->paymentStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
 
+    $this->renderer = $this->getMock('\Drupal\Core\Render\RendererInterface');
+
     $this->requestStack = $this->getMockBuilder('\Symfony\Component\HttpFoundation\RequestStack')
       ->disableOriginalConstructor()
       ->getMock();
@@ -121,7 +130,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
     $plugin_id = $this->randomMachineName();
     $plugin_definition = array();
 
-    $this->element = new PaymentReference($configuration, $plugin_id, $plugin_definition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->paymentMethodSelectorManager, new Random(), $this->temporaryPaymentStorage, $this->paymentQueue);
+    $this->element = new PaymentReference($configuration, $plugin_id, $plugin_definition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->paymentMethodSelectorManager, new Random(), $this->temporaryPaymentStorage, $this->paymentQueue);
   }
 
   /**
@@ -148,6 +157,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       array('link_generator', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->linkGenerator),
       array('payment_reference.queue', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentQueue),
       array('plugin.manager.payment.method_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodSelectorManager),
+      array('renderer', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->renderer),
       array('request_stack', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->requestStack),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );

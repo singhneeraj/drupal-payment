@@ -35,6 +35,13 @@ class PaymentLineItemsInputUnitTest extends UnitTestCase {
   protected $paymentLineItemManager;
 
   /**
+   * The renderer.
+   *
+   * @var \Drupal\Core\Render\RendererInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $renderer;
+
+  /**
    * The string translator.
    *
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -49,12 +56,14 @@ class PaymentLineItemsInputUnitTest extends UnitTestCase {
   public function setUp() {
     $this->paymentLineItemManager = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface');
 
+    $this->renderer = $this->getMock('\Drupal\Core\Render\RendererInterface');
+
     $this->stringTranslation = $this->getStringTranslationStub();
 
     $configuration = array();
     $plugin_id = $this->randomMachineName();
     $plugin_definition = array();
-    $this->element = new PaymentLineItemsInput($configuration, $plugin_id, $plugin_definition, $this->stringTranslation, $this->paymentLineItemManager);
+    $this->element = new PaymentLineItemsInput($configuration, $plugin_id, $plugin_definition, $this->stringTranslation, $this->renderer, $this->paymentLineItemManager);
   }
 
   /**
@@ -64,6 +73,7 @@ class PaymentLineItemsInputUnitTest extends UnitTestCase {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
       array('plugin.manager.payment.line_item', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentLineItemManager),
+      array('renderer', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->renderer),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
     $container->expects($this->any())
@@ -399,8 +409,7 @@ class PaymentLineItemsInputUnitTest extends UnitTestCase {
     $form_state = new FormState();
     $form_state->setTriggeringElement($form_build['foo']['add_more']['add']);
 
-    $element = $this->element;
-    $response = $element::ajaxAddMoreSubmit($form_build, $form_state);
+    $response = $this->element->ajaxAddMoreSubmit($form_build, $form_state);
     $this->assertInstanceOf('\Drupal\Core\Ajax\AjaxResponse', $response);
   }
 
@@ -582,10 +591,6 @@ namespace {
   }
   if (!defined('RESPONSIVE_PRIORITY_MEDIUM')) {
     define('RESPONSIVE_PRIORITY_MEDIUM', 'priority-medium');
-  }
-  if (!function_exists('drupal_render')) {
-    function drupal_render() {
-    }
   }
 
 }

@@ -20,6 +20,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\Element\FormElementInterface;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Utility\LinkGeneratorInterface;
@@ -83,6 +84,13 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
   protected $random;
 
   /**
+   * The renderer.
+   *
+   * @var \Drupal\Core\Render\RendererInterface
+   */
+  protected $renderer;
+
+  /**
    * The request stack.
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
@@ -103,16 +111,18 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    * @param \Drupal\Core\Datetime\DateFormatter $date_formatter
    * @param \Drupal\Core\Utility\LinkGeneratorInterface $link_generator
+   * @param \Drupal\Core\Render\RendererInterface $renderer
    * @param \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface $payment_method_selector_manager
    * @param \Drupal\Component\Utility\Random $random
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, RequestStack $request_stack, EntityStorageInterface $payment_storage, TranslationInterface $string_translation, DateFormatter $date_formatter, LinkGeneratorInterface $link_generator, PaymentMethodSelectorManagerInterface $payment_method_selector_manager, Random $random) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, RequestStack $request_stack, EntityStorageInterface $payment_storage, TranslationInterface $string_translation, DateFormatter $date_formatter, LinkGeneratorInterface $link_generator, RendererInterface $renderer, PaymentMethodSelectorManagerInterface $payment_method_selector_manager, Random $random) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->dateFormatter = $date_formatter;
     $this->linkGenerator = $link_generator;
     $this->paymentMethodSelectorManager = $payment_method_selector_manager;
     $this->paymentStorage = $payment_storage;
     $this->random = $random;
+    $this->renderer = $renderer;
     $this->requestStack = $request_stack;
     $this->stringTranslation = $string_translation;
   }
@@ -485,11 +495,11 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     $root_element = NestedArray::getValue($form, $root_element_parents);
 
     $response = new AjaxResponse();
-    $response->addCommand(new ReplaceCommand('#' . $root_element['container']['#id'], drupal_render($root_element['container'])));
+    $response->addCommand(new ReplaceCommand('#' . $root_element['container']['#id'], $this->renderer->render($root_element['container'])));
 
     if ($this->getPaymentMethodSelector($root_element, $form_state)->getPaymentMethod()->isPaymentExecutionInterruptive()) {
       $link = $this->buildCompletePaymentLink($root_element, $form_state);
-      $response->addCommand(new OpenModalDialogCommand($this->t('Complete payment'), drupal_render($link)));
+      $response->addCommand(new OpenModalDialogCommand($this->t('Complete payment'), $this->renderer->render($link)));
     }
 
     return $response;
@@ -511,7 +521,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     $root_element = NestedArray::getValue($form, $root_element_parents);
 
     $response = new AjaxResponse();
-    $response->addCommand(new ReplaceCommand('#' . $root_element['container']['#id'], drupal_render($root_element['container'])));
+    $response->addCommand(new ReplaceCommand('#' . $root_element['container']['#id'], $this->renderer->render($root_element['container'])));
 
     return $response;
   }

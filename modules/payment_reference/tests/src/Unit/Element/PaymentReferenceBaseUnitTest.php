@@ -69,6 +69,13 @@ class PaymentReferenceBaseUnitTest extends UnitTestCase {
   protected $pluginDefinition = array();
 
   /**
+   * The renderer.
+   *
+   * @var \Drupal\Core\Render\RendererInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $renderer;
+
+  /**
    * The request stack.
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack|\PHPUnit_Framework_MockObject_MockObject
@@ -114,6 +121,8 @@ class PaymentReferenceBaseUnitTest extends UnitTestCase {
 
     $this->paymentStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
 
+    $this->renderer = $this->getMock('\Drupal\Core\Render\RendererInterface');
+
     $this->requestStack = $this->getMockBuilder('\Symfony\Component\HttpFoundation\RequestStack')
       ->disableOriginalConstructor()
       ->getMock();
@@ -130,7 +139,7 @@ class PaymentReferenceBaseUnitTest extends UnitTestCase {
     $this->pluginDefinition['class'] = $this->randomMachineName();
 
     $this->element = $this->getMockBuilder('\Drupal\payment_reference\Element\PaymentReferenceBase')
-      ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->paymentMethodSelectorManager, new Random()))
+      ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->paymentMethodSelectorManager, new Random()))
       ->getMockForAbstractClass();
     $this->element->expects($this->any())
       ->method('getPaymentQueue')
@@ -329,7 +338,7 @@ class PaymentReferenceBaseUnitTest extends UnitTestCase {
     $this->pluginDefinition = array();
 
     $this->element = $this->getMockBuilder('\Drupal\payment_reference\Element\PaymentReferenceBase')
-      ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->paymentMethodSelectorManager, new Random()))
+      ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->paymentMethodSelectorManager, new Random()))
       ->setMethods(array('getEntityFormDisplay', 'getPaymentMethodSelector', 'getTemporaryPaymentStorageKey', 'setTemporaryPayment'))
       ->getMockForAbstractClass();
 
@@ -638,7 +647,7 @@ class PaymentReferenceBaseUnitTest extends UnitTestCase {
     $payment_method_selector = $this->getMock('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface');
 
     $this->element = $this->getMockBuilder('\Drupal\payment_reference\Element\PaymentReferenceBase')
-      ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->paymentMethodSelectorManager, new Random()))
+      ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->paymentMethodSelectorManager, new Random()))
       ->setMethods(array('getPaymentMethodSelector', 'getTemporaryPaymentStorageKey'))
       ->getMockForAbstractClass();
     $this->element->expects($this->atLeastOnce())
@@ -678,7 +687,7 @@ class PaymentReferenceBaseUnitTest extends UnitTestCase {
       ->willReturn($payment_method);
 
     $this->element = $this->getMockBuilder('\Drupal\payment_reference\Element\PaymentReferenceBase')
-      ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->paymentMethodSelectorManager, new Random()))
+      ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->paymentMethodSelectorManager, new Random()))
       ->setMethods(array('getPaymentMethodSelector', 'getTemporaryPaymentStorageKey'))
       ->getMockForAbstractClass();
     $this->element->expects($this->atLeastOnce())
@@ -849,7 +858,7 @@ class PaymentReferenceBaseUnitTest extends UnitTestCase {
       ->with($payment, $this->isType('array'), $form_state);
 
     $this->element = $this->getMockBuilder('\Drupal\payment_reference\Element\PaymentReferenceBase')
-      ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->paymentMethodSelectorManager, new Random()))
+      ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->paymentMethodSelectorManager, new Random()))
       ->setMethods(array('getEntityFormDisplay', 'getPaymentMethodSelector', 'hasTemporaryPayment'))
       ->getMockForAbstractClass();
     $this->element->expects($this->atLeastOnce())
@@ -943,7 +952,7 @@ class PaymentReferenceBaseUnitTest extends UnitTestCase {
     );
 
     $this->element = $this->getMockBuilder('\Drupal\payment_reference\Element\PaymentReferenceBase')
-      ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->paymentMethodSelectorManager, new Random()))
+      ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->paymentMethodSelectorManager, new Random()))
       ->setMethods(array('buildPaymentForm', 'buildPaymentView', 'buildRefreshButton'))
       ->getMockForAbstractClass();
     $this->element->expects($this->atLeastOnce())
@@ -1040,10 +1049,6 @@ namespace {
   }
   if (!function_exists('drupal_process_attached')) {
     function drupal_process_attached() {
-    }
-  }
-  if (!function_exists('drupal_render')) {
-    function drupal_render() {
     }
   }
   if (!function_exists('drupal_set_message')) {

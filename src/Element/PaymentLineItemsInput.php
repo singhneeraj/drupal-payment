@@ -17,6 +17,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\FormElement;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\currency\FormElementCallbackTrait;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
@@ -46,6 +47,13 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
   protected $paymentLineItemManager;
 
   /**
+   * The renderer.
+   *
+   * @var \Drupal\Core\Render\RendererInterface
+   */
+  protected $renderer;
+
+  /**
    * Creates a new instance.
    *
    * @param array $configuration
@@ -55,11 +63,13 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   * @param \Drupal\Core\Render\RendererInterface $renderer
    * @param \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface $payment_line_item_manager
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, TranslationInterface $string_translation, PaymentLineItemManagerInterface $payment_line_item_manager) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, TranslationInterface $string_translation, RendererInterface $renderer, PaymentLineItemManagerInterface $payment_line_item_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->paymentLineItemManager = $payment_line_item_manager;
+    $this->renderer = $renderer;
     $this->stringTranslation = $string_translation;
   }
 
@@ -67,7 +77,7 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'), $container->get('plugin.manager.payment.line_item'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'), $container->get('renderer'), $container->get('plugin.manager.payment.line_item'));
   }
 
   /**
@@ -201,7 +211,7 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
     );
     $element['add_more']['add'] = array(
       '#ajax' => array(
-        'callback' => array(get_class($this), 'ajaxAddMoreSubmit'),
+        'callback' => [[get_class($this), 'instantiate#ajaxAddMoreSubmit#' . $plugin_id]],
         'effect' => 'fade',
         'event' => 'mousedown',
         'wrapper' => $element['#id'],
@@ -266,12 +276,12 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
   /**
    * Implements form AJAX callback.
    */
-  public static function ajaxAddMoreSubmit(array &$form, FormStateInterface $form_state) {
+  public function ajaxAddMoreSubmit(array &$form, FormStateInterface $form_state) {
     $triggering_element = $form_state->getTriggeringElement();
     $parents = array_slice($triggering_element['#array_parents'], 0, -2);
     $root_element = NestedArray::getValue($form, $parents);
     $response = new AjaxResponse();
-    $response->addCommand(new ReplaceCommand('#' . $root_element['#id'], drupal_render($root_element)));
+    $response->addCommand(new ReplaceCommand('#' . $root_element['#id'], $this->renderer->render($root_element)));
 
     return $response;
   }
