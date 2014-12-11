@@ -6,6 +6,7 @@
 
 namespace Drupal\payment\Plugin\Payment\MethodConfiguration;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -223,21 +224,18 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
       $labels[$definition['id']] = (string) $definition['label'];
     }
     $workflow_group = implode('][', array_merge($element['#parents'], array('workflow')));
-    $workflow_id = drupal_html_id('workflow');
+    $workflow_id = Html::getUniqueId('workflow');
     $element['workflow'] = array(
-      '#attached' => array(
-        'js' => array(
-          drupal_get_path('module', 'payment') . '/js/payment.js',
-          array(
-            'data' => array(
-              'payment' => array(
-                'payment_method_configuration_basic' => $labels,
-              ),
-            ),
-            'type' => 'setting',
-          ),
-        ),
-      ),
+      '#attached' => [
+        'drupalSettings' => [
+          'payment' => [
+            'payment_method_configuration_basic' => $labels,
+          ],
+        ],
+        'library' => [
+          'payment/payment_method_configuration.basic.form',
+        ],
+      ],
       '#id' => $workflow_id,
       '#type' => 'vertical_tabs',
     );

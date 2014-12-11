@@ -236,11 +236,6 @@ abstract class AdvancedPaymentMethodSelectorBase extends PaymentMethodSelectorBa
    */
   protected function buildSelector(array $root_element, FormStateInterface $form_state, array $payment_methods) {
     $build['container'] = array(
-      '#attached' => array(
-        'css' => array(
-          drupal_get_path('module', 'payment') . '/css/payment.css',
-        ),
-      ),
       '#attributes' => array(
         'class' => array('payment-method-selector-' . Html::getId($this->getPluginId() . '-selector')),
       ),

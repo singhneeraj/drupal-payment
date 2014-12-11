@@ -52,6 +52,9 @@ class Radios extends AdvancedPaymentMethodSelectorBase {
         ),
         'wrapper' => $this->getElementId(),
       ),
+      '#attached' => [
+        'library' => ['payment/payment_method_selector.payment_radios'],
+      ],
       '#default_value' => is_null($this->getPaymentMethod()) ? NULL : $this->getPaymentMethod()->getPluginId(),
       '#empty_value' => 'select',
       '#options' => $payment_method_options ,

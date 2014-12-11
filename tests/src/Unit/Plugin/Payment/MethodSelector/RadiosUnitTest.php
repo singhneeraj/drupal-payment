@@ -128,6 +128,9 @@ class RadiosUnitTest extends UnitTestCase {
         ),
         'wrapper' => $get_element_id_method->invokeArgs($this->paymentMethodSelector, array($form_state)),
       ),
+      '#attached' => [
+        'library' => ['payment/payment_method_selector.payment_radios'],
+      ],
       '#default_value' => $payment_method_id,
       '#empty_value' => 'select',
       '#options' => array(

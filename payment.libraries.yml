@@ -1,0 +1,22 @@
+payment_method_selector.payment_radios:
+  version: VERSION
+  css:
+    component:
+      css/payment.css: {}
+
+payment_method.list:
+  version: VERSION
+  css:
+    component:
+      css/payment.css: {}
+
+payment_method_configuration.list:
+  version: VERSION
+  css:
+    component:
+      css/payment.css: {}
+
+payment_method_configuration.basic.form:
+  version: VERSION
+  js:
+    js/payment.js: {}

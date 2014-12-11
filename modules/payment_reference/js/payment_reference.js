@@ -1,4 +1,5 @@
 (function ($, Drupal, drupalSettings) {
+
   /**
    * Refreshes this window's opener's payment references.
    */

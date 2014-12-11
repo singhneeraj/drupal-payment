@@ -206,19 +206,16 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     // AJAX.
     $ajax_wrapper_id = Html::getClass('payment_reference-' . $element['#name']);
     $element['container'] = array(
-      '#attached' => array(
-        'js' => array(
-          drupal_get_path('module', 'payment_reference') . '/js/payment_reference.js',
-          array(
-            'type' => 'setting',
-            'data' => array(
-              'PaymentReferencePaymentAvailable' => array(
-                $ajax_wrapper_id => $element['#default_value'] || $element['#available_payment_id'],
-              ),
-            ),
-          ),
-        ),
-      ),
+      '#attached' => [
+        'drupalSettings' => [
+          'PaymentReferencePaymentAvailable' => [
+            $ajax_wrapper_id => $element['#default_value'] || $element['#available_payment_id'],
+          ],
+        ],
+        'library' => [
+          'payment_reference/field.parent',
+        ],
+      ],
       '#id' => $ajax_wrapper_id,
       '#type' => 'container',
     );
@@ -335,11 +332,11 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
         // payment_reference.js does.
         'wrapper' => $element['container']['#id'],
       ),
-      '#attached' => array(
-        'css' => array(
-          drupal_get_path('module', 'payment_reference') . '/css/payment_reference.css',
-        ),
-      ),
+      '#attached' => [
+        'library' => [
+          'payment_reference/field.parent',
+        ],
+      ],
       '#attributes' => array(
         // system.module.css's .hidden class's is overridden by button styling,
         // so this needs a custom class.

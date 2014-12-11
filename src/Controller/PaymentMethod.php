@@ -139,18 +139,18 @@ class PaymentMethod extends ControllerBase {
       $rows[$plugin_id] = $row;
     }
 
-    return array(
-      '#attached' => array(
-        'css' => array(
-          drupal_get_path('module', 'payment') . '/css/payment.css',
-        ),
-      ),
-      '#attributes' => array(
-        'class' => array('payment-method-list'),
-      ),
-      '#header' => array($this->t('Name'), $this->t('Status'), $this->t('Operations')),
+    return [
+      '#attached' => [
+        'library' => [
+          'payment/payment_method.list',
+        ],
+      ],
+      '#attributes' => [
+        'class' => ['payment-method-list'],
+      ],
+      '#header' => [$this->t('Name'), $this->t('Status'), $this->t('Operations')],
       '#type' => 'table',
-    ) + $rows;
+    ] + $rows;
   }
 
   /**

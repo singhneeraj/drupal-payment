@@ -56,11 +56,13 @@ class ResumeContext extends ControllerBase implements ContainerInjectionInterfac
     }
 
     return array(
+      '#attached' => [
+        'library' => [
+          'payment_reference/field.child',
+        ],
+      ],
       '#type' => 'markup',
       '#markup' => $message,
-      '#attached' => array(
-        'js' => array(drupal_get_path('module', 'payment_reference') . '/js/payment_reference.js'),
-      ),
     );
   }
 

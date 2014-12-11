@@ -5,7 +5,7 @@
  * Contains \Drupal\Tests\payment\Unit\Plugin\Payment\MethodConfiguration\BasicUnitTest.
  */
 
-namespace Drupal\Tests\payment\Unit\Plugin\Payment\MethodConfiguration {
+namespace Drupal\Tests\payment\Unit\Plugin\Payment\MethodConfiguration;
 
 use Drupal\payment\Plugin\Payment\MethodConfiguration\Basic;
 use Drupal\Tests\UnitTestCase;
@@ -256,17 +256,3 @@ class BasicUnitTest extends UnitTestCase {
     $this->assertSame($label, $this->paymentMethodConfiguration->getBrandLabel());
   }
 }
-
-}
-
-namespace {
-
-  if (!function_exists('drupal_get_path')) {
-    function drupal_get_path() {}
-  }
-  if (!function_exists('drupal_html_id')) {
-    function drupal_html_id() {}
-  }
-
-}
-

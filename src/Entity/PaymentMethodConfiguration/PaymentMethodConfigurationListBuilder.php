@@ -133,7 +133,7 @@ class PaymentMethodConfigurationListBuilder extends ConfigEntityListBuilder {
    */
   public function render() {
     $build = parent::render();
-    $build['#attached']['css'][] = drupal_get_path('module', 'payment') . '/css/payment.css';
+    $build['#attached']['library'][] = 'payment/payment_method_configuration.list';
     $build['#attributes']['class'][] = 'payment-method-configuration-list';
     $build['#empty'] = $this->t('There is no payment method configuration yet.');
 
