@@ -270,7 +270,7 @@ abstract class AdvancedPaymentMethodSelectorBase extends PaymentMethodSelectorBa
    */
   protected function getElementId() {
     if (!$this->elementId) {
-      $this->elementId = drupal_html_id($this->getPluginId());
+      $this->elementId = Html::getUniqueId($this->getPluginId());
     }
 
     return $this->elementId;

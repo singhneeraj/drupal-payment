@@ -148,9 +148,6 @@ class PaymentReferenceConfigurationFormUnitTest extends UnitTestCase {
 
 namespace {
 
-  if (!function_exists('drupal_html_id')) {
-    function drupal_html_id() {}
-  }
   if (!function_exists('drupal_set_message')) {
     function drupal_set_message() {
     }

@@ -1043,10 +1043,6 @@ class PaymentReferenceBaseUnitTest extends UnitTestCase {
 
 namespace {
 
-  if (!function_exists('drupal_get_path')) {
-    function drupal_get_path() {
-    }
-  }
   if (!function_exists('drupal_process_attached')) {
     function drupal_process_attached() {
     }

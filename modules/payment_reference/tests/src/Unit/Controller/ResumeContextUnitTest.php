@@ -5,7 +5,7 @@
  * Contains \Drupal\Tests\payment_reference\Unit\Controller\ResumeContextUnitTest.
  */
 
-namespace Drupal\Tests\payment_reference\Unit\Controller {
+namespace Drupal\Tests\payment_reference\Unit\Controller;
 
 use Drupal\payment_reference\Controller\ResumeContext;
 use Drupal\Tests\UnitTestCase;
@@ -136,16 +136,5 @@ class ResumeContextUnitTest extends UnitTestCase {
       array(FALSE, FALSE),
     );
   }
-
-}
-
-}
-
-namespace {
-
-if (!function_exists('drupal_get_path')) {
-  function drupal_get_path() {
-  }
-}
 
 }

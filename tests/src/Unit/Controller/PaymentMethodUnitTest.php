@@ -5,9 +5,10 @@
  * Contains \Drupal\Tests\payment\Unit\Controller\PaymentMethodUnitTest.
  */
 
-namespace Drupal\Tests\payment\Unit\Controller {
-  use Drupal\Core\Access\AccessResult;
-  use Drupal\payment\Controller\PaymentMethod;
+namespace Drupal\Tests\payment\Unit\Controller;
+
+use Drupal\Core\Access\AccessResult;
+use Drupal\payment\Controller\PaymentMethod;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -415,15 +416,3 @@ class PaymentMethodUnitTest extends UnitTestCase {
   }
 
 }
-
-}
-
-namespace {
-
-  if (!function_exists('drupal_get_path')) {
-    function drupal_get_path() {
-    }
-  }
-
-}
-

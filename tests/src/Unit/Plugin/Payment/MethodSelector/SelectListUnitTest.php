@@ -6,7 +6,7 @@
  * \Drupal\Tests\payment\Unit\Plugin\Payment\MethodSelector\SelectListUnitTest.
  */
 
-namespace Drupal\Tests\payment\Unit\Plugin\Payment\MethodSelector {
+namespace Drupal\Tests\payment\Unit\Plugin\Payment\MethodSelector;
 
 use Drupal\payment\Plugin\Payment\MethodSelector\SelectList;
 use Drupal\Tests\UnitTestCase;
@@ -137,19 +137,6 @@ class SelectListUnitTest extends UnitTestCase {
     $this->assertEquals($expected_build_payment_method_id, $build['container']['payment_method_id']);
     $this->assertEquals($expected_build_change, $build['container']['change']);
     $this->assertSame('container', $build['container']['#type']);
-  }
-
-}
-
-}
-
-namespace {
-
-  if (!function_exists('drupal_get_path')) {
-    function drupal_get_path() {}
-  }
-  if (!function_exists('drupal_html_id')) {
-    function drupal_html_id() {}
   }
 
 }

@@ -7,6 +7,7 @@
 
 namespace Drupal\payment_form\Plugin\Payment\Type;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -80,7 +81,7 @@ class PaymentFormConfigurationForm extends ConfigFormBase {
       '#title' => $this->t('Payment method selector'),
       '#type' => 'radios',
     );
-    $limit_allowed_payment_methods_id = drupal_html_id('limit_allowed_payment_methods');
+    $limit_allowed_payment_methods_id = Html::getUniqueId('limit_allowed_payment_methods');
     $form['limit_allowed_payment_methods'] = array(
       '#default_value' => $config->get('limit_allowed_payment_methods'),
       '#id' => $limit_allowed_payment_methods_id,

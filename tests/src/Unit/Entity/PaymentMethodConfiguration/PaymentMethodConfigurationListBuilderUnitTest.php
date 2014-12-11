@@ -293,9 +293,5 @@ namespace {
   if (!defined('RESPONSIVE_PRIORITY_MEDIUM')) {
     define('RESPONSIVE_PRIORITY_MEDIUM', 'priority-medium');
   }
-  if (!function_exists('drupal_get_path')) {
-    function drupal_get_path() {
-    }
-  }
 
 }

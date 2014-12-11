@@ -260,7 +260,7 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
       '#type' => 'details',
       '#title' => $this->t('Capture'),
     );
-    $capture_id = drupal_html_id('capture');
+    $capture_id = Html::getUniqueId('capture');
     $element['capture']['capture'] = array(
       '#id' => $capture_id,
       '#type' => 'checkbox',
@@ -282,7 +282,7 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
       '#title' => $this->t('Payment capture status'),
       '#type' => 'select',
     );
-    $refund_id = drupal_html_id('refund');
+    $refund_id = Html::getUniqueId('refund');
     $element['refund'] = array(
       '#group' => $workflow_group,
       '#open' => TRUE,

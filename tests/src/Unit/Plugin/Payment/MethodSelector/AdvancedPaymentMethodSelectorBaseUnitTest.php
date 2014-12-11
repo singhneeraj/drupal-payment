@@ -6,10 +6,10 @@
  * \Drupal\Tests\payment\Unit\Plugin\Payment\MethodSelector\AdvancedPaymentMethodSelectorBaseUnitTest.
  */
 
-namespace Drupal\Tests\payment\Unit\Plugin\Payment\MethodSelector {
+namespace Drupal\Tests\payment\Unit\Plugin\Payment\MethodSelector;
 
-  use Drupal\Component\Utility\Html;
-  use Drupal\Tests\UnitTestCase;
+use Drupal\Component\Utility\Html;
+use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -636,19 +636,6 @@ class AdvancedPaymentMethodSelectorBaseUnitTest extends UnitTestCase {
     $this->assertArrayHasKey('payment_method_id', $build['container']);
     $this->assertEquals($expected_build_change, $build['container']['change']);
     $this->assertSame('container', $build['container']['#type']);
-  }
-
-}
-
-}
-
-namespace {
-
-  if (!function_exists('drupal_get_path')) {
-    function drupal_get_path() {}
-  }
-  if (!function_exists('drupal_html_id')) {
-    function drupal_html_id() {}
   }
 
 }
