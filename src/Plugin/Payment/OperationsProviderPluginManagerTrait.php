@@ -6,13 +6,6 @@
 
 namespace Drupal\payment\Plugin\Payment;
 
-use Drupal\Component\Plugin\Exception\PluginException;
-use Drupal\Core\Cache\CacheBackendInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\Plugin\DefaultPluginManager;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 /**
  * Manages discovery and instantiation of payment status plugins.
  *

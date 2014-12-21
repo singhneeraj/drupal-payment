@@ -7,7 +7,6 @@
 
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\MethodSelector;
 
-use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManager;
 use Drupal\Tests\UnitTestCase;
 use Zend\Stdlib\ArrayObject;

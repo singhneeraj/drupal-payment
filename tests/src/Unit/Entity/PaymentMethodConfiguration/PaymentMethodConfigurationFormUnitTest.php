@@ -9,7 +9,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
 
   use Drupal\Core\Form\FormState;
   use Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm;
-use Drupal\Tests\UnitTestCase;
+  use Drupal\Tests\UnitTestCase;
   use Symfony\Component\DependencyInjection\ContainerBuilder;
   use Symfony\Component\DependencyInjection\ContainerInterface;
 

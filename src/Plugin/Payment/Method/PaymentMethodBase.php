@@ -8,8 +8,8 @@ namespace Drupal\payment\Plugin\Payment\Method;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\payment\Entity\PaymentInterface;

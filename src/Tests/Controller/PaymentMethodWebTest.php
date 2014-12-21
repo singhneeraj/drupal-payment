@@ -9,7 +9,7 @@ namespace Drupal\payment\Tests\Controller;
 
 use Drupal\payment\Entity\PaymentMethodConfigurationInterface;
 use Drupal\payment\Payment;
-use Drupal\simpletest\WebTestBase ;
+use Drupal\simpletest\WebTestBase;
 
 /**
  * Payment method UI.

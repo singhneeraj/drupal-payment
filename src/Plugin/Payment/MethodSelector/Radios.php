@@ -6,7 +6,6 @@
 
 namespace Drupal\payment\Plugin\Payment\MethodSelector;
 
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 
 /**

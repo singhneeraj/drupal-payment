@@ -6,9 +6,6 @@
 
 namespace Drupal\payment\Plugin\Payment\Method;
 
-use Drupal\Component\Plugin\ConfigurablePluginInterface;
-use Drupal\Component\Plugin\PluginInspectionInterface;
-use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
 

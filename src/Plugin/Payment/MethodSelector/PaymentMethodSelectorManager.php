@@ -6,7 +6,6 @@
 
 namespace Drupal\payment\Plugin\Payment\MethodSelector;
 
-use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Component\Plugin\FallbackPluginManagerInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;

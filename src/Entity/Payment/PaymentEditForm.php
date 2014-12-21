@@ -12,7 +12,6 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\Core\Url;
 use Drupal\currency\Entity\Currency;
 use Drupal\currency\FormHelperInterface;
 use Drupal\payment\Element\PaymentLineItemsInput;

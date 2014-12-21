@@ -7,10 +7,10 @@
 
 namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
 
-use Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationDeleteForm;
-use Drupal\Tests\UnitTestCase;
+  use Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationDeleteForm;
+  use Drupal\Tests\UnitTestCase;
 
-/**
+  /**
  * @coversDefaultClass \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationDeleteForm
  *
  * @group Payment

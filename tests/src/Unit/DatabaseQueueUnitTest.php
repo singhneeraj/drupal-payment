@@ -7,8 +7,8 @@
 
 namespace Drupal\Tests\payment\Unit;
 
-use Drupal\payment\Event\PaymentEvents;
 use Drupal\payment\DatabaseQueue;
+use Drupal\payment\Event\PaymentEvents;
 use Drupal\Tests\UnitTestCase;
 
 /**

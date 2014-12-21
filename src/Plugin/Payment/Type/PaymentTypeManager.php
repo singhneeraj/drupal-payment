@@ -6,12 +6,10 @@
 
 namespace Drupal\payment\Plugin\Payment\Type;
 
-use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Component\Plugin\FallbackPluginManagerInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait;
 

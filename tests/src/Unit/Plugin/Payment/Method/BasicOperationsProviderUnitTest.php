@@ -8,7 +8,6 @@
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\Method;
 
 use Drupal\payment\Plugin\Payment\Method\BasicOperationsProvider;
-use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait;
 use Drupal\Tests\UnitTestCase;
 
 /**

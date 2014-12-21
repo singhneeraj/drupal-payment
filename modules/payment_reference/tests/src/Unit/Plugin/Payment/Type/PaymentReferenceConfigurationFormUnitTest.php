@@ -8,9 +8,9 @@
 
 namespace Drupal\Tests\payment_reference\Unit\Plugin\Payment\Type {
 
-use Drupal\payment_reference\Plugin\Payment\Type\PaymentReferenceConfigurationForm;
-use Drupal\Tests\UnitTestCase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+  use Drupal\payment_reference\Plugin\Payment\Type\PaymentReferenceConfigurationForm;
+  use Drupal\Tests\UnitTestCase;
+  use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment_reference\Plugin\Payment\Type\PaymentReferenceConfigurationForm

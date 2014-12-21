@@ -10,8 +10,6 @@ namespace Drupal\payment_reference\Tests\Element;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\payment\Entity\Payment;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Tests\Generate;
-use Drupal\payment_reference\PaymentReference;
 use Drupal\simpletest\WebTestBase;
 
 /**

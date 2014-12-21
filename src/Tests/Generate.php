@@ -7,9 +7,9 @@
 
 namespace Drupal\payment\Tests;
 
+use Drupal\Component\Utility\Random;
 use Drupal\payment\Payment;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
-use Drupal\Component\Utility\Random;
 
 /**
  * Provides utility tools to support tests.

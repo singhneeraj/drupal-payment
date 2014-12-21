@@ -8,7 +8,6 @@ namespace Drupal\payment\Plugin\Payment\LineItem;
 
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**

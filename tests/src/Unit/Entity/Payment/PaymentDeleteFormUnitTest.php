@@ -7,9 +7,9 @@
 
 namespace Drupal\Tests\payment\Unit\Entity\Payment {
 
-use Drupal\payment\Entity\Payment\PaymentDeleteForm;
-use Drupal\Tests\UnitTestCase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+  use Drupal\payment\Entity\Payment\PaymentDeleteForm;
+  use Drupal\Tests\UnitTestCase;
+  use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Entity\Payment\PaymentDeleteForm

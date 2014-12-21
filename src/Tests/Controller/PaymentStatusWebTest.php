@@ -8,7 +8,7 @@
 namespace Drupal\payment\Tests\Controller;
 
 use Drupal\payment\Payment;
-use Drupal\simpletest\WebTestBase ;
+use Drupal\simpletest\WebTestBase;
 
 /**
  * Payment status UI.

@@ -7,7 +7,6 @@
 
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\Method;
 
-use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;

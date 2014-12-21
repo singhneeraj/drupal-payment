@@ -6,14 +6,6 @@
 
 namespace Drupal\payment_test\Plugin\Payment\Method;
 
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Utility\Token;
-use Drupal\payment\Plugin\Payment\Method\PaymentMethodBase;
-use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 /**
  * A testing payment method.
  *

@@ -13,9 +13,9 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\payment\Entity\PaymentMethodConfiguration;
-use Drupal\payment\Tests\Generate;
 use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface;
+use Drupal\payment\Tests\Generate;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

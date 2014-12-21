@@ -6,10 +6,8 @@
 
 namespace Drupal\payment\Plugin\Payment\Type;
 
-use Drupal\Core\Plugin\PluginBase;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Plugin\PluginBase;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Event\PaymentEvents;
 use Drupal\payment\Event\PaymentTypePreResumeContext;

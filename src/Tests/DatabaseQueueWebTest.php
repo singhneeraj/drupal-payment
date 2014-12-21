@@ -7,8 +7,6 @@
 
 namespace Drupal\payment\Tests;
 
-
-use Drupal\payment\Tests\Generate;
 use Drupal\payment\DatabaseQueue;
 use Drupal\simpletest\WebTestBase;
 

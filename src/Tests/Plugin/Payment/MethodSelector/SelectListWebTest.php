@@ -7,9 +7,9 @@
 
 namespace Drupal\payment\Tests\Plugin\Payment\MethodSelector;
 
-use Drupal\payment\Tests\Generate;
 use Drupal\payment\Payment;
-use Drupal\simpletest\WebTestBase ;
+use Drupal\payment\Tests\Generate;
+use Drupal\simpletest\WebTestBase;
 
 /**
  * \Drupal\payment\Plugin\Payment\MethodSelector\SelectList web test.

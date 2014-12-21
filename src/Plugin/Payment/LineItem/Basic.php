@@ -8,7 +8,6 @@ namespace Drupal\payment\Plugin\Payment\LineItem;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Database\Connection;
-use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;

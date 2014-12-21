@@ -7,7 +7,7 @@
 
 namespace Drupal\payment\Tests\Controller;
 
-use Drupal\simpletest\WebTestBase ;
+use Drupal\simpletest\WebTestBase;
 
 /**
  * Payment type UI.

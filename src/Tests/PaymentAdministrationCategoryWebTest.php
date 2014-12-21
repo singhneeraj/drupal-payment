@@ -7,7 +7,7 @@
 
 namespace Drupal\payment\Tests;
 
-use Drupal\simpletest\WebTestBase ;
+use Drupal\simpletest\WebTestBase;
 
 /**
  * Tests the Payment category in the administration UI.

@@ -8,7 +8,6 @@
 namespace Drupal\payment_form\Tests\Plugin\Field\FieldWidget;
 
 use Drupal\field\Field;
-use Drupal\payment\Payment;
 use Drupal\simpletest\WebTestBase;
 
 /**

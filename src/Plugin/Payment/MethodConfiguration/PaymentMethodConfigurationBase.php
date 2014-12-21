@@ -6,10 +6,10 @@
 
 namespace Drupal\payment\Plugin\Payment\MethodConfiguration;
 
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginBase;
-use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

@@ -9,11 +9,10 @@
 namespace Drupal\Tests\payment_form\Unit\Plugin\Field\FieldFormatter {
 
   use Drupal\Core\DependencyInjection\Container;
-  use Drupal\Core\DependencyInjection\ContainerBuilder;
   use Drupal\payment_form\Plugin\Field\FieldFormatter\PaymentForm;
-use Drupal\Tests\UnitTestCase;
+  use Drupal\Tests\UnitTestCase;
 
-/**
+  /**
  * @coversDefaultClass \Drupal\payment_form\Plugin\Field\FieldFormatter\PaymentForm
  *
  * @group Payment Form Field

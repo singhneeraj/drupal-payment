@@ -7,10 +7,9 @@
 
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\Type;
 
-use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeManager;
 use Drupal\Tests\UnitTestCase;
-use Zend\Stdlib\ArrayObject;;
+use Zend\Stdlib\ArrayObject;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Type\PaymentTypeManager

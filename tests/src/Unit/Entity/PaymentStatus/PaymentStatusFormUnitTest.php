@@ -9,8 +9,8 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
 
   use Drupal\Core\Form\FormState;
   use Drupal\payment\Entity\PaymentStatus\PaymentStatusForm;
-use Drupal\Tests\UnitTestCase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+  use Drupal\Tests\UnitTestCase;
+  use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Entity\PaymentStatus\PaymentStatusForm

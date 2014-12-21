@@ -12,7 +12,6 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Handles the "pay" route.

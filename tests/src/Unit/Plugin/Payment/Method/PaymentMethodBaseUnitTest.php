@@ -11,9 +11,8 @@ namespace Drupal\Tests\payment\Unit\Plugin\Payment\Method;
   use Drupal\Core\Access\AccessResultForbidden;
   use Drupal\Core\Access\AccessResultNeutral;
   use Drupal\payment\Event\PaymentEvents;
-use Drupal\payment\Event\PaymentExecuteAccess;
+  use Drupal\payment\Event\PaymentExecuteAccess;
   use Drupal\payment\Plugin\Payment\Method\SupportedCurrency;
-  use Drupal\payment\Plugin\Payment\Method\SupportedCurrencyInterface;
   use Symfony\Component\DependencyInjection\ContainerInterface;
 
   /**

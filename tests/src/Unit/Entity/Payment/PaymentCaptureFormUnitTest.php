@@ -12,10 +12,10 @@ use Drupal\payment\Entity\Payment\PaymentCaptureForm;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-  /**
+/**
  * @coversDefaultClass \Drupal\payment\Entity\Payment\PaymentCaptureForm
-   *
-   * @group Payment
+ *
+ * @group Payment
  */
 class PaymentCaptureFormUnitTest extends UnitTestCase {
 

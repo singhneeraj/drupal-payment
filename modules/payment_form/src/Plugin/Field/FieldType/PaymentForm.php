@@ -9,7 +9,6 @@ namespace Drupal\payment_form\Plugin\Field\FieldType;
 use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\currency\Entity\Currency;
 

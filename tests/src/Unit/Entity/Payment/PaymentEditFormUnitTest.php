@@ -10,8 +10,8 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
   use Drupal\Core\Form\FormState;
   use Drupal\Core\Url;
   use Drupal\payment\Entity\Payment\PaymentEditForm;
-use Drupal\Tests\UnitTestCase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+  use Drupal\Tests\UnitTestCase;
+  use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \Drupal\payment\Entity\Payment\PaymentEditForm

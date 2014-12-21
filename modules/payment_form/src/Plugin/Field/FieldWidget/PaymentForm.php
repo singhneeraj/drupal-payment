@@ -14,7 +14,6 @@ use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\payment\Element\PaymentLineItemsInput;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

@@ -12,7 +12,6 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\Core\Url;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

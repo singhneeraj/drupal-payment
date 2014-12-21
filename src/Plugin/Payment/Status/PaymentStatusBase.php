@@ -6,8 +6,8 @@
 
 namespace Drupal\payment\Plugin\Payment\Status;
 
-use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Plugin\PluginBase;
 use Drupal\payment\Entity\PaymentInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

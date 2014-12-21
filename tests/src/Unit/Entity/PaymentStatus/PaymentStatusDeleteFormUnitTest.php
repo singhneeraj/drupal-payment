@@ -7,8 +7,8 @@
 
 namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
 
-use Drupal\payment\Entity\PaymentStatus\PaymentStatusDeleteForm;
-use Drupal\Tests\UnitTestCase;
+  use Drupal\payment\Entity\PaymentStatus\PaymentStatusDeleteForm;
+  use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Entity\PaymentStatus\PaymentStatusDeleteForm

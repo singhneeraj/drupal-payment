@@ -7,7 +7,6 @@
 
 namespace Drupal\payment_reference_test;
 
-use Drupal\Component\Utility\Random;
 use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\payment\Tests\Generate;
