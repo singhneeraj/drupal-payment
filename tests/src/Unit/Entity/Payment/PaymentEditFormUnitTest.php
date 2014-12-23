@@ -159,6 +159,7 @@ class PaymentEditFormUnitTest extends UnitTestCase {
       ->will($this->returnValue($currency_options));
 
     $build = $this->form->form(array(), $form_state);
+    unset($build['#entity_builders']);
     unset($build['#process']);
     unset($build['langcode']);
     $expected_build = array(
