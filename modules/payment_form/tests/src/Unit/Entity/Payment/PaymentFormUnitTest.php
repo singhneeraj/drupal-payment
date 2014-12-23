@@ -168,8 +168,6 @@ class PaymentFormUnitTest extends UnitTestCase {
     $form = array(
       'langcode' => array(),
     );
-    // @todo Mock FormStateInterface once ContentEntityForm no longer uses
-    //   ArrayAccess.
     $form_state = new FormState();
     $this->form->setFormDisplay($this->formDisplay, $form_state);
     $build = $this->form->form($form, $form_state);

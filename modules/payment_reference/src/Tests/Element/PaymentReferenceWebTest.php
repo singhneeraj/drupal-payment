@@ -101,7 +101,7 @@ class PaymentReferenceWebTest extends WebTestBase {
 
     // Test with an interruptive payment method.
     $text_field_value = $this->randomMachineName();
-    // @todo Once Behat is supported, test the behavior of opening a new window
+    // @todo Once Mink is supported, test the behavior of opening a new window
     //   and going back to the original form.
     $this->drupalPostForm($path, array(
       'payment_reference[container][payment_form][payment_method][container][select][container][payment_method_id]' => 'payment_test_interruptive',

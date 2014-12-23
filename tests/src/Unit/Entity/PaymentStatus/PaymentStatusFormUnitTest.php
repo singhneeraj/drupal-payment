@@ -206,7 +206,6 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
       ->with($parent_id);
 
     $form = array();
-    // @todo Mock FormStateInterface once EntityForm no longer uses ArrayAccess.
     $form_state = new FormState();
     $form_state->setValue('description', $description);
     $form_state->setValue('id', $id);

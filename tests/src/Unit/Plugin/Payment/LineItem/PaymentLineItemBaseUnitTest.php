@@ -154,7 +154,6 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
    */
   public function testDefaultConfiguration() {
     $default_configuration = array(
-      'currency_code' => '',
       'name' => NULL,
       'quantity' => 1,
     );

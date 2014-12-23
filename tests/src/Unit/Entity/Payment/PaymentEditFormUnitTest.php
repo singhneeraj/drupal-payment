@@ -109,8 +109,6 @@ class PaymentEditFormUnitTest extends UnitTestCase {
    * @covers ::form
    */
   public function testForm() {
-    // @todo Mock FormStateInterface once ContentEntityForm no longer uses
-    //   ArrayAccess.
     $form_state = new FormState();
 
     $this->form->setFormDisplay($this->formDisplay, $form_state);
@@ -200,10 +198,7 @@ class PaymentEditFormUnitTest extends UnitTestCase {
       ->with('canonical')
       ->willReturn($url);
 
-    // @todo Mock FormStateInterface.
-    $form_state = $this->getMockBuilder('\Drupal\Core\Form\FormState')
-      ->setMethods(array('setRedirectUrl'))
-      ->getMock();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form_state->expects($this->once())
       ->method('setRedirectUrl')
       ->with($url);

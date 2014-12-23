@@ -423,8 +423,6 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
   /**
    * @covers ::executePaymentAccessEvent
    *
-   * @todo: Fix this test after API here was updated.
-   *
    * @dataProvider providerTestExecutePaymentAccessEvent
    */
   public function  testExecutePaymentAccessEvent($expected, $event_result) {

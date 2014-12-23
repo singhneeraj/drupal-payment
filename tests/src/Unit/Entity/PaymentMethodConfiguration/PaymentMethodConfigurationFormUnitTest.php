@@ -326,10 +326,7 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
       ->will($this->returnValue($plugin_configuration));
 
     $form = array();
-    // @todo Mock FormStateInterface once EntityForm no longer uses ArrayAccess.
-    $form_state = $this->getMockBuilder('\Drupal\Core\Form\FormState')
-      ->setMethods(array('get', 'getValues'))
-      ->getMock();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $map = array(
       array('payment_method_configuration', $plugin),
       array('values', array(
@@ -398,10 +395,7 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
         '#type' => $this->randomMachineName(),
       ),
     );
-    // @todo Mock FormStateInterface once EntityForm no longer uses ArrayAccess.
-    $form_state = $this->getMockBuilder('\Drupal\Core\Form\FormState')
-      ->setMethods(array('get', 'getValues'))
-      ->getMock();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $map = array(
       array('payment_method_configuration', $payment_method_configuration_plugin),
     );
@@ -448,10 +442,7 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
         '#type' => $this->randomMachineName(),
       ),
     );
-    // @todo Mock FormStateInterface once EntityForm no longer uses ArrayAccess.
-    $form_state = $this->getMockBuilder('\Drupal\Core\Form\FormState')
-      ->setMethods(array('get', 'getValues'))
-      ->getMock();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $map = array(
       array('payment_method_configuration', $payment_method_configuration_plugin),
     );
@@ -511,10 +502,7 @@ class PaymentMethodConfigurationFormUnitTest extends UnitTestCase {
         '#type' => $this->randomMachineName(),
       ),
     );
-    // @todo Mock FormStateInterface once EntityForm no longer uses ArrayAccess.
-    $form_state = $this->getMockBuilder('\Drupal\Core\Form\FormState')
-      ->setMethods(array('get'))
-      ->getMock();
+    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $map = array(
       array('payment_method_configuration', $payment_method_configuration_plugin),
     );
