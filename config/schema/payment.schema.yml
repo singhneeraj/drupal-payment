@@ -12,34 +12,8 @@ payment.payment_method_configuration.*:
       type: integer
       label: Owner ID
     pluginConfiguration:
-      type: mapping
-      label: Configuration
-      mapping:
-        # This is for payment method entities that use a plugin that extends
-        # \Drupal\payment\Plugin\Payment\MethodConfiguration\Basic
-        execute_status_id:
-          label: Execute payment status
-          type: string
-        capture:
-          label: Capture
-          type: boolean
-        capture_status_id:
-          label: Capture payment status
-          type: string
-        refund:
-          label: Refund
-          type: boolean
-        refund_status_id:
-          label: Refund payment status
-          type: string
-        # This is for payment method entities that use a plugin that extends
-        # \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationBase
-        message_text:
-          label: Message text
-          type: text
-        message_text_format:
-          label: Message text format
-          type: string
+      type: payment.plugin_configuration.payment_method_configuration.[%parent.pluginId]
+      label: Plugin configuration
     pluginId:
       type: string
       label: Plugin ID
@@ -54,6 +28,9 @@ payment.payment_status.*:
   type: mapping
   label: Payment status
   mapping:
+    description:
+      label: Description
+      type: text
     id:
       type: string
       label: ID
@@ -67,10 +44,80 @@ payment.payment_status.*:
       type: string
       label: UUID
 
-field.field_settings.payment_form:
+payment.plugin_configuration.payment_method_configuration.payment_base:
   type: mapping
-  label: 'Payment form field settings'
   mapping:
-    currency_code:
+    message_text:
+      label: Message text
+      type: text
+    message_text_format:
+      label: Message text format
       type: string
-      label: 'The currency code'
+
+payment.plugin_configuration.payment_method_configuration.payment_basic:
+  type: payment.plugin_configuration.payment_method_configuration.payment_base
+  mapping:
+    brand_label:
+      label: Brand label
+      type: text
+    execute_status_id:
+      label: Execute payment status
+      type: string
+    capture:
+      label: Capture
+      type: boolean
+    capture_status_id:
+      label: Capture payment status
+      type: string
+    refund:
+      label: Refund
+      type: boolean
+    refund_status_id:
+      label: Refund payment status
+      type: string
+
+payment.plugin_configuration.line_item.payment_base:
+  type: mapping
+  mapping:
+    name:
+      label: Name
+      type: string
+    quantity:
+      label: Quantity
+      type: float
+
+payment.plugin_configuration.line_item.payment_basic:
+  type: payment.plugin_configuration.line_item.payment_base
+  mapping:
+    amount:
+      label: Amount
+      type: float
+    currency_code:
+      label: Currency code
+      type: string
+    description:
+      label: Description
+      type: text
+
+payment.plugin_configuration.payment_status.payment_base:
+  type: mapping
+  mapping:
+    created:
+      label: ID
+      type: integer
+    name:
+      label: Created
+      type: integer
+
+payment.plugin_configuration.payment_method_selector.payment_base:
+  type: mapping
+  mapping:
+    allowed_payment_method_ids:
+      label: Allowed payment method plugin IDs
+      sequence:
+        - label: Payment method plugin ID
+          type: string
+      type: sequence
+    name:
+      label: Required
+      type: boolean

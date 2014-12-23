@@ -14,7 +14,10 @@ use Drupal\payment\Entity\PaymentInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * A base line item.
+ * Provides a base line item.
+ *
+ * Plugins extending this class should provide a configuration schema that
+ * extends payment.plugin_configuration.line_item.payment_base.
  */
 abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItemInterface, ContainerFactoryPluginInterface {
 
@@ -69,7 +72,6 @@ abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItem
    */
   public function defaultConfiguration() {
     return array(
-      'currency_code' => '',
       'name' => NULL,
       'quantity' => 1,
     );

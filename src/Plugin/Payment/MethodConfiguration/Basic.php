@@ -18,6 +18,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides the configuration for the payment_basic payment method plugin.
  *
+ * Plugins extending this class should provide a configuration schema that
+ * extends
+ * payment.plugin_configuration.payment_method_configuration.payment_basic.
+ *
  * @PaymentMethodConfiguration(
  *   description = @Translation("A payment method type that always successfully executes payments, but never actually transfers money."),
  *   id = "payment_basic",

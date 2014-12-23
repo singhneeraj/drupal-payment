@@ -16,7 +16,10 @@ use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * A base payment method selector plugin.
+ * Provides a base payment method selector.
+ *
+ * Plugins extending this class should provide a configuration schema that
+ * extends payment.plugin_configuration.payment_method_selector.payment_base.
  */
 abstract class PaymentMethodSelectorBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentMethodSelectorInterface {
 

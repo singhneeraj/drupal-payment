@@ -35,11 +35,11 @@ class PaymentFormWebTest extends WebTestBase {
 
     // Test the widget when setting a default field value.
     $field_name = strtolower($this->randomMachineName());
-    $this->drupalPostForm('admin/config/people/accounts/fields', array(
-      'fields[_add_new_field][label]' => $this->randomString(),
-      'fields[_add_new_field][field_name]' => $field_name,
-      'fields[_add_new_field][type]' => 'payment_form',
-    ), t('Save'));
+    $this->drupalPostForm('admin/config/people/accounts/fields/add-field', array(
+      'label' => $this->randomString(),
+      'field_name' => $field_name,
+      'new_storage_type' => 'payment_form',
+    ), t('Save and continue'));
     $this->drupalPostForm(NULL, array(), t('Save field settings'));
     $this->drupalPostForm(NULL, array(), t('Add and configure a new line item'));
     $this->drupalPostForm(NULL, array(

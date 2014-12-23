@@ -6,6 +6,7 @@
 
 namespace Drupal\payment_form\Plugin\Field\FieldType;
 
+use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -23,6 +24,8 @@ use Drupal\currency\Entity\Currency;
  * )
  */
 class PaymentForm extends FieldItemBase {
+
+  use DependencySerializationTrait;
 
   /**
    * Definitions of the contained properties.

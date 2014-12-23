@@ -12,7 +12,10 @@ use Drupal\payment\Entity\PaymentInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * A base payment status.
+ * Provides a base payment status.
+ *
+ * Plugins extending this class should provide a configuration schema that
+ * extends payment.plugin_configuration.payment_status.payment_base.
  */
 abstract class PaymentStatusBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentStatusInterface {
 

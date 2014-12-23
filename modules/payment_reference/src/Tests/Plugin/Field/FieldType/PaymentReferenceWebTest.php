@@ -92,11 +92,11 @@ class PaymentReferenceWebTest extends WebTestBase {
     $amount = '12.34';
     $user = $this->drupalCreateUser(array('administer user fields'));
     $this->drupalLogin($user);
-    $this->drupalPostForm('admin/config/people/accounts/fields', array(
-      'fields[_add_new_field][label]' => $field_label,
-      'fields[_add_new_field][field_name]' => $field_id,
-      'fields[_add_new_field][type]' => 'payment_reference',
-    ), t('Save'));
+    $this->drupalPostForm('admin/config/people/accounts/fields/add-field', array(
+      'label' => $field_label,
+      'field_name' => $field_id,
+      'new_storage_type' => 'payment_reference',
+    ), t('Save and continue'));
     $this->drupalPostForm(NULL, array(), t('Save field settings'));
     $this->drupalPostForm(NULL, array(
       'field[settings][line_items][add_more][type]' => 'payment_basic',

@@ -16,6 +16,13 @@ One payment method instance belongs to one payment entity and vice versa. See
 \Drupal\payment\Entity\PaymentInterface::getPaymentMethod(), and
 \Drupal\payment\Entity\PaymentInterface::setPaymentMethod().
 
+If a plugin provides configuration, it must also provide a configuration schema
+for this configuration of which the type is
+payment.plugin_configuration.payment_method.[plugin_id], where [plugin_id] is
+the plugin's ID.
+
+See the drupal.org handbook for more information about configuration schemas.
+
 PAYMENT METHOD CONFIGURATION
 =============================
 Payment method configuration plugins allow you to configure payment method
@@ -34,7 +41,15 @@ One payment method configuration instance belongs to one payment method
 configuration entity and vice versa. See
 \Drupal\payment\Entity\PaymentMethodConfigurationInterface::getPluginId(),
 \Drupal\payment\Entity\PaymentMethodConfigurationInterface::getPluginConfiguration(),
-and \Drupal\payment\Entity\PaymentMethodConfigurationInterface::setPluginConfiguration().
+and
+\Drupal\payment\Entity\PaymentMethodConfigurationInterface::setPluginConfiguration().
+
+If a plugin provides configuration, it must also provide a configuration schema
+for this configuration of which the type is
+payment.plugin_configuration.payment_method_configuration.[plugin_id], where
+[plugin_id] is the plugin's ID.
+
+See the drupal.org handbook for more information about configuration schemas.
 
 See https://www.drupal.org/node/1653226 for more information about derivative
 plugins.
@@ -58,6 +73,13 @@ See
 and
 \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface::setPaymentMethod().
 
+If a plugin provides configuration, it must also provide a configuration schema
+for this configuration of which the type is
+payment.plugin_configuration.payment_method_selector.[plugin_id], where
+[plugin_id] is the plugin's ID.
+
+See the drupal.org handbook for more information about configuration schemas.
+
 PAYMENT TYPE
 ============
 Payment types provide information about the type a payment entity is of and the
@@ -72,6 +94,13 @@ One payment type instance belongs to one payment entity and vice versa. See
 \Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface::setPayment(),
 \Drupal\payment\Entity\PaymentInterface::getPaymentType(), and
 \Drupal\payment\Entity\PaymentInterface::setPaymentType().
+
+If a plugin provides configuration, it must also provide a configuration schema
+for this configuration of which the type is
+payment.plugin_configuration.payment_method_type.[plugin_id], where [plugin_id]
+is the plugin's ID.
+
+See the drupal.org handbook for more information about configuration schemas.
 
 PAYMENT STATUS
 ==============
@@ -101,6 +130,13 @@ payment entity belongs to any payment status instance. See
 \Drupal\payment\Entity\PaymentInterface::getPaymentStatuses(), and
 \Drupal\payment\Entity\PaymentInterface::setPaymentStatuses().
 
+If a plugin provides configuration, it must also provide a configuration schema
+for this configuration of which the type is
+payment.plugin_configuration.payment_method_status.[plugin_id], where
+[plugin_id] is the plugin's ID.
+
+See the drupal.org handbook for more information about configuration schemas.
+
 LINE ITEM
 =========
 Line items describe the amounts that make up a payment's total amount, just like
@@ -119,3 +155,10 @@ entity belongs to any payment status instance. See
 \Drupal\payment\Entity\PaymentInterface::getLineItems(),
 \Drupal\payment\Entity\PaymentInterface::getLineItemsByType(), and
 \Drupal\payment\Entity\PaymentInterface::setLineItems().
+
+If a plugin provides configuration, it must also provide a configuration schema
+for this configuration of which the type is
+payment.plugin_configuration.payment_method_line_item.[plugin_id], where
+[plugin_id] is the plugin's ID.
+
+See the drupal.org handbook for more information about configuration schemas.
