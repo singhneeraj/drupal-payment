@@ -271,8 +271,5 @@ namespace {
 if (!function_exists('drupal_set_message')) {
   function drupal_set_message() {}
 }
-if (!function_exists('form_execute_handlers')) {
-  function form_execute_handlers() {}
-}
 
 }

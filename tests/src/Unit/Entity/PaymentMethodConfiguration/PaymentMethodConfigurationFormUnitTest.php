@@ -526,8 +526,5 @@ namespace {
 if (!function_exists('drupal_set_message')) {
   function drupal_set_message() {}
 }
-if (!function_exists('form_state_values_clean')) {
-  function form_state_values_clean() {}
-}
 
 }
