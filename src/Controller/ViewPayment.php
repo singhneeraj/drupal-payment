@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Controller\Payment.
+ * Contains \Drupal\payment\Controller\ViewPayment.
  */
 
 namespace Drupal\payment\Controller;
@@ -13,9 +13,9 @@ use Drupal\payment\Entity\PaymentInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Returns responses for payment routes.
+ * Handles the "view payment" route.
  */
-class Payment extends ControllerBase {
+class ViewPayment extends ControllerBase {
 
   /**
    * Constructs a new class instance.
@@ -41,23 +41,10 @@ class Payment extends ControllerBase {
    *
    * @return string
    */
-  public function viewTitle(PaymentInterface $payment) {
-    return $this->t('Payment #!payment_id', array(
+  public function title(PaymentInterface $payment) {
+    return $this->t('Payment #!payment_id', [
       '!payment_id' => $payment->id(),
-    ));
-  }
-
-  /**
-   * Returns the title for the payment edit page.
-   *
-   * @param \Drupal\payment\Entity\PaymentInterface $payment
-   *
-   * @return string
-   */
-  public function editTitle(PaymentInterface $payment) {
-    return $this->t('Edit payment #!payment_id', array(
-      '!payment_id' => $payment->id(),
-    ));
+    ]);
   }
 
 }
