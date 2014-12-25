@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Tests\Controller;
 
+use Drupal\payment\Entity\Payment\PaymentListBuilder;
 use Drupal\payment\Payment;
 use Drupal\payment\Tests\Generate;
 use Drupal\simpletest\WebTestBase;
@@ -28,9 +29,13 @@ class PaymentWebTest extends WebTestBase {
    */
   protected function testPaymentUi() {
     $payment_method = Payment::methodManager()->createInstance('payment_test');
-    $payment = Generate::createPayment(2, $payment_method);
-    $payment->save();
-    $payment = entity_load_unchanged('payment', $payment->id());
+    // Create just enough payments for three pages
+    $count_payments = PaymentListBuilder::PAYMENTS_PER_PAGE * 2 + 1;
+    foreach (range(0, $count_payments) as $i) {
+      $payment = Generate::createPayment(2, $payment_method);
+      $payment->save();
+      $payment = entity_load_unchanged('payment', $payment->id());
+    }
 
     // View the administrative listing.
     $this->drupalLogin($this->drupalCreateUser(array('access administration pages')));
@@ -48,6 +53,21 @@ class PaymentWebTest extends WebTestBase {
       $this->assertText(t('Payment method'));
       $this->assertText(t('EUR 24.20'));
       $this->assertText($payment_method->getPluginLabel());
+      $count_pages = ceil($count_payments / PaymentListBuilder::PAYMENTS_PER_PAGE);
+      if ($count_pages) {
+        foreach (range(1, $count_pages - 1) as $page) {
+          $this->assertLinkByHref('admin/content/payment?page=' . $page);
+        }
+        $this->assertNoLinkByHref('admin/content/payment?page=' . ($page + 1));
+      }
+      $this->assertLinkByHref('payment/1');
+      $this->assertNoLinkByHref('payment/99');
+      $this->drupalGet('admin/content/payment', [
+        'query' => [
+          'page' => 1,
+        ],
+      ]);
+      $this->assertLinkByHref('payment/99');
     }
     $this->drupalLogout();
 

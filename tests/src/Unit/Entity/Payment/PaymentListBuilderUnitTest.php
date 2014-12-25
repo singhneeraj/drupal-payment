@@ -295,22 +295,33 @@ class PaymentListBuilderUnitTest extends UnitTestCase {
   }
 
   /**
+   * @covers ::load
    * @covers ::render
    *
    * @depends testBuildHeader
    */
   public function testRender() {
+    $query = $this->getMock('\Drupal\Core\Entity\Query\QueryInterface');
+
+    $this->entityStorage->expects($this->atLeastOnce())
+      ->method('getQuery')
+      ->willReturn($query);
     $this->entityStorage->expects($this->once())
       ->method('loadMultiple')
       ->will($this->returnValue(array()));
 
     $build = $this->listBuilder->render();
-    unset($build['#header']);
+    unset($build['list']['#header']);
     $expected_build = array(
-      '#type' => 'table',
-      '#title' => NULL,
-      '#rows' => array(),
-      '#empty' => 'There are no payments yet.',
+      'list' => [
+        '#type' => 'table',
+        '#title' => NULL,
+        '#rows' => array(),
+        '#empty' => 'There are no payments yet.',
+      ],
+      'pager' => [
+        '#theme' => 'pager',
+      ],
     );
     $this->assertSame($expected_build, $build);
   }
@@ -430,6 +441,12 @@ namespace {
   }
   if (!defined('RESPONSIVE_PRIORITY_MEDIUM')) {
     define('RESPONSIVE_PRIORITY_MEDIUM', 'priority-medium');
+  }
+  if (!function_exists('pager_default_initialize')) {
+    function pager_default_initialize() {}
+  }
+  if (!function_exists('pager_find_page')) {
+    function pager_find_page() {}
   }
 
 }

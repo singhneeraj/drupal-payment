@@ -23,6 +23,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class PaymentListBuilder extends EntityListBuilder {
 
   /**
+   * The number of Payments per page.
+   */
+  const PAYMENTS_PER_PAGE = 50;
+
+  /**
    * The currency storage.
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
@@ -83,9 +88,30 @@ class PaymentListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
+  public function load() {
+    // @todo Add (table)sorting.
+    $page = pager_find_page();
+    $start = static::PAYMENTS_PER_PAGE * ($page);
+    $query = $this->storage->getQuery();
+    $query->range($start, static::PAYMENTS_PER_PAGE);
+    $payment_ids = $query->execute();
+    $query = $this->storage->getQuery();
+    $query->count();
+    $count = $query->execute();
+    pager_default_initialize($count, static::PAYMENTS_PER_PAGE);
+
+    return $this->storage->loadMultiple($payment_ids);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function render() {
-    $build = parent::render();
-    $build['#empty'] = $this->t('There are no payments yet.');
+    $build['list'] = parent::render();
+    $build['list']['#empty'] = $this->t('There are no payments yet.');
+    $build['pager'] = [
+      '#theme' => 'pager',
+    ];
 
     return $build;
   }
