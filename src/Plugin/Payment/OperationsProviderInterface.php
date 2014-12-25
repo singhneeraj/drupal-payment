@@ -7,16 +7,19 @@
 
 namespace Drupal\payment\Plugin\Payment;
 
+/**
+ * Defines a plugin operations provider.
+ */
 interface OperationsProviderInterface {
 
   /**
-   * Gets payment status operations
+   * Gets plugin operations.
    *
    * @param string $plugin_id
-   *   The ID of the payment status plugin the operations are for.
+   *   The ID of the plugin the operations are for.
    *
    * @return array[]
-   *   An array of the same structure as
+   *   An array with the same structure as
    *   \Drupal\Core\Entity\EntityListBuilderInterface::getOperations()' return
    *   value.
    */
