@@ -20,3 +20,11 @@ payment_method_configuration.basic.form:
   version: VERSION
   js:
     js/payment.js: {}
+
+payment_reference:
+  version: VERSION
+  css:
+    component:
+      css/payment.css: {}
+  js:
+    js/payment.js: {}

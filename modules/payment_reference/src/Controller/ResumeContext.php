@@ -57,7 +57,7 @@ class ResumeContext extends ControllerBase implements ContainerInjectionInterfac
     return array(
       '#attached' => [
         'library' => [
-          'payment_reference/field.child',
+          'payment_reference/resume_context',
         ],
       ],
       '#type' => 'markup',

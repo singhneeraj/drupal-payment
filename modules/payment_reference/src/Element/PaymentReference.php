@@ -14,6 +14,7 @@ use Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Utility\LinkGeneratorInterface;
+use Drupal\payment\Element\PaymentReferenceBase;
 use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface;
 use Drupal\payment\QueueInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;

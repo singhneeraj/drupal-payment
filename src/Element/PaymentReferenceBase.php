@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\payment_reference\Element\PaymentReferenceBase.
+ * Contains \Drupal\payment\Element\PaymentReferenceBase.
  */
 
-namespace Drupal\payment_reference\Element;
+namespace Drupal\payment\Element;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
@@ -213,7 +213,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
           ],
         ],
         'library' => [
-          'payment_reference/field.parent',
+          'payment/payment_reference',
         ],
       ],
       '#id' => $ajax_wrapper_id,
@@ -265,7 +265,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
         'callback' => function(array $form, FormStateInterface $form_state) use ($plugin_id) {
             /** @var \Drupal\Component\Plugin\PluginManagerInterface $element_info_manager */
             $element_info_manager = \Drupal::service('plugin.manager.element_info');
-            /** @var \Drupal\payment_reference\Element\PaymentReferenceBase $element_plugin */
+            /** @var \Drupal\payment\Element\PaymentReferenceBase $element_plugin */
             $element_plugin = $element_info_manager->createInstance($plugin_id);
 
             return $element_plugin->ajaxPay($form, $form_state);
@@ -275,7 +275,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
       '#submit' => array(function(array $form, FormStateInterface $form_state) use ($plugin_id) {
         /** @var \Drupal\Component\Plugin\PluginManagerInterface $element_info_manager */
         $element_info_manager = \Drupal::service('plugin.manager.element_info');
-        /** @var \Drupal\payment_reference\Element\PaymentReferenceBase $element_plugin */
+        /** @var \Drupal\payment\Element\PaymentReferenceBase $element_plugin */
         $element_plugin = $element_info_manager->createInstance($plugin_id);
         $element_plugin->pay($form, $form_state);
       }),
@@ -322,7 +322,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
         'callback' => function(array $form, FormStateInterface $form_state) use ($plugin_id) {
           /** @var \Drupal\Component\Plugin\PluginManagerInterface $element_info_manager */
           $element_info_manager = \Drupal::service('plugin.manager.element_info');
-          /** @var \Drupal\payment_reference\Element\PaymentReferenceBase $element_plugin */
+          /** @var \Drupal\payment\Element\PaymentReferenceBase $element_plugin */
           $element_plugin = $element_info_manager->createInstance($plugin_id);
 
           return $element_plugin->ajaxRefresh($form, $form_state);
@@ -334,7 +334,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
       ),
       '#attached' => [
         'library' => [
-          'payment_reference/field.parent',
+          'payment/payment_reference',
         ],
       ],
       '#attributes' => array(
@@ -421,7 +421,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
       );
       $build['link'] = array(
         '#attributes' => array(
-          'class' => array('button', 'payment_reference-complete-payment-link'),
+          'class' => array('button', 'payment-reference-complete-payment-link'),
           'target' => '_blank',
         ),
         '#url' => new Url('payment_reference.pay', array(
@@ -648,7 +648,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     else {
       /** @var \Drupal\Component\Plugin\PluginManagerInterface $element_info_manager */
       $element_info_manager = \Drupal::service('plugin.manager.element_info');
-      /** @var \Drupal\payment_reference\Element\PaymentReferenceBase $element_plugin */
+      /** @var \Drupal\payment\Element\PaymentReferenceBase $element_plugin */
       $element_plugin = $element_info_manager->createInstance($element['#type']);
       $payment_ids = $element_plugin->getPaymentQueue()->loadPaymentIds($element['#queue_category_id'], $element['#queue_owner_id']);
 

@@ -1,12 +1,4 @@
-field.parent:
-  version: VERSION
-  css:
-    component:
-      css/payment_reference.css: {}
-  js:
-    js/payment_reference.js: {}
-
-field.child:
+resume_context:
   version: VERSION
   js:
     js/payment_reference.js: {}
