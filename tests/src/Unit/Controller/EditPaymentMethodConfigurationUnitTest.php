@@ -11,7 +11,7 @@ use Drupal\payment\Controller\EditPaymentMethodConfiguration;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-  /**
+/**
  * @coversDefaultClass \Drupal\payment\Controller\EditPaymentMethodConfiguration
  *
  * @group Payment

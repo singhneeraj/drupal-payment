@@ -12,7 +12,7 @@ use Drupal\payment\Controller\SelectPaymentMethodConfiguration;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-  /**
+/**
  * @coversDefaultClass \Drupal\payment\Controller\SelectPaymentMethodConfiguration
  *
  * @group Payment

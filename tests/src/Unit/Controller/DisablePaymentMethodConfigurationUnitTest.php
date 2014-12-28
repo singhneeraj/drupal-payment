@@ -11,7 +11,7 @@ use Drupal\payment\Controller\DisablePaymentMethodConfiguration;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-  /**
+/**
  * @coversDefaultClass \Drupal\payment\Controller\DisablePaymentMethodConfiguration
  *
  * @group Payment
