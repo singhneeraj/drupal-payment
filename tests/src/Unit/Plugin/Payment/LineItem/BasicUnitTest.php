@@ -59,9 +59,9 @@ class BasicUnitTest extends UnitTestCase {
 
     $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
-    $configuration = array();
+    $configuration = [];
     $plugin_id = $this->randomMachineName();
-    $plugin_definition = array();
+    $plugin_definition = [];
     $this->lineItem = new Basic($configuration, $plugin_id, $plugin_definition, $this->math, $this->stringTranslation, $this->database);
   }
 
@@ -79,8 +79,8 @@ class BasicUnitTest extends UnitTestCase {
       ->method('get')
       ->will($this->returnValueMap($map));
 
-    $configuration = array();
-    $plugin_definition = array();
+    $configuration = [];
+    $plugin_definition = [];
     $plugin_id = $this->randomMachineName();
     $form = Basic::create($container, $configuration, $plugin_id, $plugin_definition);
     $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\LineItem\Basic', $form);
@@ -134,7 +134,7 @@ class BasicUnitTest extends UnitTestCase {
    * @covers ::buildConfigurationForm
    */
   public function testBuildConfigurationForm() {
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form_elements = $this->lineItem->buildConfigurationForm($form, $form_state);
     $this->assertInternalType('array', $form_elements);

@@ -40,7 +40,7 @@ class PaymentLineItemPaymentBasicFormElements implements ContainerInjectionInter
       $line_item = Payment::lineItemManager()->createInstance('payment_basic');
       $form_state->set('payment_line_item', $line_item);
     }
-    $form['line_item'] = $line_item->buildConfigurationForm(array(), $form_state);
+    $form['line_item'] = $line_item->buildConfigurationForm([], $form_state);
     $form['submit'] = array(
       '#type' => 'submit',
       '#value' => t('Submit'),

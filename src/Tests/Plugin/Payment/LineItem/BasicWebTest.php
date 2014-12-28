@@ -57,7 +57,7 @@ class BasicWebTest extends WebTestBase {
     $data = $line_item_data;
     $data['line_item[description]'] = 'FooBar';
     $this->drupalPostForm('payment_test-plugin-payment-line_item-payment_basic', $data, t('Submit'));
-    $this->assertUrl('user/login', array(), 'Valid values trigger form submission.');
+    $this->assertUrl('user/login', [], 'Valid values trigger form submission.');
 
     // Test a non-integer quantity.
     $values =  array(

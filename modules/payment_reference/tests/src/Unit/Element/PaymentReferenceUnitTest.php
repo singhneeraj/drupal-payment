@@ -126,9 +126,9 @@ class PaymentReferenceUnitTest extends UnitTestCase {
 
     $this->urlGenerator = $this->getMock('\Drupal\Core\Routing\UrlGeneratorInterface');
 
-    $configuration = array();
+    $configuration = [];
     $plugin_id = $this->randomMachineName();
-    $plugin_definition = array();
+    $plugin_definition = [];
 
     $this->element = new PaymentReference($configuration, $plugin_id, $plugin_definition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->paymentMethodSelectorManager, new Random(), $this->temporaryPaymentStorage, $this->paymentQueue);
   }
@@ -165,9 +165,9 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       ->method('get')
       ->will($this->returnValueMap($map));
 
-    $configuration = array();
+    $configuration = [];
     $plugin_id = $this->randomMachineName();
-    $plugin_definition = array();
+    $plugin_definition = [];
 
     $form = PaymentReference::create($container, $configuration, $plugin_id, $plugin_definition);
     $this->assertInstanceOf('\Drupal\payment_reference\Element\PaymentReference', $form);

@@ -172,7 +172,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
         ->method('language')
         ->will($this->returnValue($language));
 
-      $form = array();
+      $form = [];
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
       $form = $this->form->form($form, $form_state);
       $this->assertInternalType('array', $form);
@@ -210,7 +210,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
         ->method('language')
         ->will($this->returnValue($language));
 
-      $form = array();
+      $form = [];
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
       $form = $this->form->form($form, $form_state);
       $this->assertInternalType('array', $form);
@@ -249,7 +249,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
         ->method('language')
         ->will($this->returnValue($language));
 
-      $form = array();
+      $form = [];
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
       $form = $this->form->form($form, $form_state);
       $this->assertInternalType('array', $form);
@@ -297,7 +297,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
         ->with('canonical')
         ->willReturn($url);
 
-      $form = array();
+      $form = [];
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
       $form_state->expects($this->atLeastOnce())
         ->method('getValues')
@@ -316,7 +316,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
      * @covers ::actions
      */
     public function testActions() {
-      $form = array();
+      $form = [];
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
       $method = new \ReflectionMethod($this->form, 'actions');

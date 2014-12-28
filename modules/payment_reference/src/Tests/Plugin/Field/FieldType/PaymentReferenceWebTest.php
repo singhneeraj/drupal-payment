@@ -55,7 +55,7 @@ class PaymentReferenceWebTest extends WebTestBase {
       'field_name' => $field_name,
       'settings' => array(
         'currency_code' => 'EUR',
-        'line_items_data' => array(),
+        'line_items_data' => [],
       ),
     ))->save();
 
@@ -77,7 +77,7 @@ class PaymentReferenceWebTest extends WebTestBase {
     $user->save();
     $user = entity_load_unchanged('user', $user->id());
     $this->assertEqual($user->{$field_name}[0]->target_id, $payment->id());
-    $this->assertEqual(PaymentReference::queue()->loadPaymentIds('user.' . $field_name, $payment->getOwnerId()), array());
+    $this->assertEqual(PaymentReference::queue()->loadPaymentIds('user.' . $field_name, $payment->getOwnerId()), []);
   }
 
   /**
@@ -97,7 +97,7 @@ class PaymentReferenceWebTest extends WebTestBase {
       'field_name' => $field_id,
       'new_storage_type' => 'payment_reference',
     ), t('Save and continue'));
-    $this->drupalPostForm(NULL, array(), t('Save field settings'));
+    $this->drupalPostForm(NULL, [], t('Save field settings'));
     $this->drupalPostForm(NULL, array(
       'field[settings][line_items][add_more][type]' => 'payment_basic',
     ), t('Add and configure a new line item'));

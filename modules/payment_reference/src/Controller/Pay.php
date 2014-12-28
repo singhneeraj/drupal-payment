@@ -57,7 +57,7 @@ class Pay extends ControllerBase implements ContainerInjectionInterface {
     $storage->delete($storage_key);
     $payment->execute();
     $payment->getPaymentType()->resumeContext();
-    return array();
+    return [];
   }
 
   /**

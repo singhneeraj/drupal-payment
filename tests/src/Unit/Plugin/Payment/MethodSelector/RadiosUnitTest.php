@@ -67,19 +67,19 @@ class RadiosUnitTest extends UnitTestCase {
       ->will($this->returnArgument(0));
 
     $this->paymentMethodSelectorPluginId = $this->randomMachineName();
-    $this->paymentMethodSelector = new Radios(array(), $this->paymentMethodSelectorPluginId, array(), $this->currentUser, $this->paymentMethodManager, $this->stringTranslation);
+    $this->paymentMethodSelector = new Radios([], $this->paymentMethodSelectorPluginId, [], $this->currentUser, $this->paymentMethodManager, $this->stringTranslation);
   }
 
   /**
    * @covers ::buildConfigurationForm
    */
   public function testBuildConfigurationFormWithoutAvailablePaymentMethods() {
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
     $this->paymentMethodManager->expects($this->any())
       ->method('getDefinitions')
-      ->will($this->returnValue(array()));
+      ->will($this->returnValue([]));
 
     $build = $this->paymentMethodSelector->buildConfigurationForm($form, $form_state);
 

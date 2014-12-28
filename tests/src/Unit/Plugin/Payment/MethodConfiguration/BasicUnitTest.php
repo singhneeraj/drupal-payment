@@ -58,7 +58,7 @@ class BasicUnitTest extends UnitTestCase {
 
     $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
-    $this->paymentMethodConfiguration = new Basic(array(), '', array(), $this->stringTranslation, $this->moduleHandler, $this->paymentStatusManager);
+    $this->paymentMethodConfiguration = new Basic([], '', [], $this->stringTranslation, $this->moduleHandler, $this->paymentStatusManager);
   }
 
   /**
@@ -75,8 +75,8 @@ class BasicUnitTest extends UnitTestCase {
       ->method('get')
       ->will($this->returnValueMap($map));
 
-    $configuration = array();
-    $plugin_definition = array();
+    $configuration = [];
+    $plugin_definition = [];
     $plugin_id = $this->randomMachineName();
     $form = Basic::create($container, $configuration, $plugin_id, $plugin_definition);
     $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\MethodConfiguration\Basic', $form);
@@ -150,7 +150,7 @@ class BasicUnitTest extends UnitTestCase {
    * @covers ::buildConfigurationForm
    */
   public function testBuildConfigurationForm() {
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $elements = $this->paymentMethodConfiguration->buildConfigurationForm($form, $form_state);
     $form['plugin_form']['#process'][] = array($this->paymentMethodConfiguration, 'processBuildConfigurationForm');
@@ -180,7 +180,7 @@ class BasicUnitTest extends UnitTestCase {
     $element = array(
       '#parents' => array('foo', 'bar'),
     );
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
     $method = new \ReflectionMethod($this->paymentMethodConfiguration ,'processBuildConfigurationForm');

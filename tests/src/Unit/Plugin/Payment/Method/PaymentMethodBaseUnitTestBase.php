@@ -34,7 +34,7 @@ abstract class PaymentMethodBaseUnitTestBase extends UnitTestCase {
    *
    * @var array
    */
-  protected $pluginDefinition = array();
+  protected $pluginDefinition = [];
 
   /**
    * The ID of the payment method plugin under test.

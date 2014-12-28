@@ -128,7 +128,7 @@ class PaymentMethodWebTest extends WebTestBase {
     $this->drupalLogin($this->drupalCreateUser(array('payment.payment_method_configuration.view.any', 'payment.payment_method_configuration.delete.any')));
     $this->drupalGet('admin/config/services/payment/method/configuration');
     $this->clickLink(t('Delete'));
-    $this->drupalPostForm(NULL, array(), t('Delete'));
+    $this->drupalPostForm(NULL, [], t('Delete'));
     $this->assertFalse((bool) entity_load('payment_method_configuration', $id));
   }
 

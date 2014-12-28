@@ -113,7 +113,7 @@ class PaymentFormWebTest extends WebTestBase {
     $user = $this->drupalCreateUser(array('access user profiles'));
     $this->drupalLogin($user);
     $path = 'user/' . $this->user->id();
-    $this->drupalPostForm($path, array(), t('Pay'));
+    $this->drupalPostForm($path, [], t('Pay'));
     // The front page is the currently logged-in user.
     $this->assertUrl($path);
     $this->assertResponse('200');

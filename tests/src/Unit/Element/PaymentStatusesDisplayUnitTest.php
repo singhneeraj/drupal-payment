@@ -51,9 +51,9 @@ class PaymentStatusesDisplayUnitTest extends UnitTestCase {
 
     $this->stringTranslation = $this->getStringTranslationStub();
 
-    $configuration = array();
+    $configuration = [];
     $plugin_id = $this->randomMachineName();
-    $plugin_definition = array();
+    $plugin_definition = [];
     $this->element = new PaymentStatusesDisplay($configuration, $plugin_id, $plugin_definition, $this->stringTranslation, $this->dateFormatter);
   }
 
@@ -70,9 +70,9 @@ class PaymentStatusesDisplayUnitTest extends UnitTestCase {
       ->method('get')
       ->will($this->returnValueMap($map));
 
-    $configuration = array();
+    $configuration = [];
     $plugin_id = $this->randomMachineName();
-    $plugin_definition = array();
+    $plugin_definition = [];
     $element = PaymentStatusesDisplay::create($container, $configuration, $plugin_id, $plugin_definition);
     $this->assertInstanceOf('\Drupal\payment\Element\PaymentStatusesDisplay', $element);
   }
@@ -123,7 +123,7 @@ class PaymentStatusesDisplayUnitTest extends UnitTestCase {
    * @expectedException \InvalidArgumentException
    */
   public function testPreRenderWithoutPayment() {
-    $element = array();
+    $element = [];
 
     $this->element->preRender($element);
   }

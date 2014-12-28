@@ -112,7 +112,7 @@ class PaymentWebTest extends WebTestBase {
       $this->clickLink(t('Cancel'));
       $this->assertUrl('payment/' . $payment->id());
       $this->drupalGet($path);
-      $this->drupalPostForm(NULL, array(), t('Delete'));
+      $this->drupalPostForm(NULL, [], t('Delete'));
       $this->assertResponse('200');
       $this->assertFalse((bool) \Drupal::entityManager()->getStorage('payment')->loadUnchanged($payment->id()));
     }

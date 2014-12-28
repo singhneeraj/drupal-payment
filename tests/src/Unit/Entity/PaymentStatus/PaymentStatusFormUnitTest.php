@@ -144,7 +144,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
         ->method('options')
         ->will($this->returnValue($options));
 
-      $build = $this->form->form(array(), $form_state);
+      $build = $this->form->form([], $form_state);
       unset($build['#process']);
       unset($build['langcode']);
       $expected_build = array(
@@ -205,7 +205,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
         ->method('setParentId')
         ->with($parent_id);
 
-      $form = array();
+      $form = [];
       $form_state = new FormState();
       $form_state->setValue('description', $description);
       $form_state->setValue('id', $id);
@@ -259,7 +259,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
       $this->paymentStatus->expects($this->once())
         ->method('save');
 
-      $form->save(array(), $form_state);
+      $form->save([], $form_state);
     }
 
   }

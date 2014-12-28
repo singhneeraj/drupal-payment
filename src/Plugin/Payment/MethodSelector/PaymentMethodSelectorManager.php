@@ -38,7 +38,7 @@ class PaymentMethodSelectorManager extends DefaultPluginManager implements Payme
   /**
    * {@inheritdoc}
    */
-  public function getFallbackPluginId($plugin_id, array $configuration = array()) {
+  public function getFallbackPluginId($plugin_id, array $configuration = []) {
     return 'payment_select_list';
   }
 
@@ -46,7 +46,7 @@ class PaymentMethodSelectorManager extends DefaultPluginManager implements Payme
    * {@inheritdoc}
    */
   function options() {
-    $options = array();
+    $options = [];
     foreach ($this->getDefinitions() as $plugin_id => $definition) {
       $options[$plugin_id] = $definition['label'];
     }

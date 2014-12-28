@@ -163,7 +163,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
     public function testBuildOperations() {
       $this->moduleHandler->expects($this->any())
         ->method('invokeAll')
-        ->will($this->returnValue(array()));
+        ->will($this->returnValue([]));
 
       $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
         ->disableOriginalConstructor()
@@ -171,7 +171,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
 
       $expected_build = array(
         '#type' => 'operations',
-        '#links' => array(),
+        '#links' => [],
         '#attached' => array(
           'library' => array('core/drupal.ajax'),
         )
@@ -257,7 +257,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
 
       $this->moduleHandler->expects($this->any())
         ->method('invokeAll')
-        ->will($this->returnValue(array()));
+        ->will($this->returnValue([]));
 
       $build = $this->listBuilder->buildRow($payment);
       unset($build['data']['operations']['data']['#attached']);
@@ -276,7 +276,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
           'operations' => array(
             'data' => array(
               '#type' => 'operations',
-              '#links' => array(),
+              '#links' => [],
             ),
           ),
         ),
@@ -308,7 +308,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
         ->willReturn($query);
       $this->entityStorage->expects($this->once())
         ->method('loadMultiple')
-        ->will($this->returnValue(array()));
+        ->will($this->returnValue([]));
 
       $build = $this->listBuilder->render();
       unset($build['list']['#header']);
@@ -316,7 +316,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
         'list' => [
           '#type' => 'table',
           '#title' => NULL,
-          '#rows' => array(),
+          '#rows' => [],
           '#empty' => 'There are no payments yet.',
         ],
         'pager' => [

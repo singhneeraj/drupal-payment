@@ -24,7 +24,7 @@ interface PaymentLineItemManagerInterface extends PluginManagerInterface {
    *
    * @return \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface
    */
-  public function createInstance($plugin_id, array $configuration = array());
+  public function createInstance($plugin_id, array $configuration = []);
 
   /**
    * Returns payment line item options.

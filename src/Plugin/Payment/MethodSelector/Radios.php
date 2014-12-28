@@ -36,7 +36,7 @@ class Radios extends AdvancedPaymentMethodSelectorBase {
   protected function buildSelector(array $root_element, FormStateInterface $form_state, array $payment_methods) {
     $element = parent::buildSelector($root_element, $form_state, $payment_methods);
     /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface[] $payment_methods */
-    $payment_method_options = array();
+    $payment_method_options = [];
     foreach ($payment_methods as $payment_method) {
       $payment_method_options[$payment_method->getPluginId()] = $payment_method->getPluginLabel();
     }

@@ -42,7 +42,7 @@ class EntityExtraFieldInfo {
    * Invokes the implementation.
    */
   public function invoke() {
-    $fields = array();
+    $fields = [];
     foreach (array_keys($this->paymentTypeManager->getDefinitions()) as $plugin_id) {
       $fields['payment'][$plugin_id] = array(
         'display' => array(

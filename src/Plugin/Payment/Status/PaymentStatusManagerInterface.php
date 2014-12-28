@@ -24,7 +24,7 @@ interface PaymentStatusManagerInterface extends PluginManagerInterface {
    *
    * @return \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface
    */
-  public function createInstance($plugin_id, array $configuration = array());
+  public function createInstance($plugin_id, array $configuration = []);
 
   /**
    * Returns payment status options.

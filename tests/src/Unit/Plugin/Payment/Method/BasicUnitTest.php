@@ -59,7 +59,7 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
 
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
-    $this->paymentMethod = new Basic(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager);
+    $this->paymentMethod = new Basic([], '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager);
   }
 
   /**
@@ -77,7 +77,7 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
       ->method('get')
       ->will($this->returnValueMap($map));
 
-    $form = Basic::create($container, array(), '', $this->pluginDefinition);
+    $form = Basic::create($container, [], '', $this->pluginDefinition);
     $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\Method\Basic', $form);
   }
 
@@ -203,7 +203,7 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
     $this->pluginDefinition['capture'] = $capture;
     $this->pluginDefinition['capture_status_id'] = $capture_status_id;
 
-    $this->paymentMethod = new Basic(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager);
+    $this->paymentMethod = new Basic([], '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager);
 
     $capture_payment_status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
     $capture_payment_status->expects($this->any())
@@ -284,7 +284,7 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
     $this->pluginDefinition['refund'] = $refund;
     $this->pluginDefinition['refund_status_id'] = $refund_status_id;
 
-    $this->paymentMethod = new Basic(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager);
+    $this->paymentMethod = new Basic([], '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager);
 
     $payment_status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
     $payment_status->expects($this->any())
@@ -341,7 +341,7 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->assertSame(array(), $this->paymentMethod->getSettablePaymentStatuses($account, $payment));
+    $this->assertSame([], $this->paymentMethod->getSettablePaymentStatuses($account, $payment));
   }
 
   /**

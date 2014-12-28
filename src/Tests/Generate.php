@@ -77,21 +77,21 @@ class Generate {
     $config_importer->importCurrency('JPY');
     $config_importer->importCurrency('MGA');
     $line_items = array(
-      $line_item_manager->createInstance('payment_basic', array())
+      $line_item_manager->createInstance('payment_basic', [])
         ->setName('foo')
         ->setAmount(9.9)
       // The Dutch guilder has 100 subunits, which is most common, but is no
       // longer in circulation.
         ->setCurrencyCode('NLG')
         ->setDescription(static::getRandom()->string()),
-      $line_item_manager->createInstance('payment_basic', array())
+      $line_item_manager->createInstance('payment_basic', [])
         ->setName('bar')
         ->setAmount(5.5)
       // The Japanese yen has 1000 subunits.
         ->setCurrencyCode('JPY')
         ->setQuantity(2)
         ->setDescription(static::getRandom()->string()),
-      $line_item_manager->createInstance('payment_basic', array())
+      $line_item_manager->createInstance('payment_basic', [])
         ->setName('baz')
         ->setAmount(1.1)
       // The Malagasy ariary has 5 subunits, which is non-decimal.

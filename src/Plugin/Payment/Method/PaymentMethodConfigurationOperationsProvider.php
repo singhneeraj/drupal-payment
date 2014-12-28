@@ -94,7 +94,7 @@ abstract class PaymentMethodConfigurationOperationsProvider implements Operation
       'enable' => $this->t('Enable configuration'),
       'disable' => $this->t('Disable configuration'),
     );
-    $operations = array();
+    $operations = [];
     foreach ($payment_method_configuration_operations as $name => $payment_method_configuration_operation) {
       if (array_key_exists($name, $titles)) {
         $operations[$name] = $payment_method_configuration_operation;

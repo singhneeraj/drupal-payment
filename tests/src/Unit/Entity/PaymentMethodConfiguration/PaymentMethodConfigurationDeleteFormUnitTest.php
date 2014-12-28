@@ -120,7 +120,7 @@ class PaymentMethodConfigurationDeleteFormUnitTest extends UnitTestCase {
     $this->payment->expects($this->once())
       ->method('delete');
 
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form_state->expects($this->once())
       ->method('setRedirectUrl');

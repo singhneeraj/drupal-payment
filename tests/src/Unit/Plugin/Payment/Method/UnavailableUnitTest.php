@@ -54,14 +54,14 @@ class UnavailableUnitTest extends UnitTestCase {
       'label' => $this->randomMachineName(),
     );
 
-    $this->plugin = new Unavailable(array(), '', $this->pluginDefinition, $this->token, $this->paymentStatusManager);
+    $this->plugin = new Unavailable([], '', $this->pluginDefinition, $this->token, $this->paymentStatusManager);
   }
 
   /**
    * @covers ::defaultConfiguration
    */
   public function testDefaultConfiguration() {
-    $this->assertSame(array(), $this->plugin->defaultConfiguration());
+    $this->assertSame([], $this->plugin->defaultConfiguration());
   }
 
   /**
@@ -75,21 +75,21 @@ class UnavailableUnitTest extends UnitTestCase {
    * @covers ::calculateDependencies
    */
   public function testCalculateDependencies() {
-    $this->assertSame(array(), $this->plugin->calculateDependencies());
+    $this->assertSame([], $this->plugin->calculateDependencies());
   }
 
   /**
    * @covers ::getConfiguration
    */
   public function testGetConfiguration() {
-    $this->assertSame(array(), $this->plugin->getConfiguration());
+    $this->assertSame([], $this->plugin->getConfiguration());
   }
 
   /**
    * @covers ::setConfiguration
    */
   public function testSetConfiguration() {
-    $this->assertSame($this->plugin, $this->plugin->setConfiguration(array()));
+    $this->assertSame($this->plugin, $this->plugin->setConfiguration([]));
   }
 
   /**
@@ -99,7 +99,7 @@ class UnavailableUnitTest extends UnitTestCase {
     $method = new \ReflectionMethod($this->plugin, 'getSupportedCurrencies');
     $method->setAccessible(TRUE);
 
-    $this->assertSame(array(), $method->invoke($this->plugin));
+    $this->assertSame([], $method->invoke($this->plugin));
   }
 
   /**
@@ -119,7 +119,7 @@ class UnavailableUnitTest extends UnitTestCase {
    * @covers ::buildConfigurationForm
    */
   public function testBuildConfigurationForm() {
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
@@ -133,7 +133,7 @@ class UnavailableUnitTest extends UnitTestCase {
    * @covers ::validateConfigurationForm
    */
   public function testValidateConfigurationForm() {
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $this->plugin->validateConfigurationForm($form, $form_state);
   }
@@ -142,7 +142,7 @@ class UnavailableUnitTest extends UnitTestCase {
    * @covers ::submitConfigurationForm
    */
   public function testSubmitConfigurationForm() {
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $this->plugin->submitConfigurationForm($form, $form_state);
   }

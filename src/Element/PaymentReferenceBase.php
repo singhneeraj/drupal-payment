@@ -251,7 +251,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
       '#payment' => $payment_method_selector->getPayment(),
       '#type' => 'payment_line_items_display',
     );
-    $build['payment_method'] = $payment_method_selector->buildConfigurationForm(array(), $form_state);
+    $build['payment_method'] = $payment_method_selector->buildConfigurationForm([], $form_state);
     if ($this->hasTemporaryPayment($element, $form_state)) {
       $this->disableChildren($build['payment_method']);
     }
@@ -292,7 +292,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
    */
   public static function processMaxWeight(array &$element, FormStateInterface $form_state, array $form) {
     $parent_element = NestedArray::getValue($form, array_slice($element['#array_parents'], 0, -1));
-    $weights = array();
+    $weights = [];
     foreach (Element::children($parent_element) as $sibling_key) {
       $weights[] = isset($parent_element[$sibling_key]['#weight']) ? $parent_element[$sibling_key]['#weight'] : 0;
     }
@@ -342,7 +342,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
         // so this needs a custom class.
         'class' => $class,
       ),
-      '#limit_validation_errors' => array(),
+      '#limit_validation_errors' => [],
       '#submit' => array(array($this->pluginDefinition['class'], 'refresh')),
       '#type' => 'submit',
       '#value' => $this->t('Re-check available payments'),
@@ -366,7 +366,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     /** @var \Drupal\payment\Entity\PaymentInterface|null $payment */
     $payment = $payment_id ? $this->paymentStorage->load($payment_id) : NULL;
 
-    $build = array();
+    $build = [];
     if ($payment) {
       $currency = $payment->getCurrency();
       $status = $payment->getPaymentStatus();
@@ -412,7 +412,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     $payment_method_selector = $this->getPaymentMethodSelector($element, $form_state);
     $payment_method = $payment_method_selector->getPaymentMethod();
 
-    $build = array();
+    $build = [];
     if ($payment_method) {
       $build['message'] = array(
         '#markup' => $this->t('@payment_method_label requires the payment to be completed in a new window.', array(

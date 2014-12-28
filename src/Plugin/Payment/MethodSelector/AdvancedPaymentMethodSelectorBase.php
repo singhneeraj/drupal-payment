@@ -36,7 +36,7 @@ abstract class AdvancedPaymentMethodSelectorBase extends PaymentMethodSelectorBa
    *
    * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface[]
    */
-  protected $selectedPaymentMethods = array();
+  protected $selectedPaymentMethods = [];
 
   /**
    * Constructs a new class instance.
@@ -155,7 +155,7 @@ abstract class AdvancedPaymentMethodSelectorBase extends PaymentMethodSelectorBa
       '#type' => 'container',
     );
     if ($this->getPaymentMethod()) {
-      $element += $this->getPaymentMethod()->buildConfigurationForm(array(), $form_state);
+      $element += $this->getPaymentMethod()->buildConfigurationForm([], $form_state);
     }
 
     return $element;

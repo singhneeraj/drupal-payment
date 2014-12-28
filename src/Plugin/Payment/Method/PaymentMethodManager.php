@@ -45,7 +45,7 @@ class PaymentMethodManager extends DefaultPluginManager implements PaymentMethod
   /**
    * {@inheritdoc}
    */
-  public function getFallbackPluginId($plugin_id, array $configuration = array()) {
+  public function getFallbackPluginId($plugin_id, array $configuration = []) {
     return 'payment_unavailable';
   }
 
@@ -53,7 +53,7 @@ class PaymentMethodManager extends DefaultPluginManager implements PaymentMethod
    * {@inheritdoc}
    */
   function options() {
-    $options = array();
+    $options = [];
     $definitions = $this->getDefinitions();
     unset($definitions['payment_unavailable']);
     foreach ($definitions as $plugin_id => $definition) {

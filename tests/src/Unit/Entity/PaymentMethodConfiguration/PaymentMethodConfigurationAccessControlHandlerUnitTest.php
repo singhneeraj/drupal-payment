@@ -43,7 +43,7 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
     $this->moduleHandler->expects($this->any())
       ->method('invokeAll')
-      ->willReturn(array());
+      ->willReturn([]);
 
     $this->accessControlHandler = new PaymentMethodConfigurationAccessControlHandler($entity_type, $this->moduleHandler);
   }
@@ -303,7 +303,7 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
    */
   public function testCheckCreateAccess() {
     $bundle = $this->randomMachineName();
-    $context = array();
+    $context = [];
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
     $account->expects($this->once())
       ->method('hasPermission')

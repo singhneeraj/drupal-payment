@@ -45,7 +45,7 @@ class EntityBundleInfo {
    * Invokes the implementation.
    */
   public function invoke() {
-    $bundles = array();
+    $bundles = [];
 
     foreach ($this->paymentTypeManager->getDefinitions() as $plugin_id => $definition) {
       $bundles['payment'][$plugin_id] = array(

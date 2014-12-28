@@ -177,13 +177,13 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
       $payment_method_configuration_plugin = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface');
 
       $form = array(
-        'plugin_form' => array(),
+        'plugin_form' => [],
       );
       $form_state = new FormState();
 
       $payment_method_configuration_plugin->expects($this->atLeastOnce())
         ->method('buildConfigurationForm')
-        ->with(array(), $form_state)
+        ->with([], $form_state)
         ->will($this->returnValue($payment_method_configuration_plugin_form));
 
       $this->paymentMethodConfigurationManager->expects($this->atLeastOnce())
@@ -325,7 +325,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
         ->method('getConfiguration')
         ->will($this->returnValue($plugin_configuration));
 
-      $form = array();
+      $form = [];
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
       $map = array(
         array('payment_method_configuration', $plugin),
@@ -481,7 +481,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
       $this->paymentMethodConfiguration->expects($this->once())
         ->method('save');
 
-      $form->save(array(), $form_state);
+      $form->save([], $form_state);
     }
 
     /**

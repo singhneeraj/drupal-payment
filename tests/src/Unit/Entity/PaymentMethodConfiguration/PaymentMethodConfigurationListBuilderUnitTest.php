@@ -169,7 +169,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
 
       $this->moduleHandler->expects($this->any())
         ->method('invokeAll')
-        ->will($this->returnValue(array()));
+        ->will($this->returnValue([]));
 
       $build = $this->listBuilder->buildRow($payment_method_configuration);
       unset($build['data']['operations']['data']['#attached']);
@@ -187,7 +187,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
           'operations' => array(
             'data' => array(
               '#type' => 'operations',
-              '#links' => array(),
+              '#links' => [],
             ),
           ),
         ),
@@ -208,7 +208,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
 
       $this->entityStorage->expects($this->once())
         ->method('loadMultiple')
-        ->will($this->returnValue(array()));
+        ->will($this->returnValue([]));
 
       $build = $this->listBuilder->render();
       unset($build['#attached']);
@@ -216,7 +216,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
       $expected_build = array(
         '#type' => 'table',
         '#title' => NULL,
-        '#rows' => array(),
+        '#rows' => [],
         '#empty' => 'There is no payment method configuration yet.',
         '#attributes' => array(
           'class' => array('payment-method-configuration-list'),

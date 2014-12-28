@@ -158,7 +158,7 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
       ->will($this->returnValue($definitions));
     $expected_hierarchy = array(
       'foo' => array(
-        'bar' => array(),
+        'bar' => [],
       ),
     );
     $this->assertSame($expected_hierarchy, $this->paymentStatusManager->hierarchy(array('foo', 'bar')));

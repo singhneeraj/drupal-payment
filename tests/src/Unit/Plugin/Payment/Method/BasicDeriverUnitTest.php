@@ -71,7 +71,7 @@ class BasicDeriverUnitTest extends UnitTestCase {
       ->method('get')
       ->will($this->returnValueMap($map));
 
-    $form = BasicDeriver::create($container, array(), '', array());
+    $form = BasicDeriver::create($container, [], '', []);
     $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\Method\BasicDeriver', $form);
   }
 

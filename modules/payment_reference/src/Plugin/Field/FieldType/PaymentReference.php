@@ -49,7 +49,7 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
   public static function defaultFieldSettings() {
     return parent::defaultFieldSettings() + array(
       'currency_code' => '',
-      'line_items_data' => array(),
+      'line_items_data' => [],
     );
   }
 
@@ -95,7 +95,7 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
       '#default_value' => $this->getSetting('currency_code'),
       '#required' => TRUE,
     );
-    $line_items = array();
+    $line_items = [];
     foreach ($this->getSetting('line_items_data') as $line_item_data) {
       $line_items[] = Payment::lineItemManager()->createInstance($line_item_data['plugin_id'], $line_item_data['plugin_configuration']);
     }
@@ -121,7 +121,7 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
     if ($triggering_element['#array_parents'] != $add_more_button_form_parents) {
       $values = $form_state->getValues();
       $values = NestedArray::getValue($values, $element['#array_parents']);
-      $line_items_data = array();
+      $line_items_data = [];
       foreach (PaymentLineItemsInput::getLineItems($element['line_items'], $form_state) as $line_item) {
         $line_items_data[] = array(
           'plugin_id' => $line_item->getPluginId(),
@@ -140,7 +140,7 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
    * {@inheritdoc}
    */
   public function storageSettingsForm(array &$form, FormStateInterface $form_state, $has_data) {
-    return array();
+    return [];
   }
 
   /**

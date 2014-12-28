@@ -100,8 +100,8 @@ class PaymentStorageSchemaUnitTest extends UnitTestCase {
   public function testAlterEntitySchemaWithNonFieldColumns() {
     $schema = array(
       'payment' => array(
-        'fields' => array(),
-        'foreign keys' => array(),
+        'fields' => [],
+        'foreign keys' => [],
       ),
     );
     $method = new \ReflectionMethod($this->storageSchema, 'alterEntitySchemaWithNonFieldColumns');

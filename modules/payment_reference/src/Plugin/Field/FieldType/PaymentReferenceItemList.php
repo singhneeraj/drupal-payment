@@ -22,7 +22,7 @@ class PaymentReferenceItemList extends FieldItemList {
    * {@inheritdoc}
    */
   public function defaultValuesForm(array &$form, FormStateInterface $form_state) {
-    return array();
+    return [];
   }
 
   /**

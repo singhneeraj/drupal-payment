@@ -131,7 +131,7 @@ class PaymentRefundFormUnitTest extends UnitTestCase {
       ->with('canonical')
       ->will($this->returnValue($url));
 
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form_state->expects($this->once())
       ->method('setRedirectUrl')

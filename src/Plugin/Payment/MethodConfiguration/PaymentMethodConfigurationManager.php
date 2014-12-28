@@ -38,7 +38,7 @@ class PaymentMethodConfigurationManager extends DefaultPluginManager implements 
   /**
    * {@inheritdoc}
    */
-  public function getFallbackPluginId($plugin_id, array $configuration = array()) {
+  public function getFallbackPluginId($plugin_id, array $configuration = []) {
     return 'payment_unavailable';
   }
 

@@ -94,7 +94,7 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
       // An array of
       // \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface
       // objects (required).
-      '#default_value' => array(),
+      '#default_value' => [],
       // A \Drupal\payment\Entity\PaymentInterface object (optional).
       '#payment' => NULL,
       '#process' => [[get_class($this), 'instantiate#process#' . $plugin_id]],
@@ -109,7 +109,7 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
 
     // Set internal configuration.
     $element += array(
-      '#value' => array(),
+      '#value' => [],
     );
     $element['#payment_line_items'] = static::getLineItems($element, $form_state);
     $element['#element_validate'] = array(function(array &$element, FormStateInterface $form_state, array &$form) use ($plugin_id) {
@@ -172,7 +172,7 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
       $element['line_items'][$line_item->getName()]['type'] = array(
         '#markup' => $line_item_definition['label'],
       );
-      $element['line_items'][$line_item->getName()]['plugin_form'] = $line_item->buildConfigurationForm(array(), $form_state);
+      $element['line_items'][$line_item->getName()]['plugin_form'] = $line_item->buildConfigurationForm([], $form_state);
       $element['line_items'][$line_item->getName()]['weight'] = array(
         '#attributes' => array(
           'class' => array('payment-line-item-weight'),
@@ -188,7 +188,7 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
           'effect' => 'fade',
           'event' => 'mousedown',
         ),
-        '#limit_validation_errors' => array(),
+        '#limit_validation_errors' => [],
         '#submit' => array(array(get_class($this), 'deleteSubmit')),
         '#type' => 'submit',
         '#value' => $this->t('Delete'),
@@ -237,7 +237,7 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
    */
   public static function validate(array $element, FormStateInterface $form_state, array &$form) {
     // Reorder line items based on their weight elements.
-    $line_items = array();
+    $line_items = [];
     $values = $form_state->getValues();
     $values = NestedArray::getValue($values, $element['#parents']);
     if ($values['line_items']) {
@@ -379,7 +379,7 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
   public static function getLineItems(array $element, FormStateInterface $form_state) {
     $key = 'payment.element.payment_line_items_input.configured.' . $element['#name'];
 
-    return $form_state->has($key) ? $form_state->get($key) : array();
+    return $form_state->has($key) ? $form_state->get($key) : [];
   }
 
   /**

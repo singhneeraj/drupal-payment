@@ -48,9 +48,9 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
 
     $this->paymentMethodManager = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface');
 
-    $configuration = array();
+    $configuration = [];
     $plugin_id = $this->randomMachineName();
-    $plugin_definition = array();
+    $plugin_definition = [];
     $this->paymentMethodSelectorPlugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorBase')
       ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->currentUser, $this->paymentMethodManager))
       ->getMockForAbstractClass();
@@ -72,7 +72,7 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
     /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase $class_name */
     $class_name = get_class($this->paymentMethodSelectorPlugin);
 
-    $payment_method_selector = $class_name::create($container, array(), $this->randomMachineName(), array());
+    $payment_method_selector = $class_name::create($container, [], $this->randomMachineName(), []);
     $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorBase', $payment_method_selector);
   }
 
@@ -90,14 +90,14 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
    * @covers ::calculateDependencies
    */
   public function testCalculateDependencies() {
-    $this->assertSame(array(), $this->paymentMethodSelectorPlugin->calculateDependencies());
+    $this->assertSame([], $this->paymentMethodSelectorPlugin->calculateDependencies());
   }
 
   /**
    * @covers ::validateConfigurationForm
    */
   public function testValidateConfigurationForm() {
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $this->paymentMethodSelectorPlugin->validateConfigurationForm($form, $form_state);
   }
@@ -106,7 +106,7 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
    * @covers ::submitConfigurationForm
    */
   public function testSubmitConfigurationForm() {
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $this->paymentMethodSelectorPlugin->submitConfigurationForm($form, $form_state);
   }
@@ -214,15 +214,15 @@ class PaymentMethodSelectorBaseUnitTest extends UnitTestCase {
       ->will($this->returnValue(FALSE));
 
     $definitions = array(
-      $plugin_id_access => array(),
-      $plugin_id_no_access => array(),
+      $plugin_id_access => [],
+      $plugin_id_no_access => [],
     );
     $this->paymentMethodManager->expects($this->any())
       ->method('getDefinitions')
       ->will($this->returnValue($definitions));
     $return_value_map = array(
-      array($plugin_id_access, array(), $plugin_access),
-      array($plugin_id_no_access, array(), $plugin_no_access),
+      array($plugin_id_access, [], $plugin_access),
+      array($plugin_id_no_access, [], $plugin_no_access),
     );
     $this->paymentMethodManager->expects($this->any())
       ->method('createInstance')

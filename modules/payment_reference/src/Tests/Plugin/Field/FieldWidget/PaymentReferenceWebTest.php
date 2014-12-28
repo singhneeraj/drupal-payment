@@ -53,12 +53,12 @@ class PaymentReferenceWebTest extends WebTestBase {
       'field_name' => $field_name,
       'settings' => array(
         'currency_code' => 'EUR',
-        'line_items' => array(),
+        'line_items' => [],
       ),
     ))->save();
 
     entity_get_form_display('user', 'user', 'default')
-      ->setComponent($field_name, array())
+      ->setComponent($field_name, [])
       ->save();
 
     $user = $this->drupalCreateUser(array('payment.payment.view.own'));
@@ -74,8 +74,8 @@ class PaymentReferenceWebTest extends WebTestBase {
 
     // Test the widget when editing an entity.
     $this->drupalGet('user/' . $user->id() . '/edit');
-    $this->drupalPostForm(NULL, array(), t('Re-check available payments'));
-    $this->drupalPostForm(NULL, array(), t('Pay'));
+    $this->drupalPostForm(NULL, [], t('Re-check available payments'));
+    $this->drupalPostForm(NULL, [], t('Pay'));
     $this->assertNoFieldByXPath('//input[@value="Pay"]');
     $this->assertLinkByHref('payment/1');
   }

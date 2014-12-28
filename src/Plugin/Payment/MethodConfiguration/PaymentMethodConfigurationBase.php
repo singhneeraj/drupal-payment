@@ -58,7 +58,7 @@ abstract class PaymentMethodConfigurationBase extends PluginBase implements Paym
    * {@inheritdoc}
    */
   public function calculateDependencies() {
-    return array();
+    return [];
   }
 
   /**

@@ -65,7 +65,7 @@ class PaymentFormUnitTest extends UnitTestCase {
     $this->fieldType->expects($this->once())
       ->method('getSetting')
       ->with('currency_code');
-    $form = array();
+    $form = [];
     /** @var \Drupal\Core\Form\FormStateInterface $form_state */
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $this->assertInternalType('array', $this->fieldType->fieldSettingsForm($form, $form_state));

@@ -57,7 +57,7 @@ class EntityExtraFieldInfoUnitTest extends UnitTestCase {
   public function testInvoke() {
     $payment_type_plugin_id = $this->randomMachineName();
     $payment_type_definitions = array(
-      $payment_type_plugin_id => array(),
+      $payment_type_plugin_id => [],
     );
     $this->paymentTypeManager->expects($this->once())
       ->method('getDefinitions')

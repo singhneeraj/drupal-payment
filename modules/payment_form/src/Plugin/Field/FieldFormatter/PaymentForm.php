@@ -28,7 +28,7 @@ class PaymentForm extends FormatterBase {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items) {
-    $line_items_data = array();
+    $line_items_data = [];
     foreach ($items as $item) {
       /** @var \Drupal\payment_form\Plugin\Field\FieldType\PaymentForm $item */
       $plugin_id = $item->get('plugin_id')->getValue();

@@ -32,7 +32,7 @@ class PaymentLineItemsInputWebTest extends WebTestBase {
    * @return array
    */
   protected function lineItemData(array $names) {
-    $data = array();
+    $data = [];
     foreach ($names as $name) {
       $data += array(
         'line_item[line_items][' . $name . '][plugin_form][amount][amount]' => '10.0',
@@ -68,7 +68,7 @@ class PaymentLineItemsInputWebTest extends WebTestBase {
    */
   protected function testElement() {
     $state = \Drupal::state();
-    $names = array();
+    $names = [];
     foreach (Generate::createPaymentLineItems() as $line_item) {
       $names[] = $line_item->getName();
     }
@@ -87,7 +87,7 @@ class PaymentLineItemsInputWebTest extends WebTestBase {
     $this->assertAddMore(FALSE);
 
     // Delete a line item through a regular submission.
-    $this->drupalPostForm(NULL, array(), t('Delete'));
+    $this->drupalPostForm(NULL, [], t('Delete'));
     $this->assertLineItemElements($names);
     $elements = $this->xpath('//input[@name="line_item[line_items][' . $type . '][weight]"]');
     $this->assertFalse(isset($elements[0]));
@@ -105,7 +105,7 @@ class PaymentLineItemsInputWebTest extends WebTestBase {
     if ($this->assertTrue(is_array($value))) {
       /// We end up with one more line item than we originally had.
       $this->assertEqual(count($value), count($names));
-      $line_items = array();
+      $line_items = [];
       foreach ($value as $line_item_data) {
         $this->assertTrue(isset($line_item_data['plugin_configuration']));
         $this->assertTrue(is_array($line_item_data['plugin_configuration']));

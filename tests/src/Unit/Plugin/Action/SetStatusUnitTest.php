@@ -49,8 +49,8 @@ class SetStatusUnitTest extends UnitTestCase {
 
     $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
-    $configuration = array();
-    $plugin_definition = array();
+    $configuration = [];
+    $plugin_definition = [];
     $plugin_id = $this->randomMachineName();
     $this->action = new SetStatus($configuration, $plugin_id, $plugin_definition, $this->stringTranslation, $this->paymentStatusManager);
   }
@@ -68,8 +68,8 @@ class SetStatusUnitTest extends UnitTestCase {
       ->method('get')
       ->will($this->returnValueMap($map));
 
-    $configuration = array();
-    $plugin_definition = array();
+    $configuration = [];
+    $plugin_definition = [];
     $plugin_id = $this->randomMachineName();
     $form = SetStatus::create($container, $configuration, $plugin_id, $plugin_definition);
     $this->assertInstanceOf('\Drupal\payment\Plugin\Action\SetStatus', $form);
@@ -91,7 +91,7 @@ class SetStatusUnitTest extends UnitTestCase {
     $this->paymentStatusManager->expects($this->once())
       ->method('options');
 
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form = $this->action->buildConfigurationForm($form, $form_state);
     $this->assertInternalType('array', $form);
@@ -104,7 +104,7 @@ class SetStatusUnitTest extends UnitTestCase {
    */
   public function testSubmitConfigurationForm() {
     $plugin_id = $this->randomMachineName();
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form_state->expects($this->atLeastOnce())
       ->method('getValues')

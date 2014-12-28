@@ -61,7 +61,7 @@ abstract class PaymentStatusBase extends PluginBase implements ContainerFactoryP
    * {@inheritdoc}
    */
   public function calculateDependencies() {
-    return array();
+    return [];
   }
 
   /**

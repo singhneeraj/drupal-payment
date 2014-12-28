@@ -78,7 +78,7 @@ abstract class PaymentMethodSelectorBase extends PluginBase implements Container
    * {@inheritdoc}
    */
   public function calculateDependencies() {
-    return array();
+    return [];
   }
 
   /**
@@ -155,7 +155,7 @@ abstract class PaymentMethodSelectorBase extends PluginBase implements Container
    *    An array of payment method plugin instances, keyed by plugin ID.
    */
   protected function getAvailablePaymentMethods() {
-    $payment_methods = array();
+    $payment_methods = [];
     foreach (array_keys($this->paymentMethodManager->getDefinitions()) as $plugin_id) {
       if ($this->getAllowedPaymentMethods() === TRUE || in_array($plugin_id, $this->getAllowedPaymentMethods())) {
         $payment_method = $this->paymentMethodManager->createInstance($plugin_id);

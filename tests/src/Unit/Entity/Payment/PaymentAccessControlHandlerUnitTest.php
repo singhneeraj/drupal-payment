@@ -311,7 +311,7 @@ class PaymentAccessControlHandlerUnitTest extends UnitTestCase {
    */
   public function testCheckCreateAccess() {
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
-    $context = array();
+    $context = [];
 
     $class = new \ReflectionClass($this->accessControlHandler);
     $method = $class->getMethod('checkCreateAccess');

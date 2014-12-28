@@ -52,9 +52,9 @@ class UnavailableUnitTest extends UnitTestCase {
       ->method('translate')
       ->will($this->returnArgument(0));
 
-    $configuration = array();
+    $configuration = [];
     $plugin_id = $this->randomMachineName();
-    $plugin_definition = array();
+    $plugin_definition = [];
     $this->paymentType = new Unavailable($configuration, $plugin_id, $plugin_definition, $this->eventDispatcher, $this->stringTranslation);
   }
 
@@ -71,8 +71,8 @@ class UnavailableUnitTest extends UnitTestCase {
       ->method('get')
       ->will($this->returnValueMap($map));
 
-    $configuration = array();
-    $plugin_definition = array();
+    $configuration = [];
+    $plugin_definition = [];
     $plugin_id = $this->randomMachineName();
     $form = Unavailable::create($container, $configuration, $plugin_id, $plugin_definition);
     $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\Type\Unavailable', $form);

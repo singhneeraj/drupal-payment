@@ -63,7 +63,7 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
       'label' => $this->randomMachineName(),
     );
     $this->paymentMethodConfiguration = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationBase')
-      ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->stringTranslation, $this->moduleHandler))
+      ->setConstructorArgs(array([], '', $this->pluginDefinition, $this->stringTranslation, $this->moduleHandler))
       ->getMockForAbstractClass();
   }
 
@@ -82,7 +82,7 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
 
     /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase $class_name */
     $class_name = get_class($this->paymentMethodConfiguration);
-    $form = $class_name::create($container, array(), '', array());
+    $form = $class_name::create($container, [], '', []);
     $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationBase', $form);
   }
 
@@ -102,7 +102,7 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
    * @covers ::calculateDependencies
    */
   public function testCalculateDependencies() {
-    $this->assertSame(array(), $this->paymentMethodConfiguration->calculateDependencies());
+    $this->assertSame([], $this->paymentMethodConfiguration->calculateDependencies());
   }
 
   /**
@@ -129,7 +129,7 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
    * @covers ::buildConfigurationForm
    */
   public function testBuildConfigurationFormWithoutFilter() {
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
     $this->moduleHandler->expects($this->once())
@@ -158,7 +158,7 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
    * @covers ::buildConfigurationForm
    */
   public function testBuildConfigurationFormWithFilter() {
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
     $this->moduleHandler->expects($this->once())
@@ -203,7 +203,7 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
    * @covers ::validateConfigurationForm
    */
   public function testValidateConfigurationForm() {
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $this->paymentMethodConfiguration->validateConfigurationForm($form, $form_state);
   }

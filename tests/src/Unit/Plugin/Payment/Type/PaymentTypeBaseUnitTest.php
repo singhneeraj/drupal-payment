@@ -40,9 +40,9 @@ class PaymentTypeBaseUnitTest extends UnitTestCase {
   public function setUp() {
     $this->eventDispatcher = $this->getMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
-    $configuration = array();
+    $configuration = [];
     $plugin_id = $this->randomMachineName();
-    $plugin_definition = array();
+    $plugin_definition = [];
     $this->paymentType = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Type\PaymentTypeBase')
       ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->eventDispatcher))
       ->getMockForAbstractClass();
@@ -63,7 +63,7 @@ class PaymentTypeBaseUnitTest extends UnitTestCase {
     /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase $class_name */
     $class_name = get_class($this->paymentType);
 
-    $line_item = $class_name::create($container, array(), $this->randomMachineName(), array());
+    $line_item = $class_name::create($container, [], $this->randomMachineName(), []);
     $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\type\PaymentTypeBase', $line_item);
   }
 
@@ -71,14 +71,14 @@ class PaymentTypeBaseUnitTest extends UnitTestCase {
    * @covers ::calculateDependencies
    */
   public function testCalculateDependencies() {
-    $this->assertSame(array(), $this->paymentType->calculateDependencies());
+    $this->assertSame([], $this->paymentType->calculateDependencies());
   }
 
   /**
    * @covers ::defaultConfiguration
    */
   public function testDefaultConfiguration() {
-    $this->assertSame(array(), $this->paymentType->defaultConfiguration());
+    $this->assertSame([], $this->paymentType->defaultConfiguration());
   }
 
   /**

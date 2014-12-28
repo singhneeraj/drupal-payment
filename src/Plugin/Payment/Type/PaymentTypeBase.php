@@ -62,14 +62,14 @@ abstract class PaymentTypeBase extends PluginBase implements ContainerFactoryPlu
    * {@inheritdoc}
    */
   public function calculateDependencies() {
-    return array();
+    return [];
   }
 
   /**
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return array();
+    return [];
   }
 
   /**

@@ -226,7 +226,7 @@ class DatabaseQueue implements QueueInterface {
    * {@inheritdoc}
    */
   function loadPaymentIds($category_id, $owner_id) {
-    $allowed_payment_status_ids = array();
+    $allowed_payment_status_ids = [];
     foreach ($this->getAllowedPaymentStatusIds() as $payment_status_id) {
       $allowed_payment_status_ids = array_merge($allowed_payment_status_ids, array($payment_status_id), $this->paymentStatusManager->getDescendants($payment_status_id));
     }

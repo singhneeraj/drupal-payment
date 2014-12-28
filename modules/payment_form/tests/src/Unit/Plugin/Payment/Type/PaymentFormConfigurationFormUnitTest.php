@@ -33,7 +33,7 @@ namespace Drupal\Tests\payment_form\Unit\Plugin\Payment\Type {
      *
      * @var array
      */
-    protected $configFactoryConfiguration = array();
+    protected $configFactoryConfiguration = [];
 
     /**
      * The form under test.
@@ -120,7 +120,7 @@ namespace Drupal\Tests\payment_form\Unit\Plugin\Payment\Type {
      * @covers ::buildForm
      */
     public function testBuildForm() {
-      $form = array();
+      $form = [];
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
       $form = $this->form->buildForm($form, $form_state);
       $this->assertInternalType('array', $form);
@@ -130,7 +130,7 @@ namespace Drupal\Tests\payment_form\Unit\Plugin\Payment\Type {
      * @covers ::submitForm
      */
     public function testSubmitForm() {
-      $form = array();
+      $form = [];
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
       $form_state->expects($this->atLeastOnce())
         ->method('getValues')

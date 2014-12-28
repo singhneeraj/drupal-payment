@@ -76,7 +76,7 @@ class PaymentForm extends ContentEntityForm {
       '#payment' => $payment,
       '#type' => 'payment_line_items_display',
     );
-    $form['payment_method'] = $payment_method_selector->buildConfigurationForm(array(), $form_state);
+    $form['payment_method'] = $payment_method_selector->buildConfigurationForm([], $form_state);
 
     return parent::form($form, $form_state);
   }

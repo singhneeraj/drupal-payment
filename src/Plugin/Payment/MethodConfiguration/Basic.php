@@ -223,7 +223,7 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
       '#title' => $this->t('Brand label'),
       '#type' => 'textfield',
     );
-    $labels = array();
+    $labels = [];
     foreach ($this->paymentStatusManager->getDefinitions() as $definition) {
       $labels[$definition['id']] = (string) $definition['label'];
     }

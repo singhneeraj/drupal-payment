@@ -82,7 +82,7 @@ class PaymentStatusManager extends DefaultPluginManager implements PaymentStatus
   /**
    * {@inheritdoc}
    */
-  public function getFallbackPluginId($plugin_id, array $configuration = array()) {
+  public function getFallbackPluginId($plugin_id, array $configuration = []) {
     return 'payment_unknown';
   }
 
@@ -112,8 +112,8 @@ class PaymentStatusManager extends DefaultPluginManager implements PaymentStatus
     static $hierarchy = NULL;
 
     if (is_null($hierarchy)) {
-      $parents = array();
-      $children = array();
+      $parents = [];
+      $children = [];
       $definitions = $this->getDefinitions();
       if (is_array($limit_plugin_ids)) {
         $definitions = array_intersect_key($definitions, array_flip($limit_plugin_ids));
@@ -146,9 +146,9 @@ class PaymentStatusManager extends DefaultPluginManager implements PaymentStatus
    *   The return value is identical to that of self::hierarchy().
    */
   protected function hierarchyLevel(array $parent_plugin_ids, array $child_plugin_ids) {
-    $hierarchy = array();
+    $hierarchy = [];
     foreach ($parent_plugin_ids as $plugin_id) {
-      $hierarchy[$plugin_id] = isset($child_plugin_ids[$plugin_id]) ? $this->hierarchyLevel($child_plugin_ids[$plugin_id], $child_plugin_ids) : array();
+      $hierarchy[$plugin_id] = isset($child_plugin_ids[$plugin_id]) ? $this->hierarchyLevel($child_plugin_ids[$plugin_id], $child_plugin_ids) : [];
     }
 
     return $hierarchy;
@@ -168,7 +168,7 @@ class PaymentStatusManager extends DefaultPluginManager implements PaymentStatus
    */
   protected function optionsLevel(array $hierarchy, $depth) {
     $definitions = $this->getDefinitions();
-    $options = array();
+    $options = [];
     $prefix = $depth ? str_repeat('-', $depth) . ' ' : '';
     foreach ($hierarchy as $plugin_id => $child_plugin_ids) {
       $options[$plugin_id] = $prefix . $definitions[$plugin_id]['label'];
@@ -194,14 +194,14 @@ class PaymentStatusManager extends DefaultPluginManager implements PaymentStatus
       $parent_id = $definition['parent_id'];
       return array_unique(array_merge(array($parent_id), $this->getAncestors($parent_id)));
     }
-    return array();
+    return [];
   }
 
   /**
    * {@inheritdoc}
    */
   public function getChildren($plugin_id) {
-    $child_plugin_ids = array();
+    $child_plugin_ids = [];
     foreach ($this->getDefinitions() as $definition) {
       if (isset($definition['parent_id']) && $definition['parent_id'] == $plugin_id) {
         $child_plugin_ids[] = $definition['id'];

@@ -61,8 +61,8 @@ class ConfigDeriverUnitTest extends UnitTestCase {
       ->method('get')
       ->will($this->returnValueMap($map));
 
-    $configuration = array();
-    $plugin_definition = array();
+    $configuration = [];
+    $plugin_definition = [];
     $plugin_id = $this->randomMachineName();
     $form = ConfigDeriver::create($container, $configuration, $plugin_id, $plugin_definition);
     $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\Status\ConfigDeriver', $form);
@@ -104,7 +104,7 @@ class ConfigDeriverUnitTest extends UnitTestCase {
       ->method('loadMultiple')
       ->will($this->returnValue(array($status_a, $status_b)));
 
-    $derivatives = $this->deriver->getDerivativeDefinitions(array());
+    $derivatives = $this->deriver->getDerivativeDefinitions([]);
     $this->assertCount(2, $derivatives);
   }
 }

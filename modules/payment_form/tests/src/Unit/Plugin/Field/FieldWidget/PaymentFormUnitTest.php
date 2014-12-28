@@ -54,10 +54,10 @@ class PaymentFormUnitTest extends UnitTestCase {
    */
   protected function setUp() {
     $plugin_id = $this->randomMachineName();
-    $plugin_definition = array();
+    $plugin_definition = [];
     $this->fieldDefinition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
-    $settings = array();
-    $third_party_settings = array();
+    $settings = [];
+    $third_party_settings = [];
 
     $this->paymentLineItemManager = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface');
 
@@ -82,10 +82,10 @@ class PaymentFormUnitTest extends UnitTestCase {
     $field_definition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
     $configuration = array(
       'field_definition' => $field_definition,
-      'settings' => array(),
-      'third_party_settings' => array(),
+      'settings' => [],
+      'third_party_settings' => [],
     );
-    $plugin_definition = array();
+    $plugin_definition = [];
     $plugin_id = $this->randomMachineName();
     $form = PaymentForm::create($container, $configuration, $plugin_id, $plugin_definition);
     $this->assertInstanceOf('\Drupal\payment_form\Plugin\Field\FieldWidget\PaymentForm', $form);
@@ -98,7 +98,7 @@ class PaymentFormUnitTest extends UnitTestCase {
     $line_items_data = array(
       array(
         'plugin_id' => $this->randomMachineName(),
-        'plugin_configuration' => array(),
+        'plugin_configuration' => [],
       ),
     );
     $this->fieldWidget->setSetting('line_items', $line_items_data);
@@ -115,11 +115,11 @@ class PaymentFormUnitTest extends UnitTestCase {
     $line_items_data = array(
       array(
         'plugin_id' => $this->randomMachineName(),
-        'plugin_configuration' => array(),
+        'plugin_configuration' => [],
       ),
       array(
         'plugin_id' => $this->randomMachineName(),
-        'plugin_configuration' => array(),
+        'plugin_configuration' => [],
       )
     );
     $this->fieldWidget->setSetting('line_items', $line_items_data);
@@ -137,8 +137,8 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();;
     $delta = 0;
-    $element = array();
-    $form = array();
+    $element = [];
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
     $this->assertInternalType('array', $this->fieldWidget->formElement($items, $delta, $element, $form, $form_state));
@@ -156,7 +156,7 @@ class PaymentFormUnitTest extends UnitTestCase {
 
     $iterator = new \ArrayIterator(array(
       (object) array(
-      'plugin_configuration' => array(),
+      'plugin_configuration' => [],
       'plugin_id' => $this->randomMachineName(),
     )
     ));
@@ -172,7 +172,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       '#array_parents' => array('line_items'),
       '#items' => $items,
     );
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
     $element = $this->fieldWidget->formElementProcess($element, $form_state, $form);

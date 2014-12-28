@@ -43,7 +43,7 @@ class PaymentStatusWebTest extends WebTestBase {
   protected function testList() {
     $payment_status_id = strtolower($this->randomMachineName());
     /** @var \Drupal\payment\Entity\PaymentStatusInterface $status */
-    $status = $this->paymentStatusStorage->create(array());
+    $status = $this->paymentStatusStorage->create([]);
     $status->setId($payment_status_id)
       ->setLabel($this->randomMachineName())
       ->save();
@@ -137,7 +137,7 @@ class PaymentStatusWebTest extends WebTestBase {
   protected function testDelete() {
     $payment_status_id = strtolower($this->randomMachineName());
     /** @var \Drupal\payment\Entity\PaymentStatusInterface $status */
-    $status = $this->paymentStatusStorage->create(array());
+    $status = $this->paymentStatusStorage->create([]);
     $status->setId($payment_status_id)
       ->save();
 
@@ -147,7 +147,7 @@ class PaymentStatusWebTest extends WebTestBase {
     $this->drupalLogin($this->drupalCreateUser(array('payment.payment_status.administer')));
     $this->drupalGet($path);
     $this->assertResponse(200);
-    $this->drupalPostForm(NULL, array(), t('Delete'));
+    $this->drupalPostForm(NULL, [], t('Delete'));
     $this->assertNull($this->paymentStatusStorage->loadUnchanged($payment_status_id));
   }
 }

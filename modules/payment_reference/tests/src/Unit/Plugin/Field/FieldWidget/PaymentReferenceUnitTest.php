@@ -33,7 +33,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    *
    * @var array
    */
-  protected $configFactoryConfiguration = array();
+  protected $configFactoryConfiguration = [];
 
   /**
    * A user account used for testing.
@@ -85,7 +85,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
 
     $this->paymentFactory = $this->getMock('\Drupal\payment_reference\PaymentFactoryInterface');
 
-    $this->widget = new PaymentReference($this->randomMachineName(), array(), $this->fieldDefinition, array(), array(), $this->configFactory, $this->currentUser, $this->paymentFactory);
+    $this->widget = new PaymentReference($this->randomMachineName(), [], $this->fieldDefinition, [], [], $this->configFactory, $this->currentUser, $this->paymentFactory);
   }
 
   /**
@@ -104,10 +104,10 @@ class PaymentReferenceUnitTest extends UnitTestCase {
 
     $configuration = array(
       'field_definition' => $this->fieldDefinition,
-      'settings' => array(),
-      'third_party_settings' => array(),
+      'settings' => [],
+      'third_party_settings' => [],
     );
-    $plugin_definition = array();
+    $plugin_definition = [];
     $plugin_id = $this->randomMachineName();
     $plugin = PaymentReference::create($container, $configuration, $plugin_id, $plugin_definition);
     $this->assertInstanceOf('\Drupal\payment_reference\Plugin\Field\FieldWidget\PaymentReference', $plugin);
@@ -158,9 +158,9 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       ->method('getEntity')
       ->will($this->returnValue($entity));
 
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
-    $build = $this->widget->formElement($items, 3, array(), $form, $form_state);
+    $build = $this->widget->formElement($items, 3, [], $form, $form_state);
     $expected_build = array(
       'target_id' => array(
         '#default_value' => NULL,
@@ -189,7 +189,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
 
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form[$field_name]['widget']['target_id']['#value'] = $payment_id;
-    $values = array();
+    $values = [];
 
     $expected_value = array(
       'target_id' => $payment_id,

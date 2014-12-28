@@ -110,7 +110,7 @@ class PaymentStatusForm extends EntityForm {
         $form['created_message'] = array(
           '#type' => 'markup',
           '#markup' => $this->t('Enable the <a href="@url">Datetime</a> module to set the date and time of the new payment status.', array(
-              '@url' => $this->urlGenerator->generateFromRoute('system.modules_list', array(), array(
+              '@url' => $this->urlGenerator->generateFromRoute('system.modules_list', [], array(
                   'fragment' => 'module-datetime',
                 ))
             )),

@@ -139,7 +139,7 @@ class PaymentMethodConfigurationForm extends EntityForm {
     }
     $form['plugin_form'] = array(
         '#tree' => TRUE,
-      ) + $payment_method_configuration_plugin->buildConfigurationForm(array(), $form_state);
+      ) + $payment_method_configuration_plugin->buildConfigurationForm([], $form_state);
 
     return parent::form($form, $form_state);
   }

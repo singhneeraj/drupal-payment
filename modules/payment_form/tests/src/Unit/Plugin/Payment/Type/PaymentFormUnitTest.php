@@ -69,7 +69,7 @@ class PaymentFormUnitTest extends UnitTestCase {
 
     $this->stringTranslation = $this->getStringTranslationStub();
 
-    $this->paymentType = new PaymentForm(array(), 'payment_form', array(), $this->eventDispatcher, $this->entityManager, $this->stringTranslation);
+    $this->paymentType = new PaymentForm([], 'payment_form', [], $this->eventDispatcher, $this->entityManager, $this->stringTranslation);
 
     $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
@@ -91,8 +91,8 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->method('get')
       ->will($this->returnValueMap($map));
 
-    $configuration = array();
-    $plugin_definition = array();
+    $configuration = [];
+    $plugin_definition = [];
     $plugin_id = $this->randomMachineName();
     $plugin = PaymentForm::create($container, $configuration, $plugin_id, $plugin_definition);
     $this->assertInstanceOf('\Drupal\payment_form\Plugin\Payment\Type\PaymentForm', $plugin);
@@ -171,7 +171,7 @@ class PaymentFormUnitTest extends UnitTestCase {
     $this->entityManager->expects($this->atLeastOnce())
       ->method('getFieldDefinitions')
       ->with($entity_type_id, $bundle)
-      ->will($this->returnValue(array()));
+      ->will($this->returnValue([]));
 
     $this->paymentType->setEntityTypeId($entity_type_id);
     $this->paymentType->setBundle($bundle);

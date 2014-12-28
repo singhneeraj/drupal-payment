@@ -52,7 +52,7 @@ class PaymentMethodConfigurationAccessControlHandler extends EntityAccessControl
       return AccessResult::allowedIf($payment_method_configuration->status())->andIf($this->access($payment_method_configuration, 'update', $langcode, $account, TRUE))->cacheUntilEntityChanges($payment_method_configuration);
     }
     elseif ($operation == 'duplicate') {
-      return $this->createAccess($payment_method_configuration->bundle(), $account, array(), TRUE)->andIf($this->access($payment_method_configuration, 'view', $langcode, $account, TRUE));
+      return $this->createAccess($payment_method_configuration->bundle(), $account, [], TRUE)->andIf($this->access($payment_method_configuration, 'view', $langcode, $account, TRUE));
     }
     else {
       $permission_prefix = 'payment.payment_method_configuration.' . $operation;

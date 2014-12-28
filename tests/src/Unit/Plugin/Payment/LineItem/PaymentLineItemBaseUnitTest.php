@@ -39,9 +39,9 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
   public function setUp() {
     $this->math = $this->getMock('\Drupal\currency\Math\MathInterface');
 
-    $configuration = array();
+    $configuration = [];
     $plugin_id = $this->randomMachineName();
-    $plugin_definition = array();
+    $plugin_definition = [];
     $this->lineItem = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase')
       ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->math))
       ->getMockForAbstractClass();
@@ -62,7 +62,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
     /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase $class_name */
     $class_name = get_class($this->lineItem);
 
-    $line_item = $class_name::create($container, array(), $this->randomMachineName(), array());
+    $line_item = $class_name::create($container, [], $this->randomMachineName(), []);
     $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase', $line_item);
   }
 
@@ -102,9 +102,9 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
       ->with($amount, $quantity)
       ->will($this->returnValue($total_amount));
 
-    $configuration = array();
+    $configuration = [];
     $plugin_id = $this->randomMachineName();
-    $plugin_definition = array();
+    $plugin_definition = [];
     /** @var \Drupal\payment\Plugin\Payment\LineItem\Basic|\PHPUnit_Framework_MockObject_MockObject $line_item */
     $line_item = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase')
       ->setMethods(array('formElements', 'getAmount', 'getConfigurationFromFormValues', 'getCurrencyCode', 'getDescription', 'getQuantity'))
@@ -146,7 +146,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
    * @covers ::calculateDependencies
    */
   public function testCalculateDependencies() {
-    $this->assertSame(array(), $this->lineItem->calculateDependencies());
+    $this->assertSame([], $this->lineItem->calculateDependencies());
   }
 
   /**
@@ -165,16 +165,16 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
    * @covers ::buildConfigurationForm
    */
   public function testBuildConfigurationForm() {
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
-    $this->assertSame(array(), $this->lineItem->buildConfigurationForm($form, $form_state));
+    $this->assertSame([], $this->lineItem->buildConfigurationForm($form, $form_state));
   }
 
   /**
    * @covers ::validateConfigurationForm
    */
   public function testValidateConfigurationForm() {
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $this->lineItem->validateConfigurationForm($form, $form_state);
   }
@@ -183,7 +183,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
    * @covers ::submitConfigurationForm
    */
   public function testSubmitConfigurationForm() {
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $this->lineItem->submitConfigurationForm($form, $form_state);
   }

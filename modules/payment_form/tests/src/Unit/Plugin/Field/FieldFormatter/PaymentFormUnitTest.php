@@ -102,7 +102,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->method('getCurrentRequest')
       ->willReturn($this->request);
 
-    $this->fieldFormatter = new PaymentForm('payment_form', array(), $this->fieldDefinition, array(), $this->randomMachineName(), $this->randomMachineName(), array());
+    $this->fieldFormatter = new PaymentForm('payment_form', [], $this->fieldDefinition, [], $this->randomMachineName(), $this->randomMachineName(), []);
   }
 
   /**
@@ -247,7 +247,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->will($this->returnValue($storage));
 
     $plugin_id = $this->randomMachineName();
-    $plugin_configuration = array();
+    $plugin_configuration = [];
 
     $payment_line_item = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface');
 

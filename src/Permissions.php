@@ -52,7 +52,7 @@ class Permissions implements ContainerInjectionInterface {
    *   The structure is the same as that of *.permissions.yml files.
    */
   public function getPermissions() {
-    $permissions = array();
+    $permissions = [];
     $definitions = $this->paymentMethodConfigurationManager->getDefinitions();
     foreach ($definitions as $plugin_id => $definition) {
       $permissions['payment.payment_method_configuration.create.' . $plugin_id] = array(

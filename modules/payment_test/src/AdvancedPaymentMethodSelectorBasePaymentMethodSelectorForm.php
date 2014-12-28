@@ -87,7 +87,7 @@ class AdvancedPaymentMethodSelectorBasePaymentMethodSelectorForm implements Cont
       $payment_method_selector->setRequired();
       /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface[] $payment_method_configurations */
       $payment_method_configurations = PaymentMethodConfiguration::loadMultiple();
-      $allowed_payment_method_ids = array();
+      $allowed_payment_method_ids = [];
       foreach ($payment_method_configurations as $payment_method_configuration) {
         $allowed_payment_method_ids[] = 'payment_basic:' . $payment_method_configuration->id();
       }
@@ -95,7 +95,7 @@ class AdvancedPaymentMethodSelectorBasePaymentMethodSelectorForm implements Cont
       $form_state->set('payment_method_selector', $payment_method_selector);
     }
 
-    $form['payment_method'] = $payment_method_selector->buildConfigurationForm(array(), $form_state);
+    $form['payment_method'] = $payment_method_selector->buildConfigurationForm([], $form_state);
     // Nest the selector in a tree if that's required.
     if ($tree) {
       $form['tree'] = array(

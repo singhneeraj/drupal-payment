@@ -65,7 +65,7 @@ namespace Drupal\Tests\payment\Unit\Element {
      *
      * @var array
      */
-    protected $pluginDefinition = array();
+    protected $pluginDefinition = [];
 
     /**
      * The renderer.
@@ -132,7 +132,7 @@ namespace Drupal\Tests\payment\Unit\Element {
 
       $this->urlGenerator = $this->getMock('\Drupal\Core\Routing\UrlGeneratorInterface');
 
-      $configuration = array();
+      $configuration = [];
       $plugin_id = $this->randomMachineName();
 
       $this->pluginDefinition['class'] = $this->randomMachineName();
@@ -332,9 +332,9 @@ namespace Drupal\Tests\payment\Unit\Element {
      * @dataProvider providerTestPay
      */
     public function testPay($is_payment_execution_interruptive, $is_xml_http_request) {
-      $configuration = array();
+      $configuration = [];
       $plugin_id = $this->randomMachineName();
-      $this->pluginDefinition = array();
+      $this->pluginDefinition = [];
 
       $this->element = $this->getMockBuilder('\Drupal\payment\Element\PaymentReferenceBase')
         ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->paymentMethodSelectorManager, new Random()))
@@ -466,7 +466,7 @@ namespace Drupal\Tests\payment\Unit\Element {
       $form = array(
         'foo' => array(
           'bar' => array(
-            '#limit_allowed_payment_method_ids' => array(),
+            '#limit_allowed_payment_method_ids' => [],
             '#name' => $this->randomMachineName(),
             '#payment_method_selector_id' => $payment_method_selector_plugin_id,
             '#prototype_payment' => $payment,
@@ -512,7 +512,7 @@ namespace Drupal\Tests\payment\Unit\Element {
      * @covers ::refresh
      */
     public function testRefresh() {
-      $form = array();
+      $form = [];
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
       $form_state->expects($this->once())
         ->method('setRebuild')
@@ -625,7 +625,7 @@ namespace Drupal\Tests\payment\Unit\Element {
     public function providerGetPaymentMethodSelector() {
       return array(
         array(NULL),
-        array(array()),
+        array([]),
         array(array($this->randomMachineName(), $this->randomMachineName())),
       );
     }
@@ -634,9 +634,9 @@ namespace Drupal\Tests\payment\Unit\Element {
      * @covers ::buildCompletePaymentLink
      */
     public function testBuildCompletePaymentLinkWithoutPaymentMethod() {
-      $configuration = array();
+      $configuration = [];
       $plugin_id = $this->randomMachineName();
-      $this->pluginDefinition = array();
+      $this->pluginDefinition = [];
 
       $element = array(
         '#foo' => $this->randomMachineName(),
@@ -662,16 +662,16 @@ namespace Drupal\Tests\payment\Unit\Element {
       $method->setAccessible(TRUE);
 
       $build = $method->invoke($this->element, $element, $form_state);
-      $this->assertSame(array(), $build);
+      $this->assertSame([], $build);
     }
 
     /**
      * @covers ::buildCompletePaymentLink
      */
     public function testBuildCompletePaymentLinkWithPaymentMethod() {
-      $configuration = array();
+      $configuration = [];
       $plugin_id = $this->randomMachineName();
-      $this->pluginDefinition = array();
+      $this->pluginDefinition = [];
 
       $element = array(
         '#foo' => $this->randomMachineName(),
@@ -724,7 +724,7 @@ namespace Drupal\Tests\payment\Unit\Element {
       $method->setAccessible(TRUE);
 
       $build = $method->invoke($this->element, $element, $form_state);
-      $this->assertSame(array(), $build);
+      $this->assertSame([], $build);
     }
 
     /**
@@ -745,7 +745,7 @@ namespace Drupal\Tests\payment\Unit\Element {
       $method->setAccessible(TRUE);
 
       $build = $method->invoke($this->element, $element, $form_state);
-      $this->assertSame(array(), $build);
+      $this->assertSame([], $build);
     }
 
     /**
@@ -842,13 +842,13 @@ namespace Drupal\Tests\payment\Unit\Element {
       $payment_method_selector = $this->getMock('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface');
       $payment_method_selector->expects($this->atLeastOnce())
         ->method('buildConfigurationForm')
-        ->with(array(), $form_state)
-        ->willReturn(array());
+        ->with([], $form_state)
+        ->willReturn([]);
       $payment_method_selector->expects($this->atLeastOnce())
         ->method('getPayment')
         ->willReturn($payment);
 
-      $configuration = array();
+      $configuration = [];
       $plugin_id = $this->randomMachineName();
 
       $entity_form_display = $this->getMock('\Drupal\Core\Entity\Display\EntityFormDisplayInterface');
@@ -933,9 +933,9 @@ namespace Drupal\Tests\payment\Unit\Element {
         '#queue_owner_id' => $queue_owner_id,
       );
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
-      $form = array();
+      $form = [];
 
-      $configuration = array();
+      $configuration = [];
       $plugin_id = $this->randomMachineName();
 
       $payment_form = array(
@@ -988,7 +988,7 @@ namespace Drupal\Tests\payment\Unit\Element {
      */
     public function testProcessWithInvalidElementConfiguration(array $element) {
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
-      $form = array();
+      $form = [];
 
       $this->element->process($element, $form_state, $form);
     }

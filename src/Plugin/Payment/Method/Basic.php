@@ -199,7 +199,7 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
    * {@inheritdoc}
    */
   public function getSettablePaymentStatuses(AccountInterface $account, PaymentInterface $payment) {
-    return array();
+    return [];
   }
 
 }

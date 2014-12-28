@@ -24,6 +24,6 @@ interface PaymentMethodConfigurationManagerInterface extends PluginManagerInterf
    *
    * @return \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface
    */
-  public function createInstance($plugin_id, array $configuration = array());
+  public function createInstance($plugin_id, array $configuration = []);
 
 }

@@ -33,7 +33,7 @@ class PaymentFormUnitTest extends UnitTestCase {
    *
    * @var array
    */
-  protected $configFactoryConfiguration = array();
+  protected $configFactoryConfiguration = [];
 
   /**
    * The entity manager.
@@ -166,7 +166,7 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->will($this->returnValue($entity_type));
 
     $form = array(
-      'langcode' => array(),
+      'langcode' => [],
     );
     $form_state = new FormState();
     $this->form->setFormDisplay($this->formDisplay, $form_state);
@@ -242,7 +242,7 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @covers ::actions
    */
   public function testActions() {
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
     $method = new \ReflectionMethod($this->form, 'actions');

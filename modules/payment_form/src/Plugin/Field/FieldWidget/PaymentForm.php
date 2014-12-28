@@ -94,7 +94,7 @@ class PaymentForm extends WidgetBase implements ContainerFactoryPluginInterface 
       '#value' => $element['#array_parents'],
       '#type' => 'value',
     );
-    $line_items = array();
+    $line_items = [];
     foreach ($element['#items'] as $item) {
       if ($item->plugin_id) {
         $line_items[] = $this->paymentLineItemManager->createInstance($item->plugin_id, $item->plugin_configuration);
@@ -115,7 +115,7 @@ class PaymentForm extends WidgetBase implements ContainerFactoryPluginInterface 
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
     $element = NestedArray::getValue($form, array_merge(array_slice($values['array_parents'], count($form['#array_parents'])), array('line_items')));
 
-    $line_items_data = array();
+    $line_items_data = [];
     /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface $line_item */
     foreach ($element['#value'] as $line_item) {
       $line_items_data[] = array(

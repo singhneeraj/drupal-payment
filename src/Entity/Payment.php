@@ -80,7 +80,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[]
    *   Keys are line item machine names.
    */
-  protected $lineItems = array();
+  protected $lineItems = [];
 
   /**
    * Payment statuses.
@@ -89,12 +89,12 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    *   Values are \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface
    *   objects.
    */
-  protected $statuses = array();
+  protected $statuses = [];
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $values, $entity_type, $bundle = FALSE, $translations = array()) {
+  public function __construct(array $values, $entity_type, $bundle = FALSE, $translations = []) {
     parent::__construct($values, $entity_type, $bundle, $translations);
     $payment_type_manager = PaymentServiceWrapper::typeManager();
     if ($payment_type_manager instanceof CachedDiscoveryInterface) {
@@ -202,7 +202,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function getLineItemsByType($plugin_id) {
-    $line_items = array();
+    $line_items = [];
     foreach ($this->getLineItems() as $line_item) {
       if ($line_item->getPluginId() == $plugin_id) {
         $line_items[$line_item->getName()] = $line_item;
@@ -425,14 +425,14 @@ class Payment extends ContentEntityBase implements PaymentInterface {
     }
 
     // Clone the line items.
-    $cloned_line_items = array();
+    $cloned_line_items = [];
     foreach ($this->getLineItems() as $line_item) {
       $cloned_line_items[] = clone $line_item;
     }
     $this->setLineItems($cloned_line_items);
 
     // Clone the payment statuses.
-    $cloned_statuses = array();
+    $cloned_statuses = [];
     foreach ($this->getPaymentStatuses() as $status) {
       $cloned_statuses[] = clone $status;
     }

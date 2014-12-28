@@ -40,8 +40,8 @@ class UnsetLineItemUnitTest extends UnitTestCase {
   public function setUp() {
     $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
-    $configuration = array();
-    $plugin_definition = array();
+    $configuration = [];
+    $plugin_definition = [];
     $plugin_id = $this->randomMachineName();
     $this->action = new UnsetLineItem($configuration, $plugin_id, $plugin_definition, $this->stringTranslation);
   }
@@ -58,8 +58,8 @@ class UnsetLineItemUnitTest extends UnitTestCase {
       ->method('get')
       ->will($this->returnValueMap($map));
 
-    $configuration = array();
-    $plugin_definition = array();
+    $configuration = [];
+    $plugin_definition = [];
     $plugin_id = $this->randomMachineName();
     $form = UnsetLineItem::create($container, $configuration, $plugin_id, $plugin_definition);
     $this->assertInstanceOf('\Drupal\payment\Plugin\Action\UnsetLineItem', $form);
@@ -78,7 +78,7 @@ class UnsetLineItemUnitTest extends UnitTestCase {
    * @covers ::buildConfigurationForm
    */
   public function testBuildConfigurationForm() {
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form = $this->action->buildConfigurationForm($form, $form_state);
     $this->assertInternalType('array', $form);
@@ -91,7 +91,7 @@ class UnsetLineItemUnitTest extends UnitTestCase {
    */
   public function testSubmitConfigurationForm() {
     $name = $this->randomMachineName();
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form_state->expects($this->atLeastOnce())
       ->method('getValues')

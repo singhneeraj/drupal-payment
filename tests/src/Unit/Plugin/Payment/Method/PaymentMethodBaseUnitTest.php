@@ -49,7 +49,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
 
     $this->plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\PaymentMethodBase')
-      ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token))
+      ->setConstructorArgs(array([], '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token))
       ->getMockForAbstractClass();
   }
 
@@ -69,7 +69,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
 
     /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase $class_name */
     $class_name = get_class($this->plugin);
-    $form = $class_name::create($container, array(), '', $this->pluginDefinition);
+    $form = $class_name::create($container, [], '', $this->pluginDefinition);
     $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\Method\PaymentMethodBase', $form);
   }
 
@@ -77,14 +77,14 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
    * @covers ::defaultConfiguration
    */
   public function testDefaultConfiguration() {
-    $this->assertSame(array(), $this->plugin->defaultConfiguration());
+    $this->assertSame([], $this->plugin->defaultConfiguration());
   }
 
   /**
    * @covers ::calculateDependencies
    */
   public function testCalculateDependencies() {
-    $this->assertSame(array(), $this->plugin->calculateDependencies());
+    $this->assertSame([], $this->plugin->calculateDependencies());
   }
 
   /**
@@ -177,7 +177,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
    * @covers ::validateConfigurationForm
    */
   public function testValidateConfigurationForm() {
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $this->plugin->validateConfigurationForm($form, $form_state);
   }
@@ -186,7 +186,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
    * @covers ::submitConfigurationForm
    */
   public function testSubmitConfigurationForm() {
-    $form = array();
+    $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $this->plugin->submitConfigurationForm($form, $form_state);
   }
@@ -249,7 +249,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $this->pluginDefinition['active'] = $active;
     /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase|\PHPUnit_Framework_MockObject_MockObject $payment_method */
     $payment_method = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\PaymentMethodBase')
-      ->setConstructorArgs(array(array(), '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token))
+      ->setConstructorArgs(array([], '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token))
       ->setMethods(array('executePaymentAccessCurrency', 'executePaymentAccessEvent', 'doExecutePaymentAccess'))
       ->getMockForAbstractClass();
     $payment_method->expects($this->any())

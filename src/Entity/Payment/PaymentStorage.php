@@ -90,7 +90,7 @@ class PaymentStorage extends SqlContentEntityStorage implements PaymentStorageIn
   /**
    * {@inheritdoc}
    */
-  public function create(array $values = array()) {
+  public function create(array $values = []) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = parent::create($values);
     $status = $this->paymentStatusManager->createInstance('payment_created')
@@ -149,7 +149,7 @@ class PaymentStorage extends SqlContentEntityStorage implements PaymentStorageIn
     $record->first_payment_status_id = current($payment->getPaymentStatuses())->getId();
     $record->last_payment_status_id = $payment->getPaymentStatus()->getId();
     $record->owner = $payment->getOwnerId();
-    $record->payment_method_configuration = serialize($payment->getPaymentMethod() ? $payment->getPaymentMethod()->getConfiguration() : array());
+    $record->payment_method_configuration = serialize($payment->getPaymentMethod() ? $payment->getPaymentMethod()->getConfiguration() : []);
     $record->payment_method_id = $payment->getPaymentMethod() ? $payment->getPaymentMethod()->getPluginId() : NULL;
     $record->payment_type_configuration = serialize($payment->getPaymentType()->getConfiguration());
     $record->payment_type_id = $payment->getPaymentType()->getPluginId();
@@ -219,7 +219,7 @@ class PaymentStorage extends SqlContentEntityStorage implements PaymentStorageIn
       ->condition('payment_id', array_keys($entities))
       ->orderBy('id', 'ASC')
       ->execute();
-    $statuses= array_fill_keys(array_keys($entities), array());
+    $statuses= array_fill_keys(array_keys($entities), []);
     while ($status_data = $result->fetchAssoc()) {
       $status = $this->paymentStatusManager->createInstance($status_data['plugin_id']);
       $status->setCreated((int) $status_data['created']);

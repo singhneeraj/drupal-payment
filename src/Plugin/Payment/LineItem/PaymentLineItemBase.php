@@ -64,7 +64,7 @@ abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItem
    * {@inheritdoc}
    */
   public function calculateDependencies() {
-    return array();
+    return [];
   }
 
   /**
@@ -150,7 +150,7 @@ abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItem
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    return array();
+    return [];
   }
 
   /**

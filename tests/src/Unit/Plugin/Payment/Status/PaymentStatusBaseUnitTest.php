@@ -53,7 +53,7 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
   public function setup() {
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
-    $configuration = array();
+    $configuration = [];
     $this->pluginId = $this->randomMachineName();
     $this->pluginDefinition = array(
       'label' => $this->randomMachineName(),
@@ -78,7 +78,7 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
     /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase $class_name */
     $class_name = get_class($this->status);
 
-    $line_item = $class_name::create($container, array(), $this->randomMachineName(), array());
+    $line_item = $class_name::create($container, [], $this->randomMachineName(), []);
     $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\Status\PaymentStatusBase', $line_item);
   }
 
@@ -86,7 +86,7 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
    * @covers ::calculateDependencies
    */
   public function testCalculateDependencies() {
-    $this->assertSame(array(), $this->status->calculateDependencies());
+    $this->assertSame([], $this->status->calculateDependencies());
   }
 
   /**

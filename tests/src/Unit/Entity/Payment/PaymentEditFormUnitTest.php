@@ -158,7 +158,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
         ->method('getCurrencyOptions')
         ->will($this->returnValue($currency_options));
 
-      $build = $this->form->form(array(), $form_state);
+      $build = $this->form->form([], $form_state);
       unset($build['#entity_builders']);
       unset($build['#process']);
       unset($build['langcode']);
@@ -212,7 +212,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
       $form->setFormDisplay($this->formDisplay, $form_state);
       $form->setEntity($this->payment);
 
-      $form->save(array(), $form_state);
+      $form->save([], $form_state);
     }
 
   }

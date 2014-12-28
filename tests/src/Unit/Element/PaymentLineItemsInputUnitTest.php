@@ -60,9 +60,9 @@ namespace Drupal\Tests\payment\Unit\Element {
 
       $this->stringTranslation = $this->getStringTranslationStub();
 
-      $configuration = array();
+      $configuration = [];
       $plugin_id = $this->randomMachineName();
-      $plugin_definition = array();
+      $plugin_definition = [];
       $this->element = new PaymentLineItemsInput($configuration, $plugin_id, $plugin_definition, $this->stringTranslation, $this->renderer, $this->paymentLineItemManager);
     }
 
@@ -80,9 +80,9 @@ namespace Drupal\Tests\payment\Unit\Element {
         ->method('get')
         ->will($this->returnValueMap($map));
 
-      $configuration = array();
+      $configuration = [];
       $plugin_id = $this->randomMachineName();
-      $plugin_definition = array();
+      $plugin_definition = [];
 
       $form = PaymentLineItemsInput::create($container, $configuration, $plugin_id, $plugin_definition);
       $this->assertInstanceOf('\Drupal\payment\Element\PaymentLineItemsInput', $form);
@@ -115,7 +115,7 @@ namespace Drupal\Tests\payment\Unit\Element {
         '#name' => $this->randomMachineName(),
       );
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
-      $form = array();
+      $form = [];
       $this->element->process($element, $form_state, $form);
     }
 
@@ -135,7 +135,7 @@ namespace Drupal\Tests\payment\Unit\Element {
         '#name' => $this->randomMachineName(),
       );
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
-      $form = array();
+      $form = [];
       $this->element->process($element, $form_state, $form);
     }
 
@@ -144,7 +144,7 @@ namespace Drupal\Tests\payment\Unit\Element {
      */
     public function testProcess() {
       $form_state = new FormState();
-      $form = array();
+      $form = [];
 
       $line_item_name_a = $this->randomMachineName();
       $line_item_configuration_form_a = array(
@@ -153,7 +153,7 @@ namespace Drupal\Tests\payment\Unit\Element {
       $line_item_a = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface');
       $line_item_a->expects($this->atLeastOnce())
         ->method('buildConfigurationForm')
-        ->with(array(), $form_state)
+        ->with([], $form_state)
         ->willReturn($line_item_configuration_form_a);
       $line_item_a->expects($this->atLeastOnce())
         ->method('getName')
@@ -165,7 +165,7 @@ namespace Drupal\Tests\payment\Unit\Element {
       $line_item_b = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface');
       $line_item_b->expects($this->atLeastOnce())
         ->method('buildConfigurationForm')
-        ->with(array(), $form_state)
+        ->with([], $form_state)
         ->willReturn($line_item_configuration_form_b);
       $line_item_b->expects($this->atLeastOnce())
         ->method('getName')
@@ -176,7 +176,7 @@ namespace Drupal\Tests\payment\Unit\Element {
         '#cardinality' => PaymentLineItemsInput::CARDINALITY_UNLIMITED,
         '#default_value' => $line_items,
         '#name' => $this->randomMachineName(),
-        '#parents' => array(),
+        '#parents' => [],
       );
       $element = $this->element->process($element, $form_state, $form);
 
@@ -211,7 +211,7 @@ namespace Drupal\Tests\payment\Unit\Element {
       $method_set = new \ReflectionMethod($this->element, 'setLineItems');
       $method_set->setAccessible(TRUE);
 
-      $this->assertSame(array(), $method_get->invoke($this->element, $element, $form_state));
+      $this->assertSame([], $method_get->invoke($this->element, $element, $form_state));
       $method_set->invoke($this->element, $element, $form_state, $line_items);
       $this->assertSame($line_items, $method_get->invoke($this->element, $element, $form_state));
     }
@@ -241,11 +241,11 @@ namespace Drupal\Tests\payment\Unit\Element {
       $method_initialize = new \ReflectionMethod($this->element, 'initializeLineItems');
       $method_initialize->setAccessible(TRUE);
 
-      $this->assertSame(array(), $method_get->invoke($this->element, $element, $form_state));
+      $this->assertSame([], $method_get->invoke($this->element, $element, $form_state));
       $method_initialize->invoke($this->element, $element, $form_state);
       $this->assertSame($line_items, $method_get->invoke($this->element, $element, $form_state));
-      $method_set->invoke($this->element, $element, $form_state, array());
-      $this->assertSame(array(), $method_get->invoke($this->element, $element, $form_state));
+      $method_set->invoke($this->element, $element, $form_state, []);
+      $this->assertSame([], $method_get->invoke($this->element, $element, $form_state));
     }
 
     /**
@@ -372,7 +372,7 @@ namespace Drupal\Tests\payment\Unit\Element {
           'add_more' => array(
             'add' => array(
               '#array_parents' => array('foo', 'add_more', 'add'),
-              '#parents' => array(),
+              '#parents' => [],
             ),
           ),
         ),
@@ -400,7 +400,7 @@ namespace Drupal\Tests\payment\Unit\Element {
           'add_more' => array(
             'add' => array(
               '#array_parents' => array('foo', 'add_more', 'add'),
-              '#parents' => array(),
+              '#parents' => [],
             ),
           ),
         ),
@@ -440,7 +440,7 @@ namespace Drupal\Tests\payment\Unit\Element {
             $line_item_name => array(
               'delete' => array(
                 '#array_parents' => array('foo', 'line_items', $line_item_name, 'delete'),
-                '#parents' => array(),
+                '#parents' => [],
               ),
             ),
           ),
@@ -475,7 +475,7 @@ namespace Drupal\Tests\payment\Unit\Element {
             $line_item_name => array(
               'delete' => array(
                 '#array_parents' => array('foo', 'line_items', $line_item_name, 'delete'),
-                '#parents' => array(),
+                '#parents' => [],
               ),
             ),
           ),
@@ -525,7 +525,7 @@ namespace Drupal\Tests\payment\Unit\Element {
           '#name' => $root_element_name,
           '#parents' => array('foo'),
           // The line items are built below.
-          'line_items' => array(),
+          'line_items' => [],
         ),
       );
 

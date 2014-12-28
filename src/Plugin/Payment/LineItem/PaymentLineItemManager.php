@@ -37,7 +37,7 @@ class PaymentLineItemManager extends DefaultPluginManager implements PaymentLine
    * {@inheritdoc}
    */
   public function options() {
-    $options = array();
+    $options = [];
     foreach ($this->getDefinitions() as $plugin_id => $definition) {
       $options[$plugin_id] = $definition['label'];
     }

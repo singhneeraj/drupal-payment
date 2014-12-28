@@ -66,7 +66,7 @@ class Unavailable extends PaymentTypeBase {
    * {@inheritdoc}
    */
   public function paymentDescription($language_code = NULL) {
-    return $this->t('Unavailable', array(), array(
+    return $this->t('Unavailable', [], array(
       'langcode' => $language_code,
     ));
   }

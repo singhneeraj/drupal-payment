@@ -77,7 +77,7 @@ class OperationsProviderPluginManagerTraitUnitTestPluginManager {
    *
    * @var array
    */
-  protected $pluginDefinitions = array();
+  protected $pluginDefinitions = [];
 
   /**
    * Creates a new class instance.

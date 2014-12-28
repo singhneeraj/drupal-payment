@@ -90,7 +90,7 @@ class PaymentForm extends FieldItemBase {
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_storage_definition) {
     // @todo Find out how to test this method, as it cannot use t() or
     //   self::t().
-    $definitions = array();
+    $definitions = [];
     $definitions['plugin_configuration'] = DataDefinition::create('any')
       ->setLabel(t('Plugin configuration'))
       ->setRequired(TRUE);
@@ -106,7 +106,7 @@ class PaymentForm extends FieldItemBase {
    */
   public function applyDefaultValue($notify = TRUE) {
     $this->get('plugin_id')->setValue('', $notify);
-    $this->get('plugin_configuration')->setValue(array(), $notify);
+    $this->get('plugin_configuration')->setValue([], $notify);
 
     return $this;
   }

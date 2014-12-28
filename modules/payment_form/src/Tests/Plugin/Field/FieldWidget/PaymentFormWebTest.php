@@ -40,8 +40,8 @@ class PaymentFormWebTest extends WebTestBase {
       'field_name' => $field_name,
       'new_storage_type' => 'payment_form',
     ), t('Save and continue'));
-    $this->drupalPostForm(NULL, array(), t('Save field settings'));
-    $this->drupalPostForm(NULL, array(), t('Add and configure a new line item'));
+    $this->drupalPostForm(NULL, [], t('Save field settings'));
+    $this->drupalPostForm(NULL, [], t('Add and configure a new line item'));
     $this->drupalPostForm(NULL, array(
       'default_value_input[field_' . $field_name . '][line_items][line_items][payment_basic][plugin_form][description]' => $this->randomString(),
     ), t('Save settings'));

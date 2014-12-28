@@ -49,7 +49,7 @@ class PaymentReferenceWebTest extends WebTestBase {
       'field_name' => $payment_reference_field_name,
       'settings' => array(
         'currency_code' => 'EUR',
-        'line_items_data' => array(),
+        'line_items_data' => [],
       ),
     ))->save();
 
@@ -78,7 +78,7 @@ class PaymentReferenceWebTest extends WebTestBase {
 
     // Test without selecting a payment method.
     $this->drupalGet($path);
-    $this->drupalPostForm(NULL, array(), t('Pay'));
+    $this->drupalPostForm(NULL, [], t('Pay'));
     $this->assertText('Payment method field is required');
     $this->assertText('quxfoobar field is required');
     $value = $state->get('payment_reference_test_payment_reference_element');
@@ -90,8 +90,8 @@ class PaymentReferenceWebTest extends WebTestBase {
       'payment_reference[container][payment_form][payment_method][container][select][container][payment_method_id]' => 'payment_test_uninterruptive',
       'payment_reference[container][payment_form][quxfoobar][0][value]' => $text_field_value,
     ), t('Choose payment method'));
-    $this->drupalPostForm(NULL, array(), t('Pay'));
-    $this->drupalPostForm(NULL, array(), t('Submit'));
+    $this->drupalPostForm(NULL, [], t('Pay'));
+    $this->drupalPostForm(NULL, [], t('Submit'));
     $payment_id = $state->get('payment_reference_test_payment_reference_element');
     $this->assertTrue(is_int($payment_id));
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
@@ -107,7 +107,7 @@ class PaymentReferenceWebTest extends WebTestBase {
       'payment_reference[container][payment_form][payment_method][container][select][container][payment_method_id]' => 'payment_test_interruptive',
       'payment_reference[container][payment_form][quxfoobar][0][value]' => $text_field_value,
     ), t('Choose payment method'));
-    $this->drupalPostForm(NULL, array(), t('Pay'));
+    $this->drupalPostForm(NULL, [], t('Pay'));
     $this->clickLink(t('Complete payment'));
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = Payment::loadMultiple()[2];

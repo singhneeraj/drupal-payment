@@ -24,7 +24,7 @@ interface PaymentMethodSelectorManagerInterface extends PluginManagerInterface {
    *
    * @return \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface
    */
-  public function createInstance($plugin_id, array $configuration = array());
+  public function createInstance($plugin_id, array $configuration = []);
 
   /**
    * Returns payment method selector options.

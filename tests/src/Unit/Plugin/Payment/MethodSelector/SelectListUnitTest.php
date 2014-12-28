@@ -67,7 +67,7 @@ class SelectListUnitTest extends UnitTestCase {
       ->will($this->returnArgument(0));
 
     $this->paymentMethodSelectorPluginId = $this->randomMachineName();
-    $this->paymentMethodSelector = new SelectList(array(), $this->paymentMethodSelectorPluginId, array(), $this->currentUser, $this->paymentMethodManager, $this->stringTranslation);
+    $this->paymentMethodSelector = new SelectList([], $this->paymentMethodSelectorPluginId, [], $this->currentUser, $this->paymentMethodManager, $this->stringTranslation);
   }
 
   /**
