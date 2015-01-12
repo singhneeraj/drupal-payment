@@ -7,8 +7,10 @@
 
 namespace Drupal\payment\Plugin\Action;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Action\ConfigurableActionBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -86,6 +88,17 @@ class UnsetLineItem extends ConfigurableActionBase {
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
     $this->configuration['line_item_name'] = $values['line_item_name'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function access($payment, AccountInterface $account = NULL, $return_as_object = FALSE) {
+    if ($payment instanceof PaymentInterface) {
+      return $payment->access('update', $account, $return_as_object);
+    }
+    $access = AccessResult::forbidden();
+    return $return_as_object ? $access : $access->isAllowed();
   }
 
 }

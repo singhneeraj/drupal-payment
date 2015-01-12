@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\payment\Unit\Plugin\Action;
 
+use Drupal\Core\Access\AccessResultAllowed;
 use Drupal\payment\Plugin\Action\SetStatus;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -144,4 +145,57 @@ class SetStatusUnitTest extends UnitTestCase {
     $this->action->execute();
     $this->action->execute($payment);
   }
+
+  /**
+   * @covers ::access
+   */
+  public function testAccessWithPaymentAsObject() {
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
+    $access_result = new AccessResultAllowed();
+
+    $payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
+    $payment->expects($this->atLeastOnce())
+      ->method('access')
+      ->with('update', $account, TRUE)
+      ->willReturn($access_result);
+
+    $this->assertSame($access_result, $this->action->access($payment, $account, TRUE));
+  }
+
+  /**
+   * @covers ::access
+   */
+  public function testAccessWithPaymentAsBoolean() {
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
+    $payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
+    $payment->expects($this->atLeastOnce())
+      ->method('access')
+      ->with('update', $account)
+      ->willReturn(TRUE);
+
+    $this->assertTrue($this->action->access($payment, $account));
+  }
+
+  /**
+   * @covers ::access
+   */
+  public function testAccessWithoutPaymentAsObject() {
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
+    $access_result = $this->action->access(NULL, $account, TRUE);
+    $this->assertFalse($access_result->isAllowed());
+  }
+
+  /**
+   * @covers ::access
+   */
+  public function testAccessWithoutPaymentAsBoolean() {
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
+    $access_result = $this->action->access(NULL, $account);
+    $this->assertFalse($access_result);
+  }
+
 }
