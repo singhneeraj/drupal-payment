@@ -4,7 +4,7 @@ ABOUT
 Allows users to set up payment methods and connects them to other modules that
 allow their users to make payments.
 
-In addition to this README file, also see the online handbook at
+In addition to this README file, also see PLUGINS.txt and the online handbook at
 http://drupal.org/node/1807610.
 
 - Payment is an API to connect payment methods to modules that allow users to
