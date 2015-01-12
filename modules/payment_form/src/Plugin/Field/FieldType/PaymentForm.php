@@ -71,7 +71,6 @@ class PaymentForm extends FieldItemBase {
       'columns' => array(
         'plugin_configuration' => array(
           'type' => 'blob',
-          'not null' => TRUE,
           'serialize' => TRUE,
         ),
         'plugin_id' => array(

@@ -62,7 +62,6 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
         'target_id' => array(
           'type' => 'int',
           'unsigned' => TRUE,
-          'not null' => FALSE,
         ),
       ),
       'indexes' => array(
