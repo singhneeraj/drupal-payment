@@ -47,6 +47,13 @@ class PaymentStorageUnitTest extends UnitTestCase {
   protected $entityType;
 
   /**
+   * The language manager.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $languageManager;
+
+  /**
    * The payment line item manager.
    *
    * @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -97,6 +104,8 @@ class PaymentStorageUnitTest extends UnitTestCase {
 
     $this->entityType = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
 
+    $this->languageManager = $this->getMock('\Drupal\Core\Language\LanguageManagerInterface');
+
     $this->paymentLineItemManager = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface');
 
     $this->paymentMethodManager = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface');
@@ -105,7 +114,7 @@ class PaymentStorageUnitTest extends UnitTestCase {
 
     $this->paymentTypeManager = $this->getMock('\Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface');
 
-    $this->storage = new PaymentStorage($this->entityType, $this->database, $this->entityManager, $this->cacheBackend, $this->paymentLineItemManager, $this->paymentMethodManager, $this->paymentStatusManager, $this->paymentTypeManager);
+    $this->storage = new PaymentStorage($this->entityType, $this->database, $this->entityManager, $this->cacheBackend, $this->languageManager, $this->paymentLineItemManager, $this->paymentMethodManager, $this->paymentStatusManager, $this->paymentTypeManager);
   }
 
   /**
@@ -117,6 +126,7 @@ class PaymentStorageUnitTest extends UnitTestCase {
       array('cache.entity', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->cacheBackend),
       array('database', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->database),
       array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager),
+      array('language_manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->languageManager),
       array('plugin.manager.payment.line_item', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentLineItemManager),
       array('plugin.manager.payment.method', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodManager),
       array('plugin.manager.payment.status', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentStatusManager),
