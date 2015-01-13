@@ -49,12 +49,12 @@ use Drupal\user\UserInterface;
  *   id = "payment",
  *   label = @Translation("Payment"),
  *   links = {
- *     "canonical" = "payment.payment.view",
- *     "edit-form" = "payment.payment.edit",
- *     "delete-form" = "payment.payment.delete",
- *     "update-status-form" = "payment.payment.update_status",
- *     "capture-form" = "payment.payment.capture",
- *     "refund-form" = "payment.payment.refund"
+ *     "canonical" = "/payment/{payment}",
+ *     "edit-form" = "/payment/{payment}/edit",
+ *     "delete-form" = "/payment/{payment}/delete",
+ *     "update-status-form" = "/payment/{payment}/update-status",
+ *     "capture-form" = "/payment/{payment}/capture",
+ *     "refund-form" = "/payment/{payment}/refund"
  *   }
  * )
  */

@@ -4,23 +4,23 @@ payment.payment.admin_list:
   title: Payments
 
 payment.payment.view:
-  base_route: payment.payment.view
-  route_name: payment.payment.view
+  base_route: entity.payment.canonical
+  route_name: entity.payment.canonical
   title: 'View'
 
 payment.payment.edit:
-  base_route: payment.payment.view
-  route_name: payment.payment.edit
+  base_route: entity.payment.canonical
+  route_name: entity.payment.edit
   title: 'Edit'
 
 payment.payment.update_status:
-  base_route: payment.payment.view
-  route_name: payment.payment.update_status
+  base_route: entity.payment.canonical
+  route_name: entity.payment.update_status
   title: 'Update status'
 
 payment.payment.capture:
-  base_route: payment.payment.view
-  route_name: payment.payment.capture
+  base_route: entity.payment.canonical
+  route_name: entity.payment.capture
   title: 'Capture'
 
 payment.payment_method.list:

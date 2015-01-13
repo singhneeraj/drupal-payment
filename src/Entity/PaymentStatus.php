@@ -33,10 +33,9 @@ use Drupal\Core\Entity\EntityManagerInterface;
  *   id = "payment_status",
  *   label = @Translation("Payment status"),
  *   links = {
- *     "canonical" = "payment.payment_status.edit",
- *     "create-form" = "payment.payment_status.add",
- *     "edit-form" = "payment.payment_status.edit",
- *     "delete-form" = "payment.payment_status.delete"
+ *     "canonical" = "/admin/config/services/payment/status/edit/{payment_status}",
+ *     "edit-form" = "/admin/config/services/payment/status/edit/{payment_status}",
+ *     "delete-form" = "/admin/config/services/payment/status/edit/{payment_status}/delete"
  *   }
  * )
  */

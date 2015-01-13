@@ -39,13 +39,12 @@ use Drupal\user\UserStorageInterface;
  *   id = "payment_method_configuration",
  *   label = @Translation("Payment method configuration"),
  *   links = {
- *     "enable" = "payment.payment_method_configuration.enable",
- *     "disable" = "payment.payment_method_configuration.disable",
- *     "canonical" = "payment.payment_method_configuration.edit",
- *     "create-form" = "payment.payment_method_configuration.select",
- *     "edit-form" = "payment.payment_method_configuration.edit",
- *     "delete-form" = "payment.payment_method_configuration.delete",
- *     "duplicate-form" = "payment.payment_method_configuration.duplicate"
+ *     "enable" = "/admin/config/services/payment/method/configuration/{payment_method_configuration}/enable",
+ *     "disable" = "/admin/config/services/payment/method/configuration/{payment_method_configuration}/disable",
+ *     "canonical" = "/admin/config/services/payment/method/configuration/{payment_method_configuration}",
+ *     "edit-form" = "/admin/config/services/payment/method/configuration/{payment_method_configuration}",
+ *     "delete-form" = "/admin/config/services/payment/method/configuration/{payment_method_configuration}/delete",
+ *     "duplicate-form" = "/admin/config/services/payment/method/configuration/{payment_method_configuration}/duplicate"
  *   }
  * )
  */

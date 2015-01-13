@@ -83,7 +83,7 @@ class ListPaymentTypes extends ControllerBase {
         if ($this->currentUser->hasPermission('administer payment fields')) {
           $operations['manage-fields'] = [
             'title' => $this->t('Manage fields'),
-            'url' => new Url('field_ui.overview_payment', [
+            'url' => new Url('entity.payment.field_ui_fields', [
               'bundle' => $plugin_id,
             ]),
           ];
@@ -91,7 +91,7 @@ class ListPaymentTypes extends ControllerBase {
         if ($this->currentUser->hasPermission('administer payment form display')) {
           $operations['manage-form-display'] = [
             'title' => $this->t('Manage form display'),
-            'url' => new Url('field_ui.form_display_overview_payment', [
+            'url' => new Url('entity.payment.field_ui_form_display', [
               'bundle' => $plugin_id,
             ]),
           ];
@@ -99,7 +99,7 @@ class ListPaymentTypes extends ControllerBase {
         if ($this->currentUser->hasPermission('administer payment display')) {
           $operations['manage-display'] = [
             'title' => $this->t('Manage display'),
-            'url' => new Url('field_ui.display_overview_payment', [
+            'url' => new Url('entity.payment.field_ui_display', [
               'bundle' => $plugin_id,
             ]),
           ];

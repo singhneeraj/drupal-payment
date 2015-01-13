@@ -14,7 +14,7 @@ payment.payment.admin_list:
   requirements:
     _permission: 'payment.payment.view.any'
 
-payment.payment.view:
+entity.payment.canonical:
   path: '/payment/{payment}'
   defaults:
     _entity_view: 'payment.full'
@@ -22,7 +22,7 @@ payment.payment.view:
   requirements:
     _entity_access: 'payment.view'
 
-payment.payment.edit:
+entity.payment.edit:
   path: '/payment/{payment}/edit'
   defaults:
     _entity_form: 'payment.edit'
@@ -32,7 +32,7 @@ payment.payment.edit:
   options:
     _admin_route: TRUE
 
-payment.payment.update_status:
+entity.payment.update_status:
   path: '/payment/{payment}/update-status'
   defaults:
     _entity_form: 'payment.update_status'
@@ -42,7 +42,7 @@ payment.payment.update_status:
   options:
     _admin_route: TRUE
 
-payment.payment.capture:
+entity.payment.capture:
   path: '/payment/{payment}/capture'
   defaults:
     _entity_form: 'payment.capture'
@@ -52,7 +52,7 @@ payment.payment.capture:
   options:
     _admin_route: TRUE
 
-payment.payment.refund:
+entity.payment.refund:
   path: '/payment/{payment}/refund'
   defaults:
     _entity_form: 'payment.refund'
@@ -62,7 +62,7 @@ payment.payment.refund:
   options:
     _admin_route: TRUE
 
-payment.payment.delete:
+entity.payment.delete:
   path: '/payment/{payment}/delete'
   defaults:
     _entity_form: 'payment.delete'
@@ -103,7 +103,7 @@ payment.payment_method_configuration.add:
   requirements:
     _custom_access: '\Drupal\payment\Controller\AddPaymentMethodConfiguration::access'
 
-payment.payment_method_configuration.edit:
+entity.payment_method_configuration.edit_form:
   path: '/admin/config/services/payment/method/configuration/{payment_method_configuration}'
   defaults:
     _entity_form: 'payment_method_configuration.default'
@@ -111,7 +111,7 @@ payment.payment_method_configuration.edit:
   requirements:
     _entity_access: 'payment_method_configuration.update'
 
-payment.payment_method_configuration.enable:
+entity.payment_method_configuration.enable:
   path: '/admin/config/services/payment/method/configuration/{payment_method_configuration}/enable'
   defaults:
     _controller: '\Drupal\payment\Controller\EnablePaymentMethodConfiguration::execute'
@@ -119,7 +119,7 @@ payment.payment_method_configuration.enable:
     _entity_access: 'payment_method_configuration.enable'
     _csrf_token: 'TRUE'
 
-payment.payment_method_configuration.disable:
+entity.payment_method_configuration.disable:
   path: '/admin/config/services/payment/method/configuration/{payment_method_configuration}/disable'
   defaults:
     _controller: '\Drupal\payment\Controller\DisablePaymentMethodConfiguration::execute'
@@ -127,14 +127,14 @@ payment.payment_method_configuration.disable:
     _entity_access: 'payment_method_configuration.disable'
     _csrf_token: 'TRUE'
 
-payment.payment_method_configuration.delete:
+entity.payment_method_configuration.delete_form:
   path: '/admin/config/services/payment/method/configuration/{payment_method_configuration}/delete'
   defaults:
     _entity_form: 'payment_method_configuration.delete'
   requirements:
     _entity_access: 'payment_method_configuration.delete'
 
-payment.payment_method_configuration.duplicate:
+entity.payment_method_configuration.duplicate_form:
   path: '/admin/config/services/payment/method/configuration/{payment_method_configuration}/duplicate'
   defaults:
     _controller: '\Drupal\payment\Controller\DuplicatePaymentMethodConfiguration::execute'
@@ -158,7 +158,7 @@ payment.payment_status.add:
   requirements:
     _permission: 'payment.payment_status.administer'
 
-payment.payment_status.edit:
+entity.payment_status.edit_form:
   path: '/admin/config/services/payment/status/edit/{payment_status}'
   defaults:
     _entity_form: 'payment_status.default'
@@ -166,7 +166,7 @@ payment.payment_status.edit:
   requirements:
     _entity_access: 'payment_status.update'
 
-payment.payment_status.delete:
+entity.payment_status.delete_form:
   path: '/admin/config/services/payment/status/delete/{payment_status}'
   defaults:
     _entity_form: 'payment_status.delete'

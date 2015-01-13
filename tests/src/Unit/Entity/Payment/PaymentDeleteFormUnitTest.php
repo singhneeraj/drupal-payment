@@ -123,7 +123,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
     function testGetCancelUrl() {
       $url = $this->form->getCancelUrl();
       $this->assertInstanceOf('\Drupal\Core\Url', $url);
-      $this->assertSame('payment.payment.view', $url->getRouteName());
+      $this->assertSame('entity.payment.canonical', $url->getRouteName());
     }
 
     /**
