@@ -1,8 +1,8 @@
 ABOUT
 -----
 
-Allows users to set up payment methods and connects them to other modules that
-allow their users to make payments.
+Payment allows you to create and configure payment methods and use those to
+process other modules' payments.
 
 In addition to this README file, also see PLUGINS.txt and the online handbook at
 http://drupal.org/node/1807610.
