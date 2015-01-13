@@ -165,19 +165,19 @@ class ListPaymentTypesUnitTest extends UnitTestCase {
             ],
             'manage-fields' => [
               'title' => 'Manage fields',
-              'url' => new Url('field_ui.overview_payment', [
+              'url' => new Url('entity.payment.field_ui_fields', [
                 'bundle' => 'foo',
               ]),
             ],
             'manage-form-display' => [
               'title' => 'Manage form display',
-              'url' => new Url('field_ui.form_display_overview_payment', [
+              'url' => new Url('entity.payment.field_ui_form_display', [
                 'bundle' => 'foo',
               ]),
             ],
             'manage-display' => [
               'title' => 'Manage display',
-              'url' => new Url('field_ui.display_overview_payment', [
+              'url' => new Url('entity.payment.field_ui_display', [
                 'bundle' => 'foo',
               ]),
             ],
@@ -202,19 +202,19 @@ class ListPaymentTypesUnitTest extends UnitTestCase {
             ],
             'manage-fields' => [
               'title' => 'Manage fields',
-              'url' => new Url('field_ui.overview_payment', [
+              'url' => new Url('entity.payment.field_ui_fields', [
                 'bundle' => 'bar',
               ]),
             ],
             'manage-form-display' => [
               'title' => 'Manage form display',
-              'url' => new Url('field_ui.form_display_overview_payment', [
+              'url' => new Url('entity.payment.field_ui_form_display', [
                 'bundle' => 'bar',
               ]),
             ],
             'manage-display' => [
               'title' => 'Manage display',
-              'url' => new Url('field_ui.display_overview_payment', [
+              'url' => new Url('entity.payment.field_ui_display', [
                 'bundle' => 'bar',
               ]),
             ],
