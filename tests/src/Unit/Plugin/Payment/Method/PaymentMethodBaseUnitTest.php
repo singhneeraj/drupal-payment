@@ -284,6 +284,8 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
 
   /**
    * @covers ::capturePayment
+   *
+   * @expectedException \Exception
    */
   public function testCapturePayment() {
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
@@ -291,8 +293,6 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
       ->getMock();
 
     $this->plugin->setPayment($payment);
-    $this->plugin->expects($this->once())
-      ->method('doCapturePayment');
 
     $this->plugin->capturePayment();
   }
@@ -308,34 +308,17 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
 
   /**
    * @covers ::capturePaymentAccess
-   *
-   * @dataProvider providerTestCapturePaymentAccess
    */
-  public function testCapturePaymentAccess($expected, $do) {
+  public function testCapturePaymentAccess() {
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
 
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
-    /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase|\PHPUnit_Framework_MockObject_MockObject $payment_method */
     $this->plugin->setPayment($payment);
-    $this->plugin->expects($this->any())
-      ->method('doCapturePaymentAccess')
-      ->with($account)
-      ->will($this->returnValue($do));
 
-    $this->assertSame($expected, $this->plugin->capturePaymentAccess($account));
-  }
-
-  /**
-   * Provides data to self::testCapturePaymentAccess().
-   */
-  public function providerTestCapturePaymentAccess() {
-    return array(
-      array(TRUE, TRUE),
-      array(FALSE, FALSE),
-    );
+    $this->assertFalse($this->plugin->capturePaymentAccess($account));
   }
 
   /**
@@ -351,19 +334,15 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
 
   /**
    * @covers ::refundPayment
+   *
+   * @expectedException \Exception
    */
   public function testRefundPayment() {
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->eventDispatcher->expects($this->once())
-      ->method('dispatch')
-      ->with(PaymentEvents::PAYMENT_PRE_REFUND, $this->isInstanceOf('\Drupal\payment\Event\PaymentPreRefund'));
-
     $this->plugin->setPayment($payment);
-    $this->plugin->expects($this->once())
-      ->method('doRefundPayment');
 
     $this->plugin->refundPayment();
   }
@@ -379,10 +358,8 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
 
   /**
    * @covers ::refundPaymentAccess
-   *
-   * @dataProvider providerTestRefundPaymentAccess
    */
-  public function testRefundPaymentAccess($expected, $do) {
+  public function testRefundPaymentAccess() {
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
@@ -391,22 +368,8 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
 
     /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase|\PHPUnit_Framework_MockObject_MockObject $payment_method */
     $this->plugin->setPayment($payment);
-    $this->plugin->expects($this->any())
-      ->method('doRefundPaymentAccess')
-      ->with($account)
-      ->will($this->returnValue($do));
 
-    $this->assertSame($expected, $this->plugin->refundPaymentAccess($account));
-  }
-
-  /**
-   * Provides data to self::testRefundPaymentAccess().
-   */
-  public function providerTestRefundPaymentAccess() {
-    return array(
-      array(TRUE, TRUE),
-      array(FALSE, FALSE),
-    );
+    $this->assertFalse($this->plugin->refundPaymentAccess($account));
   }
 
   /**

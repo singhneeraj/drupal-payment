@@ -260,7 +260,10 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    *
    * @return bool
    */
-  abstract protected function doCapturePaymentAccess(AccountInterface $account);
+  protected function doCapturePaymentAccess(AccountInterface $account) {
+    // Child classes must override this method to support payment capture.
+    return FALSE;
+  }
 
   /**
    * {@inheritdoc}
@@ -278,7 +281,9 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
   /**
    * Performs the actual payment capture.
    */
-  abstract protected function doCapturePayment();
+  protected function doCapturePayment() {
+    throw new \Exception('Child classes must override this method to support payment capture.');
+  }
 
   /**
    * {@inheritdoc}
@@ -298,7 +303,10 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    *
    * @return bool
    */
-  abstract protected function doRefundPaymentAccess(AccountInterface $account);
+  protected function doRefundPaymentAccess(AccountInterface $account) {
+    // Child classes must override this method to support payment refund.
+    return FALSE;
+  }
 
   /**
    * {@inheritdoc}
@@ -316,7 +324,9 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
   /**
    * Performs the actual payment refund.
    */
-  abstract protected function doRefundPayment();
+  protected function doRefundPayment() {
+    throw new \Exception('Child classes must override this method to support payment refund.');
+  }
 
   /**
    * Checks a payment's currency against this plugin.
