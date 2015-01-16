@@ -7,6 +7,7 @@ process other modules' payments.
 In addition to this README file, also see PLUGINS.txt and the online handbook at
 http://drupal.org/node/1807610.
 
+This project contains the following modules:
 - Payment is an API to connect payment methods to modules that allow users to
   make payments. This means that it doesn't do anything by itself, apart from
   providing other modules with the ability to make payments.
