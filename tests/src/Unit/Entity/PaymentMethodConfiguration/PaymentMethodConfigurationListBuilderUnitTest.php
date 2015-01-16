@@ -22,7 +22,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
     /**
      * The entity storage.
      *
-     * @var \Drupal\Core\Entity\EntityStorageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $entityStorage;
 
@@ -67,7 +67,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
      * @covers ::__construct
      */
     public function setUp() {
-      $this->entityStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
+      $this->entityStorage = $this->getMock('\Drupal\Core\Config\Entity\ConfigEntityStorageInterface');
 
       $this->entityType = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
 
@@ -207,7 +207,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
         ->will($this->returnValue('Drupal\Core\Config\Entity\ConfigEntityBase'));
 
       $this->entityStorage->expects($this->once())
-        ->method('loadMultiple')
+        ->method('loadMultipleOverrideFree')
         ->will($this->returnValue([]));
 
       $build = $this->listBuilder->render();

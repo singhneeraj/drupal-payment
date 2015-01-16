@@ -71,8 +71,15 @@ class PaymentReferenceConfigurationForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+  protected function getEditableConfigNames() {
+    return ['payment_reference.payment_type'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->configFactory()->get('payment_reference.payment_type');
+    $config = $this->config('payment_reference.payment_type');
     $form['payment_method_selector_id'] = array(
       '#default_value' => $config->get('payment_method_selector_id'),
       '#options' => $this->paymentMethodSelectorManager->options(),

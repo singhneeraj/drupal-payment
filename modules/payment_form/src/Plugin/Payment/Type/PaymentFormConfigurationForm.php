@@ -72,8 +72,15 @@ class PaymentFormConfigurationForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+  protected function getEditableConfigNames() {
+    return ['payment_form.payment_type'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->configFactory()->get('payment_form.payment_type');
+    $config = $this->config('payment_form.payment_type');
 
     $form['payment_method_selector_id'] = array(
       '#default_value' => $config->get('payment_method_selector_id'),
@@ -111,7 +118,7 @@ class PaymentFormConfigurationForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->configFactory()->get('payment_form.payment_type');
+    $config = $this->config('payment_form.payment_type');
     $values = $form_state->getValues();
     $config->set('payment_method_selector_id', $values['payment_method_selector_id']);
     $config->set('limit_allowed_payment_methods', $values['limit_allowed_payment_methods']);
