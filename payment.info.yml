@@ -5,4 +5,4 @@ configure: payment.admin
 type: module
 package: Payment
 dependencies:
-  - currency
+  - currency:currency (3.x)
