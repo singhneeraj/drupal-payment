@@ -9,7 +9,7 @@ http://drupal.org/node/1807610.
 
 This project contains the following modules:
 - Payment is an API to connect payment methods to modules that allow users to
-  make payments. This means that it doesn't do anything by itself, apart from
+  make payments. This means that it doesn't do much by itself, apart from
   providing other modules with the ability to make payments.
 - Payment Form Field contains a field that displays a payment form when viewing
   the entity the field is attached to.
