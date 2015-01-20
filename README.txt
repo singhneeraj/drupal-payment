@@ -12,7 +12,7 @@ This project contains the following modules:
   make payments. This means that it doesn't do anything by itself, apart from
   providing other modules with the ability to make payments.
 - Payment Form Field contains a field that displays a payment form when viewing
-  the entity it is attached to.
+  the entity the field is attached to.
 - Payment Reference Field contains a field that allow users to make a payment
   while adding a new entity.
 
