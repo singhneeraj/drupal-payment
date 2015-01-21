@@ -1,10 +1,3 @@
-payment_reference.pay:
-  path: '/payment_reference/pay/{storage_key}'
-  defaults:
-    _controller: '\Drupal\payment_reference\Controller\Pay::execute'
-  requirements:
-    _custom_access: '\Drupal\payment_reference\Controller\Pay::access'
-    _csrf_token: 'TRUE'
 payment_reference.resume_context:
   path: '/payment_reference/resume/{payment}'
   defaults:

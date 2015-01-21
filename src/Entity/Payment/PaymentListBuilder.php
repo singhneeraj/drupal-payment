@@ -218,6 +218,12 @@ class PaymentListBuilder extends EntityListBuilder {
           'url' => $entity->urlInfo('refund-form'),
         );
     }
+    if ($entity->access('complete')) {
+      $operations['resume'] = array(
+        'title' => $this->t('Complete'),
+        'url' => $entity->urlInfo('complete'),
+      );
+    }
 
     return $operations;
   }

@@ -50,6 +50,7 @@ use Drupal\user\UserInterface;
  *   label = @Translation("Payment"),
  *   links = {
  *     "canonical" = "/payment/{payment}",
+ *     "complete" = "/payment/{payment}/complete",
  *     "edit-form" = "/payment/{payment}/edit",
  *     "delete-form" = "/payment/{payment}/delete",
  *     "update-status-form" = "/payment/{payment}/update-status",
@@ -334,15 +335,8 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function execute() {
-    $manager = PaymentServiceWrapper::statusManager();
-    // Execute the payment.
-    if ($this->getPaymentMethod()->executePaymentAccess(\Drupal::currentUser())) {
-      $this->setPaymentStatus($manager->createInstance('payment_pending'));
-      $this->getPaymentMethod()->executePayment($this);
-    }
-    else {
-      $this->setPaymentStatus($manager->createInstance('payment_failed'));
-      $this->getPaymentType()->resumeContext();
+    if ($this->getPaymentMethod()) {
+      return $this->getPaymentMethod()->executePayment();
     }
   }
 

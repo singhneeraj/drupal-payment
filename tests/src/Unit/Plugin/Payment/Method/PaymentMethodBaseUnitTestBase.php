@@ -30,6 +30,13 @@ abstract class PaymentMethodBaseUnitTestBase extends UnitTestCase {
   protected $token;
 
   /**
+   * The payment status manager.
+   *
+   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $paymentStatusManager;
+
+  /**
    * The definition of the payment method plugin under test.
    *
    * @var array
@@ -50,6 +57,8 @@ abstract class PaymentMethodBaseUnitTestBase extends UnitTestCase {
     parent::setUp();
 
     $this->eventDispatcher = $this->getMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
+
+    $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
     $this->token = $this->getMockBuilder('\Drupal\Core\Utility\Token')
       ->disableOriginalConstructor()

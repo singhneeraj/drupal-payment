@@ -124,13 +124,6 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
   }
 
   /**
-   * @covers ::isPaymentExecutionInterruptive
-   */
-  public function testIsPaymentExecutionInterruptive() {
-    $this->assertInternalType('bool', $this->paymentMethod->isPaymentExecutionInterruptive());
-  }
-
-  /**
    * @covers ::doExecutePayment
    */
   public function testDoExecutePayment() {
@@ -141,18 +134,11 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
       ->with($this->pluginDefinition['execute_status_id'])
       ->will($this->returnValue($payment_status));
 
-    $payment_type = $this->getMock('\Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface');
-    $payment_type->expects($this->once())
-      ->method('resumeContext');
-
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
     $payment->expects($this->once())
       ->method('save');
-    $payment->expects($this->once())
-      ->method('getPaymentType')
-      ->will($this->returnValue($payment_type));
     $payment->expects($this->once())
       ->method('setPaymentStatus')
       ->with($payment_status);

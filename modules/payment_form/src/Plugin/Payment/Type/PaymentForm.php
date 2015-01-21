@@ -10,12 +10,12 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Url;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeBase;
+use Drupal\payment\Response\Response;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * The payment form field payment type.
@@ -93,12 +93,8 @@ class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInter
   /**
    * {@inheritdoc}
    */
-  protected function doResumeContext() {
-    $response = new RedirectResponse($this->getDestinationUrl());
-    $listener = function(FilterResponseEvent $event) use ($response) {
-      $event->setResponse($response);
-    };
-    $this->eventDispatcher->addListener(KernelEvents::RESPONSE, $listener, 999);
+  protected function doGetResumeContextResponse() {
+    return new Response(Url::fromUri($this->getDestinationUrl()));
   }
 
   /**

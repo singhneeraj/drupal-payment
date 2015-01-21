@@ -43,21 +43,23 @@ interface PaymentTypeInterface extends PluginInspectionInterface, ConfigurablePl
   public function paymentDescription($language_code = NULL);
 
   /**
-   * Checks if the payment type context can be resumed..
+   * Checks if the payment type context can be resumed.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *
    * @return bool
    *
-   * @see self::resumeContext
+   * @see self::getResumeContextResponse
    */
   public function resumeContextAccess(AccountInterface $account);
 
   /**
-   * Resumes the payment context's workflow.
+   * Resumes the payer's original workflow.
+   *
+   * @return \Drupal\payment\Response\ResponseInterface
    *
    * @see self::resumeContextAccess
    */
-  public function resumeContext();
+  public function getResumeContextResponse();
 
 }

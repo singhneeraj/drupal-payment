@@ -49,7 +49,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
 
     $this->plugin = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\PaymentMethodBase')
-      ->setConstructorArgs(array([], '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token))
+      ->setConstructorArgs([[], '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager])
       ->getMockForAbstractClass();
   }
 
@@ -61,6 +61,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $map = array(
       array('event_dispatcher', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->eventDispatcher),
       array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
+      array('plugin.manager.payment.status', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentStatusManager),
       array('token', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->token),
     );
     $container->expects($this->any())
@@ -192,13 +193,6 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
   }
 
   /**
-   * @covers ::isPaymentExecutionInterruptive
-   */
-  public function testIsPaymentExecutionInterruptive() {
-    $this->assertInternalType('bool', $this->plugin->isPaymentExecutionInterruptive());
-  }
-
-  /**
    * @covers ::executePayment
    *
    * @expectedException \Exception
@@ -211,6 +205,13 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
    * @covers ::executePayment
    */
   public function testExecutePayment() {
+    $payment_status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
+
+    $this->paymentStatusManager->expects($this->atLeastOnce())
+      ->method('createInstance')
+      ->with('payment_pending')
+      ->willReturn($payment_status);
+
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
@@ -249,7 +250,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $this->pluginDefinition['active'] = $active;
     /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase|\PHPUnit_Framework_MockObject_MockObject $payment_method */
     $payment_method = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\PaymentMethodBase')
-      ->setConstructorArgs(array([], '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token))
+      ->setConstructorArgs([[], '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager])
       ->setMethods(array('executePaymentAccessCurrency', 'executePaymentAccessEvent', 'doExecutePaymentAccess'))
       ->getMockForAbstractClass();
     $payment_method->expects($this->any())

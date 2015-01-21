@@ -62,6 +62,14 @@ entity.payment.refund:
   options:
     _admin_route: TRUE
 
+entity.payment.complete:
+  path: '/payment/{payment}/complete'
+  defaults:
+    _controller: '\Drupal\payment\Controller\CompletePayment::execute'
+  requirements:
+    _entity_access: 'payment.complete'
+    _csrf_token: 'TRUE'
+
 entity.payment.delete:
   path: '/payment/{payment}/delete'
   defaults:
@@ -117,7 +125,7 @@ entity.payment_method_configuration.enable:
     _controller: '\Drupal\payment\Controller\EnablePaymentMethodConfiguration::execute'
   requirements:
     _entity_access: 'payment_method_configuration.enable'
-    _csrf_token: 'TRUE'
+    _te_token: 'TRUE'
 
 entity.payment_method_configuration.disable:
   path: '/admin/config/services/payment/method/configuration/{payment_method_configuration}/disable'
@@ -125,7 +133,6 @@ entity.payment_method_configuration.disable:
     _controller: '\Drupal\payment\Controller\DisablePaymentMethodConfiguration::execute'
   requirements:
     _entity_access: 'payment_method_configuration.disable'
-    _csrf_token: 'TRUE'
 
 entity.payment_method_configuration.delete_form:
   path: '/admin/config/services/payment/method/configuration/{payment_method_configuration}/delete'

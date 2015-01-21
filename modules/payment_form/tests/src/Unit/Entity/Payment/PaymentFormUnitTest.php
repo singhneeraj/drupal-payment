@@ -8,6 +8,8 @@
 namespace Drupal\Tests\payment_form\Unit\Entity\Payment;
 
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Url;
+use Drupal\payment\Response\Response;
 use Drupal\payment_form\Entity\Payment\PaymentForm;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -207,6 +209,14 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @covers ::submitForm
    */
   public function testSubmitForm() {
+    $redirect_url = new Url($this->randomMachineName());
+    $response = new Response($redirect_url);
+
+    $result = $this->getMock('\Drupal\payment\PaymentExecutionResultInterface');
+    $result->expects($this->atLeastOnce())
+      ->method('getCompletionResponse')
+      ->willReturn($response);
+
     $form = array(
       'payment_method' => array(
         '#type' => $this->randomMachineName(),
@@ -217,23 +227,27 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->method('get')
       ->with('payment_method_selector')
       ->willReturn($this->paymentMethodSelector);
+    $form_state->expects($this->atLeastOnce())
+      ->method('setRedirectUrl')
+      ->with($redirect_url);
 
     $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
 
-    $this->paymentMethodSelector->expects($this->once())
+    $this->paymentMethodSelector->expects($this->atLeastOnce())
       ->method('getPaymentMethod')
       ->will($this->returnValue($payment_method));
-    $this->paymentMethodSelector->expects($this->once())
+    $this->paymentMethodSelector->expects($this->atLeastOnce())
       ->method('submitConfigurationForm')
       ->with($form['payment_method'], $form_state);
 
-    $this->payment->expects($this->once())
+    $this->payment->expects($this->atLeastOnce())
       ->method('setPaymentMethod')
       ->with($payment_method);
-    $this->payment->expects($this->once())
+    $this->payment->expects($this->atLeastOnce())
       ->method('save');
-    $this->payment->expects($this->once())
-      ->method('execute');
+    $this->payment->expects($this->atLeastOnce())
+      ->method('execute')
+      ->willReturn($result);
 
     $this->form->submitForm($form, $form_state);
   }

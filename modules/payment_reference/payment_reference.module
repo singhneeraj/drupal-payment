@@ -14,19 +14,6 @@ use Drupal\field\FieldConfigInterface;
 use Drupal\field\FieldStorageConfigInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment_reference\PaymentReference;
-use Symfony\Cmf\Component\Routing\RouteObjectInterface;
-
-/**
- * Implements hook_page_alter().
- */
-function payment_reference_page_alter(&$page) {
-  if (\Drupal::request()->attributes->get(RouteObjectInterface::ROUTE_NAME) == 'payment_reference.pay') {
-    $skip_regions = array_diff(Element::children($page), array('content'));
-    foreach ($skip_regions as $skip_region) {
-      $page[$skip_region]['#access'] = FALSE;
-    }
-  }
-}
 
 /**
  * Implements hook_entity_extra_field_info().

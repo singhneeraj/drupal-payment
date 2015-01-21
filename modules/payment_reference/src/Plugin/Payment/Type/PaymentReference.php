@@ -11,12 +11,12 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Url;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeBase;
+use Drupal\payment\Response\Response;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * The payment reference field payment type.
@@ -98,22 +98,12 @@ class PaymentReference extends PaymentTypeBase implements ContainerFactoryPlugin
   /**
    * {@inheritdoc}
    */
-  protected function doResumeContext() {
-    // If the payment method does not interrupt the payment type context, the
-    // payer is still in the original context and we do not need to redirect
-    // them back.
-    if ($this->getPayment()->getPaymentMethod()->isPaymentExecutionInterruptive()) {
-      $url = $this->urlGenerator->generateFromRoute('payment_reference.resume_context', array(
-        'payment' => $this->getPayment()->id(),
-      ), array(
-        'absolute' => TRUE,
-      ));
-      $response = new RedirectResponse($url);
-      $listener = function(FilterResponseEvent $event) use ($response) {
-        $event->setResponse($response);
-      };
-      $this->eventDispatcher->addListener(KernelEvents::RESPONSE, $listener, 999);
-    }
+  protected function doGetResumeContextResponse() {
+    return new Response(new Url('payment_reference.resume_context', array(
+      'payment' => $this->getPayment()->id(),
+    ), array(
+      'absolute' => TRUE,
+    )));
   }
 
   /**

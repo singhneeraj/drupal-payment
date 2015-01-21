@@ -91,7 +91,7 @@ class ListPaymentTypes extends ControllerBase {
         if ($this->currentUser->hasPermission('administer payment form display')) {
           $operations['manage-form-display'] = [
             'title' => $this->t('Manage form display'),
-            'url' => new Url('entity.payment.field_ui_form_display', [
+            'url' => new Url('entity.entity_form_display.payment.default', [
               'bundle' => $plugin_id,
             ]),
           ];
@@ -99,7 +99,7 @@ class ListPaymentTypes extends ControllerBase {
         if ($this->currentUser->hasPermission('administer payment display')) {
           $operations['manage-display'] = [
             'title' => $this->t('Manage display'),
-            'url' => new Url('entity.payment.field_ui_display', [
+            'url' => new Url('entity.entity_view_display.payment.default', [
               'bundle' => $plugin_id,
             ]),
           ];

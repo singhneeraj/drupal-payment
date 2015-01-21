@@ -18,6 +18,8 @@ use Drupal\payment\Event\PaymentExecuteAccess;
 use Drupal\payment\Event\PaymentPreCapture;
 use Drupal\payment\Event\PaymentPreExecute;
 use Drupal\payment\Event\PaymentPreRefund;
+use Drupal\payment\PaymentExecutionResult;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -54,6 +56,13 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
   protected $payment;
 
   /**
+   * The payment status manager.
+   *
+   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
+   */
+  protected $paymentStatusManager;
+
+  /**
    * The token API.
    *
    * @var \Drupal\Core\Utility\Token
@@ -75,12 +84,15 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    *   The event dispatcher.
    * @param \Drupal\Core\Utility\Token $token
    *   The token API.
+   * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
+   *   The payment status manager.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler, EventDispatcherInterface $event_dispatcher, Token $token) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler, EventDispatcherInterface $event_dispatcher, Token $token, PaymentStatusManagerInterface $payment_status_manager) {
     $configuration += $this->defaultConfiguration();
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->eventDispatcher = $event_dispatcher;
     $this->moduleHandler = $module_handler;
+    $this->paymentStatusManager = $payment_status_manager;
     $this->token = $token;
   }
 
@@ -88,7 +100,7 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('module_handler'), $container->get('event_dispatcher'), $container->get('token'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('module_handler'), $container->get('event_dispatcher'), $container->get('token'), $container->get('plugin.manager.payment.status'));
   }
 
   /**
@@ -194,14 +206,6 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
-  public function isPaymentExecutionInterruptive() {
-    // To be on the safe side, we assume any payment method is interruptive.
-    return TRUE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function executePaymentAccess(AccountInterface $account) {
     if (!$this->getPayment()) {
       throw new \LogicException('Trying to check access for a non-existing payment. A payment must be set trough self::setPayment() first.');
@@ -234,13 +238,27 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
     $event = new PaymentPreExecute($this->getPayment());
     $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_PRE_EXECUTE, $event);
     // @todo invoke Rules event.
+    $this->payment->setPaymentStatus($this->paymentStatusManager->createInstance('payment_pending'));
     $this->doExecutePayment();
+    $this->getPayment()->save();
+
+    return $this->getPaymentExecutionResult();
   }
 
   /**
    * Performs the actual payment execution.
    */
-  abstract protected function doExecutePayment();
+  protected function doExecutePayment() {
+    // This method is empty so child classes can override it and provide their
+    // own implementation.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPaymentExecutionResult() {
+    return new PaymentExecutionResult();
+  }
 
   /**
    * {@inheritdoc}

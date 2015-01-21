@@ -43,21 +43,23 @@ interface PaymentMethodInterface extends PluginInspectionInterface, Configurable
    * Executes the payment.
    *
    * When executing a payment, it may be authorized, or authorized and captured.
+   * After calling this method, more action may be required depending on the
+   * return value of self::getPaymentExecutionResult().
+   * This method MUST set the payment's status to "payment_pending" before it
+   * performs any payment-method-specific logic.
+   *
+   * @return \Drupal\payment\PaymentExecutionResultInterface
    *
    * @see self::executePaymentAccess
    */
   public function executePayment();
 
   /**
-   * Whether payment execution interrupts the payment type's context.
+   * Gets the payment execution status.
    *
-   * If payment execution interrupts the context's workflow, this must return
-   * TRUE. An example of an interruption is when the payer must be redirected
-   * off-site.
-   *
-   * @return bool
+   * @return \Drupal\payment\PaymentExecutionResultInterface
    */
-  public function isPaymentExecutionInterruptive();
+  public function getPaymentExecutionResult();
 
   /**
    * Gets the payment this payment method is for.

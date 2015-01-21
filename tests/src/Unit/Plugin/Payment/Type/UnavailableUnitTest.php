@@ -88,16 +88,16 @@ class UnavailableUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::doResumeContext
+   * @covers ::doGetResumeContextResponse
    * @expectedException \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    */
-  public function testDoResumeContext() {
+  public function testDoGetResumeContextResponse() {
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
     $this->paymentType->setPayment($payment);
 
-    $this->paymentType->resumeContext();
+    $this->paymentType->getResumeContextResponse();
   }
 
   /**

@@ -36,7 +36,7 @@ class PaymentTest extends PaymentTypeBase {
   /**
    * {@inheritdoc
    */
-  public function doResumeContext() {
+  public function doGetResumeContextResponse() {
   }
 
 }

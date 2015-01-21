@@ -9,7 +9,6 @@ namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
-use Drupal\Core\Executable\ExecutableInterface;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface as PluginPaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface as PluginPaymentStatusInterface;
@@ -18,7 +17,14 @@ use Drupal\user\EntityOwnerInterface;
 /**
  * Defines a payment entity type .
  */
-interface PaymentInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface, ExecutableInterface {
+interface PaymentInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
+
+  /**
+   * Executes the payment.
+   *
+   * @return \Drupal\payment\PaymentExecutionResultInterface
+   */
+  public function execute();
 
   /**
    * Returns the timestamp of the entity creation.

@@ -157,13 +157,6 @@ class UnavailableUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::isPaymentExecutionInterruptive
-   */
-  public function testIsPaymentExecutionInterruptive() {
-    $this->assertInternalType('bool', $this->plugin->isPaymentExecutionInterruptive());
-  }
-
-  /**
    * @covers ::executePayment
    * @expectedException \RuntimeException
    */

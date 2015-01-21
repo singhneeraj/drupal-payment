@@ -8,12 +8,10 @@
 
 namespace Drupal\Tests\payment_form\Unit\Plugin\Payment\Type;
 
+use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\payment_form\Plugin\Payment\Type\PaymentForm;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * @coversDefaultClass \Drupal\payment_form\Plugin\Payment\Type\PaymentForm
@@ -199,30 +197,18 @@ class PaymentFormUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::doResumeContext
+   * @covers ::doGetResumeContextResponse
    * @depends testGetDestinationUrl
    */
-  public function testDoResumeContext() {
-    $url = 'http://example.com';
+  public function testDoGetResumeContextResponse() {
+    $url = 'http://example.com/' . $this->randomMachineName();
 
     $this->paymentType->setDestinationUrl($url);
 
-    $kernel = $this->getMock('\Symfony\Component\HttpKernel\HttpKernelInterface');
-    $request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
-      ->disableOriginalConstructor()
-      ->getMock();
-    $request_type = $this->randomMachineName();
-    $response = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Response')
-      ->disableOriginalConstructor()
-      ->getMock();
-    $event = new FilterResponseEvent($kernel, $request, $request_type, $response);
+    $response = $this->paymentType->getResumeContextResponse();
 
-    $this->eventDispatcher->expects($this->once())
-      ->method('addListener')
-      ->with(KernelEvents::RESPONSE, new PaymentFormUnitTestDoResumeContextCallableConstraint($event, $url), 999);
-
-
-    $this->paymentType->resumeContext();
+    $this->assertInstanceOf('\Drupal\payment\Response\ResponseInterface', $response);
+    $this->assertSame($url, $response->getRedirectUrl()->getUri());
   }
 
   /**
@@ -233,59 +219,6 @@ class PaymentFormUnitTest extends UnitTestCase {
     $this->assertInternalType('array', $configuration);
     $this->assertArrayHasKey('destination_url', $configuration);
     $this->assertInternalType('null', $configuration['destination_url']);
-  }
-
-}
-
-/**
- * Provides a constraint for the doResumeContext() callable.
- */
-class PaymentFormUnitTestDoResumeContextCallableConstraint extends \PHPUnit_Framework_Constraint {
-
-  /**
-   * The event to listen to.
-   *
-   * @var \Symfony\Component\HttpKernel\Event\FilterResponseEvent
-   */
-  protected $event;
-
-  /**
-   * The redirect URL.
-   *
-   * @var string
-   */
-  protected $url;
-
-  /**
-   * Constructs a new class instance.
-   *
-   * @param \Symfony\Component\HttpKernel\Event\FilterResponseEvent $event
-   * @param string $url
-   */
-  public function __construct(FilterResponseEvent $event, $url) {
-    $this->event = $event;
-    $this->url = $url;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function matches($other) {
-    if (is_callable($other)) {
-      $other($this->event);
-      $response = $this->event->getResponse();
-      if ($response instanceof RedirectResponse) {
-        return $response->getTargetUrl() == $this->url;
-      }
-    }
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function toString() {
-    return 'returns a RedirectResponse through a KernelEvents::RESPONSE event listener';
   }
 
 }

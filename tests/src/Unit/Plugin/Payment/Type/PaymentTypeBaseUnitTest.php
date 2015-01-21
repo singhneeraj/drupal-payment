@@ -106,20 +106,26 @@ class PaymentTypeBaseUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::resumeContext
+   * @covers ::getResumeContextResponse
    *
    * @depends testGetPayment
    */
-  public function testResumeContext() {
+  public function testGetResumeContextResponse() {
+    $response = $this->getMock('\Drupal\payment\Response\ResponseInterface');
+
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
     $this->paymentType->setPayment($payment);
 
+    $this->paymentType->expects($this->atLeastOnce())
+      ->method('doGetResumeContextResponse')
+      ->willReturn($response);
+
     $this->eventDispatcher->expects($this->once())
       ->method('dispatch')
       ->with(PaymentEvents::PAYMENT_TYPE_PRE_RESUME_CONTEXT);
 
-    $this->paymentType->resumeContext();
+    $this->assertSame($response, $this->paymentType->getResumeContextResponse());
   }
 }

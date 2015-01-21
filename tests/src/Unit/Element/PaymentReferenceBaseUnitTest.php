@@ -9,6 +9,7 @@ namespace Drupal\Tests\payment\Unit\Element {
 
   use Drupal\Component\Utility\Random;
   use Drupal\Core\Form\FormState;
+  use Drupal\Core\Url;
   use Drupal\Tests\UnitTestCase;
 
   /**
@@ -89,13 +90,6 @@ namespace Drupal\Tests\payment\Unit\Element {
     protected $stringTranslation;
 
     /**
-     * The temporary payment storage.
-     *
-     * @var \Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $temporaryPaymentStorage;
-
-    /**
      * The url generator.
      *
      * @var \Drupal\Core\Routing\UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -128,8 +122,6 @@ namespace Drupal\Tests\payment\Unit\Element {
 
       $this->stringTranslation = $this->getStringTranslationStub();
 
-      $this->temporaryPaymentStorage = $this->getMock('\Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface');
-
       $this->urlGenerator = $this->getMock('\Drupal\Core\Routing\UrlGeneratorInterface');
 
       $configuration = [];
@@ -143,9 +135,6 @@ namespace Drupal\Tests\payment\Unit\Element {
       $this->element->expects($this->any())
         ->method('getPaymentQueue')
         ->willReturn($this->paymentQueue);
-      $this->element->expects($this->any())
-        ->method('getTemporaryPaymentStorage')
-        ->willReturn($this->temporaryPaymentStorage);
     }
 
     /**
@@ -155,111 +144,6 @@ namespace Drupal\Tests\payment\Unit\Element {
       $info = $this->element->getInfo();
       $this->assertInternalType('array', $info);
       $this->assertTrue(is_callable($info['#process'][0]));
-    }
-
-    /**
-     * @covers ::getTemporaryPaymentStorageKey
-     */
-    public function testGetTemporaryPaymentStorageKey() {
-      $method = new \ReflectionMethod($this->element, 'getTemporaryPaymentStorageKey');
-      $method->setAccessible(TRUE);
-
-      $element = array(
-        '#name' => $this->randomMachineName(),
-      );
-      $form_state = new FormState();
-
-      $key = $method->invoke($this->element, $element, $form_state);
-      $this->assertSame($key, $method->invoke($this->element, $element, $form_state));
-    }
-
-    /**
-     * @covers ::hasTemporaryPayment
-     *
-     * @depends testGetTemporaryPaymentStorageKey
-     */
-    public function testHasTemporaryPayment() {
-      $has_method = new \ReflectionMethod($this->element, 'hasTemporaryPayment');
-      $has_method->setAccessible(TRUE);
-      $get_key_method = new \ReflectionMethod($this->element, 'getTemporaryPaymentStorageKey');
-      $get_key_method->setAccessible(TRUE);
-
-      $element = array(
-        '#name' => $this->randomMachineName(),
-      );
-      $form_state = new FormState();
-
-      $key = $get_key_method->invoke($this->element, $element, $form_state);
-
-      // Use a random string instead of a boolean so we can assert the value.
-      $has = $this->randomMachineName();
-
-      $this->temporaryPaymentStorage->expects($this->once())
-        ->method('has')
-        ->with($key)
-        ->willReturn($has);
-
-      $this->assertSame($has, $has_method->invoke($this->element, $element, $form_state));
-    }
-
-    /**
-     * @covers ::getTemporaryPayment
-     *
-     * @depends testGetTemporaryPaymentStorageKey
-     */
-    public function testGetTemporaryPayment() {
-      $has_method = new \ReflectionMethod($this->element, 'getTemporaryPayment');
-      $has_method->setAccessible(TRUE);
-      $get_key_method = new \ReflectionMethod($this->element, 'getTemporaryPaymentStorageKey');
-      $get_key_method->setAccessible(TRUE);
-
-      $element = array(
-        '#name' => $this->randomMachineName(),
-      );
-      $form_state = new FormState();
-
-      $key = $get_key_method->invoke($this->element, $element, $form_state);
-
-      $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-        ->disableOriginalConstructor()
-        ->getMock();
-
-      $this->temporaryPaymentStorage->expects($this->once())
-        ->method('get')
-        ->with($key)
-        ->willReturn($payment);
-
-      $this->assertSame($payment, $has_method->invoke($this->element, $element, $form_state));
-    }
-
-    /**
-     * @covers ::SetTemporaryPayment
-     *
-     * @depends testGetTemporaryPaymentStorageKey
-     */
-    public function testSetTemporaryPayment() {
-      $set_method = new \ReflectionMethod($this->element, 'setTemporaryPayment');
-      $set_method->setAccessible(TRUE);
-      $get_method = new \ReflectionMethod($this->element, 'getTemporaryPaymentStorageKey');
-      $get_method->setAccessible(TRUE);
-
-      $element = array(
-        '#name' => $this->randomMachineName(),
-      );
-      $form_state = new FormState();
-
-      $key = $get_method->invoke($this->element, $element, $form_state);
-
-      $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-        ->disableOriginalConstructor()
-        ->getMock();
-
-      $this->temporaryPaymentStorage->expects($this->once())
-        ->method('setWithExpire')
-        ->with($key, $payment, \Drupal\payment\Element\PaymentReferenceBase::KEY_VALUE_TTL)
-        ->willReturn($payment);
-
-      $set_method->invoke($this->element, $element, $form_state, $payment);
     }
 
     /**
@@ -331,14 +215,14 @@ namespace Drupal\Tests\payment\Unit\Element {
      *
      * @dataProvider providerTestPay
      */
-    public function testPay($is_payment_execution_interruptive, $is_xml_http_request) {
+    public function testPay($has_completed, $is_xml_http_request) {
       $configuration = [];
       $plugin_id = $this->randomMachineName();
       $this->pluginDefinition = [];
 
       $this->element = $this->getMockBuilder('\Drupal\payment\Element\PaymentReferenceBase')
         ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->paymentMethodSelectorManager, new Random()))
-        ->setMethods(array('getEntityFormDisplay', 'getPaymentMethodSelector', 'getTemporaryPaymentStorageKey', 'setTemporaryPayment'))
+        ->setMethods(array('getEntityFormDisplay', 'getPaymentMethodSelector'))
         ->getMockForAbstractClass();
 
       $form = array(
@@ -369,29 +253,36 @@ namespace Drupal\Tests\payment\Unit\Element {
       $request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
         ->disableOriginalConstructor()
         ->getMock();
-      $request->expects($is_payment_execution_interruptive ? $this->atLeastOnce() : $this->never())
+      $request->expects($has_completed ? $this->never() : $this->atLeastOnce())
         ->method('isXmlHttpRequest')
         ->willReturn($is_xml_http_request);
 
-      $this->requestStack->expects($is_payment_execution_interruptive ? $this->atLeastOnce() : $this->never())
+      $this->requestStack->expects($has_completed ? $this->never() : $this->atLeastOnce())
         ->method('getCurrentRequest')
         ->willReturn($request);
 
+      $result = $this->getMock('\Drupal\payment\PaymentExecutionResultInterface');
+      $result->expects($this->atLeastOnce())
+        ->method('hasCompleted')
+        ->willReturn($has_completed);
+
       $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
-      $payment_method->expects($this->atLeastOnce())
-        ->method('isPaymentExecutionInterruptive')
-        ->willReturn($is_payment_execution_interruptive);
+
+      $url = new Url($this->randomMachineName());
 
       $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
         ->disableOriginalConstructor()
         ->getMock();
-      $payment->expects($is_payment_execution_interruptive ? $this->never() : $this->once())
-        ->method('execute');
-      $payment->expects($is_payment_execution_interruptive ? $this->never() : $this->once())
-        ->method('save');
-      $payment->expects($this->once())
-        ->method('setPaymentMethod')
-        ->with($payment_method);
+      $payment->expects($this->atLeastOnce())
+        ->method('execute')
+        ->willReturn($result);
+      $payment->expects($this->atLeastOnce())
+          ->method('setPaymentMethod')
+          ->with($payment_method);
+      $payment->expects(!$has_completed && !$is_xml_http_request ? $this->atLeastOnce() : $this->never())
+        ->method('urlInfo')
+        ->with('complete')
+        ->willReturn($url);
 
       $payment_method_selector = $this->getMock('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface');
       $payment_method_selector->expects($this->atLeastOnce())
@@ -415,9 +306,6 @@ namespace Drupal\Tests\payment\Unit\Element {
       $this->element->expects($this->atLeastOnce())
         ->method('getPaymentMethodSelector')
         ->willReturn($payment_method_selector);
-      $this->element->expects($is_payment_execution_interruptive ? $this->once() : $this->never())
-        ->method('setTemporaryPayment')
-        ->with($form['foo']['bar'], $form_state, $payment);
 
       $this->element->pay($form, $form_state);
     }
@@ -438,18 +326,29 @@ namespace Drupal\Tests\payment\Unit\Element {
      *
      * @dataProvider providerTestAjaxPay
      */
-    public function testAjaxPay($is_payment_execution_interruptive, $number_of_commands) {
+    public function testAjaxPay($has_completed, $number_of_commands) {
       $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
         ->disableOriginalConstructor()
         ->getMock();
       $payment->expects($this->atLeastOnce())
         ->method('createDuplicate')
         ->willReturnSelf();
+      $payment->expects($has_completed ? $this->never() : $this->atLeastOnce())
+        ->method('urlInfo')
+        ->with('complete');
+
+      $result = $this->getMock('\Drupal\payment\PaymentExecutionResultInterface');
+      $result->expects($this->atLeastOnce())
+        ->method('hasCompleted')
+        ->willReturn($has_completed);
 
       $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
-      $payment_method->expects($this->once())
-        ->method('isPaymentExecutionInterruptive')
-        ->willReturn($is_payment_execution_interruptive);
+      $payment_method->expects($this->any())
+        ->method('getPayment')
+        ->willReturn($payment);
+      $payment_method->expects($this->atLeastOnce())
+        ->method('getPaymentExecutionResult')
+        ->willReturn($result);
 
       $payment_method_selector_plugin_id = $this->randomMachineName();
 
@@ -503,8 +402,8 @@ namespace Drupal\Tests\payment\Unit\Element {
      */
     public function providerTestAjaxPay() {
       return array(
-        array(TRUE, 2),
-        array(FALSE, 1),
+      array(TRUE, 1),
+      array(FALSE, 2),
       );
     }
 
@@ -647,16 +546,12 @@ namespace Drupal\Tests\payment\Unit\Element {
 
       $this->element = $this->getMockBuilder('\Drupal\payment\Element\PaymentReferenceBase')
         ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->paymentMethodSelectorManager, new Random()))
-        ->setMethods(array('getPaymentMethodSelector', 'getTemporaryPaymentStorageKey'))
+        ->setMethods(array('getPaymentMethodSelector'))
         ->getMockForAbstractClass();
       $this->element->expects($this->atLeastOnce())
         ->method('getPaymentMethodSelector')
         ->with($element, $form_state)
         ->willReturn($payment_method_selector);
-      $this->element->expects($this->never())
-        ->method('getTemporaryPaymentStorageKey')
-        ->with($element, $form_state);
-
 
       $method = new \ReflectionMethod($this->element, 'buildCompletePaymentLink');
       $method->setAccessible(TRUE);
@@ -678,7 +573,14 @@ namespace Drupal\Tests\payment\Unit\Element {
       );
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
+      $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+        ->disableOriginalConstructor()
+        ->getMock();
+
       $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
+      $payment_method->expects($this->atLeastOnce())
+        ->method('getPayment')
+        ->willReturn($payment);
 
       $payment_method_selector = $this->getMock('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface');
       $payment_method_selector->expects($this->atLeastOnce())
@@ -687,15 +589,12 @@ namespace Drupal\Tests\payment\Unit\Element {
 
       $this->element = $this->getMockBuilder('\Drupal\payment\Element\PaymentReferenceBase')
         ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->paymentMethodSelectorManager, new Random()))
-        ->setMethods(array('getPaymentMethodSelector', 'getTemporaryPaymentStorageKey'))
+        ->setMethods(array('getPaymentMethodSelector'))
         ->getMockForAbstractClass();
       $this->element->expects($this->atLeastOnce())
         ->method('getPaymentMethodSelector')
         ->with($element, $form_state)
         ->willReturn($payment_method_selector);
-      $this->element->expects($this->atLeastOnce())
-        ->method('getTemporaryPaymentStorageKey')
-        ->with($element, $form_state);
 
 
       $method = new \ReflectionMethod($this->element, 'buildCompletePaymentLink');
@@ -806,11 +705,34 @@ namespace Drupal\Tests\payment\Unit\Element {
      * @covers ::buildRefreshButton
      */
     public function testBuildRefreshButton() {
+      $limit_allowed_payment_method_ids = [$this->randomMachineName()];
+
+      $payment_method_selector_id = $this->randomMachineName();
+
+      $payment_method_selector = $this->getMock('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface');
+
+      $this->paymentMethodSelectorManager->expects($this->atLeastOnce())
+        ->method('createInstance')
+        ->with($payment_method_selector_id)
+        ->willReturn($payment_method_selector);
+
+      $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+        ->disableOriginalConstructor()
+        ->getMock();
+      $payment->expects($this->atLeastOnce())
+        ->method('createDuplicate')
+        ->willReturnSelf();
+
       $element = array(
         '#default_value' => mt_rand(),
         'container' => array(
           '#id' => $this->randomMachineName(),
         ),
+        '#limit_allowed_payment_method_ids' => $limit_allowed_payment_method_ids,
+        '#name' => $this->randomMachineName(),
+        '#payment_method_selector_id' => $payment_method_selector_id,
+        '#prototype_payment' => $payment,
+        '#required' => (bool) mt_rand(0, 1),
       );
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
@@ -858,7 +780,7 @@ namespace Drupal\Tests\payment\Unit\Element {
 
       $this->element = $this->getMockBuilder('\Drupal\payment\Element\PaymentReferenceBase')
         ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->paymentMethodSelectorManager, new Random()))
-        ->setMethods(array('getEntityFormDisplay', 'getPaymentMethodSelector', 'hasTemporaryPayment'))
+        ->setMethods(array('getEntityFormDisplay', 'getPaymentMethodSelector'))
         ->getMockForAbstractClass();
       $this->element->expects($this->atLeastOnce())
         ->method('getEntityFormDisplay')
@@ -867,10 +789,6 @@ namespace Drupal\Tests\payment\Unit\Element {
         ->method('getPaymentMethodSelector')
         ->with($element, $form_state)
         ->willReturn($payment_method_selector);
-      $this->element->expects($this->atLeastOnce())
-        ->method('hasTemporaryPayment')
-        ->with($element, $form_state)
-        ->willReturn(TRUE);
 
       $build = $method->invoke($this->element, $element, $form_state);
       $this->assertInternalType('array', $build);

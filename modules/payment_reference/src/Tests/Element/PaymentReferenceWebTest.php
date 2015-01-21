@@ -84,10 +84,10 @@ class PaymentReferenceWebTest extends WebTestBase {
     $value = $state->get('payment_reference_test_payment_reference_element');
     $this->assertNull($value);
 
-    // Test with a non-interruptive payment method.
+    // Test with a payment method that returns no execution completion response.
     $text_field_value = $this->randomMachineName();
     $this->drupalPostForm($path, array(
-      'payment_reference[container][payment_form][payment_method][container][select][container][payment_method_id]' => 'payment_test_uninterruptive',
+      'payment_reference[container][payment_form][payment_method][container][select][container][payment_method_id]' => 'payment_test_no_response',
       'payment_reference[container][payment_form][quxfoobar][0][value]' => $text_field_value,
     ), t('Choose payment method'));
     $this->drupalPostForm(NULL, [], t('Pay'));
@@ -99,16 +99,14 @@ class PaymentReferenceWebTest extends WebTestBase {
     $this->assertTrue($payment instanceof PaymentInterface);
     $this->assertEqual($payment->get('quxfoobar')[0]->get('value')->getValue(), $text_field_value);
 
-    // Test with an interruptive payment method.
+    // Test with a payment method that returns an execution completion response.
     $text_field_value = $this->randomMachineName();
-    // @todo Once Mink is supported, test the behavior of opening a new window
-    //   and going back to the original form.
     $this->drupalPostForm($path, array(
-      'payment_reference[container][payment_form][payment_method][container][select][container][payment_method_id]' => 'payment_test_interruptive',
+      'payment_reference[container][payment_form][payment_method][container][select][container][payment_method_id]' => 'payment_test_response',
       'payment_reference[container][payment_form][quxfoobar][0][value]' => $text_field_value,
     ), t('Choose payment method'));
     $this->drupalPostForm(NULL, [], t('Pay'));
-    $this->clickLink(t('Complete payment'));
+    $this->clickLink(t('Complete payment (opens in a new window).'));
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = Payment::loadMultiple()[2];
     $this->assertEqual($payment->getPaymentStatus()->getPluginId(), 'payment_success');

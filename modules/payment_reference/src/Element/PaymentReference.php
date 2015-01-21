@@ -35,13 +35,6 @@ class PaymentReference extends PaymentReferenceBase {
   protected $paymentQueue;
 
   /**
-   * The temporary payment storage.
-   *
-   * @var \Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface
-   */
-  protected $temporaryPaymentStorage;
-
-  /**
    * Creates a new instance.
    *
    * @param array $configuration
@@ -58,13 +51,11 @@ class PaymentReference extends PaymentReferenceBase {
    * @param \Drupal\Core\Render\RendererInterface $renderer
    * @param \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface $payment_method_selector_manager
    * @param \Drupal\Component\Utility\Random $random
-   * @param \Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface $temporary_payment_storage
    * @param \Drupal\payment\QueueInterface $payment_queue
    */
-  public function __construct($configuration, $plugin_id, $plugin_definition, RequestStack $request_stack, EntityStorageInterface $payment_storage, TranslationInterface $string_translation, DateFormatter $date_formatter, LinkGeneratorInterface $link_generator, RendererInterface $renderer, PaymentMethodSelectorManagerInterface $payment_method_selector_manager, Random $random, KeyValueStoreExpirableInterface $temporary_payment_storage, QueueInterface $payment_queue) {
+  public function __construct($configuration, $plugin_id, $plugin_definition, RequestStack $request_stack, EntityStorageInterface $payment_storage, TranslationInterface $string_translation, DateFormatter $date_formatter, LinkGeneratorInterface $link_generator, RendererInterface $renderer, PaymentMethodSelectorManagerInterface $payment_method_selector_manager, Random $random, QueueInterface $payment_queue) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $request_stack, $payment_storage, $string_translation, $date_formatter, $link_generator, $renderer, $payment_method_selector_manager, $random);
     $this->paymentQueue = $payment_queue;
-    $this->temporaryPaymentStorage = $temporary_payment_storage;
   }
 
   /**
@@ -74,10 +65,7 @@ class PaymentReference extends PaymentReferenceBase {
     /** @var \Drupal\Core\Entity\EntityManagerInterface $entity_manager */
     $entity_manager = $container->get('entity.manager');
 
-    /** @var \Drupal\Core\KeyValueStore\KeyValueExpirableFactoryInterface $key_value_expirable */
-    $key_value_expirable = $container->get('keyvalue.expirable');
-
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('request_stack'), $entity_manager->getStorage('payment'), $container->get('string_translation'), $container->get('date.formatter'), $container->get('link_generator'), $container->get('renderer'), $container->get('plugin.manager.payment.method_selector'), new Random(), $key_value_expirable->get('payment.payment_type.payment_reference'), $container->get('payment_reference.queue'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('request_stack'), $entity_manager->getStorage('payment'), $container->get('string_translation'), $container->get('date.formatter'), $container->get('link_generator'), $container->get('renderer'), $container->get('plugin.manager.payment.method_selector'), new Random(), $container->get('payment_reference.queue'));
   }
 
   /**
@@ -85,13 +73,6 @@ class PaymentReference extends PaymentReferenceBase {
    */
   protected function getPaymentQueue() {
     return $this->paymentQueue;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getTemporaryPaymentStorage() {
-    return $this->temporaryPaymentStorage;
   }
 
 }

@@ -252,12 +252,12 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
       '#type' => 'payment_line_items_display',
     );
     $build['payment_method'] = $payment_method_selector->buildConfigurationForm([], $form_state);
-    if ($this->hasTemporaryPayment($element, $form_state)) {
+    if ($payment_method_selector->getPaymentMethod() && !$payment_method_selector->getPaymentMethod()->getPaymentExecutionResult()->hasCompleted()) {
       $this->disableChildren($build['payment_method']);
     }
     $this->getEntityFormDisplay($element, $form_state)->buildForm($payment_method_selector->getPayment(), $build, $form_state);
     $build['pay_link'] = $this->buildCompletePaymentLink($element, $form_state);
-    $build['pay_link']['#access'] = $this->hasTemporaryPayment($element, $form_state);
+    $build['pay_link']['#access'] = !$payment_method_selector->getPaymentMethod() || !$payment_method_selector->getPaymentMethod()->getPaymentExecutionResult()->hasCompleted();
     $build['pay_link']['#process'] = array(array(get_class($this), 'processMaxWeight'));
     $plugin_id = $this->getPluginId();
     $build['pay_button'] = array(
@@ -312,8 +312,11 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
    *   A render array.
    */
   protected function buildRefreshButton(array $element, FormStateInterface $form_state) {
+    $payment_method_selector = $this->getPaymentMethodSelector($element, $form_state);
     $class = array('payment_reference-refresh-button');
-    if (!$element['#default_value'] && $element['#available_payment_id'] && !$this->hasTemporaryPayment($element, $form_state)) {
+    if (!$element['#default_value']
+      && $element['#available_payment_id']
+      && (!$payment_method_selector->getPaymentMethod() || !$payment_method_selector->getPaymentMethod()->getPaymentExecutionResult()->hasCompleted())) {
       $class[] = 'payment-reference-hidden';
     }
     $plugin_id = $this->getPluginId();
@@ -413,7 +416,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     $payment_method = $payment_method_selector->getPaymentMethod();
 
     $build = [];
-    if ($payment_method) {
+    if ($payment_method && !$payment_method->getPayment()->isNew()) {
       $build['message'] = array(
         '#markup' => $this->t('@payment_method_label requires the payment to be completed in a new window.', array(
             '@payment_method_label' => $payment_method->getPluginLabel(),
@@ -424,9 +427,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
           'class' => array('button', 'payment-reference-complete-payment-link'),
           'target' => '_blank',
         ),
-        '#url' => new Url('payment_reference.pay', array(
-          'storage_key' => $this->getTemporaryPaymentStorageKey($element, $form_state),
-        )),
+        '#url' => $payment_method->getPayment()->urlInfo('complete'),
         '#title' => $this->t('Complete payment'),
         '#type' => 'link',
       );
@@ -463,22 +464,16 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     $payment = $payment_method_selector->getPayment();
     $payment_method = $payment_method_selector->getPaymentMethod();
     $payment->setPaymentMethod($payment_method);
-    if ($payment_method->isPaymentExecutionInterruptive()) {
-      $this->setTemporaryPayment($root_element, $form_state, $payment);
-      if (!$this->requestStack->getCurrentRequest()->isXmlHttpRequest()) {
-        $link = $this->linkGenerator->generate($this->t('Complete payment (opens in a new window).'), new Url('payment_reference.pay', array(
-          'storage_key' => $this->getTemporaryPaymentStorageKey($root_element, $form_state),
-        ), array(
-          'attributes' => array(
-            'target' => '_blank',
-          ),
-        )));
-        drupal_set_message($link);
-      }
-    }
-    else {
-      $payment->save();
-      $payment->execute();
+
+    $payment->save();
+    $result = $payment->execute();
+    if (!$result->hasCompleted() && !$this->requestStack->getCurrentRequest()->isXmlHttpRequest()) {
+      $url = $payment->urlInfo('complete');
+      $url->setOption('attributes', [
+        'target' => '_blank',
+      ]);
+      $link = $this->linkGenerator->generate($this->t('Complete payment (opens in a new window).'), $url);
+      drupal_set_message($link);
     }
     $form_state->setRebuild();
   }
@@ -494,7 +489,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     $response = new AjaxResponse();
     $response->addCommand(new ReplaceCommand('#' . $root_element['container']['#id'], $this->renderer->render($root_element['container'])));
 
-    if ($this->getPaymentMethodSelector($root_element, $form_state)->getPaymentMethod()->isPaymentExecutionInterruptive()) {
+    if (!$this->getPaymentMethodSelector($root_element, $form_state)->getPaymentMethod()->getPaymentExecutionResult()->hasCompleted()) {
       $link = $this->buildCompletePaymentLink($root_element, $form_state);
       $response->addCommand(new OpenModalDialogCommand($this->t('Complete payment'), $this->renderer->render($link)));
     }
@@ -570,70 +565,11 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
   }
 
   /**
-   * Gets the element temporary payment storage key.
-   *
-   * @param array $element
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *
-   * @return string
-   */
-  protected function getTemporaryPaymentStorageKey(array $element, FormStateInterface $form_state) {
-    $key = 'payment_reference.element.payment_reference.temporary_storage_key.' . $element['#name'];
-    if (!$form_state->has($key)) {
-      $form_state->set($key, $this->random->name(128));
-    }
-
-    return $form_state->get($key);
-  }
-
-  /**
-   * Stores the payment temporarily.
-   *
-   * @param array $element
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   * @param \Drupal\payment\Entity\PaymentInterface $payment
-   */
-  protected function setTemporaryPayment(array $element, FormStateInterface $form_state, PaymentInterface $payment) {
-    $this->getTemporaryPaymentStorage()->setWithExpire($this->getTemporaryPaymentStorageKey($element, $form_state), $payment, static::KEY_VALUE_TTL);
-  }
-
-  /**
-   * Checks if a temporary payment exists.
-   *
-   * @param array $element
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *
-   * @return bool
-   */
-  protected function hasTemporaryPayment(array $element, FormStateInterface $form_state) {
-    return $this->getTemporaryPaymentStorage()->has($this->getTemporaryPaymentStorageKey($element, $form_state));
-  }
-
-  /**
-   * Retrieves the temporarily stored payment.
-   *
-   * @param array $element
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *
-   * @return \Drupal\payment\Entity\PaymentInterface
-   */
-  protected function getTemporaryPayment(array $element, FormStateInterface $form_state) {
-    return $this->getTemporaryPaymentStorage()->get($this->getTemporaryPaymentStorageKey($element, $form_state));
-  }
-
-  /**
    * Gets the payment queue.
    *
    * @return \Drupal\payment\QueueInterface
    */
   abstract protected function getPaymentQueue();
-
-  /**
-   * Gets the temporary payment storage.
-   *
-   * @return \Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface
-   */
-  abstract protected function getTemporaryPaymentStorage();
 
   /**
    * {@inheritdoc}

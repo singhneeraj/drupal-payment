@@ -105,16 +105,18 @@ abstract class PaymentTypeBase extends PluginBase implements ContainerFactoryPlu
   /**
    * {@inheritdoc}
    */
-  function resumeContext() {
+  function getResumeContextResponse() {
     $event = new PaymentTypePreResumeContext($this->getPayment());
     $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_TYPE_PRE_RESUME_CONTEXT, $event);
     // @todo Invoke Rules event.
-    $this->doResumeContext();
+    return $this->doGetResumeContextResponse();
   }
 
   /**
    * Performs the actual context resumption.
+   *
+   * @return \Drupal\payment\Response\ResponseInterface
    */
-  abstract protected function doResumeContext();
+  abstract protected function doGetResumeContextResponse();
 
 }

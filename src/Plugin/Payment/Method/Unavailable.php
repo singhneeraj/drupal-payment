@@ -10,6 +10,7 @@ use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\PaymentExecutionResult;
 
 /**
  * A payment method controller that essentially disables payment methods.
@@ -72,8 +73,8 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
   /**
    * {@inheritdoc}
    */
-  public function isPaymentExecutionInterruptive() {
-    return FALSE;
+  public function getPaymentExecutionResult() {
+    return new PaymentExecutionResult();
   }
 
   /**

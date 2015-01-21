@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface;
+use Drupal\payment\Response\ResponseInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -101,7 +102,10 @@ class PaymentForm extends ContentEntityForm {
     $payment_method_selector->submitConfigurationForm($form['payment_method'], $form_state);
     $payment->setPaymentMethod($payment_method_selector->getPaymentMethod());
     $payment->save();
-    $payment->execute();
+    $result = $payment->execute();
+    if (!$result->hasCompleted()) {
+      $form_state->setRedirectUrl($result->getCompletionResponse()->getRedirectUrl());
+    }
   }
 
   /**

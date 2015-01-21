@@ -171,13 +171,13 @@ class ListPaymentTypesUnitTest extends UnitTestCase {
             ],
             'manage-form-display' => [
               'title' => 'Manage form display',
-              'url' => new Url('entity.payment.field_ui_form_display', [
+              'url' => new Url('entity.entity_form_display.payment.default', [
                 'bundle' => 'foo',
               ]),
             ],
             'manage-display' => [
               'title' => 'Manage display',
-              'url' => new Url('entity.payment.field_ui_display', [
+              'url' => new Url('entity.entity_view_display.payment.default', [
                 'bundle' => 'foo',
               ]),
             ],
@@ -208,13 +208,13 @@ class ListPaymentTypesUnitTest extends UnitTestCase {
             ],
             'manage-form-display' => [
               'title' => 'Manage form display',
-              'url' => new Url('entity.payment.field_ui_form_display', [
+              'url' => new Url('entity.entity_form_display.payment.default', [
                 'bundle' => 'bar',
               ]),
             ],
             'manage-display' => [
               'title' => 'Manage display',
-              'url' => new Url('entity.payment.field_ui_display', [
+              'url' => new Url('entity.entity_view_display.payment.default', [
                 'bundle' => 'bar',
               ]),
             ],
