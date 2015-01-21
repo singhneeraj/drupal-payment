@@ -21,6 +21,13 @@ use Drupal\user\EntityOwnerInterface;
 interface PaymentInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface, ExecutableInterface {
 
   /**
+   * Returns the timestamp of the entity creation.
+   *
+   * @return int
+   */
+  public function getCreatedTime();
+
+  /**
    * Gets the payment's type plugin.
    *
    * @return \Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface

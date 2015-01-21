@@ -66,15 +66,6 @@ class PaymentUnitTest extends KernelTestBase {
   }
 
   /**
-   * Tests getChangedTime().
-   */
-  protected function testGetChangedTime() {
-    $status = $this->statusManager->createInstance('payment_succes');
-    $this->payment->setPaymentStatus($status);
-    $this->assertIdentical($this->payment->getChangedTime(), $status->getCreated());
-  }
-
-  /**
    * Tests label().
    */
   protected function testLabel() {

@@ -111,8 +111,15 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
+  public function getCreatedTime() {
+    return $this->get('created')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getChangedTime() {
-    return $this->getPaymentStatus()->getCreated();
+    return $this->get('changed')->value;
   }
 
   /**
@@ -388,6 +395,12 @@ class Payment extends ContentEntityBase implements PaymentInterface {
     $fields['bundle'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Payment type'))
       ->setReadOnly(TRUE);
+    $fields['changed'] = BaseFieldDefinition::create('changed')
+      ->setLabel(t('Changed'))
+      ->setDescription(t('The time the payment was last edited.'));
+    $fields['created'] = BaseFieldDefinition::create('created')
+      ->setLabel(t('Created'))
+      ->setDescription(t('The time the payment was created.'));
     $fields['currency'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Currency'))
       ->setDefaultValue(0)

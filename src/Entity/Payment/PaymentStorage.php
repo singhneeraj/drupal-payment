@@ -125,6 +125,8 @@ class PaymentStorage extends SqlContentEntityStorage implements PaymentStorageIn
       $payment_method = $record->payment_method_id ? $this->paymentMethodManager->createInstance($record->payment_method_id, unserialize($record->payment_method_configuration)) : NULL;
       $payment_type = $this->paymentTypeManager->createInstance($record->payment_type_id, unserialize($record->payment_type_configuration));
       $records[$id] = (object) array(
+        'changed' => $record->changed,
+        'created' => $record->created,
         'currency' => $record->currency,
         'id' => (int) $record->id,
         'owner' => (int) $record->owner,
@@ -147,6 +149,8 @@ class PaymentStorage extends SqlContentEntityStorage implements PaymentStorageIn
 
     $record = new \stdClass();
     $record->bundle = $payment->bundle();
+    $record->changed= $payment->getChangedTime();
+    $record->created = $payment->getCreatedTime();
     $record->currency = $payment->getCurrencyCode();
     $record->id = $payment->id();
     $record->first_payment_status_id = current($payment->getPaymentStatuses())->getId();
