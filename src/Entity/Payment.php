@@ -244,11 +244,9 @@ class Payment extends ContentEntityBase implements PaymentInterface {
       $this->statuses[] = $status;
     }
     if ($notify) {
-      /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher */
-      $event_dispatcher = \Drupal::service('event_dispatcher');
-      $event = new PaymentStatusSet($this, $previous_status);
-      $event_dispatcher->dispatch(PaymentEvents::PAYMENT_STATUS_SET, $event);
-      // @todo Invoke Rules event.
+      /** @var \Drupal\payment\EventDispatcherInterface $event_dispatcher */
+      $event_dispatcher = \Drupal::service('payment.event_dispatcher');
+      $event_dispatcher->setPaymentStatus($this, $previous_status);
     }
 
     return $this;

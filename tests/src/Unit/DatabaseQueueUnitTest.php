@@ -28,7 +28,7 @@ class DatabaseQueueUnitTest extends UnitTestCase {
   /**
    * The event dispatcher.
    *
-   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $eventDispatcher;
 
@@ -64,7 +64,7 @@ class DatabaseQueueUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->eventDispatcher = $this->getMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
+    $this->eventDispatcher = $this->getMock('\Drupal\payment\EventDispatcherInterface');
 
     $this->paymentMethodManager = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface');
 
@@ -93,23 +93,6 @@ class DatabaseQueueUnitTest extends UnitTestCase {
     $allowed_payment_status_ids = array($this->randomMachineName(), $this->randomMachineName());
     $this->assertSame($this->queue, $this->queue->setAllowedPaymentStatusIds($allowed_payment_status_ids));
     $this->assertSame($allowed_payment_status_ids, $this->queue->getAllowedPaymentStatusIds());
-  }
-
-  /**
-   * @covers ::alterLoadedPaymentIds
-   */
-  public function testAlterLoadedPaymentIds() {
-    $category_id = $this->randomMachineName();
-    $owner_id = $this->randomMachineName();
-    $payment_ids = array($this->randomMachineName());
-
-    $this->eventDispatcher->expects($this->once())
-      ->method('dispatch')
-      ->with(PaymentEvents::PAYMENT_QUEUE_PAYMENT_IDS_ALTER, $this->isInstanceOf('\Drupal\payment\Event\PaymentQueuePaymentIdsAlter'));
-
-    $method = new \ReflectionMethod($this->queue, 'alterLoadedPaymentIds');
-    $method->setAccessible(TRUE);
-    $method->invoke($this->queue, $category_id, $owner_id, $payment_ids);
   }
 
   /**

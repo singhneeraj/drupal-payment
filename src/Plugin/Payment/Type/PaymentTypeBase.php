@@ -9,10 +9,8 @@ namespace Drupal\payment\Plugin\Payment\Type;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Event\PaymentEvents;
-use Drupal\payment\Event\PaymentTypePreResumeContext;
+use Drupal\payment\EventDispatcherInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Defines base payment type.
@@ -22,7 +20,7 @@ abstract class PaymentTypeBase extends PluginBase implements ContainerFactoryPlu
   /**
    * The event dispatcher.
    *
-   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   * @var \Drupal\payment\EventDispatcherInterface
    */
   protected $eventDispatcher;
 
@@ -42,7 +40,7 @@ abstract class PaymentTypeBase extends PluginBase implements ContainerFactoryPlu
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   * @param \Drupal\payment\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher.
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition, EventDispatcherInterface $event_dispatcher) {
@@ -55,7 +53,7 @@ abstract class PaymentTypeBase extends PluginBase implements ContainerFactoryPlu
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('event_dispatcher'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('payment.event_dispatcher'));
   }
 
   /**
@@ -106,9 +104,7 @@ abstract class PaymentTypeBase extends PluginBase implements ContainerFactoryPlu
    * {@inheritdoc}
    */
   function getResumeContextResponse() {
-    $event = new PaymentTypePreResumeContext($this->getPayment());
-    $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_TYPE_PRE_RESUME_CONTEXT, $event);
-    // @todo Invoke Rules event.
+    $this->eventDispatcher->preResumeContext($this->getPayment());
     return $this->doGetResumeContextResponse();
   }
 

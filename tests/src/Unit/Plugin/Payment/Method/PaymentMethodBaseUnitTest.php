@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\Method;
 
+  use Drupal\Core\Access\AccessResult;
   use Drupal\Core\Access\AccessResultAllowed;
   use Drupal\Core\Access\AccessResultForbidden;
   use Drupal\Core\Access\AccessResultNeutral;
@@ -59,7 +60,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
-      array('event_dispatcher', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->eventDispatcher),
+      array('payment.event_dispatcher', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->eventDispatcher),
       array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
       array('plugin.manager.payment.status', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentStatusManager),
       array('token', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->token),
@@ -215,9 +216,10 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
+
     $this->eventDispatcher->expects($this->once())
-      ->method('dispatch')
-      ->with(PaymentEvents::PAYMENT_PRE_EXECUTE);
+      ->method('preExecutePayment')
+      ->with($payment);
 
     $this->plugin->setPayment($payment);
 
@@ -256,16 +258,23 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $payment_method->expects($this->any())
       ->method('executePaymentAccessCurrency')
       ->with($account)
-      ->will($this->returnValue($currency_supported));
+      ->willReturn($currency_supported);
     $payment_method->expects($this->any())
       ->method('executePaymentAccessEvent')
       ->with($account)
-      ->will($this->returnValue($events));
+      ->willReturn($events);
     $payment_method->expects($this->any())
       ->method('doExecutePaymentAccess')
       ->with($account)
-      ->will($this->returnValue($do));
+      ->willReturn($do);
     $payment_method->setPayment($payment);
+
+    $access_result = AccessResult::allowedIf($events);
+
+    $this->eventDispatcher->expects($this->any())
+      ->method('executePaymentAccess')
+      ->with($payment, $payment_method, $account)
+      ->willReturn($access_result);
 
     $this->assertSame($expected, $payment_method->executePaymentAccess($account));
   }
@@ -382,33 +391,6 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
     $this->plugin->refundPaymentAccess($account);
-  }
-
-  /**
-   * @covers ::executePaymentAccessEvent
-   *
-   * @dataProvider providerTestExecutePaymentAccessEvent
-   */
-  public function  testExecutePaymentAccessEvent($expected, $event_result) {
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
-
-    $this->plugin->setPayment($payment);
-
-    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
-
-    $this->eventDispatcher->expects($this->once())
-      ->method('dispatch')
-      ->with(PaymentEvents::PAYMENT_EXECUTE_ACCESS, $this->isInstanceOf('\Drupal\payment\Event\PaymentExecuteAccess'))
-      ->will($this->returnCallback(function($type, PaymentExecuteAccess $event) use ($event_result) {
-        $event->setAccessResult($event_result);
-      }));
-
-    $method = new \ReflectionMethod($this->plugin, 'executePaymentAccessEvent');
-    $method->setAccessible(TRUE);
-
-    $this->assertSame($expected, $method->invoke($this->plugin, $account)->isAllowed());
   }
 
   /**

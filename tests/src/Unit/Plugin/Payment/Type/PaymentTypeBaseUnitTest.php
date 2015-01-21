@@ -21,7 +21,7 @@ class PaymentTypeBaseUnitTest extends UnitTestCase {
   /**
    * The event dispatcher.
    *
-   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $eventDispatcher;
 
@@ -38,7 +38,7 @@ class PaymentTypeBaseUnitTest extends UnitTestCase {
    * @covers ::__construct
    */
   public function setUp() {
-    $this->eventDispatcher = $this->getMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
+    $this->eventDispatcher = $this->getMock('\Drupal\payment\EventDispatcherInterface');
 
     $configuration = [];
     $plugin_id = $this->randomMachineName();
@@ -54,7 +54,7 @@ class PaymentTypeBaseUnitTest extends UnitTestCase {
   public function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
-      array('event_dispatcher', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->eventDispatcher),
+      array('payment.event_dispatcher', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->eventDispatcher),
     );
     $container->expects($this->any())
       ->method('get')
@@ -123,8 +123,8 @@ class PaymentTypeBaseUnitTest extends UnitTestCase {
       ->willReturn($response);
 
     $this->eventDispatcher->expects($this->once())
-      ->method('dispatch')
-      ->with(PaymentEvents::PAYMENT_TYPE_PRE_RESUME_CONTEXT);
+      ->method('preResumeContext')
+      ->with($payment);
 
     $this->assertSame($response, $this->paymentType->getResumeContextResponse());
   }

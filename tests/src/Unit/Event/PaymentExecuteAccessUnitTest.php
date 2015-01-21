@@ -113,7 +113,7 @@ class PaymentExecuteAccessUnitTest extends UnitTestCase {
   public function testGetAccessResultNeutral() {
     $result = new AccessResultNeutral();
     $this->assertSame($this->event, $this->event->setAccessResult($result));
-    $this->assertFalse($this->event->getAccessResult()->isAllowed());
+    $this->assertTrue($this->event->getAccessResult()->isAllowed());
   }
 
 }

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Contains \Drupal\payment\plugin\payment\status\PaymentStatusInterface.
+ * Contains \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface.
  */
 
-namespace Drupal\payment\plugin\payment\status;
+namespace Drupal\payment\Plugin\Payment\Status;
 
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;

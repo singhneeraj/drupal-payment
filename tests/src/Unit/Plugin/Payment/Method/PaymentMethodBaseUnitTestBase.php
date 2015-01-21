@@ -18,7 +18,7 @@ abstract class PaymentMethodBaseUnitTestBase extends UnitTestCase {
   /**
    * The event dispatcher.
    *
-   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $eventDispatcher;
 
@@ -56,7 +56,7 @@ abstract class PaymentMethodBaseUnitTestBase extends UnitTestCase {
   public function setUp() {
     parent::setUp();
 
-    $this->eventDispatcher = $this->getMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
+    $this->eventDispatcher = $this->getMock('\Drupal\payment\EventDispatcherInterface');
 
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 

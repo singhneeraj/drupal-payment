@@ -12,10 +12,10 @@ use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
+use Drupal\payment\EventDispatcherInterface;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeBase;
 use Drupal\payment\Response\Response;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -52,7 +52,7 @@ class PaymentReference extends PaymentTypeBase implements ContainerFactoryPlugin
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   * @param \Drupal\payment\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher.
    * @param \Drupal\Core\Routing\UrlGeneratorInterface $url_generator
    *   The URL generator.
@@ -77,7 +77,7 @@ class PaymentReference extends PaymentTypeBase implements ContainerFactoryPlugin
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('event_dispatcher'),
+      $container->get('payment.event_dispatcher'),
       $container->get('url_generator'),
       $container->get('entity.manager'),
       $container->get('string_translation')

@@ -10,10 +10,7 @@ namespace Drupal\payment;
 use Drupal\Component\Utility\Random;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Database;
-use Drupal\payment\Event\PaymentEvents;
-use Drupal\payment\Event\PaymentQueuePaymentIdsAlter;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Provides a database-based payment queue.
@@ -37,7 +34,7 @@ class DatabaseQueue implements QueueInterface {
   /**
    * The event dispatcher.
    *
-   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   * @var \Drupal\payment\EventDispatcherInterface
    */
   protected $eventDispatcher;
 
@@ -77,7 +74,7 @@ class DatabaseQueue implements QueueInterface {
    *   The unique ID of the queue (instance).
    * @param \Drupal\Core\Database\Connection $database
    *   A database connection.
-   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   * @param \Drupal\payment\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher.
    * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    *   The payment status plugin manager.
@@ -244,25 +241,7 @@ class DatabaseQueue implements QueueInterface {
 
     $payment_ids = $query->execute()->fetchCol();
 
-    return $this->alterLoadedPaymentIds($category_id, $owner_id, $payment_ids);
-  }
-
-  /**
-   * Alters loaded payment IDs.
-   *
-   * @param string $category_id
-   * @param int $owner_id
-   * @param int[] $payment_ids
-   *
-   * @return int[] $payment_ids
-   */
-  protected function alterLoadedPaymentIds($category_id, $owner_id, array $payment_ids) {
-    $event = new PaymentQueuePaymentIdsAlter($this->queueId, $category_id, $owner_id, $payment_ids);
-    $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_QUEUE_PAYMENT_IDS_ALTER, $event);
-    $payment_ids = $event->getPaymentIds();
-    // @todo Add a Rules event.
-
-    return $payment_ids;
+    return $this->eventDispatcher->alterQueueLoadedPaymentIds($this->queueId, $category_id, $owner_id, $payment_ids);
   }
 
   /**

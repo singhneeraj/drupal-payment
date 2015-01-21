@@ -6,9 +6,14 @@
 
 namespace Drupal\payment\Plugin\Payment\Method;
 
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Utility\Token;
 use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\EventDispatcherInterface;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A basic payment method that does not transfer money.
@@ -32,6 +37,43 @@ use Drupal\payment\Entity\PaymentInterface;
  * )
  */
 class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface, PaymentMethodCapturePaymentInterface, PaymentMethodRefundPaymentInterface, PaymentMethodUpdatePaymentStatusInterface {
+
+  /**
+   * The payment status manager.
+   *
+   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
+   */
+  protected $paymentStatusManager;
+
+  /**
+   * Constructs a new class instance.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param array $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
+   * @param \Drupal\payment\EventDispatcherInterface $event_dispatcher
+   *   The event dispatcher.
+   * @param \Drupal\Core\Utility\Token $token
+   *   The token API.
+   * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
+   *   The payment status manager.
+   */
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler, EventDispatcherInterface $event_dispatcher, Token $token, PaymentStatusManagerInterface $payment_status_manager) {
+    $configuration += $this->defaultConfiguration();
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $module_handler, $event_dispatcher, $token, $payment_status_manager);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('module_handler'), $container->get('payment.event_dispatcher'), $container->get('token'), $container->get('plugin.manager.payment.status'));
+  }
 
   /**
    * {@inheritdoc}

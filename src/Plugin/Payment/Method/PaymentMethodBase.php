@@ -13,15 +13,10 @@ use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Event\PaymentEvents;
-use Drupal\payment\Event\PaymentExecuteAccess;
-use Drupal\payment\Event\PaymentPreCapture;
-use Drupal\payment\Event\PaymentPreExecute;
-use Drupal\payment\Event\PaymentPreRefund;
 use Drupal\payment\PaymentExecutionResult;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
+use Drupal\payment\EventDispatcherInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * A base payment method plugin.
@@ -37,7 +32,7 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
   /**
    * The event dispatcher.
    *
-   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   * @var \Drupal\payment\EventDispatcherInterface
    */
   protected $eventDispatcher;
 
@@ -80,7 +75,7 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    *   The plugin implementation definition.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
-   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   * @param \Drupal\payment\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher.
    * @param \Drupal\Core\Utility\Token $token
    *   The token API.
@@ -100,7 +95,7 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('module_handler'), $container->get('event_dispatcher'), $container->get('token'), $container->get('plugin.manager.payment.status'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('module_handler'), $container->get('payment.event_dispatcher'), $container->get('token'), $container->get('plugin.manager.payment.status'));
   }
 
   /**
@@ -213,7 +208,7 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
 
     return $this->pluginDefinition['active']
     && $this->executePaymentAccessCurrency($account)
-    && $this->executePaymentAccessEvent($account)
+    && $this->eventDispatcher->executePaymentAccess($this->getPayment(), $this, $account)->isAllowed()
     && $this->doExecutePaymentAccess($account);
   }
 
@@ -235,9 +230,7 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
     if (!$this->getPayment()) {
       throw new \LogicException('Trying to execute a non-existing payment. A payment must be set trough self::setPayment() first.');
     }
-    $event = new PaymentPreExecute($this->getPayment());
-    $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_PRE_EXECUTE, $event);
-    // @todo invoke Rules event.
+    $this->eventDispatcher->preExecutePayment($this->getPayment());
     $this->payment->setPaymentStatus($this->paymentStatusManager->createInstance('payment_pending'));
     $this->doExecutePayment();
     $this->getPayment()->save();
@@ -290,9 +283,7 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
     if (!$this->getPayment()) {
       throw new \LogicException('Trying to capture a non-existing payment. A payment must be set trough self::setPayment() first.');
     }
-    $event = new PaymentPreCapture($this->getPayment());
-    $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_PRE_CAPTURE, $event);
-    // @todo invoke Rules event.
+    $this->eventDispatcher->preCapturePayment($this->getPayment());
     $this->doCapturePayment();
   }
 
@@ -333,9 +324,7 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
     if (!$this->getPayment()) {
       throw new \LogicException('Trying to refund a non-existing payment. A payment must be set trough self::setPayment() first.');
     }
-    $event = new PaymentPreRefund($this->getPayment());
-    $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_PRE_REFUND, $event);
-    // @todo invoke Rules event.
+    $this->eventDispatcher->preRefundPayment($this->getPayment());
     $this->doRefundPayment();
   }
 
@@ -388,22 +377,6 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    *   Return TRUE to allow all currencies and amounts.
    */
   abstract protected function getSupportedCurrencies();
-
-  /**
-   * Invokes events for self::executePaymentAccess().
-   *
-   * @todo Invoke Rules event.
-   *
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *
-   * @return \Drupal\Core\Access\AccessResultInterface
-   */
-  protected function executePaymentAccessEvent(AccountInterface $account) {
-    $event = new PaymentExecuteAccess($this->getPayment(), $this, $account);
-    $this->eventDispatcher->dispatch(PaymentEvents::PAYMENT_EXECUTE_ACCESS, $event);
-
-    return $event->getAccessResult();
-  }
 
   /**
    * {@inheritdoc}

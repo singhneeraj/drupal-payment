@@ -8,7 +8,7 @@
 namespace Drupal\payment\Event;
 
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\plugin\payment\status\PaymentStatusInterface;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -37,8 +37,8 @@ class PaymentStatusSet extends Event {
    *
    * @param \Drupal\payment\Entity\PaymentInterface $payment
    *   The payment the status was set on.
-   * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface $previous_payment_status|null
-   *   The payment's previous status.
+   * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface|null $previous_payment_status
+   *   The payment's previous status or NULL if there is none.
    */
   public function __construct(PaymentInterface $payment, PaymentStatusInterface $previous_payment_status = NULL) {
     $this->payment = $payment;

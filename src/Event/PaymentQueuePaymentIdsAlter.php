@@ -57,7 +57,7 @@ class PaymentQueuePaymentIdsAlter extends Event {
    * @param int[] $payment_ids
    *   The IDs of available payments as loaded by the queue.
    */
-  public function __construct($queue_id, $category_id, $owner_id, array &$payment_ids) {
+  public function __construct($queue_id, $category_id, $owner_id, array $payment_ids) {
     $this->categoryId = $category_id;
     $this->ownerId = $owner_id;
     $this->paymentIds = $payment_ids;

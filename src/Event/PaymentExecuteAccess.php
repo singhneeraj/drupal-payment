@@ -7,8 +7,8 @@
 
 namespace Drupal\payment\Event;
 
+use Drupal\Core\Access\AccessResultAllowed;
 use Drupal\Core\Access\AccessResultInterface;
-use Drupal\Core\Access\AccessResultNeutral;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
@@ -60,7 +60,7 @@ class PaymentExecuteAccess extends Event {
    * @param \Drupal\Core\Session\AccountInterface
    */
   public function __construct(PaymentInterface $payment, PaymentMethodInterface $payment_method, AccountInterface $account) {
-    $this->accessResult = new AccessResultNeutral();
+    $this->accessResult = new AccessResultAllowed();
     $this->payment = $payment;
     $this->paymentMethod = $payment_method;
     $this->account = $account;
