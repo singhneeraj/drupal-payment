@@ -118,6 +118,11 @@ class PaymentForm extends ContentEntityForm {
       'submit' => $actions['submit'],
     );
     $actions['submit']['#value'] = $this->t('Pay');
+    /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface $payment_method_selector */
+    $payment_method_selector = $form_state->get('payment_method_selector');
+    if (count($payment_method_selector->getAvailablePaymentMethods()) == 0) {
+      $actions['submit']['#disabled'] = TRUE;
+    }
 
     return $actions;
   }

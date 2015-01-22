@@ -255,13 +255,39 @@ class PaymentFormUnitTest extends UnitTestCase {
   /**
    * @covers ::actions
    */
-  public function testActions() {
+  public function testActionsWithAvailablePaymentmethods() {
     $form = [];
-    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state = new FormState();
+    $form_state->set('payment_method_selector', $this->paymentMethodSelector);
+
+    $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
+
+    $this->paymentMethodSelector->expects($this->atLeastOnce())
+      ->method('getAvailablePaymentMethods')
+      ->willReturn([$payment_method]);
 
     $method = new \ReflectionMethod($this->form, 'actions');
     $method->setAccessible(TRUE);
-    $method->invokeArgs($this->form, array($form, $form_state));
+    $actions = $method->invokeArgs($this->form, array($form, $form_state));
+    $this->assertTrue(empty($actions['submit']['#disabled']));
+  }
+
+  /**
+   * @covers ::actions
+   */
+  public function testActionsWithoutAvailablePaymentmethods() {
+    $form = [];
+    $form_state = new FormState();
+    $form_state->set('payment_method_selector', $this->paymentMethodSelector);
+
+    $this->paymentMethodSelector->expects($this->atLeastOnce())
+      ->method('getAvailablePaymentMethods')
+      ->willReturn([]);
+
+    $method = new \ReflectionMethod($this->form, 'actions');
+    $method->setAccessible(TRUE);
+    $actions = $method->invokeArgs($this->form, array($form, $form_state));
+    $this->assertTrue($actions['submit']['#disabled']);
   }
 
 }

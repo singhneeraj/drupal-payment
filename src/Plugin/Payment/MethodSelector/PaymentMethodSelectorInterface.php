@@ -90,4 +90,12 @@ interface PaymentMethodSelectorInterface extends PluginInspectionInterface, Conf
    */
   public function setPaymentMethod(PaymentMethodInterface $payment_method);
 
+  /**
+   * Returns all available payment methods.
+   *
+   * @return \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface[]
+   *    An array of payment method plugin instances, keyed by plugin ID.
+   */
+  public function getAvailablePaymentMethods();
+
 }

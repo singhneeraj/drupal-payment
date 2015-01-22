@@ -149,12 +149,9 @@ abstract class PaymentMethodSelectorBase extends PluginBase implements Container
   }
 
   /**
-   * Returns all available payment methods.
-   *
-   * @return \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface[]
-   *    An array of payment method plugin instances, keyed by plugin ID.
+   * {@inheritdoc}
    */
-  protected function getAvailablePaymentMethods() {
+  public function getAvailablePaymentMethods() {
     $payment_methods = [];
     foreach (array_keys($this->paymentMethodManager->getDefinitions()) as $plugin_id) {
       if ($this->getAllowedPaymentMethods() === TRUE || in_array($plugin_id, $this->getAllowedPaymentMethods())) {
