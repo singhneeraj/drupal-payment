@@ -184,8 +184,7 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
    *
    * @dataProvider providerDoCapturePaymentAccess
    */
-  public function testDoCapturePaymentAccess($expected, $capture, $current_status_id, $execute_status_id, $capture_status_id) {
-    $this->pluginDefinition['execute_status_id'] = $execute_status_id;
+  public function testDoCapturePaymentAccess($expected, $capture, $current_status_id, $capture_status_id) {
     $this->pluginDefinition['capture'] = $capture;
     $this->pluginDefinition['capture_status_id'] = $capture_status_id;
 
@@ -226,9 +225,9 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
     $status_id_b = $this->randomMachineName();
     $status_id_c = $this->randomMachineName();
     return array(
-      array(TRUE, TRUE, $status_id_a, $status_id_a, $status_id_b),
-      array(FALSE, TRUE, $status_id_a, $status_id_b, $status_id_c),
-      array(FALSE, FALSE, $status_id_a, $status_id_a, $status_id_b),
+      array(TRUE, TRUE, $status_id_a, $status_id_b),
+      array(TRUE, TRUE, $status_id_a, $status_id_c),
+      array(FALSE, FALSE, $status_id_a, $status_id_b),
     );
   }
 
@@ -265,8 +264,7 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
    *
    * @dataProvider providerDoRefundPaymentAccess
    */
-  public function testDoRefundPaymentAccess($expected, $refund, $current_status_id, $capture_status_id, $refund_status_id) {
-    $this->pluginDefinition['capture_status_id'] = $capture_status_id;
+  public function testDoRefundPaymentAccess($expected, $refund, $current_status_id, $refund_status_id) {
     $this->pluginDefinition['refund'] = $refund;
     $this->pluginDefinition['refund_status_id'] = $refund_status_id;
 
@@ -302,9 +300,9 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
     $status_id_b = $this->randomMachineName();
     $status_id_c = $this->randomMachineName();
     return array(
-      array(TRUE, TRUE, $status_id_a, $status_id_a, $status_id_b),
-      array(FALSE, TRUE, $status_id_a, $status_id_b, $status_id_c),
-      array(FALSE, FALSE, $status_id_a, $status_id_a, $status_id_b),
+      array(TRUE, TRUE, $status_id_a, $status_id_b),
+      array(TRUE, TRUE, $status_id_a, $status_id_c),
+      array(FALSE, FALSE, $status_id_a, $status_id_b),
     );
   }
 
