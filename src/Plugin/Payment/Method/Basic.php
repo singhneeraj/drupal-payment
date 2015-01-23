@@ -161,7 +161,7 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
    * {@inheritdoc}
    */
   public function doCapturePaymentAccess(AccountInterface $account) {
-    return $this->getCapture() && $this->getPayment()->getPaymentStatus()->getPluginId() == $this->getExecuteStatusId();
+    return $this->getCapture() && $this->getPayment()->getPaymentStatus()->getPluginId() != $this->getCaptureStatusId();
   }
 
   /**
@@ -176,7 +176,7 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
    * {@inheritdoc}
    */
   public function doRefundPaymentAccess(AccountInterface $account) {
-    return $this->getRefund() && $this->getPayment()->getPaymentStatus()->getPluginId() == $this->getCaptureStatusId();
+    return $this->getRefund() && $this->getPayment()->getPaymentStatus()->getPluginId() != $this->getRefundStatusId();
   }
 
   /**
