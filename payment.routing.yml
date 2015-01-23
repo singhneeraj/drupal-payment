@@ -22,7 +22,7 @@ entity.payment.canonical:
   requirements:
     _entity_access: 'payment.view'
 
-entity.payment.edit:
+entity.payment.edit_form:
   path: '/payment/{payment}/edit'
   defaults:
     _entity_form: 'payment.edit'
@@ -32,7 +32,7 @@ entity.payment.edit:
   options:
     _admin_route: TRUE
 
-entity.payment.update_status:
+entity.payment.update_status_form:
   path: '/payment/{payment}/update-status'
   defaults:
     _entity_form: 'payment.update_status'
@@ -42,7 +42,7 @@ entity.payment.update_status:
   options:
     _admin_route: TRUE
 
-entity.payment.capture:
+entity.payment.capture_form:
   path: '/payment/{payment}/capture'
   defaults:
     _entity_form: 'payment.capture'
@@ -52,7 +52,7 @@ entity.payment.capture:
   options:
     _admin_route: TRUE
 
-entity.payment.refund:
+entity.payment.refund_form:
   path: '/payment/{payment}/refund'
   defaults:
     _entity_form: 'payment.refund'
@@ -70,7 +70,7 @@ entity.payment.complete:
     _entity_access: 'payment.complete'
     _csrf_token: 'TRUE'
 
-entity.payment.delete:
+entity.payment.delete_form:
   path: '/payment/{payment}/delete'
   defaults:
     _entity_form: 'payment.delete'
