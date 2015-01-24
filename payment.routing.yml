@@ -125,7 +125,7 @@ entity.payment_method_configuration.enable:
     _controller: '\Drupal\payment\Controller\EnablePaymentMethodConfiguration::execute'
   requirements:
     _entity_access: 'payment_method_configuration.enable'
-    _te_token: 'TRUE'
+    _csrf_token: 'TRUE'
 
 entity.payment_method_configuration.disable:
   path: '/admin/config/services/payment/method/configuration/{payment_method_configuration}/disable'
@@ -133,6 +133,7 @@ entity.payment_method_configuration.disable:
     _controller: '\Drupal\payment\Controller\DisablePaymentMethodConfiguration::execute'
   requirements:
     _entity_access: 'payment_method_configuration.disable'
+    _csrf_token: 'TRUE'
 
 entity.payment_method_configuration.delete_form:
   path: '/admin/config/services/payment/method/configuration/{payment_method_configuration}/delete'
