@@ -49,7 +49,7 @@ interface QueueInterface {
    *
    * @param integer $payment_id
    * @param string $acquisition_code
-   *   The code that was received from self::reserve().
+   *   The code that was received from self::claimPayment().
    *
    * @return bool
    *   Whether the acquisition was successful.

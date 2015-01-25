@@ -8,6 +8,7 @@
 namespace Drupal\payment_form\Entity\Payment;
 
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -125,6 +126,15 @@ class PaymentForm extends ContentEntityForm {
     }
 
     return $actions;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function copyFormValuesToEntity(EntityInterface $entity, array $form, FormStateInterface $form_state) {
+    // Remove this override once https://drupal.org/node/2409143 has been fixed.
+    $this->getFormDisplay($form_state)
+      ->extractFormValues($entity, $form, $form_state);
   }
 
 }

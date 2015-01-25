@@ -26,54 +26,39 @@ class PaymentStorageSchema extends SqlContentEntityStorageSchema {
   }
 
   /**
+   * Adds non-field columns to the schema.
    *
+   * @param array[] $schema
+   *   The existing schema.
    */
   protected function alterEntitySchemaWithNonFieldColumns(array &$schema) {
     $schema['payment']['fields'] += array(
-      'first_payment_status_id' => array(
-        'description' => "The {payment_status_item}.id of this payment's first status item.",
+      'first_payment_status_delta' => array(
+        'description' => "The {payment__payment_statuses}.delta of this payment's first status item.",
         'type' => 'int',
         'unsigned' => TRUE,
         'default' => 0,
         'not null' => TRUE,
       ),
-      'last_payment_status_id' => array(
-        'description' => "The {payment_status_item}.id of this payment's most recent status item.",
+      'last_payment_status_delta' => array(
+        'description' => "The {payment__payment_statuses}.delta of this payment's most recent status item.",
         'type' => 'int',
         'unsigned' => TRUE,
         'default' => 0,
         'not null' => TRUE,
-      ),
-      'payment_method_configuration' => array(
-        'type' => 'blob',
-        'not null' => TRUE,
-        'serialize' => TRUE,
-      ),
-      'payment_method_id' => array(
-        'type' => 'varchar',
-        'length' => 255,
-      ),
-      'payment_type_configuration' => array(
-        'type' => 'blob',
-        'not null' => TRUE,
-        'serialize' => TRUE,
-      ),
-      'payment_type_id' => array(
-        'type' => 'varchar',
-        'length' => 255,
       ),
     );
     $schema['payment']['foreign keys'] += array(
-      'first_payment_status_id' => array(
-        'table' => 'payment_status_item',
+      'first_payment_status_delta' => array(
+        'table' => 'payment__payment_statuses',
         'columns' => array(
-          'first_payment_status_id' => 'id',
+          'first_payment_status_delta' => 'delta',
         ),
       ),
-      'last_payment_status_id' => array(
-        'table' => 'payment_status_item',
+      'last_payment_status_delta' => array(
+        'table' => 'payment__payment_statuses',
         'columns' => array(
-          'last_payment_status_id' => 'id',
+          'last_payment_status_delta' => 'delta',
         ),
       ),
       'owner' => array(
@@ -83,8 +68,6 @@ class PaymentStorageSchema extends SqlContentEntityStorageSchema {
         ),
       ),
     );
-
-    return $schema;
   }
 
 }

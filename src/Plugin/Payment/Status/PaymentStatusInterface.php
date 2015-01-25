@@ -8,12 +8,12 @@ namespace Drupal\payment\Plugin\Payment\Status;
 
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
-use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\PaymentAwareInterface;
 
 /**
  * A payment status plugin.
  */
-interface PaymentStatusInterface extends PluginInspectionInterface, ConfigurablePluginInterface {
+interface PaymentStatusInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PaymentAwareInterface {
 
   /**
    * Sets the created date and time.
@@ -32,38 +32,6 @@ interface PaymentStatusInterface extends PluginInspectionInterface, Configurable
    *   A Unix timestamp.
    */
   public function getCreated();
-
-  /**
-   * Sets the payment the status belongs to.
-   *
-   * @param \Drupal\payment\Entity\PaymentInterface $payment
-   *
-   * @return static
-   */
-  public function setPayment(PaymentInterface $payment);
-
-  /**
-   * Gets the payment this status belongs to.
-   *
-   * @return \Drupal\payment\Entity\PaymentInterface
-   */
-  public function getPayment();
-
-  /**
-   * Sets the ID.
-   *
-   * @param int $id
-   * *
-   * @return static
-   */
-  public function setId($id);
-
-  /**
-   * Gets the ID.
-   *
-   * @return int
-   */
-  public function getId();
 
   /**
    * Gets this payment status's ancestors.

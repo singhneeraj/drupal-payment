@@ -12,10 +12,10 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Utility\Token;
-use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\PaymentExecutionResult;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Drupal\payment\EventDispatcherInterface;
+use Drupal\payment\PaymentAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -28,6 +28,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * - message_text_format: The ID of the text format to format message_text with.
  */
 abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentMethodInterface, PaymentMethodCapturePaymentInterface, PaymentMethodRefundPaymentInterface {
+
+  use PaymentAwareTrait;
 
   /**
    * The event dispatcher.
@@ -42,20 +44,6 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
   protected $moduleHandler;
-
-  /**
-   * The payment this payment method is for.
-   *
-   * @var \Drupal\payment\Entity\PaymentInterface
-   */
-  protected $payment;
-
-  /**
-   * The payment status manager.
-   *
-   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
-   */
-  protected $paymentStatusManager;
 
   /**
    * The token API.
@@ -123,7 +111,7 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    * {@inheritdoc}
    */
   public function setConfiguration(array $configuration) {
-    $this->configuration = $configuration;
+    $this->configuration = $configuration + $this->defaultConfiguration();
   }
 
   /**
@@ -142,22 +130,6 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    */
   public function getMessageTextFormat() {
     return $this->pluginDefinition['message_text_format'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getPayment() {
-    return $this->payment;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setPayment(PaymentInterface $payment) {
-    $this->payment = $payment;
-
-    return $this;
   }
 
   /**

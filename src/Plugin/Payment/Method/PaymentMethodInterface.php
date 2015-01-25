@@ -11,6 +11,7 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\PaymentAwareInterface;
 
 /**
  * Defines a payment method.
@@ -26,7 +27,7 @@ use Drupal\payment\Entity\PaymentInterface;
  * - \Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface:
  *   This interface lets payment methods capture already authorized payments.
  */
-interface PaymentMethodInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface {
+interface PaymentMethodInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface, PaymentAwareInterface {
 
   /**
    * Checks if the payment can be executed.
@@ -60,22 +61,6 @@ interface PaymentMethodInterface extends PluginInspectionInterface, Configurable
    * @return \Drupal\payment\PaymentExecutionResultInterface
    */
   public function getPaymentExecutionResult();
-
-  /**
-   * Gets the payment this payment method is for.
-   *
-   * @return \Drupal\payment\Entity\PaymentInterface
-   */
-  public function getPayment();
-
-  /**
-   * Gets the payment this payment method is for.
-   *
-   * @param \Drupal\payment\Entity\PaymentInterface $payment
-   *
-   * @return $this
-   */
-  public function setPayment(PaymentInterface $payment);
 
   /**
    * Gets the plugin label.

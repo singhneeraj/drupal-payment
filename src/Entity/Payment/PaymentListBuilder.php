@@ -89,7 +89,8 @@ class PaymentListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function load() {
-    // @todo Add (table)sorting.
+    // @todo Add (table)sorting once https://drupal.org/node/2134761 has been
+    //   fixed.
     $page = pager_find_page();
     $start = static::PAYMENTS_PER_PAGE * ($page);
     $query = $this->storage->getQuery();

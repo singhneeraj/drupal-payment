@@ -10,7 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\currency\Math\MathInterface;
-use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\PaymentAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -21,19 +21,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItemInterface, ContainerFactoryPluginInterface {
 
+  use PaymentAwareTrait;
+
   /**
    * The math service.
    *
    * @var \Drupal\currency\Math\MathInterface
    */
   protected $math;
-
-  /**
-   * The payment this line item is for.
-   *
-   * @var \Drupal\payment\Entity\PaymentInterface
-   */
-  protected $payment;
 
   /**
    * Constructs a new class instance.
@@ -88,23 +83,7 @@ abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItem
    * {@inheritdoc}
    */
   public function setConfiguration(array $configuration) {
-    $this->configuration = $configuration;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getPayment() {
-    return $this->payment;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setPayment(PaymentInterface $payment) {
-    $this->payment = $payment;
-
-    return $this;
+    $this->configuration = $configuration + $this->defaultConfiguration();
   }
 
   /**

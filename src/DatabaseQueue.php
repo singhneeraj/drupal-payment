@@ -153,7 +153,7 @@ class DatabaseQueue implements QueueInterface {
    */
   public function claimPayment($payment_id) {
     $acquisition_code = $this->tryClaimPaymentOnce($payment_id);
-    // If a payment cannot be claimed at the first try, wait until the prevous
+    // If a payment cannot be claimed at the first try, wait until the previous
     // claim has expired and try to claim the payment one more time.
     if ($acquisition_code === FALSE) {
       sleep($this->getClaimExpirationPeriod());
@@ -232,10 +232,10 @@ class DatabaseQueue implements QueueInterface {
     }
     $query = $this->database->select('payment_queue', 'pq');
     $query->addJoin('INNER', 'payment', 'p', 'p.id = pq.payment_id');
-    $query->addJoin('INNER', 'payment_status', 'ps', 'p.last_payment_status_id = ps.id');
+    $query->addJoin('INNER', 'payment__payment_statuses', 'p_ps', 'p.id = p_ps.entity_id AND p.last_payment_status_delta = p_ps.delta');
     $query->fields('pq', array('payment_id'))
       ->condition('pq.category_id', $category_id)
-      ->condition('ps.plugin_id', $allowed_payment_status_ids)
+      ->condition('p_ps.payment_statuses_plugin_id', $allowed_payment_status_ids)
       ->condition('p.owner', $owner_id)
       ->condition('pq.queue_id', $this->queueId);
 

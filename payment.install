@@ -9,61 +9,6 @@
  * Implements hook_schema().
  */
 function payment_schema() {
-  $schema['payment_line_item'] = array(
-    'fields' => array(
-      'amount' => array(
-        'type' => 'float',
-        'size' => 'big',
-        'not null' => TRUE,
-      ),
-      'amount_total' => array(
-        'type' => 'float',
-        'size' => 'big',
-        'not null' => TRUE,
-      ),
-      'currency_code' => array(
-        'type' => 'varchar',
-        'length' => 3,
-        'not null' => TRUE,
-      ),
-      'name' => array(
-        'type' => 'varchar',
-        'length' => 255,
-      ),
-      'payment_id' => array(
-        'description' => 'The {payment}.id this line item belongs to.',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 0,
-      ),
-      'plugin_configuration' => array(
-        'type' => 'blob',
-        'not null' => TRUE,
-        'serialize' => TRUE,
-      ),
-      'plugin_id' => array(
-        'type' => 'varchar',
-        'length' => 255,
-      ),
-      'quantity' => array(
-        'type' => 'int',
-        'default' => 1,
-        'not null' => TRUE,
-      ),
-    ),
-    'primary key' => array('name', 'payment_id'),
-    'foreign keys' => array(
-      'payment_id' => array(
-        'table' => 'payment',
-        'columns' => array(
-          'payment_id' => 'id',
-        ),
-      ),
-    ),
-    'indexes' => array(
-      'payment_id' => array('payment_id'),
-    ),
-  );
   $schema['payment_queue'] = array(
     'fields' => array(
       'acquisition_code' => array(
@@ -106,40 +51,6 @@ function payment_schema() {
       'category_id' => array('category_id'),
       'queue_id' => array('queue_id'),
     ),
-  );
-  $schema['payment_status'] = array(
-    'fields' => array(
-      'created' => array(
-        'type' => 'int',
-        'not null' => TRUE,
-      ),
-      'payment_id' => array(
-        'description' => 'The payment ID.',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 0,
-      ),
-      'plugin_id' => array(
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-      ),
-      'id' => array(
-        'type' => 'serial',
-      ),
-    ),
-    'foreign keys' => array(
-      'payment_id' => array(
-        'table' => 'payment',
-        'columns' => array(
-          'payment_id' => 'id',
-        ),
-      ),
-    ),
-    'indexes' => array(
-      'payment_id' => array('payment_id'),
-    ),
-    'primary key' => array('id'),
   );
 
   return $schema;

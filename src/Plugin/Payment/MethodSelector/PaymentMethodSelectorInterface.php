@@ -9,13 +9,13 @@ namespace Drupal\payment\Plugin\Payment\MethodSelector;
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
-use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\PaymentAwareInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
 
 /**
  * Provides a plugin to select and configure a payment method for a payment.
  */
-interface PaymentMethodSelectorInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface {
+interface PaymentMethodSelectorInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface, PaymentAwareInterface {
 
   /**
    * Sets whether a payment method must be selected.
@@ -57,22 +57,6 @@ interface PaymentMethodSelectorInterface extends PluginInspectionInterface, Conf
    *   An array of payment method plugin IDs or TRUE to allow all.
    */
   public function getAllowedPaymentMethods();
-
-  /**
-   * Gets the payment this payment method is for.
-   *
-   * @return \Drupal\payment\Entity\PaymentInterface
-   */
-  public function getPayment();
-
-  /**
-   * Gets the payment this payment method is for.
-   *
-   * @param \Drupal\payment\Entity\PaymentInterface $payment
-   *
-   * @return $this
-   */
-  public function setPayment(PaymentInterface $payment);
 
   /**
    * Gets the selected payment method.

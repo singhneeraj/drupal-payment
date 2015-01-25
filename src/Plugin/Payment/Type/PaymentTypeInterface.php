@@ -9,28 +9,12 @@ namespace Drupal\payment\Plugin\Payment\Type;
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\PaymentAwareInterface;
 
 /**
  * A payment type plugin.
  */
-interface PaymentTypeInterface extends PluginInspectionInterface, ConfigurablePluginInterface {
-
-  /**
-   * Sets the ID of the payment this plugin is of.
-   *
-   * @param \Drupal\payment\Entity\PaymentInterface $payment
-   *
-   * @return static
-   */
-  public function setPayment(PaymentInterface $payment);
-
-  /**
-   * Gets the ID of the payment this plugin is of.
-   *
-   * @return \Drupal\payment\Entity\PaymentInterface
-   */
-  public function getPayment();
+interface PaymentTypeInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PaymentAwareInterface {
 
   /**
    * Returns the description of the payment this plugin is of.

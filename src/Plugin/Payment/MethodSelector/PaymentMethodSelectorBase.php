@@ -11,6 +11,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\PaymentAwareTrait;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -23,19 +24,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class PaymentMethodSelectorBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentMethodSelectorInterface {
 
+  use PaymentAwareTrait;
+
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
   protected $currentUser;
-
-  /**
-   * The payment a payment method is selected for.
-   *
-   * @var \Drupal\payment\Entity\PaymentInterface
-   */
-  protected $payment;
 
   /**
    * The payment method manager.
@@ -164,13 +160,6 @@ abstract class PaymentMethodSelectorBase extends PluginBase implements Container
     }
 
     return $payment_methods;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getPayment() {
-    return $this->payment;
   }
 
   /**

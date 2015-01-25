@@ -107,7 +107,7 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
   public function testGetConfiguration() {
     $configuration = array(
       $this->randomMachineName() => mt_rand(),
-    );
+    ) + $this->status->defaultConfiguration();
     $this->assertNull($this->status->setConfiguration($configuration));
     $this->assertSame($configuration, $this->status->getConfiguration());
   }
@@ -132,16 +132,6 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
       ->getMock();
     $this->assertSame($this->status, $this->status->setPayment($payment));
     $this->assertSame($payment, $this->status->getPayment());
-  }
-
-  /**
-   * @covers ::setId
-   * @covers ::getId
-   */
-  public function testGetId() {
-    $created = mt_rand();
-    $this->assertSame($this->status, $this->status->setId($created));
-    $this->assertSame($created, $this->status->getId());
   }
 
   /**

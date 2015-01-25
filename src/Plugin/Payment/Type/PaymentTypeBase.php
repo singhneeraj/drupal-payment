@@ -8,8 +8,8 @@ namespace Drupal\payment\Plugin\Payment\Type;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
-use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\EventDispatcherInterface;
+use Drupal\payment\PaymentAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -17,19 +17,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class PaymentTypeBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentTypeInterface {
 
+  use PaymentAwareTrait;
+
   /**
    * The event dispatcher.
    *
    * @var \Drupal\payment\EventDispatcherInterface
    */
   protected $eventDispatcher;
-
-  /**
-   * The payment this type is of.
-   *
-   * @var \Drupal\payment\Entity\PaymentInterface
-   */
-  protected $payment;
 
   /**
    * Constructs a new class instance.
@@ -81,23 +76,7 @@ abstract class PaymentTypeBase extends PluginBase implements ContainerFactoryPlu
    * {@inheritdoc}
    */
   public function setConfiguration(array $configuration) {
-    $this->configuration = $configuration;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getPayment() {
-    return $this->payment;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setPayment(PaymentInterface $payment) {
-    $this->payment = $payment;
-
-    return $this;
+    $this->configuration = $configuration + $this->defaultConfiguration();
   }
 
   /**

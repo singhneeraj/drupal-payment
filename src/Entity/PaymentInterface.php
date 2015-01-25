@@ -121,8 +121,7 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
   /**
    * Sets/replaces all statuses without notifications.
    *
-   * @param array $statuses
-   *   \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface objects.
+   * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface[] $statuses
    *
    * @return \Drupal\payment\Entity\PaymentInterface
    */
@@ -132,12 +131,10 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
    * Sets a status.
    *
    * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface $status
-   * @param bool $notify
-   *   Whether or not to trigger a notification event.
    *
    * @return \Drupal\payment\Entity\PaymentInterface
    */
-  public function setPaymentStatus(PluginPaymentStatusInterface $status, $notify = TRUE);
+  public function setPaymentStatus(PluginPaymentStatusInterface $status);
 
   /**
    * Gets all payment statuses.

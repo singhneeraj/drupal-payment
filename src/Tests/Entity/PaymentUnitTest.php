@@ -127,7 +127,7 @@ class PaymentUnitTest extends KernelTestBase {
     $line_item_1->setName($this->randomMachineName());
     $line_item_2 = $this->lineItemManager->createInstance('payment_basic');
     $line_item_2->setName($this->randomMachineName());
-    $this->assertTrue(spl_object_hash($this->payment->setLineItems(array($line_item_1, $line_item_2))), spl_object_hash($this->payment));
+    $this->assertTrue(spl_object_hash($this->payment->setLineItems([$line_item_1, $line_item_2])), spl_object_hash($this->payment));
     $line_items = $this->payment->getLineItems();
     if ($this->assertTrue(is_array($line_items))) {
       $this->assertEqual(spl_object_hash($line_items[$line_item_1->getName()]), spl_object_hash($line_item_1));
@@ -147,23 +147,29 @@ class PaymentUnitTest extends KernelTestBase {
   }
 
   /**
-   * Tests setStatus() and getStatus().
+   * Tests setPaymentStatus() and getPaymentStatus().
    */
-  protected function testGetStatus() {
-    $status = $this->statusManager->createInstance('payment_pending');
-    $this->assertEqual(spl_object_hash($this->payment->setPaymentStatus($status, FALSE)), spl_object_hash($this->payment));
-    $this->assertEqual(spl_object_hash($this->payment->getPaymentStatus()), spl_object_hash($status));
+  protected function testGetPaymentStatus() {
+    $payment_status_a = $this->statusManager->createInstance('payment_pending');
+    $payment_status_b = $this->statusManager->createInstance('payment_failed');
+    $this->assertEqual(spl_object_hash($this->payment->setPaymentStatus($payment_status_a)), spl_object_hash($this->payment));
+    $this->assertEqual(spl_object_hash($this->payment->getPaymentStatus()), spl_object_hash($payment_status_a));
+    // Make sure we always get the last status.
+    $this->payment->setPaymentStatus($payment_status_b);
+    $this->assertEqual(spl_object_hash($this->payment->getPaymentStatus()), spl_object_hash($payment_status_b));
   }
 
   /**
-   * Tests setStatuses() and getStatuses().
+   * Tests setPaymentStatuses() and getPaymentStatuses().
    */
-  protected function testGetStatuses() {
+  protected function testGetPaymentStatuses() {
     $statuses = array($this->statusManager->createInstance('payment_pending'), $this->statusManager->createInstance('payment_failed'));
     $this->assertEqual(spl_object_hash($this->payment->setPaymentStatuses($statuses)), spl_object_hash($this->payment));
     $retrieved_statuses = $this->payment->getPaymentStatuses();
     $this->assertEqual(spl_object_hash(reset($retrieved_statuses)), spl_object_hash(reset($statuses)));
     $this->assertEqual(spl_object_hash(end($retrieved_statuses)), spl_object_hash(end($statuses)));
+    // Make sure we always get the last status.
+    $this->assertEqual(spl_object_hash($this->payment->getPaymentStatus()), spl_object_hash(end($statuses)));
   }
 
   /**
@@ -193,7 +199,8 @@ class PaymentUnitTest extends KernelTestBase {
     for ($i = 0; $i < 2; $i++) {
       /** @var \Drupal\payment\Plugin\Payment\LineItem\Basic $line_item */
       $line_item = $this->lineItemManager->createInstance('payment_basic');
-      $line_item->setName($this->randomMachineName());
+      $name = $this->randomMachineName();
+      $line_item->setName($name);
       $line_item->setAmount($amount);
       $line_item->setQuantity($quantity);
       $this->payment->setLineItem($line_item);

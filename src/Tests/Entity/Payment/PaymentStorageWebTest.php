@@ -9,6 +9,8 @@ namespace Drupal\payment\Tests\Entity\Payment;
 
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Payment;
+use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
+use Drupal\payment\plugin\payment\status\PaymentStatusInterface;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface;
 use Drupal\payment\Tests\Generate;
 use Drupal\simpletest\WebTestBase;
@@ -60,33 +62,23 @@ class PaymentStorageWebTest extends WebTestBase {
     $this->assertTrue(is_numeric($payment->getOwnerId()));
     // Check references to other tables.
     $payment_data = $database->select('payment', 'p')
-      ->fields('p', array('first_payment_status_id', 'last_payment_status_id'))
+      ->fields('p', array('first_payment_status_delta', 'last_payment_status_delta'))
       ->condition('id', $payment->id())
       ->execute()
       ->fetchAssoc();
-    $this->assertEqual($payment_data['first_payment_status_id'], 1);
-    $this->assertEqual($payment_data['last_payment_status_id'], 2);
+    $this->assertEqual($payment_data['first_payment_status_delta'], 0);
+    $this->assertEqual($payment_data['last_payment_status_delta'], 1);
     /** @var \Drupal\payment\Entity\PaymentInterface $payment_loaded */
     $payment_loaded = entity_load_unchanged('payment', $payment->id());
     $this->assertEqual(count($payment_loaded->getLineItems()), count($payment->getLineItems()));
+    foreach ($payment_loaded->getLineItems() as $line_item) {
+      $this->assertTrue($line_item instanceof PaymentLineItemInterface);
+    }
     $this->assertEqual(count($payment_loaded->getPaymentStatuses()), count($payment->getPaymentStatuses()));
-    $this->assertEqual($payment_loaded->getPaymentMethod()->getConfiguration(), $payment_method->getConfiguration());
-    $this->assertEqual($payment_loaded->getPaymentType()->getConfiguration(), $payment_type_configuration);
-
-    // Test deleting a payment.
-    $payment->delete();
-    $this->assertFalse(entity_load('payment', $payment->id()));
-    $line_items_exists = db_select('payment_line_item')
-      ->condition('payment_id', $payment->id())
-      ->countQuery()
-      ->execute()
-      ->fetchField();
-    $this->assertFalse($line_items_exists);
-    $statuses_exist = db_select('payment_status')
-      ->condition('payment_id', $payment->id())
-      ->countQuery()
-      ->execute()
-      ->fetchField();
-    $this->assertFalse($statuses_exist);
+    foreach ($payment_loaded->getPaymentStatuses() as $status) {
+      $this->assertTrue($status instanceof PaymentStatusInterface);
+    }
+    $this->assertEqual($payment_loaded->getPaymentMethod()->getConfiguration(), $payment->getPaymentMethod()->getConfiguration());
+    $this->assertEqual($payment_loaded->getPaymentType()->getConfiguration(), $payment->getPaymentType()->getConfiguration());
   }
 }

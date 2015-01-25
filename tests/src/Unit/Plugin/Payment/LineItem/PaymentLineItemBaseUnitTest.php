@@ -73,7 +73,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
   public function testGetConfiguration() {
     $configuration = array(
       $this->randomMachineName() => mt_rand(),
-    );
+    ) + $this->lineItem->defaultConfiguration();
     $return = $this->lineItem->setConfiguration($configuration);
     $this->assertNull($return);
     $this->assertSame($configuration, $this->lineItem->getConfiguration());

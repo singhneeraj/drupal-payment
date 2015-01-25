@@ -96,7 +96,7 @@ abstract class PaymentMethodConfigurationBase extends PluginBase implements Paym
    * {@inheritdoc}
    */
   public function setConfiguration(array $configuration) {
-    $this->configuration = $configuration;
+    $this->configuration = $configuration + $this->defaultConfiguration();
   }
 
   /**

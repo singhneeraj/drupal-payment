@@ -10,27 +10,12 @@ use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\PaymentAwareInterface;
 
 /**
  * A payment line item.
  */
-interface PaymentLineItemInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface {
-
-  /**
-   * Sets the payment the line item belongs to.
-   *
-   * @param \Drupal\payment\Entity\PaymentInterface $payment
-   *
-   * @return static
-   */
-  public function setPayment(PaymentInterface $payment);
-
-  /**
-   * Gets the payment this line item belongs to.
-   *
-   * @return \Drupal\payment\Entity\PaymentInterface
-   */
-  public function getPayment();
+interface PaymentLineItemInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface, PaymentAwareInterface {
 
   /**
    * Gets the amount.
