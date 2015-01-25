@@ -25,24 +25,15 @@ class PaymentAwarePluginInstance extends PluginInstance {
    */
   public function setValue($value, $notify = TRUE) {
     if ($value instanceof PaymentAwareInterface) {
-      $this->setPayment($value);
-    }
-    parent::setValue($value, $notify);
-  }
-
-  /**
-   * Sets a payment on a plugin instance.
-   *
-   * @param \Drupal\payment\PaymentAwareInterface $plugin_instance
-   */
-  protected function setPayment(PaymentAwareInterface $plugin_instance) {
-    $data = $this;
-    while ($data = $data->getParent()) {
-      if ($data instanceof PaymentInterface) {
-        $plugin_instance->setPayment($data);
-        break;
+      $data = $this;
+      while ($data = $data->getParent()) {
+        if ($data instanceof PaymentInterface) {
+          $value->setPayment($data);
+          break;
+        }
       }
     }
+    parent::setValue($value, $notify);
   }
 
 }
