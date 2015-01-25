@@ -16,8 +16,7 @@ use Drupal\Core\TypedData\MapDataDefinition;
 /**
  * Provides a base for plugin bag field items.
  */
-abstract class
-PluginBagItemBase extends FieldItemBase implements PluginBagItemInterface {
+abstract class PluginBagItemBase extends FieldItemBase implements PluginBagItemInterface {
 
   /**
    * {@inheritdoc}

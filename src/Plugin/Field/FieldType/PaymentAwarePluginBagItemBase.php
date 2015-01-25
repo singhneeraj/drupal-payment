@@ -7,8 +7,8 @@
 
 namespace Drupal\payment\Plugin\Field\FieldType;
 
-use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\PaymentAwareInterface;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\TypedData\MapDataDefinition;
 
 /**
  * Provides a plugin bag for payment-aware plugins.
@@ -18,20 +18,12 @@ abstract class PaymentAwarePluginBagItemBase extends PluginBagItemBase {
   /**
    * {@inheritdoc}
    */
-  public function onChange($property_name, $notify = TRUE) {
-    if ($property_name == 'plugin_configuration') {
-      $plugin_instance = $this->getContainedPluginInstance();
-      if ($plugin_instance instanceof PaymentAwareInterface) {
-        $data = $this;
-        while ($data = $data->getParent()) {
-          if ($data instanceof PaymentInterface) {
-            $plugin_instance->setPayment($data);
-            break;
-          }
-        }
-      }
-    }
-    parent::onChange($property_name, $notify);
+  public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
+    $properties = parent::propertyDefinitions($field_definition);
+    $properties['plugin_instance'] = MapDataDefinition::create('payment_aware_plugin_instance')
+      ->setLabel(t('Plugin instance'));
+
+    return $properties;
   }
 
 }

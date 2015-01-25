@@ -11,6 +11,7 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\payment\PaymentAwareInterface;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface as PluginPaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface as PluginPaymentStatusInterface;
@@ -403,6 +404,24 @@ class Payment extends ContentEntityBase implements PaymentInterface {
       ->setReadOnly(TRUE);
 
     return $fields;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getTranslatedField($name, $langcode) {
+    $field_item_list = parent::getTranslatedField($name, $langcode);
+    $plugin_bag_field_names = ['line_items', 'payment_method', 'payment_statuses', 'payment_type'];
+    if (in_array($name, $plugin_bag_field_names)) {
+      foreach ($field_item_list as $field_item) {
+        $plugin_instance = $field_item->get('plugin_instance')->getValue();
+        if ($plugin_instance instanceof PaymentAwareInterface) {
+          $plugin_instance->setPayment($this);
+        }
+      }
+    }
+
+    return $field_item_list;
   }
 
 }
