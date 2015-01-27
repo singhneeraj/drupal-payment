@@ -386,9 +386,26 @@ class Payment extends ContentEntityBase implements PaymentInterface {
     $fields['owner'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Owner'))
       ->setDefaultValue(0)
-      ->setSettings(array(
-        'target_type' => 'user',
-      ));
+      ->setSetting('target_type', 'user')
+      ->setSetting('handler', 'default')
+      ->setDefaultValueCallback('Drupal\node\Entity\Node::getCurrentUserId')
+      ->setTranslatable(TRUE)
+      ->setDisplayOptions('view', array(
+        'type' => 'author',
+        'weight' => 0,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 0,
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'autocomplete_type' => 'tags',
+          'placeholder' => '',
+        ),
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
     $fields['line_items'] = BaseFieldDefinition::create('payment_line_item')
       ->setLabel(t('Line items'))
       ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED);
