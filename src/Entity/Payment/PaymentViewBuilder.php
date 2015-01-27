@@ -26,11 +26,6 @@ class PaymentViewBuilder extends EntityViewBuilder {
     parent::buildComponents($build, $entities, $displays, $view_mode, $langcode);
 
     foreach ($entities as $i => $payment) {
-      $build[$i]['method'] = array(
-        '#markup' => $payment->getPaymentMethod() ? $payment->getPaymentMethod()->getPluginLabel() : $this->t('Unavailable'),
-        '#title' => $this->t('Payment method'),
-        '#type' => 'item',
-      );
       $build[$i]['line_items'] = array(
         '#payment' => $payment,
         '#type' => 'payment_line_items_display',

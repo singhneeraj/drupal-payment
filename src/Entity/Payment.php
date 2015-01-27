@@ -393,12 +393,22 @@ class Payment extends ContentEntityBase implements PaymentInterface {
       ->setLabel(t('Line items'))
       ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED);
     $fields['payment_method'] = BaseFieldDefinition::create('payment_method')
-      ->setLabel(t('Payment method'));
+      ->setLabel(t('Payment method'))
+      ->setDisplayOptions('view', array(
+        'type' => 'payment_plugin_label',
+        'weight' => 0,
+      ))
+      ->setDisplayConfigurable('view', TRUE);
     $fields['payment_statuses'] = BaseFieldDefinition::create('payment_status')
       ->setLabel(t('Payment statuses'))
       ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED);
     $fields['payment_type'] = BaseFieldDefinition::create('payment_type')
-      ->setLabel(t('Payment type'));
+      ->setLabel(t('Payment type'))
+      ->setDisplayOptions('view', array(
+        'type' => 'payment_plugin_label',
+        'weight' => 0,
+      ))
+      ->setDisplayConfigurable('view', TRUE);
     $fields['uuid'] = BaseFieldDefinition::create('uuid')
       ->setLabel(t('Universally Unique ID'))
       ->setReadOnly(TRUE);

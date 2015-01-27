@@ -51,9 +51,13 @@ class PaymentAccessControlHandler extends EntityAccessControlHandler {
       return AccessResult::forbidden();
     }
     elseif ($operation == 'complete') {
-      return AccessResult::allowedIf($payment->getOwnerId() == $account->id())
-        ->andIf(AccessResult::allowedIf($payment->getPaymentMethod()))
-        ->andIf(AccessResult::forbiddenIf($payment->getPaymentMethod()->getPaymentExecutionResult()->hasCompleted()));
+      if ($payment->getPaymentMethod()) {
+        return AccessResult::allowedIf($payment->getOwnerId() == $account->id())
+          ->andIf(AccessResult::forbiddenIf($payment->getPaymentMethod()->getPaymentExecutionResult()->hasCompleted()));
+      }
+      else {
+        return AccessResult::forbidden();
+      }
     }
     return $this->checkAccessPermission($payment, $operation, $account);
   }
