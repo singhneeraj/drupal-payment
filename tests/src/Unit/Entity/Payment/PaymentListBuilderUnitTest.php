@@ -141,7 +141,12 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
     function testBuildHeader() {
       $header = $this->listBuilder->buildHeader();
       $expected = array(
-        'updated' => 'Last updated',
+        'updated' => [
+          'data' => 'Last updated',
+          'field' => 'changed',
+          'sort' => 'DESC',
+          'specifier' => 'changed',
+        ],
         'status' => 'Status',
         'amount' => 'Amount',
         'payment_method' => array(

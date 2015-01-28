@@ -89,12 +89,12 @@ class PaymentListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function load() {
-    // @todo Add (table)sorting once https://drupal.org/node/2134761 has been
-    //   fixed.
     $page = pager_find_page();
     $start = static::PAYMENTS_PER_PAGE * ($page);
     $query = $this->storage->getQuery();
     $query->range($start, static::PAYMENTS_PER_PAGE);
+    $header = $this->buildHeader();
+    $query->tableSort($header);
     $payment_ids = $query->execute();
     $query = $this->storage->getQuery();
     $query->count();
@@ -121,20 +121,25 @@ class PaymentListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $row['updated'] = $this->t('Last updated');
-    $row['status'] = $this->t('Status');
-    $row['amount'] =$this-> t('Amount');
-    $row['payment_method'] = array(
+    $header['updated'] = [
+      'data' => $this->t('Last updated'),
+      'field' => 'changed',
+      'sort' => 'DESC',
+      'specifier' => 'changed',
+    ];
+    $header['status'] = $this->t('Status');
+    $header['amount'] =$this-> t('Amount');
+    $header['payment_method'] = array(
       'data' => $this->t('Payment method'),
       'class' => array(RESPONSIVE_PRIORITY_LOW),
     );
-    $row['owner'] = array(
+    $header['owner'] = array(
       'data' => $this->t('Payer'),
       'class' => array(RESPONSIVE_PRIORITY_MEDIUM),
     );
-    $row['operations'] = $this->t('Operations');
+    $header['operations'] = $this->t('Operations');
 
-    return $row;
+    return $header;
   }
 
   /**
