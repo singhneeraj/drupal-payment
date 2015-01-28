@@ -70,7 +70,7 @@ class PaymentDeleteForm extends ContentEntityConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->getEntity()->delete();
     drupal_set_message($this->t('Payment #!payment_id has been deleted.', array(
-      '!id' => $this->getEntity()->id(),
+      '!payment_id' => $this->getEntity()->id(),
     )));
     $form_state->setRedirect('<front>');
   }

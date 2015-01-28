@@ -176,7 +176,14 @@ class PaymentListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   protected function getDefaultOperations(EntityInterface $entity) {
+    $destination = $this->requestStack->getCurrentRequest()->attributes->get('_system_path');
+
     $operations = parent::getDefaultOperations($entity);
+    foreach ($operations as &$operation) {
+      $operation['query'] = array(
+        'destination' => $destination,
+      );
+    }
 
     if ($entity->access('view')) {
       $operations['view'] = array(
@@ -193,7 +200,7 @@ class PaymentListBuilder extends EntityListBuilder {
           'data-accepts' => 'application/vnd.drupal-modal',
         ),
         'query' => array(
-          'destination' => $this->requestStack->getCurrentRequest()->attributes->get('_system_path'),
+          'destination' => $destination,
         ),
         'url' => $entity->urlInfo('update-status-form'),
       );
@@ -206,7 +213,7 @@ class PaymentListBuilder extends EntityListBuilder {
             'data-accepts' => 'application/vnd.drupal-modal',
           ),
           'query' => array(
-            'destination' => $this->requestStack->getCurrentRequest()->attributes->get('_system_path'),
+            'destination' => $destination,
           ),
           'url' => $entity->urlInfo('capture-form'),
         );
@@ -219,7 +226,7 @@ class PaymentListBuilder extends EntityListBuilder {
             'data-accepts' => 'application/vnd.drupal-modal',
           ),
           'query' => array(
-            'destination' => $this->requestStack->getCurrentRequest()->attributes->get('_system_path'),
+            'destination' => $destination,
           ),
           'url' => $entity->urlInfo('refund-form'),
         );
