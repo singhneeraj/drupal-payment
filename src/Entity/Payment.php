@@ -366,7 +366,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields['bundle'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Payment type'))
+      ->setLabel(t('Bundle'))
       ->setReadOnly(TRUE);
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
