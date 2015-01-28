@@ -399,7 +399,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
       ->setLabel(t('Payment ID'))
       ->setReadOnly(TRUE);
     $fields['owner'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Owner'))
+      ->setLabel(t('Payer'))
       ->setDefaultValue(0)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
