@@ -5,4 +5,5 @@ configure: payment.admin
 type: module
 package: Payment
 dependencies:
+  - entity_reference
   - currency

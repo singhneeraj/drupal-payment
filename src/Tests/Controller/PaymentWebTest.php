@@ -22,7 +22,7 @@ class PaymentWebTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('payment', 'payment_test');
+  public static $modules = array('entity_reference', 'payment', 'payment_test');
 
   /**
    * Tests the payment UI.
@@ -89,10 +89,10 @@ class PaymentWebTest extends WebTestBase {
     $this->drupalLogin($this->drupalCreateUser(array('payment.payment.update.any')));
     $this->drupalGet($path);
     if ($this->assertResponse('200')) {
-      $this->assertFieldByXPath('//select[@name="payment_currency_code"]');
+      $this->assertFieldByXPath('//select[@name="currency"]');
       $this->assertFieldByXPath('//select[@name="payment_line_items[line_items][bar][plugin_form][amount][currency_code]"]');
       $this->drupalPostForm(NULL, array(
-        'payment_currency_code' => 'XXX',
+        'currency' => 'XXX',
         'payment_line_items[line_items][bar][plugin_form][amount][currency_code]' => 'XXX',
       ), t('Save'));
     }

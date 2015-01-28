@@ -376,10 +376,20 @@ class Payment extends ContentEntityBase implements PaymentInterface {
       ->setDescription(t('The time the payment was created.'));
     $fields['currency'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Currency'))
+      ->setRequired(TRUE)
       ->setDefaultValue(0)
-      ->setSettings(array(
-        'target_type' => 'currency',
-      ));
+      ->setSetting('target_type', 'currency')
+      ->setSetting('handler', 'default')
+      ->setDisplayOptions('view', array(
+        'type' => 'entity_reference_label',
+        'weight' => 0,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'options_select',
+        'weight' => 0,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Payment ID'))
       ->setReadOnly(TRUE);

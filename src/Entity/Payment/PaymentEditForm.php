@@ -66,13 +66,6 @@ class PaymentEditForm extends ContentEntityForm {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->getEntity();
 
-    $form['payment_currency_code'] = array(
-      '#type' => 'select',
-      '#title' => $this->t('Currency'),
-      '#options' => $this->currencyFormHelper->getCurrencyOptions(),
-      '#default_value' => $payment->getCurrencyCode(),
-      '#required' => TRUE,
-    );
     $form['payment_line_items'] = array(
       '#type' => 'payment_line_items_input',
       '#title' => $this->t('Line items'),
@@ -91,7 +84,6 @@ class PaymentEditForm extends ContentEntityForm {
     parent::copyFormValuesToEntity($payment, $form, $form_state);
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $values = $form_state->getValues();
-    $payment->setCurrencyCode($values['payment_currency_code']);
     foreach (PaymentLineItemsInput::getLineItems($form['payment_line_items'], $form_state) as $line_item) {
       $payment->setLineItem($line_item);
     }
