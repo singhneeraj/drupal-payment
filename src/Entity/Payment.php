@@ -8,9 +8,10 @@
 namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;
-use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\payment\PaymentAwareInterface;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface as PluginPaymentMethodInterface;
@@ -355,15 +356,6 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public static function preCreate(EntityStorageInterface $storage, array &$values) {
-    $values += array(
-      'owner' => (int) \Drupal::currentUser()->id(),
-    );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields['bundle'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Bundle'))
@@ -403,7 +395,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
       ->setDefaultValue(0)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
-      ->setDefaultValueCallback('Drupal\node\Entity\Node::getCurrentUserId')
+      ->setDefaultValueCallback('Drupal\payment\Entity\Payment::getCurrentUserId')
       ->setTranslatable(TRUE)
       ->setDisplayOptions('view', array(
         'type' => 'author',
@@ -464,6 +456,18 @@ class Payment extends ContentEntityBase implements PaymentInterface {
     }
 
     return $field_item_list;
+  }
+
+  /**
+   * Default value callback for 'owner' base field definition.
+   *
+   * @see ::baseFieldDefinitions()
+   *
+   * @return array
+   *   An array of default values.
+   */
+  public static function getCurrentUserId(EntityInterface $entity, FieldDefinitionInterface $field_definition) {
+    return array(\Drupal::currentUser()->id());
   }
 
 }
