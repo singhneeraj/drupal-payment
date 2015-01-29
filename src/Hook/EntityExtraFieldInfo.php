@@ -50,10 +50,6 @@ class EntityExtraFieldInfo {
             'label' => $this->t('Line items'),
             'weight' => 0,
           ),
-          'statuses' => array(
-            'label' => $this->t('Status items'),
-            'weight' => 0,
-          ),
         ),
       );
     }

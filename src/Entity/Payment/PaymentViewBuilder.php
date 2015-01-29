@@ -30,10 +30,6 @@ class PaymentViewBuilder extends EntityViewBuilder {
         '#payment' => $payment,
         '#type' => 'payment_line_items_display',
       );
-      $build[$i]['statuses'] = array(
-        '#payment' => $payment,
-        '#type' => 'payment_statuses_display',
-      );
     }
   }
 }

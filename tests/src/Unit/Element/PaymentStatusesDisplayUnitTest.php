@@ -41,8 +41,6 @@ class PaymentStatusesDisplayUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->dateFormatter = $this->getMockBuilder('\Drupal\Core\Datetime\DateFormatter')
@@ -59,6 +57,7 @@ class PaymentStatusesDisplayUnitTest extends UnitTestCase {
 
   /**
    * @covers ::create
+   * @covers ::__construct
    */
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
@@ -102,15 +101,8 @@ class PaymentStatusesDisplayUnitTest extends UnitTestCase {
       ->method('format')
       ->with($payment_status_created);
 
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
-    $payment->expects($this->atLeastOnce())
-      ->method('getPaymentStatuses')
-      ->willReturn(array($payment_status));
-
     $element = array(
-      '#payment' => $payment,
+      '#payment_statuses' => [$payment_status],
     );
 
     $build = $this->element->preRender($element);

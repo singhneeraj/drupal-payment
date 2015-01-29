@@ -12,7 +12,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\currency\FormElementCallbackTrait;
-use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -63,8 +63,9 @@ class PaymentStatusesDisplay extends FormElement implements ContainerFactoryPlug
     $plugin_id = $this->getPluginId();
 
     return array(
-      // A \Drupal\payment\Entity\PaymentInterface object (required).
-      '#payment' => NULL,
+      // An array of
+      // \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface instances.
+      '#payment_statuses' => [],
       '#pre_render' => [[get_class($this), 'instantiate#preRender#' . $plugin_id]],
     );
   }
@@ -75,23 +76,25 @@ class PaymentStatusesDisplay extends FormElement implements ContainerFactoryPlug
    * @throws \InvalidArgumentException
    */
   public function preRender(array $element) {
-    if (!isset($element['#payment']) || !($element['#payment'] instanceof PaymentInterface)) {
-      throw new \InvalidArgumentException('The payment does not implement \Drupal\payment\Entity\PaymentInterface.');
+    if (!isset($element['#payment_statuses']) || !is_array($element['#payment_statuses'])) {
+      throw new \InvalidArgumentException('#payment_statuses must be an array of \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface instances.');
     }
-    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
-    $payment = $element['#payment'];
     $element['table'] = array(
       '#empty' => $this->t('There are no statuses.'),
       '#header' => array($this->t('Status'), $this->t('Date')),
       '#type' => 'table',
     );
     /** @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface $status */
-    foreach (array_reverse($payment->getPaymentStatuses()) as $i => $status) {
-      $definition = $status->getPluginDefinition();
-      $element['table']['status_' . $i] = array(
+    foreach ($element['#payment_statuses'] as $delta => $payment_status) {
+      if (!$payment_status instanceof PaymentStatusInterface) {
+        $type = is_object($payment_status) ? get_class($payment_status) : gettype($payment_status);
+        throw new \InvalidArgumentException(sprintf('#payment_statuses must be an array of \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface instances, but the array contained %s.', $type));
+      }
+      $definition = $payment_status->getPluginDefinition();
+      $element['table']['status_' . $delta] = array(
         '#attributes' => array(
           'class' => array(
-            'payment-status-plugin-' . $status->getPluginId(),
+            'payment-status-plugin-' . $payment_status->getPluginId(),
           ),
         ),
         'label' => array(
@@ -104,7 +107,7 @@ class PaymentStatusesDisplay extends FormElement implements ContainerFactoryPlug
           '#attributes' => array(
             'class' => array('payment-line-item-quantity'),
           ),
-          '#markup' => $this->dateFormatter->format($status->getCreated()),
+          '#markup' => $this->dateFormatter->format($payment_status->getCreated()),
         ),
       );
     }

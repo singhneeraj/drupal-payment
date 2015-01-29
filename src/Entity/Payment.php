@@ -425,7 +425,12 @@ class Payment extends ContentEntityBase implements PaymentInterface {
       ->setDisplayConfigurable('view', TRUE);
     $fields['payment_statuses'] = BaseFieldDefinition::create('payment_status')
       ->setLabel(t('Payment statuses'))
-      ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED);
+      ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
+      ->setDisplayOptions('view', array(
+        'type' => 'payment_status_overview',
+        'weight' => 0,
+      ))
+      ->setDisplayConfigurable('view', TRUE);
     $fields['payment_type'] = BaseFieldDefinition::create('payment_type')
       ->setLabel(t('Payment type'))
       ->setDisplayOptions('view', array(

@@ -1,0 +1,43 @@
+<?php
+
+/**
+ * @file
+ * Contains \Drupal\payment\Plugin\field\formatter\PaymentStatusFormatter.
+ */
+
+namespace Drupal\payment\Plugin\Field\FieldFormatter;
+
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\FormatterBase;
+
+/**
+ * A payment status field formatter.
+ *
+ * @FieldFormatter(
+ *   id = "payment_status_overview",
+ *   label = @Translation("Overview"),
+ *   field_types = {
+ *     "payment_status",
+ *   }
+ * )
+ */
+class PaymentStatusOverview extends FormatterBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function viewElements(FieldItemListInterface $items) {
+    $payment_statuses = [];
+    /** @var \Drupal\payment\Plugin\Field\FieldType\PluginBagItemInterface $item */
+    foreach ($items as $delta => $item) {
+      $payment_statuses[$delta] = $item->getContainedPluginInstance();
+    }
+    $build[0] = [
+      '#payment_statuses' => $payment_statuses,
+      '#type' => 'payment_statuses_display',
+    ];
+
+    return $build;
+  }
+
+}
