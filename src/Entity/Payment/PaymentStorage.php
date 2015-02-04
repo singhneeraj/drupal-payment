@@ -87,21 +87,6 @@ class PaymentStorage extends SqlContentEntityStorage {
   /**
    * {@inheritdoc}
    */
-  protected function buildQuery($ids, $revision_id = FALSE) {
-    // @todo  What does this code do?
-    $query = $this->database->select('payment', 'payment');
-    $query->addTag('payment_load_multiple');
-    $query->fields('payment');
-    if ($ids) {
-      $query->condition('id', $ids);
-    }
-
-    return $query;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function mapToStorageRecord(ContentEntityInterface $entity, $table_name = NULL) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $entity;

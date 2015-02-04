@@ -30,7 +30,7 @@ class PaymentWebTest extends WebTestBase {
   protected function testPaymentUi() {
     $payment_method = Payment::methodManager()->createInstance('payment_test');
     // Create just enough payments for three pages
-    $count_payments = PaymentListBuilder::PAYMENTS_PER_PAGE * 2 + 1;
+    $count_payments = 50 * 2 + 1;
     foreach (range(0, $count_payments) as $i) {
       $payment = Generate::createPayment(2, $payment_method);
       $payment->save();
@@ -53,7 +53,7 @@ class PaymentWebTest extends WebTestBase {
       $this->assertText(t('Payment method'));
       $this->assertText(t('EUR 24.20'));
       $this->assertText($payment_method->getPluginLabel());
-      $count_pages = ceil($count_payments / PaymentListBuilder::PAYMENTS_PER_PAGE);
+      $count_pages = ceil($count_payments / 50);
       if ($count_pages) {
         foreach (range(1, $count_pages - 1) as $page) {
           $this->assertLinkByHref('admin/content/payment?page=' . $page);
