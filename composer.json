@@ -5,7 +5,7 @@
     "psr-4": {
       "Drupal\\payment\\": "src",
       "Drupal\\payment_form\\": "modules/payment_form/src",
-      "Drupal\\payment_reference\\": "modules/payment_reference/src",
+      "Drupal\\payment_reference\\": "modules/payment_reference/src"
     }
   },
   "autoload-dev": {
