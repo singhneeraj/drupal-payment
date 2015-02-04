@@ -1,0 +1,18 @@
+{
+  "name": "drupal/payment",
+  "license": "GPL-2.0",
+  "autoload": {
+    "psr-4": {
+      "Drupal\\payment\\": "src",
+      "Drupal\\payment_form\\": "modules/payment_form/src",
+      "Drupal\\payment_reference\\": "modules/payment_reference/src",
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Drupal\\Tests\\payment\\": "tests/src",
+      "Drupal\\Tests\\payment_reference\\": "modules/payment_form/tests/src",
+      "Drupal\\Tests\\payment_reference\\": "modules/payment_reference/tests/src"
+    }
+  }
+}
