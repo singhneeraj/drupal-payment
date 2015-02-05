@@ -166,6 +166,17 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
      * @covers ::buildOperations
      */
     public function testBuildOperations() {
+      $attributes = new ParameterBag();
+
+      $request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
+        ->disableOriginalConstructor()
+        ->getMock();
+      $request->attributes = $attributes;
+
+      $this->requestStack->expects($this->atLeastOnce())
+        ->method('getCurrentRequest')
+        ->willReturn($request);
+
       $this->moduleHandler->expects($this->any())
         ->method('invokeAll')
         ->will($this->returnValue([]));
@@ -192,6 +203,17 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
      * @depends testBuildOperations
      */
     function testBuildRow($payment_currency_exists) {
+      $attributes = new ParameterBag();
+
+      $request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
+        ->disableOriginalConstructor()
+        ->getMock();
+      $request->attributes = $attributes;
+
+      $this->requestStack->expects($this->atLeastOnce())
+        ->method('getCurrentRequest')
+        ->willReturn($request);
+
       $payment_changed_time = time();
       $payment_changed_time_formatted = $this->randomMachineName();
       $payment_currency_code = $this->randomMachineName();
@@ -307,6 +329,9 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
      */
     public function testRender() {
       $query = $this->getMock('\Drupal\Core\Entity\Query\QueryInterface');
+      $query->expects($this->atLeastOnce())
+        ->method('pager')
+        ->willReturnSelf();
 
       $this->entityStorage->expects($this->atLeastOnce())
         ->method('getQuery')
@@ -316,25 +341,31 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
         ->will($this->returnValue([]));
 
       $build = $this->listBuilder->render();
-      unset($build['list']['#header']);
+      unset($build['table']['#header']);
       $expected_build = array(
-        'list' => [
-          '#type' => 'table',
-          '#title' => NULL,
-          '#rows' => [],
-          '#empty' => 'There are no payments yet.',
-        ],
-        'pager' => [
-          '#theme' => 'pager',
-        ],
+        '#type' => 'table',
+        '#title' => NULL,
+        '#rows' => [],
+        '#empty' => 'There are no payments yet.',
       );
-      $this->assertSame($expected_build, $build);
+      $this->assertSame($expected_build, $build['table']);
     }
 
     /**
      * @covers ::getDefaultOperations
      */
     public function testGetDefaultOperationsWithoutAccess() {
+      $attributes = new ParameterBag();
+
+      $request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
+        ->disableOriginalConstructor()
+        ->getMock();
+      $request->attributes = $attributes;
+
+      $this->requestStack->expects($this->atLeastOnce())
+        ->method('getCurrentRequest')
+        ->willReturn($request);
+
       $method = new \ReflectionMethod($this->listBuilder, 'getDefaultOperations');
       $method->setAccessible(TRUE);
 

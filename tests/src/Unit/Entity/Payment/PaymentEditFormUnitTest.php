@@ -21,13 +21,6 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
   class PaymentEditFormUnitTest extends UnitTestCase {
 
     /**
-     * The Currency form helper.
-     *
-     * @var \Drupal\currency\FormHelperInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $currencyFormHelper;
-
-    /**
      * The entity manager.
      *
      * @var \Drupal\Core\Entity\EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -68,8 +61,6 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
      * @covers ::__construct
      */
     public function setUp() {
-      $this->currencyFormHelper = $this->getMock('\Drupal\currency\FormHelperInterface');
-
       $this->entityManager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
 
       $this->formDisplay = $this->getMock('\Drupal\Core\Entity\Display\EntityFormDisplayInterface');
@@ -83,7 +74,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
         ->method('translate')
         ->will($this->returnArgument(0));
 
-      $this->form = new PaymentEditForm($this->entityManager, $this->stringTranslation, $this->currencyFormHelper);
+      $this->form = new PaymentEditForm($this->entityManager, $this->stringTranslation);
       $this->form->setEntity($this->payment);
     }
 
@@ -93,7 +84,6 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
     function testCreate() {
       $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
       $map = array(
-        array('currency.form_helper', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->currencyFormHelper),
         array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager),
         array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
       );
@@ -154,22 +144,12 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
         'baz' => $this->randomMachineName(),
         'qux' => $this->randomMachineName(),
       );
-      $this->currencyFormHelper->expects($this->once())
-        ->method('getCurrencyOptions')
-        ->will($this->returnValue($currency_options));
 
       $build = $this->form->form([], $form_state);
       unset($build['#entity_builders']);
       unset($build['#process']);
       unset($build['langcode']);
       $expected_build = array(
-        'payment_currency_code' => array(
-          '#type' => 'select',
-          '#title' => 'Currency',
-          '#options' => $currency_options,
-          '#default_value' => $currency_code,
-          '#required' => TRUE,
-        ),
         'payment_line_items' => array(
           '#type' => 'payment_line_items_input',
           '#title' => 'Line items',
@@ -206,7 +186,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
 
       /** @var \Drupal\payment\Entity\Payment\PaymentEditForm|\PHPUnit_Framework_MockObject_MockObject $form */
       $form = $this->getMockBuilder('\Drupal\payment\Entity\Payment\PaymentEditForm')
-        ->setConstructorArgs(array($this->entityManager, $this->stringTranslation, $this->currencyFormHelper))
+        ->setConstructorArgs(array($this->entityManager, $this->stringTranslation))
         ->setMethods(array('copyFormValuesToEntity'))
         ->getMock();
       $form->setFormDisplay($this->formDisplay, $form_state);

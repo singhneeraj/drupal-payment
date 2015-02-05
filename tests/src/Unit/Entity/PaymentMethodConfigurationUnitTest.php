@@ -197,13 +197,6 @@ class PaymentMethodConfigurationUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests the third party settings implementation.
-   */
-  function testThirdPartySettings() {
-    $this->assertTrue(in_array('Drupal\Core\Config\Entity\ThirdPartySettingsTrait', class_uses($this->paymentMethodConfiguration)));
-  }
-
-  /**
    * @covers ::entityManager
    */
   public function testEntityManager() {

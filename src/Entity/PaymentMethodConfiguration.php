@@ -8,7 +8,6 @@
 namespace Drupal\payment\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
-use Drupal\Core\Config\Entity\ThirdPartySettingsTrait;
 use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -49,8 +48,6 @@ use Drupal\user\UserStorageInterface;
  * )
  */
 class PaymentMethodConfiguration extends ConfigEntityBase implements PaymentMethodConfigurationInterface {
-
-  use ThirdPartySettingsTrait;
 
   /**
    * The entity manager.

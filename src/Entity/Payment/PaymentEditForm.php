@@ -23,13 +23,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class PaymentEditForm extends ContentEntityForm {
 
   /**
-   * The Currency form helper.
-   *
-   * @var \Drupal\currency\FormHelperInterface
-   */
-  protected $currencyFormHelper;
-
-  /**
    * The payment line item plugin manager.
    *
    * @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface
@@ -43,12 +36,9 @@ class PaymentEditForm extends ContentEntityForm {
    *   The entity manager.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translator.
-   * @param \Drupal\currency\FormHelperInterface
-   *   The Currency form helper.
    */
-  function __construct(EntityManagerInterface $entity_manager, TranslationInterface $string_translation, FormHelperInterface $currency_form_helper) {
+  function __construct(EntityManagerInterface $entity_manager, TranslationInterface $string_translation) {
     parent::__construct($entity_manager);
-    $this->currencyFormHelper = $currency_form_helper;
     $this->stringTranslation = $string_translation;
   }
 
@@ -56,7 +46,7 @@ class PaymentEditForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('entity.manager'), $container->get('string_translation'), $container->get('currency.form_helper'));
+    return new static($container->get('entity.manager'), $container->get('string_translation'));
   }
 
   /**

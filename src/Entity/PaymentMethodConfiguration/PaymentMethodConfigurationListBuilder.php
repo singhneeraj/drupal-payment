@@ -133,9 +133,9 @@ class PaymentMethodConfigurationListBuilder extends ConfigEntityListBuilder {
    */
   public function render() {
     $build = parent::render();
-    $build['#attached']['library'][] = 'payment/payment_method_configuration.list';
-    $build['#attributes']['class'][] = 'payment-method-configuration-list';
-    $build['#empty'] = $this->t('There is no payment method configuration yet.');
+    $build['table']['#attached']['library'][] = 'payment/payment_method_configuration.list';
+    $build['table']['#attributes']['class'][] = 'payment-method-configuration-list';
+    $build['table']['#empty'] = $this->t('There is no payment method configuration yet.');
 
     return $build;
   }

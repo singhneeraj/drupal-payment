@@ -97,8 +97,8 @@ class PaymentListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function render() {
-    $build['list'] = parent::render();
-    $build['list']['#empty'] = $this->t('There are no payments yet.');
+    $build = parent::render();
+    $build['table']['#empty'] = $this->t('There are no payments yet.');
 
     return $build;
   }

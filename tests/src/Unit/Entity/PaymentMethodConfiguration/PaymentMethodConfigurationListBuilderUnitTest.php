@@ -202,6 +202,15 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
      * @depends testBuildHeader
      */
     public function testRender() {
+      $query = $this->getMock('\Drupal\Core\Entity\Query\QueryInterface');
+      $query->expects($this->atLeastOnce())
+        ->method('pager')
+        ->willReturnSelf();
+
+      $this->entityStorage->expects($this->atLeastOnce())
+        ->method('getQuery')
+        ->willReturn($query);
+
       $this->entityType->expects($this->any())
         ->method('getClass')
         ->will($this->returnValue('Drupal\Core\Config\Entity\ConfigEntityBase'));
@@ -211,8 +220,8 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
         ->will($this->returnValue([]));
 
       $build = $this->listBuilder->render();
-      unset($build['#attached']);
-      unset($build['#header']);
+      unset($build['table']['#attached']);
+      unset($build['table']['#header']);
       $expected_build = array(
         '#type' => 'table',
         '#title' => NULL,
@@ -222,7 +231,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
           'class' => array('payment-method-configuration-list'),
         ),
       );
-      $this->assertSame($expected_build, $build);
+      $this->assertSame($expected_build, $build['table']);
     }
 
     /**
