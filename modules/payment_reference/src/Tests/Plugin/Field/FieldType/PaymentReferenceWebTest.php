@@ -66,12 +66,13 @@ class PaymentReferenceWebTest extends WebTestBase {
     $this->assertEqual(PaymentReference::queue()->loadPaymentIds('user.' . $field_name, $payment->getOwnerId()), array($payment->id()));
 
     // Set a field value on an entity and test getting it.
+    /** @var \Drupal\user\UserInterface $user */
     $user = entity_create('user', array(
       'name' => $this->randomString(),
     ));
 
-    $user->{$field_name}[0]->target_id = $payment->id();
-    $this->assertEqual($user->{$field_name}[0]->entity->id(), $payment->id());
+    $user->get($field_name)->appendItem($payment->id());
+    $this->assertEqual($user->get($field_name)->first()->entity->id(), $payment->id());
 
     // Save the entity, load it from storage and test getting the field value.
     $user->save();
