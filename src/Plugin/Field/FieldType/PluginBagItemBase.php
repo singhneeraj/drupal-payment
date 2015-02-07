@@ -180,4 +180,12 @@ abstract class PluginBagItemBase extends FieldItemBase implements PluginBagItemI
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function __isset($name) {
+    // All properties depend on the main property.
+    return parent::__isset($this->mainPropertyName());
+  }
+
 }

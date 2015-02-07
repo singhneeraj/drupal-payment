@@ -102,9 +102,9 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    */
   public function getPaymentType() {
     /** @var \Drupal\payment\Plugin\Field\FieldType\PluginBagItemInterface $field_item */
-    $field_item = $this->get('payment_type')[0];
+    $field_item = $this->get('payment_type')->first();
 
-    return $field_item->getContainedPluginInstance();
+    return $field_item ? $field_item->getContainedPluginInstance() : NULL;
   }
 
   /**
@@ -146,12 +146,8 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    */
   public function setLineItem(PaymentLineItemInterface $line_item) {
     $line_item->setPayment($this);
-    $line_items = $this->getLineItems();
-    $line_items[] = $line_item;
-    foreach (array_values($line_items) as $delta => $line_item) {
-      $this->get('line_items')[$delta]->setValue($line_item);
-    }
-
+    $this->unsetLineItem($line_item->getName());
+    $this->get('line_items')->appendItem($line_item);
 
     return $this;
   }
@@ -160,13 +156,11 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function unsetLineItem($name) {
-    $line_items = $this->getLineItems();
-    foreach ($line_items as $delta => $line_item) {
-      if ($line_item->getName() == $name) {
-        unset($line_items[$delta]);
+    foreach ($this->get('line_items') as $delta => $line_item_item) {
+      if ($line_item_item->getContainedPluginInstance()->getName() == $name) {
+        $this->get('line_items')->removeItem($delta);
       }
     }
-    $this->get('line_items')->setValue($line_items);
 
     return $this;
   }
@@ -218,11 +212,12 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public function setPaymentStatuses(array $statuses) {
-    /** @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface[] $statuses */
-    foreach (array_values($statuses) as $delta => $status) {
-      $status->setPayment($this);
-      $this->get('payment_statuses')[$delta]->setValue($status, FALSE);
+  public function setPaymentStatuses(array $payment_statuses) {
+    $this->get('payment_statuses')->applyDefaultValue();
+    /** @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface[] $payment_statuses */
+    foreach ($payment_statuses as $payment_status) {
+      $payment_status->setPayment($this);
+      $this->get('payment_statuses')->appendItem($payment_status, FALSE);
     }
 
     return $this;
@@ -231,16 +226,12 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public function setPaymentStatus(PluginPaymentStatusInterface $status) {
+  public function setPaymentStatus(PluginPaymentStatusInterface $payment_status) {
     $previous_status = $this->getPaymentStatus();
-    $status->setPayment($this);
+    $payment_status->setPayment($this);
     // Prevent duplicate statuses.
-    if (!$this->getPaymentStatus() || $this->getPaymentStatus()->getPluginId() != $status->getPluginId()) {
-      $payment_statuses = $this->getPaymentStatuses();
-      $payment_statuses[] = $status;
-      foreach (array_values($payment_statuses) as $delta => $payment_status) {
-        $this->get('payment_statuses')[$delta]->setValue($payment_status);
-      }
+    if (!$this->getPaymentStatus() || $this->getPaymentStatus()->getPluginId() != $payment_status->getPluginId()) {
+      $this->get('payment_statuses')->appendItem($payment_status);
     }
     /** @var \Drupal\payment\EventDispatcherInterface $event_dispatcher */
     $event_dispatcher = \Drupal::service('payment.event_dispatcher');
@@ -271,19 +262,18 @@ class Payment extends ContentEntityBase implements PaymentInterface {
     foreach ($this->get('payment_statuses') as $delta => $field_item) {
       $deltas[] = $delta;
     }
-    $field_item = $this->get('payment_statuses')[max($deltas)];
-
-    return $field_item->getContainedPluginInstance();
+    if ($deltas) {
+      return $this->get('payment_statuses')[max($deltas)]->getContainedPluginInstance();
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function setPaymentMethod(PluginPaymentMethodInterface $payment_method) {
-    $payment_method->setPayment($this);
     /** @var \Drupal\payment\Plugin\Field\FieldType\PluginBagItemInterface $field_item */
-    $field_item = $this->get('payment_method')[0];
-    $field_item->setContainedPluginInstance($payment_method);
+    $this->get('payment_method')->applyDefaultValue();
+    $this->get('payment_method')->appendItem($payment_method);
 
     return $this;
   }
@@ -293,9 +283,9 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    */
   public function getPaymentMethod() {
     /** @var \Drupal\payment\Plugin\Field\FieldType\PluginBagItemInterface $field_item */
-    $field_item = $this->get('payment_method')[0];
+    $field_item = $this->get('payment_method')->first();
 
-    return $field_item->getContainedPluginInstance();
+    return $field_item ? $field_item->getContainedPluginInstance() : NULL;
   }
 
   /**

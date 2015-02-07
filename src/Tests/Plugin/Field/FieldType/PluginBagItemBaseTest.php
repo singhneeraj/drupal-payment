@@ -39,7 +39,11 @@ class PluginBagItemBaseTest extends KernelTestBase {
 
     $field_definition = BaseFieldDefinition::create('payment_test_plugin_bag');
 
-    $this->fieldItem = \Drupal::typedDataManager()->create($field_definition)[0];
+    /** @var \Drupal\Core\Field\FieldItemListInterface $field_item_list */
+    $field_item_list = \Drupal::typedDataManager()->create($field_definition);
+    $field_item_list->appendItem();
+
+    $this->fieldItem = $field_item_list->first();
   }
 
   /**

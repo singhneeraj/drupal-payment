@@ -90,9 +90,11 @@ class PaymentFormWebTest extends WebTestBase {
       'name' => $this->randomString(),
       'status' => TRUE,
     ));
-    foreach (Generate::createPaymentLineItems() as $i => $line_item) {
-      $this->user->{$field_name}[$i]->get('plugin_id')->setValue($line_item->getPluginId());
-      $this->user->{$field_name}[$i]->get('plugin_configuration')->setValue($line_item->getConfiguration());
+    foreach (Generate::createPaymentLineItems() as $line_item) {
+      $this->user->get($field_name)->appendItem([
+        'plugin_id' => $line_item->getPluginId(),
+        'plugin_configuration' => $line_item->getConfiguration(),
+      ]);
     }
     $this->user->save();
 
