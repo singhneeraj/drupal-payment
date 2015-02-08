@@ -165,11 +165,16 @@ abstract class PluginBagItemBase extends FieldItemBase implements PluginBagItemI
       $this->setContainedPluginInstance($values);
     }
     elseif (is_array($values)) {
-      if (isset($values['plugin_id'])) {
-        $this->setContainedPluginId($values['plugin_id']);
+      if (isset($values['plugin_instance'])) {
+        $this->setContainedPluginInstance($values['plugin_instance']);
       }
-      if (isset($values['plugin_configuration'])) {
-        $this->setContainedPluginConfiguration($values['plugin_configuration']);
+      else {
+        if (isset($values['plugin_id'])) {
+          $this->setContainedPluginId($values['plugin_id']);
+        }
+        if (isset($values['plugin_configuration'])) {
+          $this->setContainedPluginConfiguration($values['plugin_configuration']);
+        }
       }
     }
     // Field API has this weird habit of setting NULL instead of calling
