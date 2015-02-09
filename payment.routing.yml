@@ -6,7 +6,7 @@ payment.admin:
   requirements:
     _permission: 'access administration pages'
 
-payment.payment.admin_list:
+entity.payment.collection:
   path: '/admin/content/payment'
   defaults:
     _entity_list: payment
@@ -79,7 +79,7 @@ entity.payment.delete_form:
   options:
     _admin_route: TRUE
 
-payment.payment_method.list:
+payment.payment_method.collection:
   path: '/admin/config/services/payment/method'
   defaults:
     _controller: '\Drupal\payment\Controller\ListPaymentMethods::execute'
@@ -87,7 +87,7 @@ payment.payment_method.list:
   requirements:
     _permission: 'payment.payment_method_configuration.view.any'
 
-payment.payment_method_configuration.list:
+entity.payment_method_configuration.collection:
   path: '/admin/config/services/payment/method/configuration'
   defaults:
     _entity_list: 'payment_method_configuration'
@@ -150,7 +150,7 @@ entity.payment_method_configuration.duplicate_form:
   requirements:
     _entity_access: 'payment_method_configuration.duplicate'
 
-payment.payment_status.list:
+payment.payment_status.collection:
   path: '/admin/config/services/payment/status'
   defaults:
     _controller: '\Drupal\payment\Controller\ListPaymentStatuses::execute'
@@ -181,7 +181,7 @@ entity.payment_status.delete_form:
   requirements:
     _entity_access: 'payment_status.delete'
 
-payment.payment_type.list:
+payment.payment_type.collection:
   path: '/admin/config/services/payment/type'
   defaults:
     _controller: '\Drupal\payment\Controller\ListPaymentTypes::execute'

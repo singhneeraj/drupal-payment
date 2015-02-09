@@ -198,11 +198,11 @@ class PaymentMethodConfigurationForm extends EntityForm {
    */
   public function save(array $form, FormStateInterface $form_state) {
     parent::save($form, $form_state);
-    $payment_method = $this->getEntity();
+    $payment_method_configuration = $this->getEntity();
     drupal_set_message($this->t('@label has been saved.', array(
-      '@label' => $payment_method->label()
+      '@label' => $payment_method_configuration->label()
     )));
-    $form_state->setRedirect('payment.payment_method_configuration.list');
+    $form_state->setRedirectUrl($payment_method_configuration->urlInfo('collection'));
   }
 
   /**

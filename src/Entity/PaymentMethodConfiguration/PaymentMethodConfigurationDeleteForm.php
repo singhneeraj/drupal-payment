@@ -48,7 +48,7 @@ class PaymentMethodConfigurationDeleteForm extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return new Url('payment.payment_method_configuration.list');
+    return $this->getEntity()->urlInfo('collection');
   }
 
   /**
@@ -60,7 +60,7 @@ class PaymentMethodConfigurationDeleteForm extends EntityConfirmFormBase {
     drupal_set_message($this->t('%label has been deleted.', array(
       '%label' => $payment_method->label(),
     )));
-    $form_state->setRedirectUrl($this->getCancelUrl());
+    $form_state->setRedirectUrl($this->getEntity()->urlInfo('collection'));
   }
 
   /**

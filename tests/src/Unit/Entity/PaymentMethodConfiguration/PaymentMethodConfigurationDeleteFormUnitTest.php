@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
 
+  use Drupal\Core\Url;
   use Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationDeleteForm;
   use Drupal\Tests\UnitTestCase;
 
@@ -22,7 +23,7 @@ class PaymentMethodConfigurationDeleteFormUnitTest extends UnitTestCase {
    *
    * @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $payment;
+  protected $paymentMethodConfiguration;
 
   /**
    * The string translation service.
@@ -44,7 +45,7 @@ class PaymentMethodConfigurationDeleteFormUnitTest extends UnitTestCase {
    * @covers ::__construct
    */
   public function setUp() {
-    $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
+    $this->paymentMethodConfiguration = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
       ->disableOriginalConstructor()
       ->getMock();
 
@@ -54,7 +55,7 @@ class PaymentMethodConfigurationDeleteFormUnitTest extends UnitTestCase {
       ->will($this->returnArgument(0));
 
     $this->form = new PaymentMethodConfigurationDeleteForm($this->stringTranslation);
-    $this->form->setEntity($this->payment);
+    $this->form->setEntity($this->paymentMethodConfiguration);
   }
 
   /**
@@ -78,7 +79,7 @@ class PaymentMethodConfigurationDeleteFormUnitTest extends UnitTestCase {
     $label = $this->randomMachineName();
     $string = 'Do you really want to delete %label?';
 
-    $this->payment->expects($this->once())
+    $this->paymentMethodConfiguration->expects($this->once())
       ->method('label')
       ->will($this->returnValue($label));
 
@@ -108,22 +109,35 @@ class PaymentMethodConfigurationDeleteFormUnitTest extends UnitTestCase {
    * @covers ::getCancelUrl
    */
   function testGetCancelUrl() {
-    $url = $this->form->getCancelUrl();
-    $this->assertInstanceOf('\Drupal\Core\Url', $url);
-    $this->assertSame('payment.payment_method_configuration.list', $url->getRouteName());
+    $url = new Url($this->randomMachineName());
+
+    $this->paymentMethodConfiguration->expects($this->atLeastOnce())
+      ->method('urlinfo')
+      ->with('collection')
+      ->willReturn($url);
+
+    $cancel_url = $this->form->getCancelUrl();
+    $this->assertSame($url, $cancel_url);
   }
 
   /**
    * @covers ::submitForm
    */
   function testSubmitForm() {
-    $this->payment->expects($this->once())
+    $url = new Url($this->randomMachineName());
+
+    $this->paymentMethodConfiguration->expects($this->once())
       ->method('delete');
+    $this->paymentMethodConfiguration->expects($this->atLeastOnce())
+      ->method('urlinfo')
+      ->with('collection')
+      ->willReturn($url);
 
     $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form_state->expects($this->once())
-      ->method('setRedirectUrl');
+      ->method('setRedirectUrl')
+      ->with($url);
 
     $this->form->submitForm($form, $form_state);
   }

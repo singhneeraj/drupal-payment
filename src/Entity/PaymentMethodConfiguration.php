@@ -39,6 +39,7 @@ use Drupal\user\UserStorageInterface;
  *   label = @Translation("Payment method configuration"),
  *   links = {
  *     "enable" = "/admin/config/services/payment/method/configuration/{payment_method_configuration}/enable",
+ *     "collection" = "/admin/config/services/payment/method/configuration",
  *     "disable" = "/admin/config/services/payment/method/configuration/{payment_method_configuration}/disable",
  *     "canonical" = "/admin/config/services/payment/method/configuration/{payment_method_configuration}",
  *     "edit-form" = "/admin/config/services/payment/method/configuration/{payment_method_configuration}",

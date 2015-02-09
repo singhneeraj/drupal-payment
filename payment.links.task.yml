@@ -1,6 +1,6 @@
-payment.payment.admin_list:
+entity.payment.collection:
   base_route: system.admin_content
-  route_name: payment.payment.admin_list
+  route_name: entity.payment.collection
   title: Payments
 
 payment.payment.view:
@@ -23,14 +23,14 @@ payment.payment.capture:
   route_name: entity.payment.capture_form
   title: 'Capture'
 
-payment.payment_method.list:
-  base_route: payment.payment_method.list
-  route_name: payment.payment_method.list
+payment.payment_method.collection:
+  base_route: payment.payment_method.collection
+  route_name: payment.payment_method.collection
   title: 'List'
 
-payment.payment_method_configuration.list:
-  base_route: payment.payment_method.list
-  route_name: payment.payment_method_configuration.list
+entity.payment_method_configuration.collection:
+  base_route: payment.payment_method.collection
+  route_name: entity.payment_method_configuration.collection
   title: 'Configuration'
 
 payment.payment_type:

@@ -8,6 +8,7 @@
 namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
 
   use Drupal\Core\Form\FormState;
+  use Drupal\Core\Url;
   use Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm;
   use Drupal\Tests\UnitTestCase;
   use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -466,10 +467,19 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
      * @covers ::save
      */
     public function testSave() {
+      $url = new Url($this->randomMachineName());
+
+      $this->paymentMethodConfiguration->expects($this->once())
+        ->method('save');
+      $this->paymentMethodConfiguration->expects($this->atLeastOnce())
+        ->method('urlinfo')
+        ->with('collection')
+        ->willReturn($url);
+
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
       $form_state->expects($this->once())
-        ->method('setRedirect')
-        ->with('payment.payment_method_configuration.list');
+        ->method('setRedirectUrl')
+        ->with($url);
 
       /** @var \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm|\PHPUnit_Framework_MockObject_MockObject $form */
       $form = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm')
@@ -477,9 +487,6 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
         ->setMethods(array('copyFormValuesToEntity'))
         ->getMock();
       $form->setEntity($this->paymentMethodConfiguration);
-
-      $this->paymentMethodConfiguration->expects($this->once())
-        ->method('save');
 
       $form->save([], $form_state);
     }

@@ -48,6 +48,7 @@ use Drupal\user\UserInterface;
  *   label = @Translation("Payment"),
  *   links = {
  *     "canonical" = "/payment/{payment}",
+ *     "collection" = "/admin/content/payment",
  *     "complete" = "/payment/{payment}/complete",
  *     "edit-form" = "/payment/{payment}/edit",
  *     "delete-form" = "/payment/{payment}/delete",

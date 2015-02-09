@@ -247,7 +247,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
       $form_state->expects($this->once())
         ->method('setRedirect')
-        ->with('payment.payment_status.list');
+        ->with('payment.payment_status.collection');
 
       /** @var \Drupal\payment\Entity\PaymentStatus\PaymentStatusForm|\PHPUnit_Framework_MockObject_MockObject $form */
       $form = $this->getMockBuilder('\Drupal\payment\Entity\PaymentStatus\PaymentStatusForm')

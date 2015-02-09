@@ -2,11 +2,11 @@ payment.payment_method_configuration.add:
   route_name: payment.payment_method_configuration.select
   title: 'Add payment method configuration'
   appears_on:
-    - payment.payment_method_configuration.list
-    - payment.payment_method.list
+    - entity.payment_method_configuration.collection
+    - payment.payment_method.collection
 
 payment.payment_status.add:
   route_name: payment.payment_status.add
   title: 'Add payment status'
   appears_on:
-    - payment.payment_status.list
+    - payment.payment_status.collection

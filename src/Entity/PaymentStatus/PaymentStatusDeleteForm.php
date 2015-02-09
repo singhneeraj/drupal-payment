@@ -48,7 +48,7 @@ class PaymentStatusDeleteForm extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return new Url('payment.payment_status.list');
+    return new Url('payment.payment_status.collection');
   }
 
   /**
@@ -66,6 +66,6 @@ class PaymentStatusDeleteForm extends EntityConfirmFormBase {
     drupal_set_message($this->t('%label has been deleted.', array(
       '%label' => $this->getEntity()->label(),
     )));
-    $form_state->setRedirect('payment.payment_status.list');
+    $form_state->setRedirect('payment.payment_status.collection');
   }
 }

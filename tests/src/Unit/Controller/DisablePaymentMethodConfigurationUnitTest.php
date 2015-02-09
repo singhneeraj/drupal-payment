@@ -26,54 +26,31 @@ class DisablePaymentMethodConfigurationUnitTest extends UnitTestCase {
   protected $controller;
 
   /**
-   * The URL generator used for testing.
-   *
-   * @var \Drupal\Core\Routing\UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $urlGenerator;
-
-  /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   protected function setUp() {
-
-    $this->urlGenerator = $this->getMock('\Drupal\Core\Routing\UrlGeneratorInterface');
-
-    $this->controller = new DisablePaymentMethodConfiguration($this->urlGenerator);
-  }
-
-  /**
-   * @covers ::create
-   */
-  function testCreate() {
-    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
-    $map = [
-      ['url_generator', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->urlGenerator],
-    ];
-    $container->expects($this->any())
-      ->method('get')
-      ->will($this->returnValueMap($map));
-
-    $form = DisablePaymentMethodConfiguration::create($container);
-    $this->assertInstanceOf('\Drupal\payment\Controller\DisablePaymentMethodConfiguration', $form);
+    $this->controller = new DisablePaymentMethodConfiguration();
   }
 
   /**
    * @covers ::execute
    */
   public function testExecute() {
-    $this->urlGenerator->expects($this->any())
-      ->method('generateFromRoute')
-      ->will($this->returnValue('http://example.com'));
+    $url = 'http://example.com/' . $this->randomMachineName();
 
-    $payment_method = $this->getMock('\Drupal\payment\Entity\PaymentMethodConfigurationInterface');
-    $payment_method->expects($this->once())
+    $payment_method_configuration = $this->getMock('\Drupal\payment\Entity\PaymentMethodConfigurationInterface');
+    $payment_method_configuration->expects($this->atLeastOnce())
       ->method('disable');
-    $payment_method->expects($this->once())
+    $payment_method_configuration->expects($this->atLeastOnce())
       ->method('save');
-    $this->controller->execute($payment_method);
+    $payment_method_configuration->expects($this->atLeastOnce())
+      ->method('url')
+      ->with('collection')
+      ->willReturn($url);
+
+    $response = $this->controller->execute($payment_method_configuration);
+    $this->assertInstanceOf('\Symfony\Component\HttpFoundation\RedirectResponse', $response);
+    $this->assertSame($url, $response->getTargetUrl());
   }
 
 }

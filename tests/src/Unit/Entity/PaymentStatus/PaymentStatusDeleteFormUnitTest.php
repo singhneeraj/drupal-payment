@@ -110,7 +110,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
     function testGetCancelUrl() {
       $url = $this->form->getCancelUrl();
       $this->assertInstanceOf('\Drupal\Core\Url', $url);
-      $this->assertSame('payment.payment_status.list', $url->getRouteName());
+      $this->assertSame('payment.payment_status.collection', $url->getRouteName());
     }
 
     /**
@@ -124,7 +124,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
       $form_state->expects($this->once())
         ->method('setRedirect')
-        ->with('payment.payment_status.list');
+        ->with('payment.payment_status.collection');
 
       $this->form->submitForm($form, $form_state);
     }
