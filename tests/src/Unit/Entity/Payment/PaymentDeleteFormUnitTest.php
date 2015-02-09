@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\payment\Unit\Entity\Payment {
 
+  use Drupal\Core\Url;
   use Drupal\payment\Entity\Payment\PaymentDeleteForm;
   use Drupal\Tests\UnitTestCase;
   use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -24,6 +25,13 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
      * @var \Drupal\Core\Entity\EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $entityManager;
+
+    /**
+     * The logger.
+     *
+     * @var \Psr\Log\LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $logger;
 
     /**
      * The payment.
@@ -54,6 +62,8 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
     public function setUp() {
       $this->entityManager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
 
+      $this->logger = $this->getMock('\Psr\Log\LoggerInterface');
+
       $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
         ->disableOriginalConstructor()
         ->getMock();
@@ -63,7 +73,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
         ->method('translate')
         ->will($this->returnArgument(0));
 
-      $this->form = new PaymentDeleteForm($this->entityManager, $this->stringTranslation);
+      $this->form = new PaymentDeleteForm($this->entityManager, $this->stringTranslation, $this->logger);
       $this->form->setEntity($this->payment);
     }
 
@@ -72,13 +82,14 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
      */
     function testCreate() {
       $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
-      $map = array(
-        array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager),
-        array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
-      );
+      $map = [
+        ['entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager],
+        ['payment.logger', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->logger],
+        ['string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation],
+      ];
       $container->expects($this->any())
         ->method('get')
-        ->will($this->returnValueMap($map));
+        ->willReturnMap($map);
 
       $form = PaymentDeleteForm::create($container);
       $this->assertInstanceOf('\Drupal\payment\Entity\Payment\PaymentDeleteForm', $form);
@@ -121,15 +132,24 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
      * @covers ::getCancelUrl
      */
     function testGetCancelUrl() {
-      $url = $this->form->getCancelUrl();
-      $this->assertInstanceOf('\Drupal\Core\Url', $url);
-      $this->assertSame('entity.payment.canonical', $url->getRouteName());
+      $url = new Url($this->randomMachineName());
+
+      $this->payment->expects($this->atLeastOnce())
+        ->method('urlInfo')
+        ->with('canonical')
+        ->willReturn($url);
+
+      $cancel_url = $this->form->getCancelUrl();
+      $this->assertSame($url, $cancel_url);
     }
 
     /**
      * @covers ::submitForm
      */
     function testSubmitForm() {
+      $this->logger->expects($this->atLeastOnce())
+        ->method('info');
+
       $this->payment->expects($this->once())
         ->method('delete');
 

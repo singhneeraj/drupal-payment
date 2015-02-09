@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -19,12 +20,21 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class PaymentMethodConfigurationDeleteForm extends EntityConfirmFormBase {
 
   /**
-   * Constructs a new class instance.
+   * The logger.
+   *
+   * @var \Psr\Log\LoggerInterface
+   */
+  protected $logger;
+
+  /**
+   * Constructs a new instance.
    *
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translator.
+   * @param \Psr\Log\LoggerInterface $logger
    */
-  public function __construct(TranslationInterface $string_translation) {
+  public function __construct(TranslationInterface $string_translation, LoggerInterface $logger) {
+    $this->logger = $logger;
     $this->stringTranslation = $string_translation;
   }
 
@@ -32,7 +42,7 @@ class PaymentMethodConfigurationDeleteForm extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('string_translation'));
+    return new static($container->get('string_translation'), $container->get('payment.logger'));
   }
 
   /**
@@ -55,11 +65,14 @@ class PaymentMethodConfigurationDeleteForm extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $payment_method = $this->getEntity();
-    $payment_method->delete();
-    drupal_set_message($this->t('%label has been deleted.', array(
-      '%label' => $payment_method->label(),
-    )));
+    $this->getEntity()->delete();
+    $this->logger->info('Payment method configuration %label (@id) has been deleted.', [
+      '@id' => $this->getEntity()->id(),
+      '%label' => $this->getEntity()->label(),
+    ]);
+    drupal_set_message($this->t('%label has been deleted.', [
+      '%label' => $this->getEntity()->label(),
+    ]));
     $form_state->setRedirectUrl($this->getEntity()->urlInfo('collection'));
   }
 

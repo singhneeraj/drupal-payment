@@ -116,7 +116,7 @@ class PaymentStatusForm extends EntityForm {
     drupal_set_message($this->t('@label has been saved.', array(
       '@label' => $payment_status->label()
     )));
-    $form_state->setRedirect('payment.payment_status.collection');
+    $form_state->setRedirect('entity.payment_status.collection');
   }
 
   /**

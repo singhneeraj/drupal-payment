@@ -18,8 +18,8 @@ payment.payment_method.collection:
   description: View the available payment methods, and configure custom ones.
   parent: payment.admin
   route_name: payment.payment_method.collection
-payment.payment_status.collection:
+entity.payment_status.collection:
   title: Payment statuses
   parent: payment.admin
-  route_name: payment.payment_status.collection
+  route_name: entity.payment_status.collection
   description: View the available payment statuses, and configure custom ones.

@@ -7,8 +7,10 @@
 
 namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
 
+  use Drupal\Core\Url;
   use Drupal\payment\Entity\PaymentStatus\PaymentStatusDeleteForm;
   use Drupal\Tests\UnitTestCase;
+  use Symfony\Component\DependencyInjection\ContainerInterface;
 
   /**
    * @coversDefaultClass \Drupal\payment\Entity\PaymentStatus\PaymentStatusDeleteForm
@@ -18,11 +20,18 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
   class PaymentStatusDeleteFormUnitTest extends UnitTestCase {
 
     /**
-     * The payment.
+     * The logger.
+     *
+     * @var \Psr\Log\LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $logger;
+
+    /**
+     * The payment status.
      *
      * @var \Drupal\payment\Entity\PaymentStatusInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $payment;
+    protected $paymentStatus;
 
     /**
      * The string translation service.
@@ -44,7 +53,9 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
      * @covers ::__construct
      */
     public function setUp() {
-      $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\PaymentStatus')
+      $this->logger = $this->getMock('\Psr\Log\LoggerInterface');
+
+      $this->paymentStatus = $this->getMockBuilder('\Drupal\payment\Entity\PaymentStatus')
         ->disableOriginalConstructor()
         ->getMock();
 
@@ -53,8 +64,8 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
         ->method('translate')
         ->will($this->returnArgument(0));
 
-      $this->form = new PaymentStatusDeleteForm($this->stringTranslation);
-      $this->form->setEntity($this->payment);
+      $this->form = new PaymentStatusDeleteForm($this->stringTranslation, $this->logger);
+      $this->form->setEntity($this->paymentStatus);
     }
 
     /**
@@ -62,10 +73,13 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
      */
     function testCreate() {
       $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
-      $container->expects($this->once())
+      $map = [
+        ['payment.logger', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->logger],
+        ['string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation],
+      ];
+      $container->expects($this->any())
         ->method('get')
-        ->with('string_translation')
-        ->will($this->returnValue($this->stringTranslation));
+        ->willReturnMap($map);
 
       $form = PaymentStatusDeleteForm::create($container);
       $this->assertInstanceOf('\Drupal\payment\Entity\PaymentStatus\PaymentStatusDeleteForm', $form);
@@ -78,7 +92,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
       $label = $this->randomMachineName();
       $string = 'Do you really want to delete %label?';
 
-      $this->payment->expects($this->once())
+      $this->paymentStatus->expects($this->once())
         ->method('label')
         ->will($this->returnValue($label));
 
@@ -108,23 +122,38 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
      * @covers ::getCancelUrl
      */
     function testGetCancelUrl() {
-      $url = $this->form->getCancelUrl();
-      $this->assertInstanceOf('\Drupal\Core\Url', $url);
-      $this->assertSame('payment.payment_status.collection', $url->getRouteName());
+      $url = new Url($this->randomMachineName());
+
+      $this->paymentStatus->expects($this->atLeastOnce())
+        ->method('urlInfo')
+        ->with('collection')
+        ->willReturn($url);
+
+      $cancel_url = $this->form->getCancelUrl();
+      $this->assertSame($url, $cancel_url);
     }
 
     /**
      * @covers ::submitForm
      */
     function testSubmitForm() {
-      $this->payment->expects($this->once())
+      $this->logger->expects($this->atLeastOnce())
+        ->method('info');
+
+      $url = new Url($this->randomMachineName());
+
+      $this->paymentStatus->expects($this->once())
         ->method('delete');
+      $this->paymentStatus->expects($this->atLeastOnce())
+        ->method('urlInfo')
+        ->with('collection')
+        ->willReturn($url);
 
       $form = [];
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
       $form_state->expects($this->once())
-        ->method('setRedirect')
-        ->with('payment.payment_status.collection');
+        ->method('setRedirectUrl')
+        ->with($url);
 
       $this->form->submitForm($form, $form_state);
     }

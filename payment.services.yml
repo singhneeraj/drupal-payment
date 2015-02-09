@@ -2,6 +2,9 @@ services:
   payment.event_dispatcher:
     class: Drupal\payment\EventDispatcher
     arguments: ['@event_dispatcher']
+  payment.logger:
+    parent: logger.channel_base
+    arguments: ['payment']
   plugin.manager.payment.type:
     class: Drupal\payment\Plugin\Payment\Type\PaymentTypeManager
     arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@class_resolver']

@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -20,15 +21,24 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class PaymentDeleteForm extends ContentEntityConfirmFormBase {
 
   /**
-   * Constructs a new class instance.
+   * The logger.
+   *
+   * @var \Psr\Log\LoggerInterface
+   */
+  protected $logger;
+
+  /**
+   * Constructs a new instance.
    *
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    *   The entity manager.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translator.
+   * @param \Psr\Log\LoggerInterface $logger
    */
-  public function __construct(EntityManagerInterface $entity_manager, TranslationInterface $string_translation) {
+  public function __construct(EntityManagerInterface $entity_manager, TranslationInterface $string_translation, LoggerInterface $logger) {
     parent::__construct($entity_manager);
+    $this->logger = $logger;
     $this->stringTranslation = $string_translation;
   }
 
@@ -36,7 +46,7 @@ class PaymentDeleteForm extends ContentEntityConfirmFormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('entity.manager'), $container->get('string_translation'));
+    return new static($container->get('entity.manager'), $container->get('string_translation'), $container->get('payment.logger'));
   }
 
   /**
@@ -52,9 +62,7 @@ class PaymentDeleteForm extends ContentEntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return new Url('entity.payment.canonical', array(
-      'payment' => $this->getEntity()->id(),
-    ));
+    return $this->getEntity()->urlInfo();
   }
 
   /**
@@ -69,6 +77,9 @@ class PaymentDeleteForm extends ContentEntityConfirmFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->getEntity()->delete();
+    $this->logger->info('Payment #!payment_id has been deleted.', [
+      '!payment_id' => $this->getEntity()->id(),
+    ]);
     drupal_set_message($this->t('Payment #!payment_id has been deleted.', array(
       '!payment_id' => $this->getEntity()->id(),
     )));

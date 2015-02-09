@@ -150,7 +150,7 @@ entity.payment_method_configuration.duplicate_form:
   requirements:
     _entity_access: 'payment_method_configuration.duplicate'
 
-payment.payment_status.collection:
+entity.payment_status.collection:
   path: '/admin/config/services/payment/status'
   defaults:
     _controller: '\Drupal\payment\Controller\ListPaymentStatuses::execute'

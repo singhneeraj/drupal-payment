@@ -10,6 +10,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
   use Drupal\Core\Url;
   use Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationDeleteForm;
   use Drupal\Tests\UnitTestCase;
+  use Symfony\Component\DependencyInjection\ContainerInterface;
 
   /**
  * @coversDefaultClass \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationDeleteForm
@@ -17,6 +18,13 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
  * @group Payment
  */
 class PaymentMethodConfigurationDeleteFormUnitTest extends UnitTestCase {
+
+  /**
+   * The logger.
+   *
+   * @var \Psr\Log\LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $logger;
 
   /**
    * The payment.
@@ -45,6 +53,8 @@ class PaymentMethodConfigurationDeleteFormUnitTest extends UnitTestCase {
    * @covers ::__construct
    */
   public function setUp() {
+    $this->logger = $this->getMock('\Psr\Log\LoggerInterface');
+
     $this->paymentMethodConfiguration = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration')
       ->disableOriginalConstructor()
       ->getMock();
@@ -54,7 +64,7 @@ class PaymentMethodConfigurationDeleteFormUnitTest extends UnitTestCase {
       ->method('translate')
       ->will($this->returnArgument(0));
 
-    $this->form = new PaymentMethodConfigurationDeleteForm($this->stringTranslation);
+    $this->form = new PaymentMethodConfigurationDeleteForm($this->stringTranslation, $this->logger);
     $this->form->setEntity($this->paymentMethodConfiguration);
   }
 
@@ -63,10 +73,13 @@ class PaymentMethodConfigurationDeleteFormUnitTest extends UnitTestCase {
    */
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
-    $container->expects($this->once())
+    $map = [
+      ['payment.logger', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->logger],
+      ['string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation],
+    ];
+    $container->expects($this->any())
       ->method('get')
-      ->with('string_translation')
-      ->will($this->returnValue($this->stringTranslation));
+      ->willReturnMap($map);
 
     $form = PaymentMethodConfigurationDeleteForm::create($container);
     $this->assertInstanceOf('\Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationDeleteForm', $form);
@@ -124,6 +137,9 @@ class PaymentMethodConfigurationDeleteFormUnitTest extends UnitTestCase {
    * @covers ::submitForm
    */
   function testSubmitForm() {
+    $this->logger->expects($this->atLeastOnce())
+      ->method('info');
+
     $url = new Url($this->randomMachineName());
 
     $this->paymentMethodConfiguration->expects($this->once())
