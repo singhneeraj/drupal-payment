@@ -22,7 +22,7 @@ class PaymentWebTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('entity_reference', 'payment', 'payment_test');
+  public static $modules = array('payment', 'payment_test');
 
   /**
    * Tests the payment UI.
@@ -75,26 +75,6 @@ class PaymentWebTest extends WebTestBase {
       $this->assertText(t('Payment method'));
       $this->assertText(t('Status'));
     }
-
-    // Edit the payment.
-    $path = 'payment/' . $payment->id() . '/edit';
-    $this->drupalGet($path);
-    $this->assertResponse('403');
-    $this->drupalLogin($this->drupalCreateUser(array('payment.payment.update.any')));
-    $this->drupalGet($path);
-    if ($this->assertResponse('200')) {
-      $this->assertFieldByXPath('//select[@name="currency"]');
-      $this->assertFieldByXPath('//select[@name="payment_line_items[line_items][bar][plugin_form][amount][currency_code]"]');
-      $this->drupalPostForm(NULL, array(
-        'currency' => 'XXX',
-        'payment_line_items[line_items][bar][plugin_form][amount][currency_code]' => 'XXX',
-      ), t('Save'));
-    }
-    $this->assertUrl('payment/' . $payment->id());
-    /** @var \Drupal\payment\Entity\PaymentInterface $payment */
-    $payment = entity_load_unchanged('payment', $payment->id());
-    $this->assertEqual($payment->getCurrencyCode(), 'XXX');
-    $this->assertEqual($payment->getLineItem('bar')->getCurrencyCode(), 'XXX');
 
     // Delete a payment.
     $path = 'payment/' . $payment->id() . '/delete';

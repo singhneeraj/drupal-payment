@@ -28,7 +28,6 @@ use Drupal\user\UserInterface;
  *     "access" = "Drupal\payment\Entity\Payment\PaymentAccessControlHandler",
  *     "form" = {
  *       "delete" = "Drupal\payment\Entity\Payment\PaymentDeleteForm",
- *       "edit" = "Drupal\payment\Entity\Payment\PaymentEditForm",
  *       "update_status" = "Drupal\payment\Entity\Payment\PaymentStatusForm",
  *       "capture" = "Drupal\payment\Entity\Payment\PaymentCaptureForm",
  *       "refund" = "Drupal\payment\Entity\Payment\PaymentRefundForm"
@@ -372,11 +371,6 @@ class Payment extends ContentEntityBase implements PaymentInterface {
         'type' => 'entity_reference_label',
         'weight' => 0,
       ))
-      ->setDisplayOptions('form', array(
-        'type' => 'options_select',
-        'weight' => 0,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Payment ID'))
@@ -392,17 +386,6 @@ class Payment extends ContentEntityBase implements PaymentInterface {
         'type' => 'author',
         'weight' => 0,
       ))
-      ->setDisplayOptions('form', array(
-        'type' => 'entity_reference_autocomplete',
-        'weight' => 0,
-        'settings' => array(
-          'match_operator' => 'CONTAINS',
-          'size' => '60',
-          'autocomplete_type' => 'tags',
-          'placeholder' => '',
-        ),
-      ))
-      ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
     $fields['line_items'] = BaseFieldDefinition::create('payment_line_item')
       ->setLabel(t('Line items'))

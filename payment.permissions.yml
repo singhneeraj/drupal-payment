@@ -2,10 +2,6 @@ payment.payment.view.any:
   title: View any payment
 payment.payment.view.own:
   title: View own payments
-payment.payment.update.any:
-  title: Update any payment
-payment.payment.update.own:
-  title: Update own payments
 payment.payment.update_status.any:
   title: Update any payment's status
 payment.payment.update_status.own:
