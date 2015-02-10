@@ -210,7 +210,7 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
     );
     $element['add_more']['add'] = array(
       '#ajax' => array(
-        'callback' => [[get_class($this), 'instantiate#ajaxAddMoreSubmit#' . $plugin_id]],
+        'callback' => [get_class($this), 'instantiate#ajaxAddMoreSubmit#' . $plugin_id],
         'effect' => 'fade',
         'event' => 'mousedown',
         'wrapper' => $element['#id'],
