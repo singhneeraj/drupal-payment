@@ -48,7 +48,6 @@ class EntityExtraFieldInfoUnitTest extends UnitTestCase {
   public function testInvoke() {
     $fields = $this->service->invoke();
     $this->assertInternalType('array', $fields);
-    $this->assertArrayHasKey('line_items', $fields['payment']['payment_form']['form']);
     $this->assertArrayHasKey('payment_method', $fields['payment']['payment_form']['form']);
   }
 }

@@ -33,7 +33,7 @@ use Drupal\user\UserInterface;
  *       "refund" = "Drupal\payment\Entity\Payment\PaymentRefundForm"
  *     },
  *     "list_builder" = "Drupal\payment\Entity\Payment\PaymentListBuilder",
- *     "view_builder" = "Drupal\payment\Entity\Payment\PaymentViewBuilder",
+ *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "storage" = "Drupal\payment\Entity\Payment\PaymentStorage",
  *     "storage_schema" = "Drupal\payment\Entity\Payment\PaymentStorageSchema",
  *   },
@@ -389,7 +389,12 @@ class Payment extends ContentEntityBase implements PaymentInterface {
       ->setDisplayConfigurable('view', TRUE);
     $fields['line_items'] = BaseFieldDefinition::create('payment_line_item')
       ->setLabel(t('Line items'))
-      ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED);
+      ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
+      ->setDisplayOptions('view', array(
+        'type' => 'payment_line_item_overview',
+        'weight' => 0,
+      ))
+      ->setDisplayConfigurable('view', TRUE);
     $fields['payment_method'] = BaseFieldDefinition::create('payment_method')
       ->setLabel(t('Payment method'))
       ->setDisplayOptions('view', array(

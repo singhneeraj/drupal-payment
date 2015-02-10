@@ -8,13 +8,6 @@
 use Drupal\Core\Entity\EntityInterface;
 
 /**
- * Implements hook_entity_extra_field_info().
- */
-function payment_entity_extra_field_info() {
-  return \Drupal::service('payment.hook.entity_extra_field_info')->invoke();
-}
-
-/**
  * Implements hook_entity_bundle_info().
  */
 function payment_entity_bundle_info() {

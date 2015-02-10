@@ -33,10 +33,6 @@ class EntityExtraFieldInfo {
    */
   public function invoke() {
     $fields['payment']['payment_reference']['form'] = array(
-      'line_items' => array(
-        'label' => $this->t('Line items'),
-        'weight' => 0,
-      ),
       'payment_method' => array(
         'label' => $this->t('Payment method selection and configuration'),
         'weight' => 1,

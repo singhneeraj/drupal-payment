@@ -41,8 +41,6 @@ class PaymentLineItemsDisplayUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->currencyStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
@@ -56,6 +54,7 @@ class PaymentLineItemsDisplayUnitTest extends UnitTestCase {
   }
 
   /**
+   * @covers ::__construct
    * @covers ::create
    */
   function testCreate() {
@@ -117,9 +116,6 @@ class PaymentLineItemsDisplayUnitTest extends UnitTestCase {
     $payment->expects($this->atLeastOnce())
       ->method('getCurrencyCode')
       ->willReturn($payment_currency_code);
-    $payment->expects($this->atLeastOnce())
-      ->method('getLineItems')
-      ->willReturn(array($line_item));
 
     $line_item_currency = $this->getMockBuilder('\Drupal\currency\Entity\Currency')
       ->disableOriginalConstructor()
@@ -143,6 +139,7 @@ class PaymentLineItemsDisplayUnitTest extends UnitTestCase {
 
     $element = array(
       '#payment' => $payment,
+      '#payment_line_items' => [$line_item],
     );
 
     $build = $this->element->preRender($element);
@@ -154,8 +151,10 @@ class PaymentLineItemsDisplayUnitTest extends UnitTestCase {
    *
    * @expectedException \InvalidArgumentException
    */
-  public function testPreRenderWithoutPayment() {
-    $element = [];
+  public function testPreRenderWithoutPaymentLineItems() {
+    $element = [
+      '#payment' => $this->getMock('\Drupal\payment\Entity\PaymentInterface'),
+    ];
 
     $this->element->preRender($element);
   }
