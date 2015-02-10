@@ -33,15 +33,8 @@ class PaymentStorageSchema extends SqlContentEntityStorageSchema {
    */
   protected function alterEntitySchemaWithNonFieldColumns(array &$schema) {
     $schema['payment']['fields'] += array(
-      'first_payment_status_delta' => array(
-        'description' => "The {payment__payment_statuses}.delta of this payment's first status item.",
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'default' => 0,
-        'not null' => TRUE,
-      ),
-      'last_payment_status_delta' => array(
-        'description' => "The {payment__payment_statuses}.delta of this payment's most recent status item.",
+      'current_payment_status_delta' => array(
+        'description' => "The {payment__payment_statuses}.delta of this payment's current status item.",
         'type' => 'int',
         'unsigned' => TRUE,
         'default' => 0,
@@ -49,16 +42,10 @@ class PaymentStorageSchema extends SqlContentEntityStorageSchema {
       ),
     );
     $schema['payment']['foreign keys'] += array(
-      'first_payment_status_delta' => array(
+      'current_payment_status_delta' => array(
         'table' => 'payment__payment_statuses',
         'columns' => array(
-          'first_payment_status_delta' => 'delta',
-        ),
-      ),
-      'last_payment_status_delta' => array(
-        'table' => 'payment__payment_statuses',
-        'columns' => array(
-          'last_payment_status_delta' => 'delta',
+          'current_payment_status_delta' => 'delta',
         ),
       ),
       'owner' => array(

@@ -62,12 +62,11 @@ class PaymentStorageWebTest extends WebTestBase {
     $this->assertTrue(is_numeric($payment->getOwnerId()));
     // Check references to other tables.
     $payment_data = $database->select('payment', 'p')
-      ->fields('p', array('first_payment_status_delta', 'last_payment_status_delta'))
+      ->fields('p', array('current_payment_status_delta'))
       ->condition('id', $payment->id())
       ->execute()
       ->fetchAssoc();
-    $this->assertEqual($payment_data['first_payment_status_delta'], 0);
-    $this->assertEqual($payment_data['last_payment_status_delta'], 1);
+    $this->assertEqual($payment_data['current_payment_status_delta'], 1);
     /** @var \Drupal\payment\Entity\PaymentInterface $payment_loaded */
     $payment_loaded = entity_load_unchanged('payment', $payment->id());
     $this->assertEqual(count($payment_loaded->getLineItems()), count($payment->getLineItems()));

@@ -96,8 +96,7 @@ class PaymentStorage extends SqlContentEntityStorage {
     foreach ($payment->getPaymentStatuses() as $delta => $item) {
       $deltas[] = $delta;
     }
-    $record->first_payment_status_delta = min($deltas);
-    $record->last_payment_status_delta = max($deltas);
+    $record->current_payment_status_delta = max($deltas);
 
     return $record;
   }
