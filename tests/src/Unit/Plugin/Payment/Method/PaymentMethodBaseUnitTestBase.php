@@ -23,6 +23,13 @@ abstract class PaymentMethodBaseUnitTestBase extends UnitTestCase {
   protected $eventDispatcher;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $moduleHandler;
+
+  /**
    * The token API used for testing.
    *
    * @var \Drupal\Core\Utility\Token|\PHPUnit_Framework_MockObject_MockObject
@@ -57,6 +64,8 @@ abstract class PaymentMethodBaseUnitTestBase extends UnitTestCase {
     parent::setUp();
 
     $this->eventDispatcher = $this->getMock('\Drupal\payment\EventDispatcherInterface');
+
+    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
 
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
