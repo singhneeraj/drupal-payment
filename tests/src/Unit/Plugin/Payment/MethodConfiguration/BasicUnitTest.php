@@ -16,14 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @group Payment
  */
-class BasicUnitTest extends UnitTestCase {
-
-  /**
-   * The module handler.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $moduleHandler;
+class BasicUnitTest extends PaymentMethodConfigurationBaseUnitTestBase {
 
   /**
    * The payment method configuration plugin under test.
@@ -40,25 +33,16 @@ class BasicUnitTest extends UnitTestCase {
   protected $paymentStatusManager;
 
   /**
-   * The string translator.
-   *
-   * @var \Drupal\Core\StringTranslation\TranslationInterface
-   */
-  protected $stringTranslation;
-
-  /**
    * {@inheritdoc}
    *
    * @covers ::__construct
    */
   public function setUp() {
-    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
+    parent::setUp();
 
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
-    $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
-
-    $this->paymentMethodConfiguration = new Basic([], '', [], $this->stringTranslation, $this->moduleHandler, $this->paymentStatusManager);
+    $this->paymentMethodConfiguration = new Basic([], '', $this->pluginDefinition, $this->stringTranslation, $this->moduleHandler, $this->paymentStatusManager);
   }
 
   /**

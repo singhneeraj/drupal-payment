@@ -7,7 +7,6 @@
 
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\MethodConfiguration;
 
-use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -15,14 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @group Payment
  */
-class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
-
-  /**
-   * The module handler.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $moduleHandler;
+class PaymentMethodConfigurationBaseUnitTest extends PaymentMethodConfigurationBaseUnitTestBase {
 
   /**
    * The payment method configuration plugin under test.
@@ -30,20 +22,6 @@ class PaymentMethodConfigurationBaseUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationBase|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentMethodConfiguration;
-
-  /**
-   * The payment method plugin's definition.
-   *
-   * @var mixed[]
-   */
-  protected $pluginDefinition;
-
-  /**
-   * The string translator.
-   *
-   * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $stringTranslation;
 
   /**
    * {@inheritdoc}
