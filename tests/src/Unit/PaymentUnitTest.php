@@ -26,15 +26,8 @@ class PaymentUnitTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
-    $this->originalContainer = \Drupal::getContainer();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function tearDown() {
-    \Drupal::setContainer($this->originalContainer);
+    \Drupal::unsetContainer();
   }
 
   /**
