@@ -14,7 +14,7 @@ use Drupal\user\EntityOwnerInterface;
 /**
  * Defines payment method configurations.
  */
-interface PaymentMethodConfigurationInterface extends ConfigEntityInterface, EntityOwnerInterface, ThirdPartySettingsInterface {
+interface PaymentMethodConfigurationInterface extends ConfigEntityInterface, EntityOwnerInterface {
 
   /**
    * Sets the payment method configuration ID.
