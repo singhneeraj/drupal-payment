@@ -13,7 +13,7 @@ use Drupal\Tests\UnitTestCase;
  * Provides a base for tests that cover classes that extend
  * \Drupal\idepaymental\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationBase
  */
-class PaymentMethodConfigurationBaseUnitTestBase extends UnitTestCase {
+abstract class PaymentMethodConfigurationBaseUnitTestBase extends UnitTestCase {
 
   /**
    * The module handler.
@@ -38,8 +38,6 @@ class PaymentMethodConfigurationBaseUnitTestBase extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
