@@ -206,6 +206,9 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
       $query->expects($this->atLeastOnce())
         ->method('pager')
         ->willReturnSelf();
+      $query->expects($this->atLeastOnce())
+        ->method('sort')
+        ->willReturnSelf();
 
       $this->entityStorage->expects($this->atLeastOnce())
         ->method('getQuery')
