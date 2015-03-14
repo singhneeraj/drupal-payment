@@ -71,13 +71,6 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
     protected $stringTranslation;
 
     /**
-     * The user storage.
-     *
-     * @var \Drupal\Core\Entity\EntityStorageInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $userStorage;
-
-    /**
      * {@inheritdoc}
      *
      * @covers ::__construct
@@ -86,8 +79,6 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
       $this->currentUser = $this->getMock('\Drupal\user\UserInterface');
 
       $this->formValidator = $this->getMock('\Drupal\Core\Form\FormValidatorInterface');
-
-      $this->userStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
 
       $this->paymentMethodConfigurationManager = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface');
 
@@ -106,7 +97,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
       $container->set('form_validator', $this->formValidator);
       \Drupal::setContainer($container);
 
-      $this->form = new PaymentMethodConfigurationForm($this->stringTranslation, $this->currentUser, $this->userStorage, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationManager);
+      $this->form = new PaymentMethodConfigurationForm($this->stringTranslation, $this->currentUser, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationManager);
       $this->form->setEntity($this->paymentMethodConfiguration);
     }
 
@@ -117,9 +108,8 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
       $entity_manager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
       $map = array(
         array('payment_method_configuration', $this->paymentMethodConfigurationStorage),
-        array('user', $this->userStorage),
       );
-      $entity_manager->expects($this->exactly(2))
+      $entity_manager->expects($this->atLeast(count($map)))
         ->method('getStorage')
         ->will($this->returnValueMap($map));
 
@@ -144,8 +134,6 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
      * @dataProvider providerTestForm
      */
     public function testForm($has_owner) {
-      $owner_label = $this->randomMachineName();
-
       $current_user_label = $this->randomMachineName();
 
       $payment_method_configuration_entity_id = $this->randomMachineName();
@@ -164,16 +152,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
         'label' => $payment_method_configuration_plugin_label,
       );
 
-      $owner = $this->getMockBuilder('\Drupal\user\Entity\User')
-        ->disableOriginalConstructor()
-        ->getMock();
-      $owner->expects($has_owner ? $this->atLeastOnce() : $this->never())
-        ->method('label')
-        ->willReturn($owner_label);
-
-      $this->currentUser->expects($has_owner ? $this->never() : $this->atLeastOnce())
-        ->method('label')
-        ->willReturn($current_user_label);
+      $owner = $this->getMock('\Drupal\user\UserInterface');
 
       $payment_method_configuration_plugin = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface');
 
@@ -256,11 +235,10 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
           '#disabled' => !$payment_method_configuration_entity_is_new,
         ),
         'owner' => array(
-          '#type' => 'textfield',
+          '#target_type' => 'user',
+          '#type' => 'entity_autocomplete',
           '#title' => 'Owner',
-          '#default_value' => $has_owner ? $owner_label : $current_user_label,
-          '#maxlength' => 255,
-          '#autocomplete_route_name' => 'user.autocomplete',
+          '#default_value' => $has_owner ? $owner : $this->currentUser,
           '#required' => TRUE,
         ),
         'plugin_form' => array(
@@ -286,7 +264,6 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
     public function testCopyFormValuesToEntity() {
       $label = $this->randomMachineName();
       $owner_id = mt_rand();
-      $owner_label = $this->randomMachineName();
       $plugin_configuration = array(
         'bar' => $this->randomMachineName(),
       );
@@ -312,15 +289,6 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
         ->method('id')
         ->will($this->returnValue($owner_id));
 
-      $this->userStorage->expects($this->once())
-        ->method('loadByProperties')
-        ->with(array(
-          'name' => $owner_label,
-        ))
-        ->will($this->returnValue(array(
-          mt_rand() => $owner,
-        )));
-
       $plugin = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface');
       $plugin->expects($this->atLeastOnce())
         ->method('getConfiguration')
@@ -332,7 +300,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
         array('payment_method_configuration', $plugin),
         array('values', array(
           'label' => $label,
-          'owner' => $owner_label,
+          'owner' => $owner_id,
           'status' => $status,
         )),
       );
@@ -343,7 +311,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
         ->method('getValues')
         ->willReturn(array(
           'label' => $label,
-          'owner' => $owner_label,
+          'owner' => $owner_id,
           'status' => $status,
         ));
 
@@ -373,97 +341,6 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
     }
 
     /**
-     * @covers ::validate
-     */
-    public function testValidateWithExistingOwner() {
-      $owner_label = $this->randomMachineName();
-
-      $owner = $this->getMockBuilder('\Drupal\user\Entity\User')
-        ->disableOriginalConstructor()
-        ->getMock();
-
-      $this->userStorage->expects($this->once())
-        ->method('loadByProperties')
-        ->with(array(
-          'name' => $owner_label,
-        ))
-        ->will($this->returnValue($owner));
-
-      $payment_method_configuration_plugin = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface');
-
-      $form = array(
-        'plugin_form' => array(
-          '#type' => $this->randomMachineName(),
-        ),
-      );
-      $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
-      $map = array(
-        array('payment_method_configuration', $payment_method_configuration_plugin),
-      );
-      $form_state->expects($this->any())
-        ->method('get')
-        ->willReturnMap($map);
-      $form_state->expects($this->atLeastOnce())
-        ->method('getValues')
-        ->willReturn(array(
-          'owner' => $owner_label,
-        ));
-      $form_state->expects($this->never())
-        ->method('setError');
-
-      $payment_method_configuration_plugin->expects($this->once())
-        ->method('validateConfigurationForm')
-        ->with($form['plugin_form'], $form_state);
-
-      $this->form->validate($form, $form_state);
-    }
-
-    /**
-     * @covers ::validate
-     */
-    public function testValidateWithoutExistingOwner() {
-      $owner_label = $this->randomMachineName();
-
-      $this->userStorage->expects($this->once())
-        ->method('loadByProperties')
-        ->with(array(
-          'name' => $owner_label,
-        ))
-        ->willReturn(NULL);
-
-      $payment_method_configuration_plugin = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface');
-
-      $form = array(
-        'owner' => array(
-          '#parents' => array('owner'),
-          '#type' => $this->randomMachineName(),
-        ),
-        'plugin_form' => array(
-          '#parents' => array('plugin_form'),
-          '#type' => $this->randomMachineName(),
-        ),
-      );
-      $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
-      $map = array(
-        array('payment_method_configuration', $payment_method_configuration_plugin),
-      );
-      $form_state->expects($this->any())
-        ->method('get')
-        ->willReturnMap($map);
-      $form_state->expects($this->atLeastOnce())
-        ->method('getValues')
-        ->willReturn(array(
-          'owner' => $owner_label,
-        ));
-
-      $payment_method_configuration_plugin->expects($this->once())
-        ->method('validateConfigurationForm')
-        ->with($form['plugin_form'], $form_state);
-
-      $this->form->validate($form, $form_state);
-    }
-
-    /**
      * @covers ::save
      */
     public function testSave() {
@@ -483,7 +360,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
 
       /** @var \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm|\PHPUnit_Framework_MockObject_MockObject $form */
       $form = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm')
-        ->setConstructorArgs(array($this->stringTranslation, $this->currentUser, $this->userStorage, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationManager))
+        ->setConstructorArgs(array($this->stringTranslation, $this->currentUser, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationManager))
         ->setMethods(array('copyFormValuesToEntity'))
         ->getMock();
       $form->setEntity($this->paymentMethodConfiguration);
@@ -497,7 +374,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
     public function testSubmitForm() {
       /** @var \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm|\PHPUnit_Framework_MockObject_MockObject $form_object */
       $form_object = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm')
-        ->setConstructorArgs(array($this->stringTranslation, $this->currentUser, $this->userStorage, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationManager))
+        ->setConstructorArgs(array($this->stringTranslation, $this->currentUser, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationManager))
         ->setMethods(array('copyFormValuesToEntity'))
         ->getMock();
       $form_object->setEntity($this->paymentMethodConfiguration);

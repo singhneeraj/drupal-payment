@@ -233,8 +233,11 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
         '#attributes' => array(
           'class' => array('payment-method-configuration-list'),
         ),
+        '#cache' => [
+          'contexts' => NULL,
+        ],
       );
-      $this->assertSame($expected_build, $build['table']);
+      $this->assertEquals($expected_build, $build['table']);
     }
 
     /**

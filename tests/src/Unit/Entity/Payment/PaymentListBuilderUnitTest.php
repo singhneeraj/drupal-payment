@@ -347,8 +347,11 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
         '#title' => NULL,
         '#rows' => [],
         '#empty' => 'There are no payments yet.',
+        '#cache' => [
+          'contexts' => NULL,
+        ],
       );
-      $this->assertSame($expected_build, $build['table']);
+      $this->assertEquals($expected_build, $build['table']);
     }
 
     /**
