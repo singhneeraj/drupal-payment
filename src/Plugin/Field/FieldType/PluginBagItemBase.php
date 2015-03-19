@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\Core\Field\Plugin\Field\FieldType\PluginBagItemBase.
+ * Contains \Drupal\payment\Plugin\Field\FieldType\PluginBagItemBase.
  */
 
 namespace Drupal\payment\Plugin\Field\FieldType;
