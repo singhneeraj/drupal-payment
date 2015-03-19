@@ -8,11 +8,12 @@
 namespace Drupal\payment\Plugin\Payment\Status;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
+use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerInterface;
 
 /**
  * Defines a payment status manager.
  */
-interface PaymentStatusManagerInterface extends PluginManagerInterface {
+interface PaymentStatusManagerInterface extends OperationsProviderPluginManagerInterface, PluginManagerInterface {
 
   /**
    * Creates a payment status.
@@ -101,15 +102,5 @@ interface PaymentStatusManagerInterface extends PluginManagerInterface {
    * @return boolean
    */
   public function isOrHasAncestor($plugin_id, $ancestor_plugin_id);
-
-  /**
-   * Gets the payment status' operations provider.
-   *
-   * @param string $plugin_id
-   *
-   * @return \Drupal\payment\Plugin\Payment\OperationsProviderInterface|null
-   *   The operations provider or NULL if none is available..
-   */
-  public function getOperationsProvider($plugin_id);
 
 }

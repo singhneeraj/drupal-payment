@@ -8,11 +8,12 @@
 namespace Drupal\payment\Plugin\Payment\Method;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
+use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerInterface;
 
 /**
  * Defines a payment method manager.
  */
-interface PaymentMethodManagerInterface extends PluginManagerInterface {
+interface PaymentMethodManagerInterface extends OperationsProviderPluginManagerInterface, PluginManagerInterface {
 
   /**
    * Creates a payment method.
@@ -25,16 +26,6 @@ interface PaymentMethodManagerInterface extends PluginManagerInterface {
    * @return \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface
    */
   public function createInstance($plugin_id, array $configuration = []);
-
-  /**
-   * Gets the payment method's operations provider.
-   *
-   * @param string $plugin_id
-   *
-   * @return \Drupal\payment\Plugin\Payment\OperationsProviderInterface|null
-   *   The operations provider or NULL if none is available..
-   */
-  public function getOperationsProvider($plugin_id);
 
   /**
    * Returns payment method options.

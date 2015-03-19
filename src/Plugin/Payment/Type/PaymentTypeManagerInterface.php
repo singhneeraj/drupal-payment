@@ -8,11 +8,12 @@
 namespace Drupal\payment\Plugin\Payment\Type;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
+use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerInterface;
 
 /**
  * Defines a payment type manager.
  */
-interface PaymentTypeManagerInterface extends PluginManagerInterface {
+interface PaymentTypeManagerInterface extends OperationsProviderPluginManagerInterface, PluginManagerInterface {
 
   /**
    * Creates a payment type.
@@ -25,15 +26,5 @@ interface PaymentTypeManagerInterface extends PluginManagerInterface {
    * @return \Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface
    */
   public function createInstance($plugin_id, array $configuration = []);
-
-  /**
-   * Gets the payment status' operations provider.
-   *
-   * @param string $plugin_id
-   *
-   * @return \Drupal\payment\Plugin\Payment\OperationsProviderInterface|null
-   *   The operations provider or NULL if none is available..
-   */
-  public function getOperationsProvider($plugin_id);
 
 }
