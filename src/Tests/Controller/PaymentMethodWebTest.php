@@ -104,7 +104,7 @@ class PaymentMethodWebTest extends WebTestBase {
     $this->drupalGet('admin/config/services/payment/method/configuration');
     $this->clickLink(t('Duplicate'));
     $this->assertResponse(200);
-    $this->assertFieldByXPath('//form[@id="payment-basic-payment-method-configuration-form"]');
+    $this->assertFieldByXPath('//form[@id="payment-method-configuration-payment-basic-form"]');
     $this->drupalPostForm(NULL, array(
       'id' => $entity_id . '_duplicate',
     ), t('Save'));
@@ -159,7 +159,7 @@ class PaymentMethodWebTest extends WebTestBase {
     $this->drupalLogin($user);
     $this->drupalGet('admin/config/services/payment/method/configuration-add/' . $plugin_id);
     $this->assertResponse(200);
-    $this->assertFieldByXPath('//form[@id="payment-basic-payment-method-configuration-form"]');
+    $this->assertFieldByXPath('//form[@id="payment-method-configuration-payment-basic-form"]');
 
     // Test form validation.
     $this->drupalPostForm(NULL, array(
