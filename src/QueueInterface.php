@@ -8,7 +8,7 @@
 namespace Drupal\payment;
 
 /**
- * Defines a payment reference queue manager.
+ * Defines a payment queue.
  */
 interface QueueInterface {
 
@@ -25,7 +25,7 @@ interface QueueInterface {
    * Claims a payment available for referencing through a field instance.
    *
    * After a payment has been claimed, it can be definitely acquired with
-   * self::acquire().
+   * self::acquirePayment().
    *
    * @param integer $payment_id
    *
