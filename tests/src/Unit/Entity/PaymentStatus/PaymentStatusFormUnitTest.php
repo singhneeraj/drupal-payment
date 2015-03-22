@@ -56,8 +56,6 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
 
     /**
      * {@inheritdoc}
-     *
-     * @covers ::__construct
      */
     public function setUp() {
 
@@ -80,6 +78,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
 
     /**
      * @covers ::create
+     * @covers ::__construct
      */
     function testCreate() {
       $entity_manager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
@@ -179,6 +178,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
           '#default_value' => $description,
           '#maxlength' => 255,
         ),
+        '#after_build' => ['::afterBuild'],
       );
       $this->assertSame($expected_build, $build);
     }

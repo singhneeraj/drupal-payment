@@ -72,8 +72,6 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
 
     /**
      * {@inheritdoc}
-     *
-     * @covers ::__construct
      */
     public function setUp() {
       $this->currentUser = $this->getMock('\Drupal\user\UserInterface');
@@ -103,6 +101,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
 
     /**
      * @covers ::create
+     * @covers ::__construct
      */
     function testCreate() {
       $entity_manager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
@@ -134,8 +133,6 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
      * @dataProvider providerTestForm
      */
     public function testForm($has_owner) {
-      $current_user_label = $this->randomMachineName();
-
       $payment_method_configuration_entity_id = $this->randomMachineName();
       $payment_method_configuration_entity_is_new = FALSE;
       $payment_method_configuration_entity_label = $this->randomMachineName();
@@ -244,6 +241,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
         'plugin_form' => array(
             '#tree' => TRUE,
           ) + $payment_method_configuration_plugin_form,
+        '#after_build' => ['::afterBuild'],
       );
       $this->assertEquals($expected_build, $build);
     }
