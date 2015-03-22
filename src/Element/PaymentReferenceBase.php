@@ -418,7 +418,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     if ($payment_method && !$payment_method->getPayment()->isNew()) {
       $build['message'] = array(
         '#markup' => $this->t('@payment_method_label requires the payment to be completed in a new window.', array(
-            '@payment_method_label' => $payment_method->getPluginLabel(),
+            '@payment_method_label' => $payment_method->getPluginDefinition()['label'],
           )),
       );
       $build['link'] = array(

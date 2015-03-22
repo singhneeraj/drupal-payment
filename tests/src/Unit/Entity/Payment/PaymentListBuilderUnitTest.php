@@ -234,10 +234,13 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
         ->getMock();
 
       $payment_method_label = $this->randomMachineName();
+      $payment_method_definition = [
+        'label' => $payment_method_label,
+      ];
       $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
       $payment_method->expects($this->atLeastOnce())
-        ->method('getPluginLabel')
-        ->will($this->returnValue($payment_method_label));
+        ->method('getPluginDefinition')
+        ->willReturn($payment_method_definition);
 
       $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
         ->disableOriginalConstructor()

@@ -38,7 +38,7 @@ class Radios extends AdvancedPaymentMethodSelectorBase {
     /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface[] $payment_methods */
     $payment_method_options = [];
     foreach ($payment_methods as $payment_method) {
-      $payment_method_options[$payment_method->getPluginId()] = $payment_method->getPluginLabel();
+      $payment_method_options[$payment_method->getPluginId()] = $payment_method->getPluginDefinition()['label'];
     }
     $element['container']['payment_method_id'] = array(
       '#ajax' => array(

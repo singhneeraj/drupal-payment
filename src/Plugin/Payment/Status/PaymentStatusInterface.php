@@ -77,11 +77,4 @@ interface PaymentStatusInterface extends PluginInspectionInterface, Configurable
    * @return boolean
    */
   function isOrHasAncestor($plugin_id);
-
-  /**
-   * Gets this payment status's human-readable label.
-   *
-   * @return string
-   */
-  function getLabel();
 }

@@ -85,13 +85,17 @@ class SelectListUnitTest extends UnitTestCase {
 
     $payment_method_id = $this->randomMachineName();
     $payment_method_label = $this->randomMachineName();
+    $payment_method_definition = [
+      'id' => $payment_method_id,
+      'label' => $payment_method_label,
+    ];
     $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
     $payment_method->expects($this->any())
       ->method('getPluginId')
       ->will($this->returnValue($payment_method_id));
-    $payment_method->expects($this->any())
-      ->method('getPluginLabel')
-      ->will($this->returnValue($payment_method_label));
+    $payment_method->expects($this->atLeastOnce())
+      ->method('getPluginDefinition')
+      ->willReturn($payment_method_definition);
 
     $this->paymentMethodSelector->setPaymentMethod($payment_method);
 

@@ -194,11 +194,4 @@ class PaymentStatusBaseUnitTest extends UnitTestCase {
     $this->assertSame($expected, $this->status->isOrHasAncestor($this->pluginId));
   }
 
-  /**
-   * @covers ::getLabel
-   */
-  public function testGetLabel() {
-    $this->assertSame($this->pluginDefinition['label'], $this->status->getLabel());
-  }
-
 }

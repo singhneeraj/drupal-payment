@@ -255,18 +255,4 @@ class PaymentMethodConfigurationBaseUnitTest extends PaymentMethodConfigurationB
     $this->assertSame($message_format, $this->paymentMethodConfiguration->getMessageTextFormat());
   }
 
-  /**
-   * @covers ::getPluginLabel
-   */
-  public function testGetPluginLabel() {
-    $this->assertSame($this->pluginDefinition['label'], $this->paymentMethodConfiguration->getPluginLabel());
-  }
-
-  /**
-   * @covers ::getPluginDescription
-   */
-  public function testGetPluginDescription() {
-    $this->assertSame($this->pluginDefinition['description'], $this->paymentMethodConfiguration->getPluginDescription());
-  }
-
 }

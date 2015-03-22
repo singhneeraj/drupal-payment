@@ -50,7 +50,7 @@ class ResumeContext extends ControllerBase implements ContainerInjectionInterfac
     $message = $this->t('You can now <span class="payment_reference-window-close">close this window</span>.');
     if ($payment->access('view')) {
       $message = $this->t('Your payment is %status.', array(
-          '%status' => $payment->getPaymentStatus()->getLabel(),
+          '%status' => $payment->getPaymentStatus()->getPluginDefinition()['label'],
         )) . ' ' . $message;
     }
 

@@ -62,10 +62,4 @@ interface PaymentMethodInterface extends PluginInspectionInterface, Configurable
    */
   public function getPaymentExecutionResult();
 
-  /**
-   * Gets the plugin label.
-   *
-   * @return string
-   */
-  public function getPluginLabel();
 }

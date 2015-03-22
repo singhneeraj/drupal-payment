@@ -135,10 +135,4 @@ abstract class PaymentStatusBase extends PluginBase implements ContainerFactoryP
     return $this->paymentStatusManager->isOrHasAncestor($this->getPluginId(), $plugin_id);
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getLabel() {
-    return $this->pluginDefinition['label'];
-  }
 }

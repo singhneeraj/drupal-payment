@@ -15,18 +15,4 @@ use Drupal\Core\Plugin\PluginFormInterface;
  */
 interface PaymentMethodConfigurationInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface {
 
-  /**
-   * Gets the plugin label.
-   *
-   * @return string
-   */
-  public function getPluginLabel();
-
-  /**
-   * Gets the plugin description.
-   *
-   * @return string
-   */
-  public function getPluginDescription();
-
 }

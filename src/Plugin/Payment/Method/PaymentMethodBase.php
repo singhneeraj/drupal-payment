@@ -350,11 +350,4 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    */
   abstract protected function getSupportedCurrencies();
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getPluginLabel() {
-    return $this->pluginDefinition['label'];
-  }
-
 }

@@ -455,11 +455,4 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     );
   }
 
-  /**
-   * @covers ::getPluginLabel
-   */
-  public function testGetPluginLabel() {
-    $this->assertSame($this->pluginDefinition['label'], $this->plugin->getPluginLabel());
-  }
-
 }

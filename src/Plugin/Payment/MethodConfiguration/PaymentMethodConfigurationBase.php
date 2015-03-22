@@ -64,20 +64,6 @@ abstract class PaymentMethodConfigurationBase extends PluginBase implements Paym
   /**
    * {@inheritdoc}
    */
-  public function getPluginLabel() {
-    return $this->pluginDefinition['label'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getPluginDescription() {
-    return $this->pluginDefinition['description'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function defaultConfiguration() {
     return array(
       'message_text' => '',

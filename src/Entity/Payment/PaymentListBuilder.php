@@ -145,7 +145,7 @@ class PaymentListBuilder extends EntityListBuilder {
     }
     $row['data']['amount'] = $currency->formatAmount($payment->getAmount());
 
-    $row['data']['payment_method'] = $payment->getPaymentMethod() ? $payment->getPaymentMethod()->getPluginLabel() : $this->t('Unavailable');
+    $row['data']['payment_method'] = $payment->getPaymentMethod() ? $payment->getPaymentMethod()->getPluginDefinition()['label'] : $this->t('Unavailable');
 
       $row['data']['owner']['data'] = array(
         '#theme' => 'username',
