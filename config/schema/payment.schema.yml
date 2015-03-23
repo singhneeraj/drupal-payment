@@ -109,15 +109,24 @@ payment.plugin_configuration.payment_status.payment_base:
       label: Created
       type: integer
 
-payment.plugin_configuration.payment_method_selector.payment_base:
+payment.plugin_configuration.plugin_selector.payment_base:
   type: mapping
   mapping:
-    allowed_payment_method_ids:
-      label: Allowed payment method plugin IDs
-      sequence:
-        - label: Payment method plugin ID
-          type: string
-      type: sequence
+    collect_plugin_configuration:
+      label: Collect plugin configuration
+      type: boolean
+    keep_previously_selected_plugins:
+      label: Keep previously selected plugins
+      type: boolean
+    label:
+      label: Label
+      type: label
     name:
       label: Required
       type: boolean
+
+payment.plugin_configuration.plugin_selector.payment_radios:
+  type: payment.plugin_configuration.plugin_selector.payment_base
+
+payment.plugin_configuration.plugin_selector.payment_select_list:
+  type: payment.plugin_configuration.plugin_selector.payment_base

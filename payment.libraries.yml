@@ -1,4 +1,4 @@
-payment_method_selector.payment_radios:
+plugin_selector.payment_radios:
   version: VERSION
   css:
     component:

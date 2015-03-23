@@ -12,25 +12,25 @@
 
 /* @end */
 
-/* @group payment_radios payment method selector */
+/* @group payment_radios plugin selector */
 
-.payment-method-selector-payment-radios-selector {
+.payment-plugin-selector-payment-radios-selector {
     float: left;
     min-width: 200px;
     width: 25%;
 }
 
-.payment-method-selector-payment-radios-payment-method-form {
+.payment-plugin-selector-payment-radios-payment-method-form {
     float: left;
     min-width: 400px;
     width: 75%;
 }
 
-[dir="rtl"] .payment-method-selector-payment-radios-selector {
+[dir="rtl"] .payment-plugin-selector-payment-radios-selector {
     float: right; /* LTR */
 }
 
-[dir="rtl"] .payment-method-selector-payment-radios-payment-method-form {
+[dir="rtl"] .payment-plugin-selector-payment-radios-payment-method-form {
     float: right; /* LTR */
 }
 

@@ -1,18 +1,21 @@
 payment_form.payment_type:
   label: Payment Form configuration
   mapping:
-    allowed_payment_method_ids:
+    allowed_plugin_ids:
       label: Allowed payment method plugin IDs
       sequence:
         - label: Payment method plugin ID
           type: string
       type: sequence
-    limit_allowed_payment_methods:
+    limit_allowed_plugins:
       label: Limit allowed payment methods
       type: boolean
-    payment_method_selector_id:
-      label: Payment method selector plugin ID
+    plugin_selector_id:
+      label: Plugin selector ID
       type: string
+    plugin_selector_configuration:
+      label: Plugin selector configuration
+      type: payment.plugin_configuration.plugin_selector.[%parent.plugin_selector_id]
   type: mapping
 
 payment.plugin_configuration.payment_type.payment_form:

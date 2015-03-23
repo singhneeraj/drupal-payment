@@ -73,9 +73,9 @@ class PaymentReferenceUnitTest extends UnitTestCase {
 
     $this->configFactoryConfiguration = array(
       'payment_reference.payment_type' => array(
-        'limit_allowed_payment_methods' => TRUE,
-        'allowed_payment_method_ids' => array($this->randomMachineName()),
-        'payment_method_selector_id' => $this->randomMachineName(),
+        'limit_allowed_plugins' => TRUE,
+        'allowed_plugin_ids' => array($this->randomMachineName()),
+        'plugin_selector_id' => $this->randomMachineName(),
       ),
     );
 
@@ -164,8 +164,8 @@ class PaymentReferenceUnitTest extends UnitTestCase {
     $expected_build = array(
       'target_id' => array(
         '#default_value' => NULL,
-        '#limit_allowed_payment_method_ids' => $this->configFactoryConfiguration['payment_reference.payment_type']['allowed_payment_method_ids'],
-        '#payment_method_selector_id' => $this->configFactoryConfiguration['payment_reference.payment_type']['payment_method_selector_id'],
+        '#limit_allowed_plugin_ids' => $this->configFactoryConfiguration['payment_reference.payment_type']['allowed_plugin_ids'],
+        '#plugin_selector_id' => $this->configFactoryConfiguration['payment_reference.payment_type']['plugin_selector_id'],
         '#prototype_payment' => $payment,
         '#queue_category_id' => $entity_type_id . '.' . $bundle . '.' . $field_name,
         '#queue_owner_id' => (int) $user_id,

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Contains \Drupal\payment\PaymentMethod\PaymentMethodBase.
+ * Contains \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase.
  */
 
 namespace Drupal\payment\Plugin\Payment\Method;
@@ -10,6 +10,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
+use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\payment\PaymentExecutionResult;
@@ -27,7 +28,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   form.
  * - message_text_format: The ID of the text format to format message_text with.
  */
-abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentMethodInterface, PaymentMethodCapturePaymentInterface, PaymentMethodRefundPaymentInterface {
+abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentMethodInterface, PaymentMethodCapturePaymentInterface, PaymentMethodRefundPaymentInterface, PluginFormInterface {
 
   use PaymentAwareTrait;
 

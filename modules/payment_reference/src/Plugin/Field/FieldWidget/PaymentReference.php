@@ -95,8 +95,8 @@ class PaymentReference extends WidgetBase implements ContainerFactoryPluginInter
     $payment = $this->paymentFactory->createPayment($this->fieldDefinition);
     $element['target_id'] = array(
       '#default_value' => isset($items[$delta]) ? (int) $items[$delta]->target_id : NULL,
-      '#limit_allowed_payment_method_ids' => $config->get('limit_allowed_payment_methods') ? $config->get('allowed_payment_method_ids') : NULL,
-      '#payment_method_selector_id' => $config->get('payment_method_selector_id'),
+      '#limit_allowed_plugin_ids' => $config->get('limit_allowed_plugins') ? $config->get('allowed_plugin_ids') : NULL,
+      '#plugin_selector_id' => $config->get('plugin_selector_id'),
       '#prototype_payment' => $payment,
       '#queue_category_id' => $items->getEntity()->getEntityTypeId() . '.' . $items->getEntity()->bundle() . '.' . $this->fieldDefinition->getName(),
       // The requested user account may contain a string numeric ID.

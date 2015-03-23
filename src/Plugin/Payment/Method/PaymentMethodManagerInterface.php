@@ -27,12 +27,4 @@ interface PaymentMethodManagerInterface extends OperationsProviderPluginManagerI
    */
   public function createInstance($plugin_id, array $configuration = []);
 
-  /**
-   * Returns payment method options.
-   *
-   * @return array
-   *   Keys are plugin IDs. Values are plugin labels.
-   */
-  public function options();
-
 }

@@ -8,9 +8,7 @@ namespace Drupal\payment\Plugin\Payment\Method;
 
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
-use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\PaymentAwareInterface;
 
 /**
@@ -21,13 +19,14 @@ use Drupal\payment\PaymentAwareInterface;
  * values to $this and not redirect the page, for instance.
  *
  * Plugins can additionally implement the following interfaces:
+ * - \Drupal\Core\Plugin\PluginFormInterface
  * - \Drupal\payment\Plugin\Payment\Method\PaymentMethodUpdatePaymentStatusInterface:
  *   This interface lets payment methods limit if users can update payment's
  *   statuses, and if so, which statuses can be set.
  * - \Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface:
  *   This interface lets payment methods capture already authorized payments.
  */
-interface PaymentMethodInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface, PaymentAwareInterface {
+interface PaymentMethodInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PaymentAwareInterface {
 
   /**
    * Checks if the payment can be executed.

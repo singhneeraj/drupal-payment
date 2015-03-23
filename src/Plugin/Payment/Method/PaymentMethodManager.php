@@ -49,18 +49,4 @@ class PaymentMethodManager extends DefaultPluginManager implements PaymentMethod
     return 'payment_unavailable';
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  function options() {
-    $options = [];
-    $definitions = $this->getDefinitions();
-    unset($definitions['payment_unavailable']);
-    foreach ($definitions as $plugin_id => $definition) {
-      $options[$plugin_id] = $definition['label'];
-    }
-    natcasesort($options);
-
-    return $options;
-  }
 }

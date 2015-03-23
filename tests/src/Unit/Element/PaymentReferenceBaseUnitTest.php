@@ -20,6 +20,13 @@ namespace Drupal\Tests\payment\Unit\Element {
   class PaymentReferenceBaseUnitTest extends UnitTestCase {
 
     /**
+     * The current user.
+     *
+     * @var \Drupal\Core\Session\AccountInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $currentUser;
+
+    /**
      * The element under test.
      *
      * @var \Drupal\payment\Element\PaymentReferenceBase|\PHPUnit_Framework_MockObject_MockObject
@@ -41,11 +48,11 @@ namespace Drupal\Tests\payment\Unit\Element {
     protected $linkGenerator;
 
     /**
-     * The payment method selector manager.
+     * The payment method manager.
      *
-     * @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $paymentMethodSelectorManager;
+    protected $paymentMethodManager;
 
     /**
      * The payment queue.
@@ -67,6 +74,13 @@ namespace Drupal\Tests\payment\Unit\Element {
      * @var array
      */
     protected $pluginDefinition = [];
+
+    /**
+     * The plugin selector manager.
+     *
+     * @var \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $pluginSelectorManager;
 
     /**
      * The renderer.
@@ -102,17 +116,21 @@ namespace Drupal\Tests\payment\Unit\Element {
      * @covers ::__construct
      */
     public function setUp() {
+      $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
       $this->dateFormatter = $this->getMockBuilder('\Drupal\Core\Datetime\DateFormatter')
         ->disableOriginalConstructor()
         ->getMock();
 
       $this->linkGenerator = $this->getMock('\Drupal\Core\Utility\LinkGeneratorInterface');
 
-      $this->paymentMethodSelectorManager = $this->getMock('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface');
+      $this->paymentMethodManager = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface');
 
       $this->paymentQueue = $this->getMock('\Drupal\payment\QueueInterface');
 
       $this->paymentStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
+
+      $this->pluginSelectorManager = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface');
 
       $this->renderer = $this->getMock('\Drupal\Core\Render\RendererInterface');
 
@@ -130,7 +148,7 @@ namespace Drupal\Tests\payment\Unit\Element {
       $this->pluginDefinition['class'] = $this->randomMachineName();
 
       $this->element = $this->getMockBuilder('\Drupal\payment\Element\PaymentReferenceBase')
-        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->paymentMethodSelectorManager, new Random()))
+        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodManager, new Random()))
         ->getMockForAbstractClass();
       $this->element->expects($this->any())
         ->method('getPaymentQueue')
@@ -221,13 +239,38 @@ namespace Drupal\Tests\payment\Unit\Element {
       $this->pluginDefinition = [];
 
       $this->element = $this->getMockBuilder('\Drupal\payment\Element\PaymentReferenceBase')
-        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->paymentMethodSelectorManager, new Random()))
-        ->setMethods(array('getEntityFormDisplay', 'getPaymentMethodSelector'))
+        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodManager, new Random()))
+        ->setMethods(array('getEntityFormDisplay', 'getPluginSelector'))
         ->getMockForAbstractClass();
+
+      $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
+
+      $url = new Url($this->randomMachineName());
+
+      $result = $this->getMock('\Drupal\payment\PaymentExecutionResultInterface');
+      $result->expects($this->atLeastOnce())
+        ->method('hasCompleted')
+        ->willReturn($has_completed);
+
+      $payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
+      $payment->expects($this->atLeastOnce())
+        ->method('createDuplicate')
+        ->willReturnSelf();
+      $payment->expects($this->atLeastOnce())
+        ->method('execute')
+        ->willReturn($result);
+      $payment->expects($this->atLeastOnce())
+        ->method('setPaymentMethod')
+        ->with($payment_method);
+      $payment->expects(!$has_completed && !$is_xml_http_request ? $this->atLeastOnce() : $this->never())
+        ->method('urlInfo')
+        ->with('complete')
+        ->willReturn($url);
 
       $form = array(
         'foo' => array(
           'bar' => array(
+            '#prototype_payment' => $payment,
             'container' => array(
               '#id' => $this->randomMachineName(),
               'payment_form' => array(
@@ -242,13 +285,8 @@ namespace Drupal\Tests\payment\Unit\Element {
           ),
         ),
       );
-      $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
-      $form_state->expects($this->atLeastOnce())
-        ->method('getTriggeringElement')
-        ->willReturn($form['foo']['bar']['container']['payment_form']['pay']);
-      $form_state->expects($this->once())
-        ->method('setRebuild')
-        ->with(TRUE);
+      $form_state = new FormState();
+      $form_state->setTriggeringElement($form['foo']['bar']['container']['payment_form']['pay']);
 
       $request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
         ->disableOriginalConstructor()
@@ -261,38 +299,12 @@ namespace Drupal\Tests\payment\Unit\Element {
         ->method('getCurrentRequest')
         ->willReturn($request);
 
-      $result = $this->getMock('\Drupal\payment\PaymentExecutionResultInterface');
-      $result->expects($this->atLeastOnce())
-        ->method('hasCompleted')
-        ->willReturn($has_completed);
-
-      $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
-
-      $url = new Url($this->randomMachineName());
-
-      $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-        ->disableOriginalConstructor()
-        ->getMock();
-      $payment->expects($this->atLeastOnce())
-        ->method('execute')
-        ->willReturn($result);
-      $payment->expects($this->atLeastOnce())
-          ->method('setPaymentMethod')
-          ->with($payment_method);
-      $payment->expects(!$has_completed && !$is_xml_http_request ? $this->atLeastOnce() : $this->never())
-        ->method('urlInfo')
-        ->with('complete')
-        ->willReturn($url);
-
-      $payment_method_selector = $this->getMock('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface');
-      $payment_method_selector->expects($this->atLeastOnce())
-        ->method('getPayment')
-        ->willReturn($payment);
-      $payment_method_selector->expects($this->atLeastOnce())
-        ->method('getPaymentMethod')
+      $plugin_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+      $plugin_selector->expects($this->atLeastOnce())
+        ->method('getSelectedPlugin')
         ->willReturn($payment_method);
-      $payment_method_selector->expects($this->once())
-        ->method('submitConfigurationForm')
+      $plugin_selector->expects($this->once())
+        ->method('submitSelectorForm')
         ->with($form['foo']['bar']['container']['payment_form']['payment_method'], $form_state);
 
       $entity_form_display = $this->getMock('\Drupal\Core\Entity\Display\EntityFormDisplayInterface');
@@ -304,10 +316,12 @@ namespace Drupal\Tests\payment\Unit\Element {
         ->method('getEntityFormDisplay')
         ->willReturn($entity_form_display);
       $this->element->expects($this->atLeastOnce())
-        ->method('getPaymentMethodSelector')
-        ->willReturn($payment_method_selector);
+        ->method('getPluginSelector')
+        ->willReturn($plugin_selector);
 
       $this->element->pay($form, $form_state);
+
+      $this->assertTrue($form_state->isRebuilding());
     }
 
     /**
@@ -327,15 +341,7 @@ namespace Drupal\Tests\payment\Unit\Element {
      * @dataProvider providerTestAjaxPay
      */
     public function testAjaxPay($has_completed, $number_of_commands) {
-      $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-        ->disableOriginalConstructor()
-        ->getMock();
-      $payment->expects($this->atLeastOnce())
-        ->method('createDuplicate')
-        ->willReturnSelf();
-      $payment->expects($has_completed ? $this->never() : $this->atLeastOnce())
-        ->method('urlInfo')
-        ->with('complete');
+      $payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
 
       $result = $this->getMock('\Drupal\payment\PaymentExecutionResultInterface');
       $result->expects($this->atLeastOnce())
@@ -350,24 +356,19 @@ namespace Drupal\Tests\payment\Unit\Element {
         ->method('getPaymentExecutionResult')
         ->willReturn($result);
 
-      $payment_method_selector_plugin_id = $this->randomMachineName();
+      $plugin_selector_plugin_id = $this->randomMachineName();
 
-      $payment_method_selector = $this->getMock('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface');
-      $payment_method_selector->expects($this->atLeastOnce())
-        ->method('getPaymentMethod')
+      $plugin_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+      $plugin_selector->expects($this->atLeastOnce())
+        ->method('getSelectedPlugin')
         ->willReturn($payment_method);
-
-      $this->paymentMethodSelectorManager->expects($this->atLeastOnce())
-      ->method('createInstance')
-        ->with($payment_method_selector_plugin_id)
-        ->willReturn($payment_method_selector);
 
       $form = array(
         'foo' => array(
           'bar' => array(
-            '#limit_allowed_payment_method_ids' => [],
+            '#limit_allowed_plugin_ids' => [],
             '#name' => $this->randomMachineName(),
-            '#payment_method_selector_id' => $payment_method_selector_plugin_id,
+            '#plugin_selector_id' => $plugin_selector_plugin_id,
             '#prototype_payment' => $payment,
             '#required' => TRUE,
             'container' => array(
@@ -381,16 +382,9 @@ namespace Drupal\Tests\payment\Unit\Element {
           ),
         ),
       );
-      $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
-      $map = array(
-        array('payment_reference.element.payment_reference.payment_method_selector.' . $form['foo']['bar']['#name'], $payment_method_selector),
-      );
-      $form_state->expects($this->atLeastOnce())
-        ->method('get')
-        ->willReturnMap($map);
-      $form_state->expects($this->atLeastOnce())
-        ->method('getTriggeringElement')
-        ->willReturn($form['foo']['bar']['container']['payment_form']['pay']);
+      $form_state = new FormState();
+      $form_state->set('payment_reference.element.payment_reference.plugin_selector.' . $form['foo']['bar']['#name'], $plugin_selector);
+      $form_state->setTriggeringElement($form['foo']['bar']['container']['payment_form']['pay']);
 
       $response = $this->element->ajaxPay($form, $form_state);
       $this->assertInstanceOf('\Drupal\Core\Ajax\AjaxResponse', $response);
@@ -470,58 +464,50 @@ namespace Drupal\Tests\payment\Unit\Element {
     }
 
     /**
-     * @covers ::getPaymentMethodSelector
+     * @covers ::getPluginSelector
      *
-     * @dataProvider providerGetPaymentMethodSelector
+     * @dataProvider providerGetPluginSelector
      */
-    public function testGetPaymentMethodSelector($limit_allowed_payment_method_ids) {
-      $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-        ->disableOriginalConstructor()
-        ->getMock();
+    public function testGetPluginSelector($limit_allowed_plugin_ids) {
+      $payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
       $payment->expects($this->once())
         ->method('createDuplicate')
         ->willReturnSelf();
 
-      $payment_method_selector_plugin_id = $this->randomMachineName();
+      $plugin_selector_plugin_id = $this->randomMachineName();
       $required = $this->randomMachineName();
 
       $element = array(
-        '#limit_allowed_payment_method_ids' => $limit_allowed_payment_method_ids,
+        '#limit_allowed_plugin_ids' => $limit_allowed_plugin_ids,
         '#name' => $this->randomMachineName(),
-        '#payment_method_selector_id' => $payment_method_selector_plugin_id,
+        '#plugin_selector_id' => $plugin_selector_plugin_id,
         '#prototype_payment' => $payment,
         '#required' => $required,
       );
       $form_state = new FormState();
 
-      $payment_method_selector = $this->getMock('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface');
-      $payment_method_selector->expects(is_null($limit_allowed_payment_method_ids) ? $this->never() : $this->once())
-        ->method('setAllowedPaymentMethods')
-        ->with($limit_allowed_payment_method_ids);
-      $payment_method_selector->expects($this->once())
-        ->method('setPayment')
-        ->with($payment);
-      $payment_method_selector->expects($this->once())
+      $plugin_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+      $plugin_selector->expects($this->once())
         ->method('setRequired')
         ->with($required);
 
-      $this->paymentMethodSelectorManager->expects($this->once())
+      $this->pluginSelectorManager->expects($this->once())
         ->method('createInstance')
-        ->with($payment_method_selector_plugin_id)
-        ->willReturn($payment_method_selector);
+        ->with($plugin_selector_plugin_id)
+        ->willReturn($plugin_selector);
 
-      $method = new \ReflectionMethod($this->element, 'getPaymentMethodSelector');
+      $method = new \ReflectionMethod($this->element, 'getPluginSelector');
       $method->setAccessible(TRUE);
 
-      $retrieved_payment_method_selector = $method->invoke($this->element, $element, $form_state);
-      $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface', $retrieved_payment_method_selector);
-      $this->assertSame($retrieved_payment_method_selector, $method->invoke($this->element, $element, $form_state));
+      $retrieved_plugin_selector = $method->invoke($this->element, $element, $form_state);
+      $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface', $retrieved_plugin_selector);
+      $this->assertSame($retrieved_plugin_selector, $method->invoke($this->element, $element, $form_state));
     }
 
     /**
-     * Provides data to self::testProviderGetPaymentMethodSelector().
+     * Provides data to self::testGetPluginSelector().
      */
-    public function providerGetPaymentMethodSelector() {
+    public function providerGetPluginSelector() {
       return array(
         array(NULL),
         array([]),
@@ -542,16 +528,16 @@ namespace Drupal\Tests\payment\Unit\Element {
       );
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
-      $payment_method_selector = $this->getMock('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface');
+      $plugin_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
 
       $this->element = $this->getMockBuilder('\Drupal\payment\Element\PaymentReferenceBase')
-        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->paymentMethodSelectorManager, new Random()))
-        ->setMethods(array('getPaymentMethodSelector'))
+        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodManager, new Random()))
+        ->setMethods(array('getPluginSelector'))
         ->getMockForAbstractClass();
       $this->element->expects($this->atLeastOnce())
-        ->method('getPaymentMethodSelector')
+        ->method('getPluginSelector')
         ->with($element, $form_state)
-        ->willReturn($payment_method_selector);
+        ->willReturn($plugin_selector);
 
       $method = new \ReflectionMethod($this->element, 'buildCompletePaymentLink');
       $method->setAccessible(TRUE);
@@ -573,28 +559,26 @@ namespace Drupal\Tests\payment\Unit\Element {
       );
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
-      $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-        ->disableOriginalConstructor()
-        ->getMock();
+      $payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
 
       $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
       $payment_method->expects($this->atLeastOnce())
         ->method('getPayment')
         ->willReturn($payment);
 
-      $payment_method_selector = $this->getMock('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface');
-      $payment_method_selector->expects($this->atLeastOnce())
-        ->method('getPaymentMethod')
+      $plugin_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+      $plugin_selector->expects($this->atLeastOnce())
+        ->method('getSelectedPlugin')
         ->willReturn($payment_method);
 
       $this->element = $this->getMockBuilder('\Drupal\payment\Element\PaymentReferenceBase')
-        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->paymentMethodSelectorManager, new Random()))
-        ->setMethods(array('getPaymentMethodSelector'))
+        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodManager, new Random()))
+        ->setMethods(array('getPluginSelector'))
         ->getMockForAbstractClass();
       $this->element->expects($this->atLeastOnce())
-        ->method('getPaymentMethodSelector')
+        ->method('getPluginSelector')
         ->with($element, $form_state)
-        ->willReturn($payment_method_selector);
+        ->willReturn($plugin_selector);
 
 
       $method = new \ReflectionMethod($this->element, 'buildCompletePaymentLink');
@@ -664,9 +648,7 @@ namespace Drupal\Tests\payment\Unit\Element {
 
       $payment_status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
 
-      $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-        ->disableOriginalConstructor()
-        ->getMock();
+      $payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
       $payment->expects($this->atLeastOnce())
         ->method('access')
         ->willReturn($view_access);
@@ -705,20 +687,18 @@ namespace Drupal\Tests\payment\Unit\Element {
      * @covers ::buildRefreshButton
      */
     public function testBuildRefreshButton() {
-      $limit_allowed_payment_method_ids = [$this->randomMachineName()];
+      $limit_allowed_plugin_ids = [$this->randomMachineName()];
 
-      $payment_method_selector_id = $this->randomMachineName();
+      $plugin_selector_id = $this->randomMachineName();
 
-      $payment_method_selector = $this->getMock('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface');
+      $plugin_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
 
-      $this->paymentMethodSelectorManager->expects($this->atLeastOnce())
+      $this->pluginSelectorManager->expects($this->atLeastOnce())
         ->method('createInstance')
-        ->with($payment_method_selector_id)
-        ->willReturn($payment_method_selector);
+        ->with($plugin_selector_id)
+        ->willReturn($plugin_selector);
 
-      $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-        ->disableOriginalConstructor()
-        ->getMock();
+      $payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
       $payment->expects($this->atLeastOnce())
         ->method('createDuplicate')
         ->willReturnSelf();
@@ -728,13 +708,13 @@ namespace Drupal\Tests\payment\Unit\Element {
         'container' => array(
           '#id' => $this->randomMachineName(),
         ),
-        '#limit_allowed_payment_method_ids' => $limit_allowed_payment_method_ids,
+        '#limit_allowed_plugin_ids' => $limit_allowed_plugin_ids,
         '#name' => $this->randomMachineName(),
-        '#payment_method_selector_id' => $payment_method_selector_id,
+        '#plugin_selector_id' => $plugin_selector_id,
         '#prototype_payment' => $payment,
         '#required' => (bool) mt_rand(0, 1),
       );
-      $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+      $form_state = new FormState();
 
       $method = new \ReflectionMethod($this->element, 'buildRefreshButton');
       $method->setAccessible(TRUE);
@@ -749,26 +729,27 @@ namespace Drupal\Tests\payment\Unit\Element {
      * @covers ::buildPaymentForm
      */
     public function testBuildPaymentForm() {
+      $payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
+      $payment->expects($this->atLeastOnce())
+        ->method('createDuplicate')
+        ->willReturnSelf();
+
       $element = array(
         '#parents' => array($this->randomMachineName()),
+        '#prototype_payment' => $payment,
       );
-      $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+      $form_state = new FormState();
 
       $method = new \ReflectionMethod($this->element, 'buildPaymentForm');
       $method->setAccessible(TRUE);
 
-      $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-        ->disableOriginalConstructor()
-        ->getMock();
+      $payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
 
-      $payment_method_selector = $this->getMock('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface');
-      $payment_method_selector->expects($this->atLeastOnce())
-        ->method('buildConfigurationForm')
+      $plugin_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+      $plugin_selector->expects($this->atLeastOnce())
+        ->method('buildSelectorForm')
         ->with([], $form_state)
         ->willReturn([]);
-      $payment_method_selector->expects($this->atLeastOnce())
-        ->method('getPayment')
-        ->willReturn($payment);
 
       $configuration = [];
       $plugin_id = $this->randomMachineName();
@@ -779,16 +760,16 @@ namespace Drupal\Tests\payment\Unit\Element {
         ->with($payment, $this->isType('array'), $form_state);
 
       $this->element = $this->getMockBuilder('\Drupal\payment\Element\PaymentReferenceBase')
-        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->paymentMethodSelectorManager, new Random()))
-        ->setMethods(array('getEntityFormDisplay', 'getPaymentMethodSelector'))
+        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodManager, new Random()))
+        ->setMethods(array('getEntityFormDisplay', 'getPluginSelector'))
         ->getMockForAbstractClass();
       $this->element->expects($this->atLeastOnce())
         ->method('getEntityFormDisplay')
         ->willReturn($entity_form_display);
       $this->element->expects($this->atLeastOnce())
-        ->method('getPaymentMethodSelector')
+        ->method('getPluginSelector')
         ->with($element, $form_state)
-        ->willReturn($payment_method_selector);
+        ->willReturn($plugin_selector);
 
       $build = $method->invoke($this->element, $element, $form_state);
       $this->assertInternalType('array', $build);
@@ -834,18 +815,16 @@ namespace Drupal\Tests\payment\Unit\Element {
      */
     public function testProcess() {
       $name = $this->randomMachineName();
-      $prototype_payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-        ->disableOriginalConstructor()
-        ->getMock();
-      $payment_method_selector_id = $this->randomMachineName();
+      $prototype_payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
+      $plugin_selector_id = $this->randomMachineName();
       $queue_category_id = $this->randomMachineName();
       $queue_owner_id = mt_rand();
 
       $element = array(
         '#default_value' => NULL,
-        '#limit_allowed_payment_method_ids' => NULL,
+        '#limit_allowed_plugin_ids' => NULL,
         '#name' => $name,
-        '#payment_method_selector_id' => $payment_method_selector_id,
+        '#plugin_selector_id' => $plugin_selector_id,
         '#prototype_payment' => $prototype_payment,
         '#queue_category_id' => $queue_category_id,
         '#queue_owner_id' => $queue_owner_id,
@@ -869,7 +848,7 @@ namespace Drupal\Tests\payment\Unit\Element {
       );
 
       $this->element = $this->getMockBuilder('\Drupal\payment\Element\PaymentReferenceBase')
-        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->paymentMethodSelectorManager, new Random()))
+        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodManager, new Random()))
         ->setMethods(array('buildPaymentForm', 'buildPaymentView', 'buildRefreshButton'))
         ->getMockForAbstractClass();
       $this->element->expects($this->atLeastOnce())
@@ -916,18 +895,16 @@ namespace Drupal\Tests\payment\Unit\Element {
      */
     public function providerTestProcess() {
       $name = $this->randomMachineName();
-      $prototype_payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-        ->disableOriginalConstructor()
-        ->getMock();
-      $payment_method_selector_id = $this->randomMachineName();
+      $prototype_payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
+      $plugin_selector_id = $this->randomMachineName();
       $queue_category_id = $this->randomMachineName();
       $queue_owner_id = mt_rand();
 
       $element = array(
         '#default_value' => NULL,
-        '#limit_allowed_payment_method_ids' => NULL,
+        '#limit_allowed_plugin_ids' => NULL,
         '#name' => $name,
-        '#payment_method_selector_id' => $payment_method_selector_id,
+        '#plugin_selector_id' => $plugin_selector_id,
         '#prototype_payment' => $prototype_payment,
         '#queue_category_id' => $queue_category_id,
         '#queue_owner_id' => $queue_owner_id,
@@ -938,7 +915,7 @@ namespace Drupal\Tests\payment\Unit\Element {
           '#default_value' => $this->randomMachineName(),
         ))),
         array(array_merge($element, array(
-          '#limit_allowed_payment_method_ids' => $this->randomMachineName(),
+          '#limit_allowed_plugin_ids' => $this->randomMachineName(),
         ))),
         array(array_merge($element, array(
           '#queue_category_id' => mt_rand(),
@@ -947,7 +924,7 @@ namespace Drupal\Tests\payment\Unit\Element {
           '#queue_owner_id' => $this->randomMachineName(),
         ))),
         array(array_merge($element, array(
-          '#payment_method_selector_id' => mt_rand(),
+          '#plugin_selector_id' => mt_rand(),
         ))),
         array(array_merge($element, array(
           '#prototype_payment' => $this->randomMachineName(),

@@ -64,14 +64,14 @@ class PaymentUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::methodSelectorManager
+   * @covers ::pluginSelectorManager
    */
-  public function testMethodSelectorManager() {
+  public function testPluginSelectorManager() {
     $container = new Container();
-    $method_selector_manager= $this->getMock('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface');
-    $container->set('plugin.manager.payment.method_selector', $method_selector_manager);
+    $method_selector_manager= $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface');
+    $container->set('plugin.manager.payment.plugin_selector', $method_selector_manager);
     \Drupal::setContainer($container);
-    $this->assertSame($method_selector_manager, Payment::methodSelectorManager());
+    $this->assertSame($method_selector_manager, Payment::pluginSelectorManager());
   }
 
   /**

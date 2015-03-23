@@ -11,9 +11,12 @@ use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface;
-use Drupal\payment\Response\ResponseInterface;
+use Drupal\payment\Plugin\Payment\DefaultPluginDefinitionMapper;
+use Drupal\payment\Plugin\Payment\Method\FilteredPaymentMethodManager;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
+use Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -22,11 +25,25 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class PaymentForm extends ContentEntityForm {
 
   /**
-   * The payment method selector manager.
+   * The current user.
    *
-   * @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface
+   * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $paymentMethodSelectorManager;
+  protected $currentUser;
+
+  /**
+   * The payment method manager.
+   *
+   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface
+   */
+  protected $paymentMethodManager;
+
+  /**
+   * The plugin selector manager.
+   *
+   * @var \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface
+   */
+  protected $pluginSelectorManager;
 
   /**
    * Constructs a new instance.
@@ -34,12 +51,15 @@ class PaymentForm extends ContentEntityForm {
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    *   The entity manager.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
-   * @param \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface $payment_method_selector_manager
-   *   The payment method selector manager.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   * @param \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface $plugin_selector_manager
+   * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface $payment_method_manager
    */
-  public function __construct(EntityManagerInterface $entity_manager, TranslationInterface $string_translation, PaymentMethodSelectorManagerInterface $payment_method_selector_manager) {
+  public function __construct(EntityManagerInterface $entity_manager, TranslationInterface $string_translation, AccountInterface $current_user, PluginSelectorManagerInterface $plugin_selector_manager, PaymentMethodManagerInterface $payment_method_manager) {
     parent::__construct($entity_manager);
-    $this->paymentMethodSelectorManager = $payment_method_selector_manager;
+    $this->currentUser = $current_user;
+    $this->paymentMethodManager = $payment_method_manager;
+    $this->pluginSelectorManager = $plugin_selector_manager;
     $this->stringTranslation = $string_translation;
   }
 
@@ -48,7 +68,7 @@ class PaymentForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('entity.manager'), $container->get('string_translation'), $container->get('plugin.manager.payment.method_selector'));
+    return new static($container->get('entity.manager'), $container->get('string_translation'), $container->get('current_user'), $container->get('plugin.manager.payment.plugin_selector'), $container->get('plugin.manager.payment.method'));
   }
 
   /**
@@ -57,28 +77,11 @@ class PaymentForm extends ContentEntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     $payment = $this->getEntity();
 
-    if ($form_state->has('payment_method_selector')) {
-      $payment_method_selector = $form_state->get('payment_method_selector');
-    }
-    else {
-      $config = $this->config('payment_form.payment_type');
-      $payment_method_selector_id = $config->get('payment_method_selector_id');
-      $limit_allowed_payment_methods = $config->get('limit_allowed_payment_methods');
-      $allowed_payment_method_ids = $config->get('allowed_payment_method_ids');
-      $payment_method_selector = $this->paymentMethodSelectorManager->createInstance($payment_method_selector_id);
-      if ($limit_allowed_payment_methods) {
-        $payment_method_selector->setAllowedPaymentMethods($allowed_payment_method_ids);
-      }
-      $payment_method_selector->setPayment($payment);
-      $payment_method_selector->setRequired();
-      $form_state->set('payment_method_selector', $payment_method_selector);
-    }
-
     $form['line_items'] = array(
       '#payment' => $payment,
       '#type' => 'payment_line_items_display',
     );
-    $form['payment_method'] = $payment_method_selector->buildConfigurationForm([], $form_state);
+    $form['payment_method'] = $this->getPluginSelector($form_state)->buildSelectorForm([], $form_state);
 
     return parent::form($form, $form_state);
   }
@@ -87,9 +90,7 @@ class PaymentForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface $payment_method_selector */
-    $payment_method_selector = $form_state->get('payment_method_selector');
-    $payment_method_selector->validateConfigurationForm($form['payment_method'], $form_state);
+    $this->getPluginSelector($form_state)->validateSelectorForm($form['payment_method'], $form_state);
   }
 
   /**
@@ -98,10 +99,9 @@ class PaymentForm extends ContentEntityForm {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->getEntity();
-    /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface $payment_method_selector */
-    $payment_method_selector = $form_state->get('payment_method_selector');
-    $payment_method_selector->submitConfigurationForm($form['payment_method'], $form_state);
-    $payment->setPaymentMethod($payment_method_selector->getPaymentMethod());
+    $plugin_selector = $this->getPluginSelector($form_state);
+    $plugin_selector->submitSelectorForm($form['payment_method'], $form_state);
+    $payment->setPaymentMethod($plugin_selector->getSelectedPlugin());
     $payment->save();
     $result = $payment->execute();
     if (!$result->hasCompleted()) {
@@ -119,9 +119,8 @@ class PaymentForm extends ContentEntityForm {
       'submit' => $actions['submit'],
     );
     $actions['submit']['#value'] = $this->t('Pay');
-    /** @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface $payment_method_selector */
-    $payment_method_selector = $form_state->get('payment_method_selector');
-    if (count($payment_method_selector->getAvailablePaymentMethods()) == 0) {
+    $payment_method_manager = new FilteredPaymentMethodManager($this->paymentMethodManager, $this->getEntity(), $this->currentUser);
+    if (count($payment_method_manager->getDefinitions()) == 0) {
       $actions['submit']['#disabled'] = TRUE;
     }
 
@@ -135,6 +134,36 @@ class PaymentForm extends ContentEntityForm {
     // Remove this override once https://drupal.org/node/2409143 has been fixed.
     $this->getFormDisplay($form_state)
       ->extractFormValues($entity, $form, $form_state);
+  }
+
+  /**
+   * Gets the plugin selector.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface
+   */
+  protected function getPluginSelector(FormStateInterface $form_state) {
+    if ($form_state->has('plugin_selector')) {
+      $plugin_selector = $form_state->get('plugin_selector');
+    }
+    else {
+      $config = $this->config('payment_form.payment_type');
+      $plugin_selector_id = $config->get('plugin_selector_id');
+      $limit_allowed_plugins = $config->get('limit_allowed_plugins');
+      $allowed_plugin_ids = $config->get('allowed_plugin_ids');
+      $plugin_selector = $this->pluginSelectorManager->createInstance($plugin_selector_id);
+      $mapper = new DefaultPluginDefinitionMapper();
+      $payment_method_manager = new FilteredPaymentMethodManager($this->paymentMethodManager, $this->getEntity(), $this->currentUser);
+      if ($limit_allowed_plugins) {
+        $payment_method_manager->setPluginIdFilter($allowed_plugin_ids);
+      }
+      $plugin_selector->setPluginManager($payment_method_manager, $mapper);
+      $plugin_selector->setRequired();
+      $form_state->set('plugin_selector', $plugin_selector);
+    }
+
+    return $plugin_selector;
   }
 
 }

@@ -2,21 +2,21 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\payment\Unit\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerUnitTest.
+ * Contains \Drupal\Tests\payment\Unit\Plugin\Payment\PluginSelector\PluginSelectorManagerUnitTest.
  */
 
-namespace Drupal\Tests\payment\Unit\Plugin\Payment\MethodSelector;
+namespace Drupal\Tests\payment\Unit\Plugin\Payment\PluginSelector;
 
-use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManager;
+use Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManager;
 use Drupal\Tests\UnitTestCase;
 use Zend\Stdlib\ArrayObject;
 
 /**
- * @coversDefaultClass \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManager
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManager
  *
  * @group Payment
  */
-class PaymentMethodSelectorManagerUnitTest extends UnitTestCase {
+class PluginSelectorManagerUnitTest extends UnitTestCase {
 
   /**
    * The cache backend used for testing.
@@ -47,16 +47,14 @@ class PaymentMethodSelectorManagerUnitTest extends UnitTestCase {
   protected $moduleHandler;
 
   /**
-   * The payment method plugin manager under test.
+   * The class under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManager
+   * @var \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManager
    */
-  public $paymentMethodSelectorManager;
+  public $paymentPluginSelectorManager;
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->discovery = $this->getMock('\Drupal\Component\Plugin\Discovery\DiscoveryInterface');
@@ -69,13 +67,21 @@ class PaymentMethodSelectorManagerUnitTest extends UnitTestCase {
 
     $namespaces = new ArrayObject();
 
-    $this->paymentMethodSelectorManager = new PaymentMethodSelectorManager($namespaces, $this->cache, $this->moduleHandler);
-    $property = new \ReflectionProperty($this->paymentMethodSelectorManager, 'discovery');
+    $this->paymentPluginSelectorManager = new PluginSelectorManager($namespaces, $this->cache, $this->moduleHandler);
+    $property = new \ReflectionProperty($this->paymentPluginSelectorManager, 'discovery');
     $property->setAccessible(TRUE);
-    $property->setValue($this->paymentMethodSelectorManager, $this->discovery);
-    $property = new \ReflectionProperty($this->paymentMethodSelectorManager, 'factory');
+    $property->setValue($this->paymentPluginSelectorManager, $this->discovery);
+    $property = new \ReflectionProperty($this->paymentPluginSelectorManager, 'factory');
     $property->setAccessible(TRUE);
-    $property->setValue($this->paymentMethodSelectorManager, $this->factory);
+    $property->setValue($this->paymentPluginSelectorManager, $this->factory);
+  }
+
+  /**
+   * @covers ::__construct
+   */
+  public function testConstruct() {
+    $namespaces = new ArrayObject();
+    $this->paymentPluginSelectorManager = new PluginSelectorManager($namespaces, $this->cache, $this->moduleHandler);
   }
 
   /**
@@ -84,7 +90,7 @@ class PaymentMethodSelectorManagerUnitTest extends UnitTestCase {
   public function testGetFallbackPluginId() {
     $plugin_id = $this->randomMachineName();
     $plugin_configuration = array($this->randomMachineName());
-    $this->assertInternalType('string', $this->paymentMethodSelectorManager->getFallbackPluginId($plugin_id, $plugin_configuration));
+    $this->assertInternalType('string', $this->paymentPluginSelectorManager->getFallbackPluginId($plugin_id, $plugin_configuration));
   }
 
   /**
@@ -101,27 +107,8 @@ class PaymentMethodSelectorManagerUnitTest extends UnitTestCase {
       ->will($this->returnValue($definitions));
     $this->moduleHandler->expects($this->once())
       ->method('alter')
-      ->with('payment_method_selector');
-    $this->assertSame($definitions, $this->paymentMethodSelectorManager->getDefinitions());
+      ->with('payment_plugin_selector');
+    $this->assertSame($definitions, $this->paymentPluginSelectorManager->getDefinitions());
   }
 
-  /**
-   * @covers ::options
-   * @depends testGetDefinitions
-   */
-  public function testOptions() {
-    $label = $this->randomMachineName();
-    $definitions = array(
-      'foo' => array(
-        'label' => $label,
-      ),
-    );
-    $this->discovery->expects($this->once())
-      ->method('getDefinitions')
-      ->will($this->returnValue($definitions));
-    $expected_options = array(
-      'foo' => $label,
-    );
-    $this->assertSame($expected_options, $this->paymentMethodSelectorManager->options());
-  }
 }

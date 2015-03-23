@@ -79,7 +79,6 @@ class PaymentReferenceWebTest extends WebTestBase {
     // Test without selecting a payment method.
     $this->drupalGet($path);
     $this->drupalPostForm(NULL, [], t('Pay'));
-    $this->assertText('Payment method field is required');
     $this->assertText('quxfoobar field is required');
     $value = $state->get('payment_reference_test_payment_reference_element');
     $this->assertNull($value);
@@ -87,9 +86,9 @@ class PaymentReferenceWebTest extends WebTestBase {
     // Test with a payment method that returns no execution completion response.
     $text_field_value = $this->randomMachineName();
     $this->drupalPostForm($path, array(
-      'payment_reference[container][payment_form][payment_method][container][select][container][payment_method_id]' => 'payment_test_no_response',
+      'payment_reference[container][payment_form][payment_method][container][select][container][plugin_id]' => 'payment_test_no_response',
       'payment_reference[container][payment_form][quxfoobar][0][value]' => $text_field_value,
-    ), t('Choose payment method'));
+    ), t('Choose'));
     $this->drupalPostForm(NULL, [], t('Pay'));
     $this->drupalPostForm(NULL, [], t('Submit'));
     $payment_id = $state->get('payment_reference_test_payment_reference_element');
@@ -102,9 +101,9 @@ class PaymentReferenceWebTest extends WebTestBase {
     // Test with a payment method that returns an execution completion response.
     $text_field_value = $this->randomMachineName();
     $this->drupalPostForm($path, array(
-      'payment_reference[container][payment_form][payment_method][container][select][container][payment_method_id]' => 'payment_test_response',
+      'payment_reference[container][payment_form][payment_method][container][select][container][plugin_id]' => 'payment_test_response',
       'payment_reference[container][payment_form][quxfoobar][0][value]' => $text_field_value,
-    ), t('Choose payment method'));
+    ), t('Choose'));
     $this->drupalPostForm(NULL, [], t('Pay'));
     $this->clickLink(t('Complete payment (opens in a new window).'));
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */

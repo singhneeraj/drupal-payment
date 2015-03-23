@@ -7,13 +7,15 @@
 
 namespace Drupal\payment_form\Plugin\Payment\Type;
 
+use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\payment\Plugin\Payment\DefaultPluginDefinitionMapper;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
-use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface;
+use Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -29,11 +31,11 @@ class PaymentFormConfigurationForm extends ConfigFormBase {
   protected $paymentMethodManager;
 
   /**
-   * The payment method selector manager.
+   * The plugin selector manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface
+   * @var \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface
    */
-  protected $paymentMethodSelectorManager;
+  protected $pluginSelectorManager;
 
   /**
    * Constructs a \Drupal\system\ConfigFormBase object.
@@ -41,12 +43,12 @@ class PaymentFormConfigurationForm extends ConfigFormBase {
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface $payment_method_manager
-   * @param \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface $payment_method_selector_manager
+   * @param \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface $plugin_selector_manager
    */
-  public function __construct(ConfigFactoryInterface $config_factory, TranslationInterface $string_translation, PaymentMethodManagerInterface $payment_method_manager, PaymentMethodSelectorManagerInterface $payment_method_selector_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, TranslationInterface $string_translation, PaymentMethodManagerInterface $payment_method_manager, PluginSelectorManagerInterface $plugin_selector_manager) {
     parent::__construct($config_factory);
     $this->paymentMethodManager = $payment_method_manager;
-    $this->paymentMethodSelectorManager = $payment_method_selector_manager;
+    $this->pluginSelectorManager = $plugin_selector_manager;
     $this->stringTranslation = $string_translation;
   }
 
@@ -58,7 +60,7 @@ class PaymentFormConfigurationForm extends ConfigFormBase {
       $container->get('config.factory'),
       $container->get('string_translation'),
       $container->get('plugin.manager.payment.method'),
-      $container->get('plugin.manager.payment.method_selector')
+      $container->get('plugin.manager.payment.plugin_selector')
     );
   }
 
@@ -82,27 +84,27 @@ class PaymentFormConfigurationForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('payment_form.payment_type');
 
-    $form['payment_method_selector_id'] = array(
-      '#default_value' => $config->get('payment_method_selector_id'),
-      '#options' => $this->paymentMethodSelectorManager->options(),
-      '#title' => $this->t('Payment method selector'),
-      '#type' => 'radios',
-    );
-    $limit_allowed_payment_methods_id = Html::getUniqueId('limit_allowed_payment_methods');
-    $form['limit_allowed_payment_methods'] = array(
-      '#default_value' => $config->get('limit_allowed_payment_methods'),
-      '#id' => $limit_allowed_payment_methods_id,
+    $form['plugin_selector'] = $this->getPluginSelector($form_state)->buildSelectorForm([], $form_state);
+
+    $limit_allowed_plugins_id = Html::getUniqueId('limit_allowed_plugins');
+    $form['limit_allowed_plugins'] = array(
+      '#default_value' => $config->get('limit_allowed_plugins'),
+      '#id' => $limit_allowed_plugins_id,
       '#title' => $this->t('Limit allowed payment methods'),
       '#type' => 'checkbox',
     );
-    $allowed_payment_method_ids = $config->get('allowed_payment_method_ids');
-    $form['allowed_payment_method_ids'] = array(
-      '#default_value' => $allowed_payment_method_ids,
+    $allowed_plugin_ids = $config->get('allowed_plugin_ids');
+    $options = [];
+    foreach ($this->paymentMethodManager->getDefinitions() as $definition) {
+      $options[$definition['id']] = $definition['label'];
+    }
+    $form['allowed_plugin_ids'] = array(
+      '#default_value' => $allowed_plugin_ids,
       '#multiple' => TRUE,
-      '#options' => $this->paymentMethodManager->options(),
+      '#options' => $options,
       '#states' => array(
         'visible' => array(
-          '#' . $limit_allowed_payment_methods_id => array(
+          '#' . $limit_allowed_plugins_id => array(
             'checked' => TRUE,
           ),
         ),
@@ -117,14 +119,56 @@ class PaymentFormConfigurationForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    $this->getPluginSelector($form_state)->validateSelectorForm($form['plugin_selector'], $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    $plugin_selector = $this->getPluginSelector($form_state);
+    $plugin_selector->submitSelectorForm($form['plugin_selector'], $form_state);
+    $selected_plugin = $plugin_selector->getSelectedPlugin();
     $config = $this->config('payment_form.payment_type');
     $values = $form_state->getValues();
-    $config->set('payment_method_selector_id', $values['payment_method_selector_id']);
-    $config->set('limit_allowed_payment_methods', $values['limit_allowed_payment_methods']);
-    $config->set('allowed_payment_method_ids', $values['allowed_payment_method_ids']);
+    $config->set('plugin_selector_id', $selected_plugin->getPluginId());
+    if ($selected_plugin instanceof ConfigurablePluginInterface) {
+      $selected_plugin_configuration = $selected_plugin->getConfiguration();
+    }
+    else {
+      $selected_plugin_configuration = [];
+    }
+    $config->set('plugin_selector_configuration', $selected_plugin_configuration);
+    $config->set('limit_allowed_plugins', $values['limit_allowed_plugins']);
+    $config->set('allowed_plugin_ids', $values['allowed_plugin_ids']);
     $config->save();
     parent::submitForm($form, $form_state);
+  }
+
+  /**
+   * Gets the plugin selector.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface
+   */
+  protected function getPluginSelector(FormStateInterface $form_state) {
+    $config = $this->config('payment_form.payment_type');
+    if ($form_state->has('plugin_selector')) {
+      $plugin_selector = $form_state->get('plugin_selector');
+    }
+    else {
+      $plugin_selector = $this->pluginSelectorManager->createInstance('payment_radios');
+      $mapper = new DefaultPluginDefinitionMapper();
+      $plugin_selector->setPluginManager($this->pluginSelectorManager, $mapper);
+      $plugin_selector->setLabel($this->t('Payment method selector'));
+      $plugin_selector->setRequired();
+      $plugin_selector->setSelectedPlugin($this->pluginSelectorManager->createInstance($config->get('plugin_selector_id')));
+      $form_state->set('plugin_selector', $plugin_selector);
+    }
+
+    return $plugin_selector;
   }
 
 }

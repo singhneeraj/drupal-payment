@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Annotations\PaymentMethodSelector.
+ * Contains \Drupal\payment\Annotations\PluginSelector.
  */
 
 namespace Drupal\payment\Annotations;
@@ -10,11 +10,11 @@ namespace Drupal\payment\Annotations;
 use Drupal\Component\Annotation\Plugin;
 
 /**
- * Defines a payment method selector plugin annotation.
+ * Defines a plugin selector plugin annotation.
  *
  * @Annotation
  */
-class PaymentMethodSelector extends Plugin {
+class PluginSelector extends Plugin {
 
   /**
    * The plugin ID.

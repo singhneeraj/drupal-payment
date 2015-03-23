@@ -114,23 +114,4 @@ class PaymentMethodManagerUnitTest extends UnitTestCase {
     $this->assertSame($definitions, $this->paymentMethodManager->getDefinitions());
   }
 
-  /**
-   * @covers ::options
-   * @depends testGetDefinitions
-   */
-  public function testOptions() {
-    $label = $this->randomMachineName();
-    $definitions = array(
-      'foo' => array(
-        'label' => $label,
-      ),
-    );
-    $this->discovery->expects($this->once())
-      ->method('getDefinitions')
-      ->will($this->returnValue($definitions));
-    $expected_options = array(
-      'foo' => $label,
-    );
-    $this->assertSame($expected_options, $this->paymentMethodManager->options());
-  }
 }

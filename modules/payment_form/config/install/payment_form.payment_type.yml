@@ -1,3 +1,4 @@
-payment_method_selector_id: payment_select_list
-limit_allowed_payment_methods: false
-allowed_payment_method_ids: []
+plugin_selector_id: payment_select_list
+plugin_selector_configuration: []
+limit_allowed_plugins: false
+allowed_plugin_ids: []

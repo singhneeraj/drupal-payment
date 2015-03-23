@@ -38,18 +38,25 @@ class PaymentFormUnitTest extends UnitTestCase {
   protected $configFactoryConfiguration = [];
 
   /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $currentUser;
+
+  /**
    * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $entityManager;
 
   /**
-   * The form under test.
+   * The class under test.
    *
    * @var \Drupal\payment_form\Entity\Payment\PaymentForm
    */
-  protected $form;
+  protected $sut;
 
   /**
    * The form display.
@@ -66,18 +73,25 @@ class PaymentFormUnitTest extends UnitTestCase {
   protected $payment;
 
   /**
-   * The payment method selector used for testing.
+   * The payment method manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $paymentMethodSelector;
+  protected $paymentMethodManager;
 
   /**
-   * The payment method selector manager used for testing.
+   * The plugin selector.
    *
-   * @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $paymentMethodSelectorManager;
+  protected $pluginSelector;
+
+  /**
+   * The plugin selector manager.
+   *
+   * @var \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $pluginSelectorManager;
 
   /**
    * The string translation service.
@@ -88,52 +102,55 @@ class PaymentFormUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   protected function setUp() {
+    $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
+
     $this->entityManager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
 
     $this->formDisplay = $this->getMock('\Drupal\Core\Entity\Display\EntityFormDisplayInterface');
 
-    $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
 
-    $this->paymentMethodSelector = $this->getMock('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface');
+    $this->paymentMethodManager = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface');
 
-    $this->paymentMethodSelectorManager = $this->getMock('\Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface');
+    $this->pluginSelector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+
+    $this->pluginSelectorManager = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface');
 
     $this->stringTranslation = $this->getStringTranslationStub();
 
     $this->configFactoryConfiguration = array(
       'payment_form.payment_type' => array(
-        'limit_allowed_payment_methods' => TRUE,
-        'allowed_payment_method_ids' => array($this->randomMachineName()),
-        'payment_method_selector_id' => $this->randomMachineName(),
+        'limit_allowed_plugins' => TRUE,
+        'allowed_plugin_ids' => array($this->randomMachineName()),
+        'plugin_selector_id' => $this->randomMachineName(),
       ),
     );
 
     $this->configFactory = $this->getConfigFactoryStub($this->configFactoryConfiguration);
 
-    $this->form = new PaymentForm($this->entityManager, $this->stringTranslation, $this->paymentMethodSelectorManager);
-    $this->form->setConfigFactory($this->configFactory);
-    $this->form->setEntity($this->payment);
+    $this->sut = new PaymentForm($this->entityManager, $this->stringTranslation, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodManager);
+    $this->sut->setConfigFactory($this->configFactory);
+    $this->sut->setEntity($this->payment);
   }
 
   /**
    * @covers ::create
+   * @covers ::__construct
    */
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
+      array('current_user', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->currentUser),
       array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager),
-      array('plugin.manager.payment.method_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodSelectorManager),
+      array('plugin.manager.payment.method', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodManager),
+      array('plugin.manager.payment.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
     $container->expects($this->any())
       ->method('get')
-      ->will($this->returnValueMap($map));
+      ->willReturnMap($map);
 
     $form = PaymentForm::create($container);
     $this->assertInstanceOf('\Drupal\payment_form\Entity\Payment\PaymentForm', $form);
@@ -141,50 +158,49 @@ class PaymentFormUnitTest extends UnitTestCase {
 
   /**
    * @covers ::form
+   * @covers ::getPluginSelector
    */
   public function testForm() {
-    $payment_method_selector_build = array(
+    $plugin_selector_build = array(
       '#type' => $this->randomMachineName(),
     );
-    $this->paymentMethodSelector->expects($this->atLeastOnce())
-      ->method('buildConfigurationForm')
-      ->will($this->returnValue($payment_method_selector_build));
-    $this->paymentMethodSelector->expects($this->once())
-      ->method('setAllowedPaymentMethods')
-      ->with($this->configFactoryConfiguration['payment_form.payment_type']['allowed_payment_method_ids']);
+    $this->pluginSelector->expects($this->atLeastOnce())
+      ->method('buildSelectorForm')
+      ->willReturn($plugin_selector_build);
 
-    $this->paymentMethodSelectorManager->expects($this->once())
+    $this->pluginSelectorManager->expects($this->once())
       ->method('createInstance')
-      ->with($this->configFactoryConfiguration['payment_form.payment_type']['payment_method_selector_id'])
-      ->will($this->returnValue($this->paymentMethodSelector));
+      ->with($this->configFactoryConfiguration['payment_form.payment_type']['plugin_selector_id'])
+      ->willReturn($this->pluginSelector);
 
     $payment_type = $this->getMock('\Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface');
     $this->payment->expects($this->any())
       ->method('getPaymentType')
-      ->will($this->returnValue($payment_type));
+      ->willReturn($payment_type);
     $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
     $this->payment->expects($this->any())
       ->method('entityInfo')
-      ->will($this->returnValue($entity_type));
+      ->willReturn($entity_type);
 
     $form = array(
       'langcode' => [],
     );
     $form_state = new FormState();
-    $this->form->setFormDisplay($this->formDisplay, $form_state);
-    $build = $this->form->form($form, $form_state);
-    // Build the form a second time to make sure the payment method selector is
-    // only instantiated once.
-    $this->form->form($form, $form_state);
+    $this->sut->setFormDisplay($this->formDisplay, $form_state);
+    $build = $this->sut->form($form, $form_state);
+    // Build the form a second time to make sure the plugin selector is only
+    // instantiated once.
+    $this->sut->form($form, $form_state);
     $this->assertInternalType('array', $build);
     $this->assertArrayHasKey('line_items', $build);
     $this->assertSame($this->payment, $build['line_items']['#payment']);
     $this->assertArrayHasKey('payment_method', $build);
-    $this->assertSame($payment_method_selector_build, $build['payment_method']);
+    $this->assertSame($plugin_selector_build, $build['payment_method']);
   }
 
   /**
    * @covers ::validateForm
+   * @covers ::getPluginSelector
    */
   public function testValidateForm() {
     $form = array(
@@ -192,21 +208,23 @@ class PaymentFormUnitTest extends UnitTestCase {
         '#type' => $this->randomMachineName(),
       ),
     );
-    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
-    $form_state->expects($this->atLeastOnce())
-      ->method('get')
-      ->with('payment_method_selector')
-      ->willReturn($this->paymentMethodSelector);
+    $form_state = new FormState();
 
-    $this->paymentMethodSelector->expects($this->once())
-      ->method('validateConfigurationForm')
+    $this->pluginSelectorManager->expects($this->once())
+      ->method('createInstance')
+      ->with($this->configFactoryConfiguration['payment_form.payment_type']['plugin_selector_id'])
+      ->willReturn($this->pluginSelector);
+
+    $this->pluginSelector->expects($this->once())
+      ->method('validateSelectorForm')
       ->with($form['payment_method'], $form_state);
 
-    $this->form->validateForm($form, $form_state);
+    $this->sut->validateForm($form, $form_state);
   }
 
   /**
    * @covers ::submitForm
+   * @covers ::getPluginSelector
    */
   public function testSubmitForm() {
     $redirect_url = new Url($this->randomMachineName());
@@ -222,22 +240,20 @@ class PaymentFormUnitTest extends UnitTestCase {
         '#type' => $this->randomMachineName(),
       ),
     );
-    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
-    $form_state->expects($this->atLeastOnce())
-      ->method('get')
-      ->with('payment_method_selector')
-      ->willReturn($this->paymentMethodSelector);
-    $form_state->expects($this->atLeastOnce())
-      ->method('setRedirectUrl')
-      ->with($redirect_url);
+    $form_state = new FormState();
 
     $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
 
-    $this->paymentMethodSelector->expects($this->atLeastOnce())
-      ->method('getPaymentMethod')
-      ->will($this->returnValue($payment_method));
-    $this->paymentMethodSelector->expects($this->atLeastOnce())
-      ->method('submitConfigurationForm')
+    $this->pluginSelectorManager->expects($this->once())
+      ->method('createInstance')
+      ->with($this->configFactoryConfiguration['payment_form.payment_type']['plugin_selector_id'])
+      ->willReturn($this->pluginSelector);
+
+    $this->pluginSelector->expects($this->atLeastOnce())
+      ->method('getSelectedPlugin')
+      ->willReturn($payment_method);
+    $this->pluginSelector->expects($this->atLeastOnce())
+      ->method('submitSelectorForm')
       ->with($form['payment_method'], $form_state);
 
     $this->payment->expects($this->atLeastOnce())
@@ -249,44 +265,65 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->method('execute')
       ->willReturn($result);
 
-    $this->form->submitForm($form, $form_state);
+    $this->sut->submitForm($form, $form_state);
+    $this->assertSame($redirect_url, $form_state->getRedirect());
   }
 
   /**
    * @covers ::actions
    */
-  public function testActionsWithAvailablePaymentmethods() {
+  public function testActionsWithAvailablePlugins() {
     $form = [];
     $form_state = new FormState();
-    $form_state->set('payment_method_selector', $this->paymentMethodSelector);
+    $form_state->set('plugin_selector', $this->pluginSelector);
 
-    $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
+    $plugin_id_a = $this->randomMachineName();
+    $plugin_id_b = $this->randomMachineName();
 
-    $this->paymentMethodSelector->expects($this->atLeastOnce())
-      ->method('getAvailablePaymentMethods')
-      ->willReturn([$payment_method]);
+    $plugin_a = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
+    $plugin_b = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
 
-    $method = new \ReflectionMethod($this->form, 'actions');
+    $plugin_definitions = [
+      [
+        'id' => $plugin_id_a,
+      ],
+      [
+        'id' => $plugin_id_b,
+      ],
+    ];
+
+    $this->paymentMethodManager->expects($this->atLeastOnce())
+      ->method('getDefinitions')
+      ->willReturn($plugin_definitions);
+    $map = [
+      [$plugin_id_a, [], $plugin_a],
+      [$plugin_id_b, [], $plugin_b],
+    ];
+    $this->paymentMethodManager->expects($this->atLeast(count($plugin_definitions)))
+      ->method('createInstance')
+      ->willReturnMap($map);
+
+    $method = new \ReflectionMethod($this->sut, 'actions');
     $method->setAccessible(TRUE);
-    $actions = $method->invokeArgs($this->form, array($form, $form_state));
-    $this->assertTrue(empty($actions['submit']['#disabled']));
+    $actions = $method->invokeArgs($this->sut, array($form, $form_state));
+    $this->assertFalse(empty($actions['submit']['#disabled']));
   }
 
   /**
    * @covers ::actions
    */
-  public function testActionsWithoutAvailablePaymentmethods() {
+  public function testActionsWithoutAvailablePlugins() {
     $form = [];
     $form_state = new FormState();
-    $form_state->set('payment_method_selector', $this->paymentMethodSelector);
+    $form_state->set('plugin_selector', $this->pluginSelector);
 
-    $this->paymentMethodSelector->expects($this->atLeastOnce())
-      ->method('getAvailablePaymentMethods')
+    $this->paymentMethodManager->expects($this->atLeastOnce())
+      ->method('getDefinitions')
       ->willReturn([]);
 
-    $method = new \ReflectionMethod($this->form, 'actions');
+    $method = new \ReflectionMethod($this->sut, 'actions');
     $method->setAccessible(TRUE);
-    $actions = $method->invokeArgs($this->form, array($form, $form_state));
+    $actions = $method->invokeArgs($this->sut, array($form, $form_state));
     $this->assertTrue($actions['submit']['#disabled']);
   }
 

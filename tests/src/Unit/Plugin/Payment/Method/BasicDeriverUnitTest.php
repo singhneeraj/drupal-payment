@@ -184,6 +184,7 @@ class BasicDeriverUnitTest extends UnitTestCase {
     $class = $this->randomMachineName();
     $derivatives = $this->deriver->getDerivativeDefinitions(array(
       'class' => $class,
+      'id' => $this->randomMachineName(),
     ));
     $this->assertInternalType('array', $derivatives);
     $this->assertCount(2, $derivatives);

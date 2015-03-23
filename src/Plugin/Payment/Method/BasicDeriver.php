@@ -63,6 +63,7 @@ class BasicDeriver extends DeriverBase implements ContainerDeriverInterface {
         /** @var \Drupal\payment\Plugin\Payment\MethodConfiguration\Basic $configuration_plugin */
         $configuration_plugin = $this->paymentMethodConfigurationManager->createInstance($payment_method->getPluginId(), $payment_method->getPluginConfiguration());
         $this->derivatives[$payment_method->id()] = array(
+          'id' => $base_plugin_definition['id'] . ':' . $payment_method->id(),
           'active' => $payment_method->status(),
           'label' => $configuration_plugin->getBrandLabel() ? $configuration_plugin->getBrandLabel() : $payment_method->label(),
           'message_text' => $configuration_plugin->getMessageText(),

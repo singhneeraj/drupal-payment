@@ -22,12 +22,16 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\Render\Element\FormElementInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Utility\LinkGeneratorInterface;
 use Drupal\currency\FormElementCallbackTrait;
 use Drupal\payment\Entity\Payment;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface;
+use Drupal\payment\Plugin\Payment\DefaultPluginDefinitionMapper;
+use Drupal\payment\Plugin\Payment\Method\FilteredPaymentMethodManager;
+use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
+use Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -48,6 +52,13 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
   const KEY_VALUE_TTL = 3600;
 
   /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
    * The date formatter.
    *
    * @var \Drupal\Core\Datetime\DateFormatter
@@ -62,11 +73,11 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
   protected $linkGenerator;
 
   /**
-   * The payment method selector manager.
+   * The payment method manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface
+   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface
    */
-  protected $paymentMethodSelectorManager;
+  protected $paymentMethodManager;
 
   /**
    * The payment storage.
@@ -74,6 +85,13 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
   protected $paymentStorage;
+
+  /**
+   * The plugin selector manager.
+   *
+   * @var \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface
+   */
+  protected $pluginSelectorManager;
 
   /**
    * The random generator.
@@ -111,15 +129,19 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
    * @param \Drupal\Core\Datetime\DateFormatter $date_formatter
    * @param \Drupal\Core\Utility\LinkGeneratorInterface $link_generator
    * @param \Drupal\Core\Render\RendererInterface $renderer
-   * @param \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorManagerInterface $payment_method_selector_manager
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   * @param \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface $plugin_selector_manager
+   * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface $payment_method_manager
    * @param \Drupal\Component\Utility\Random $random
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, RequestStack $request_stack, EntityStorageInterface $payment_storage, TranslationInterface $string_translation, DateFormatter $date_formatter, LinkGeneratorInterface $link_generator, RendererInterface $renderer, PaymentMethodSelectorManagerInterface $payment_method_selector_manager, Random $random) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, RequestStack $request_stack, EntityStorageInterface $payment_storage, TranslationInterface $string_translation, DateFormatter $date_formatter, LinkGeneratorInterface $link_generator, RendererInterface $renderer, AccountInterface $current_user, PluginSelectorManagerInterface $plugin_selector_manager, PaymentMethodManagerInterface $payment_method_manager, Random $random) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->currentUser = $current_user;
     $this->dateFormatter = $date_formatter;
     $this->linkGenerator = $link_generator;
-    $this->paymentMethodSelectorManager = $payment_method_selector_manager;
+    $this->paymentMethodManager = $payment_method_manager;
     $this->paymentStorage = $payment_storage;
+    $this->pluginSelectorManager = $plugin_selector_manager;
     $this->random = $random;
     $this->renderer = $renderer;
     $this->requestStack = $request_stack;
@@ -139,9 +161,9 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
       '#default_value' => NULL,
       // An array with IDs of the payment methods the payer is allowed to pay the
       // payment with, or NULL to allow all.
-      '#limit_allowed_payment_method_ids' => NULL,
-      // The ID of the payment method selector plugin to use.
-      '#payment_method_selector_id' => NULL,
+      '#limit_allowed_plugin_ids' => NULL,
+      // The ID of the plugin selector plugin to use.
+      '#plugin_selector_id' => NULL,
       '#process' => [[get_class($this), 'instantiate#process#' . $plugin_id]],
       // The payment that must be made if none are available in the queue yet. It
       // must be an instance of \Drupal\payment\Entity\PaymentInterface.
@@ -159,11 +181,12 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
    * Implements form API's element_validate callback.
    */
   public function elementValidate(array &$element, FormStateInterface $form_state, array &$form) {
-    $payment_method_selector = $this->getPaymentMethodSelector($element, $form_state);
-    $payment_method_selector->validateConfigurationForm($element['container']['payment_form']['payment_method'], $form_state);
+    $plugin_selector = $this->getPluginSelector($element, $form_state);
+    $plugin_selector->validateSelectorForm($element['container']['payment_form']['payment_method'], $form_state);
     $entity_form_display = $this->getEntityFormDisplay($element, $form_state);
-    $entity_form_display->extractFormValues($payment_method_selector->getPayment(), $element['container']['payment_form'], $form_state);
-    $entity_form_display->validateFormValues($payment_method_selector->getPayment(), $element['container']['payment_form'], $form_state);
+    $payment = $this->getPayment($element, $form_state);
+    $entity_form_display->extractFormValues($payment, $element['container']['payment_form'], $form_state);
+    $entity_form_display->validateFormValues($payment, $element['container']['payment_form'], $form_state);
   }
 
   /**
@@ -180,8 +203,8 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     if (!is_int($element['#default_value']) && !is_null($element['#default_value'])) {
       throw new \InvalidArgumentException('#default_value must be an integer or NULL, but ' . gettype($element['#default_value']) . ' was given.');
     }
-    if (!is_null($element['#limit_allowed_payment_method_ids']) && !is_array($element['#limit_allowed_payment_method_ids'])) {
-      throw new \InvalidArgumentException('#limit_allowed_payment_method_ids must be an array or NULL, but ' . gettype($element['#limit_allowed_payment_method_ids']) . ' was given.');
+    if (!is_null($element['#limit_allowed_plugin_ids']) && !is_array($element['#limit_allowed_plugin_ids'])) {
+      throw new \InvalidArgumentException('#limit_allowed_plugin_ids must be an array or NULL, but ' . gettype($element['#limit_allowed_plugin_ids']) . ' was given.');
     }
     if (!is_string($element['#queue_category_id'])) {
       throw new \InvalidArgumentException('#queue_category_id must be a string, but ' . gettype($element['#queue_category_id']) . ' was given.');
@@ -189,8 +212,8 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     if (!is_int($element['#queue_owner_id'])) {
       throw new \InvalidArgumentException('#queue_owner_id must be an integer, but ' . gettype($element['#queue_owner_id']) . ' was given.');
     }
-    if (!is_string($element['#payment_method_selector_id'])) {
-      throw new \InvalidArgumentException('#payment_method_selector_id must be a string, but ' . gettype($element['#payment_method_selector_id']) . ' was given.');
+    if (!is_string($element['#plugin_selector_id'])) {
+      throw new \InvalidArgumentException('#plugin_selector_id must be a string, but ' . gettype($element['#plugin_selector_id']) . ' was given.');
     }
     if (!($element['#prototype_payment'] instanceof PaymentInterface)) {
       throw new \InvalidArgumentException('#prototype_payment must implement \Drupal\payment\Entity\PaymentInterface.');
@@ -245,18 +268,20 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
       '#parents' => array_merge($element['#parents'], array('container', 'payment_form')),
       '#type' => 'container',
     );
-    $payment_method_selector = $this->getPaymentMethodSelector($element, $form_state);
+    $plugin_selector = $this->getPluginSelector($element, $form_state);
+    /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface|null $selected_payment_method */
+    $selected_payment_method = $plugin_selector->getSelectedPlugin();
     $build['line_items'] = array(
-      '#payment' => $payment_method_selector->getPayment(),
+      '#payment' => $this->getPayment($element, $form_state),
       '#type' => 'payment_line_items_display',
     );
-    $build['payment_method'] = $payment_method_selector->buildConfigurationForm([], $form_state);
-    if ($payment_method_selector->getPaymentMethod() && !$payment_method_selector->getPaymentMethod()->getPaymentExecutionResult()->hasCompleted()) {
+    $build['payment_method'] = $plugin_selector->buildSelectorForm([], $form_state);
+    if ($selected_payment_method && !$selected_payment_method->getPaymentExecutionResult()->hasCompleted()) {
       $this->disableChildren($build['payment_method']);
     }
-    $this->getEntityFormDisplay($element, $form_state)->buildForm($payment_method_selector->getPayment(), $build, $form_state);
+    $this->getEntityFormDisplay($element, $form_state)->buildForm($this->getPayment($element, $form_state), $build, $form_state);
     $build['pay_link'] = $this->buildCompletePaymentLink($element, $form_state);
-    $build['pay_link']['#access'] = !$payment_method_selector->getPaymentMethod() || !$payment_method_selector->getPaymentMethod()->getPaymentExecutionResult()->hasCompleted();
+    $build['pay_link']['#access'] = !$selected_payment_method || !$selected_payment_method->getPaymentExecutionResult()->hasCompleted();
     $build['pay_link']['#process'] = array(array(get_class($this), 'processMaxWeight'));
     $plugin_id = $this->getPluginId();
     $build['pay_button'] = array(
@@ -311,11 +336,13 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
    *   A render array.
    */
   protected function buildRefreshButton(array $element, FormStateInterface $form_state) {
-    $payment_method_selector = $this->getPaymentMethodSelector($element, $form_state);
+    $plugin_selector = $this->getPluginSelector($element, $form_state);
     $class = array('payment_reference-refresh-button');
+    /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface|null $selected_payment_method */
+    $selected_payment_method = $plugin_selector->getSelectedPlugin();
     if (!$element['#default_value']
       && $element['#available_payment_id']
-      && (!$payment_method_selector->getPaymentMethod() || !$payment_method_selector->getPaymentMethod()->getPaymentExecutionResult()->hasCompleted())) {
+      && (!$selected_payment_method || !$selected_payment_method->getPaymentExecutionResult()->hasCompleted())) {
       $class[] = 'payment-reference-hidden';
     }
     $plugin_id = $this->getPluginId();
@@ -411,8 +438,9 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
    *   A render array.
    */
   protected function buildCompletePaymentLink(array $element, FormStateInterface $form_state) {
-    $payment_method_selector = $this->getPaymentMethodSelector($element, $form_state);
-    $payment_method = $payment_method_selector->getPaymentMethod();
+    $plugin_selector = $this->getPluginSelector($element, $form_state);
+    /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface $payment_method */
+    $payment_method = $plugin_selector->getSelectedPlugin();
 
     $build = [];
     if ($payment_method && !$payment_method->getPayment()->isNew()) {
@@ -455,13 +483,14 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     $root_element_parents = array_slice($triggering_element['#array_parents'], 0, -3);
     $root_element = NestedArray::getValue($form, $root_element_parents);
 
-    $payment_method_selector = $this->getPaymentMethodSelector($root_element, $form_state);
-    $payment_method_selector->submitConfigurationForm($root_element['container']['payment_form']['payment_method'], $form_state);
+    $plugin_selector = $this->getPluginSelector($root_element, $form_state);
+    $plugin_selector->submitSelectorForm($root_element['container']['payment_form']['payment_method'], $form_state);
 
-    $this->getEntityFormDisplay($root_element, $form_state)->extractFormValues($payment_method_selector->getPayment(), $root_element['container']['payment_form'], $form_state);
+    $payment = $this->getPayment($root_element, $form_state);
 
-    $payment = $payment_method_selector->getPayment();
-    $payment_method = $payment_method_selector->getPaymentMethod();
+    $this->getEntityFormDisplay($root_element, $form_state)->extractFormValues($payment, $root_element['container']['payment_form'], $form_state);
+
+    $payment_method = $plugin_selector->getSelectedPlugin();
     $payment->setPaymentMethod($payment_method);
 
     $payment->save();
@@ -488,7 +517,10 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     $response = new AjaxResponse();
     $response->addCommand(new ReplaceCommand('#' . $root_element['container']['#id'], $this->renderer->render($root_element['container'])));
 
-    if (!$this->getPaymentMethodSelector($root_element, $form_state)->getPaymentMethod()->getPaymentExecutionResult()->hasCompleted()) {
+    /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface $selected_payment_method */
+    $selected_payment_method = $this->getPluginSelector($root_element, $form_state)->getSelectedPlugin();
+
+    if (!$selected_payment_method->getPaymentExecutionResult()->hasCompleted()) {
       $link = $this->buildCompletePaymentLink($root_element, $form_state);
       $response->addCommand(new OpenModalDialogCommand($this->t('Complete payment'), $this->renderer->render($link)));
     }
@@ -518,28 +550,47 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
   }
 
   /**
-   * Gets the payment method selector.
+   * Gets the plugin selector.
    *
    * @param array $element
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
-   * @return \Drupal\payment\Plugin\Payment\MethodSelector\PaymentMethodSelectorInterface
+   * @return \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface
    */
-  protected function getPaymentMethodSelector(array $element, FormStateInterface $form_state) {
-    $key = 'payment_reference.element.payment_reference.payment_method_selector.' . $element['#name'];
+  protected function getPluginSelector(array $element, FormStateInterface $form_state) {
+    $key = 'payment_reference.element.payment_reference.plugin_selector.' . $element['#name'];
+    if (!$form_state->has($key)) {
+      $plugin_selector = $this->pluginSelectorManager->createInstance($element['#plugin_selector_id']);
+      $mapper = new DefaultPluginDefinitionMapper();
+      $payment_method_manager = new FilteredPaymentMethodManager($this->paymentMethodManager, $this->getPayment($element, $form_state), $this->currentUser);
+      $plugin_selector->setPluginManager($payment_method_manager, $mapper);
+      $plugin_selector->setRequired($element['#required']);
+      if (!is_null($element['#limit_allowed_plugin_ids'])) {
+        $payment_method_manager->setPluginIdFilter($element['#limit_allowed_plugin_ids']);
+      }
+
+      $form_state->set($key, $plugin_selector);
+    }
+
+    return $form_state->get($key);
+  }
+
+  /**
+   * Gets the payment.
+   *
+   * @param array $element
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return \Drupal\payment\Entity\PaymentInterface
+   */
+  protected function getPayment(array $element, FormStateInterface $form_state) {
+    $key = 'payment_reference.element.payment_reference.payment';
     if (!$form_state->has($key)) {
       /** @var \Drupal\payment\Entity\PaymentInterface $prototype_payment */
       $prototype_payment = $element['#prototype_payment'];
       $payment = $prototype_payment->createDuplicate();
 
-      $payment_method_selector = $this->paymentMethodSelectorManager->createInstance($element['#payment_method_selector_id']);
-      $payment_method_selector->setPayment($payment);
-      $payment_method_selector->setRequired($element['#required']);
-      if (!is_null($element['#limit_allowed_payment_method_ids'])) {
-        $payment_method_selector->setAllowedPaymentMethods($element['#limit_allowed_payment_method_ids']);
-      }
-
-      $form_state->set($key, $payment_method_selector);
+      $form_state->set($key, $payment);
     }
 
     return $form_state->get($key);
@@ -556,7 +607,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
   protected function getEntityFormDisplay(array $element, FormStateInterface $form_state) {
     $key = 'payment_reference.element.payment_reference.entity_form_display.' . $element['#name'];
     if (!$form_state->has($key)) {
-      $entity_form_display = EntityFormDisplay::collectRenderDisplay($this->getPaymentMethodSelector($element, $form_state)->getPayment(), 'payment_reference');
+      $entity_form_display = EntityFormDisplay::collectRenderDisplay($this->getPayment($element, $form_state), 'payment_reference');
       $form_state->set($key, $entity_form_display);
     }
 
