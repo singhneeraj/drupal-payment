@@ -12,6 +12,9 @@ use Drupal\payment\PaymentAwareInterface;
 
 /**
  * A payment status plugin.
+ *
+ * Plugins can additionally implement the following interfaces:
+ * - \Drupal\Core\Plugin\PluginFormInterface
  */
 interface PaymentStatusInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PaymentAwareInterface {
 

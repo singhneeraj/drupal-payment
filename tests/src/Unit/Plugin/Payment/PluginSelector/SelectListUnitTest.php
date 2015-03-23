@@ -45,6 +45,10 @@ class SelectListUnitTest extends PluginSelectorBaseUnitTestBase {
 
   /**
    * @covers ::buildSelector
+   * @covers ::buildHierarchy
+   * @covers ::buildHierarchyLevel
+   * @covers ::buildOptionsLevel
+   * @covers ::sort
    */
   public function testBuildSelector() {
     $this->stringTranslation->expects($this->any())
@@ -56,24 +60,33 @@ class SelectListUnitTest extends PluginSelectorBaseUnitTestBase {
     $get_element_id_method = new \ReflectionMethod($this->sut, 'getElementId');
     $get_element_id_method->setAccessible(TRUE);
 
-    $plugin_id = $this->randomMachineName();
-    $plugin_label = $this->randomMachineName();
-    $plugin_definition = [
-      'id' => $plugin_id,
-      'label' => $plugin_label,
+    $plugin_id_a = $this->randomMachineName();
+    $plugin_label_a = $this->randomMachineName();
+    $plugin_definition_a = [
+      'id' => $plugin_id_a,
+      'label' => $plugin_label_a,
     ];
-    $plugin = $this->getMock('\Drupal\Component\Plugin\PluginInspectionInterface');
-    $plugin->expects($this->atLeastOnce())
-      ->method('getPluginDefinition')
-      ->willReturn($plugin_definition);
-    $plugin->expects($this->atLeastOnce())
+    $plugin_a = $this->getMock('\Drupal\Component\Plugin\PluginInspectionInterface');
+    $plugin_a->expects($this->atLeastOnce())
       ->method('getPluginId')
-      ->will($this->returnValue($plugin_id));
-    $this->mapper->expects($this->any())
-      ->method('getPluginLabel')
-      ->willReturn($plugin_label);
+      ->willReturn($plugin_id_a);
+    $plugin_id_b = $this->randomMachineName();
+    $plugin_label_b = $this->randomMachineName();
+    $plugin_definition_b = [
+      'id' => $plugin_id_b,
+      'label' => $plugin_label_b,
+    ];
+    $plugin_b = $this->getMock('\Drupal\Component\Plugin\PluginInspectionInterface');
 
-    $this->sut->setSelectedPlugin($plugin);
+    $map = [
+      [$plugin_definition_a, $plugin_label_a],
+      [$plugin_definition_b, $plugin_label_b],
+    ];
+    $this->mapper->expects($this->atLeastOnce())
+      ->method('getPluginLabel')
+      ->willReturnMap($map);
+
+    $this->sut->setSelectedPlugin($plugin_a);
     $selector_title = $this->randomMachineName();
     $this->sut->setLabel($selector_title);
 
@@ -81,7 +94,14 @@ class SelectListUnitTest extends PluginSelectorBaseUnitTestBase {
       '#parents' => array('foo', 'bar'),
     );
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
-    $available_plugins = array($plugin);
+    $available_plugins = [$plugin_a, $plugin_b];
+
+    $this->pluginManager->expects($this->atLeastOnce())
+      ->method('getDefinitions')
+      ->willReturn([
+        $plugin_id_a => $plugin_definition_a,
+        $plugin_id_b => $plugin_definition_b,
+      ]);
 
     $expected_build_plugin_id = array(
       '#ajax' => array(
@@ -93,10 +113,11 @@ class SelectListUnitTest extends PluginSelectorBaseUnitTestBase {
         ),
         'wrapper' => $get_element_id_method->invokeArgs($this->sut, array($form_state)),
       ),
-      '#default_value' => $plugin_id,
+      '#default_value' => $plugin_id_a,
       '#empty_value' => 'select',
       '#options' => array(
-        $plugin_id => $plugin_label,
+        $plugin_id_a => $plugin_label_a,
+        $plugin_id_b => $plugin_label_b,
       ) ,
       '#required' => FALSE,
       '#title' => $selector_title,

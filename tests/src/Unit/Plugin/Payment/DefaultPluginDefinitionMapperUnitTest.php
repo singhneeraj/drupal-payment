@@ -32,6 +32,7 @@ class DefaultPluginDefinitionMapperUnitTest extends UnitTestCase {
   public function setUp() {
     $this->pluginDefinition = [
       'id' => $this->randomMachineName(),
+      'parent_id' => $this->randomMachineName(),
       'label' => $this->getRandomGenerator()->string(),
       'description' => $this->getRandomGenerator()->string(),
       'foo' => $this->getRandomGenerator()->string(),
@@ -45,6 +46,13 @@ class DefaultPluginDefinitionMapperUnitTest extends UnitTestCase {
    */
   public function testGetPluginId() {
     $this->assertSame($this->pluginDefinition['id'], $this->sut->getPluginId($this->pluginDefinition));
+  }
+
+  /**
+   * @covers ::getParentPluginId
+   */
+  public function testGetParentPluginId() {
+    $this->assertSame($this->pluginDefinition['parent_id'], $this->sut->getParentPluginId($this->pluginDefinition));
   }
 
   /**

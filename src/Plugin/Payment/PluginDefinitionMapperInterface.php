@@ -25,6 +25,16 @@ interface PluginDefinitionMapperInterface {
   public function getPluginId(array $plugin_definition);
 
   /**
+   * Gets the plugin's parent's ID.
+   *
+   * @param array $plugin_definition
+   *
+   * @return string|null
+   *   A plugin ID or NULL if no parent was specified.
+   */
+  public function getParentPluginId(array $plugin_definition);
+
+  /**
    * Gets the label for a plugin.
    *
    * @param array $plugin_definition

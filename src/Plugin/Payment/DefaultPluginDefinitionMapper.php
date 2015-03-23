@@ -22,6 +22,13 @@ class DefaultPluginDefinitionMapper implements PluginDefinitionMapperInterface {
   /**
    * {@inheritdoc}
    */
+  public function getParentPluginId(array $plugin_definition) {
+    return $this->hasPluginDefinitionProperty($plugin_definition, 'parent_id') ? $this->getPluginDefinitionProperty($plugin_definition, 'parent_id') : NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getPluginLabel(array $plugin_definition) {
     return $this->hasPluginDefinitionProperty($plugin_definition, 'label') ? $this->getPluginDefinitionProperty($plugin_definition, 'label') : NULL;
   }
