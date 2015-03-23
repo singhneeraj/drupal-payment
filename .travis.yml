@@ -14,27 +14,24 @@ env:
   - PATH=$PATH:/home/travis/.composer/vendor/bin
 
 install:
-  - composer self-update
-
   # Download Drupal core.
   - cd $TRAVIS_BUILD_DIR/..
   - git clone --branch 8.0.x --depth 1 http://git.drupal.org/project/drupal.git
-  - cd $TRAVIS_BUILD_DIR/../drupal
+
+  # Copy Payment into Drupal core.
+  - cp -Rv $TRAVIS_BUILD_DIR $TRAVIS_BUILD_DIR/../drupal/modules/
 
   # Download module dependencies.
   - cd $TRAVIS_BUILD_DIR/../drupal/modules
   - git clone --branch 8.x-3.x --depth 1 http://git.drupal.org/project/currency.git
 
-  # Add Coveralls.io integration.
-  - cd $TRAVIS_BUILD_DIR/../drupal
-  - composer require satooshi/php-coveralls:0.6.* --prefer-source
-
-  # Copy Payment into Drupal core.
-  - cp -Rv $TRAVIS_BUILD_DIR $TRAVIS_BUILD_DIR/../drupal/modules/
+  # Install Composer dependencies.
+  - cd $TRAVIS_BUILD_DIR/../drupal/modules/payment
+  - composer install
 
 script:
   # Run PHPUnit tests and submit code coverage statistics.
-  - cd $TRAVIS_BUILD_DIR/../drupal/core
+  - cd $TRAVIS_BUILD_DIR/../drupal/modules/payment
   - mkdir -p build/logs
-  - vendor/bin/phpunit -c ../modules/payment/phpunit.xml.dist --bootstrap ../core/tests/bootstrap.php --verbose --debug --coverage-clover build/logs/clover.xml || exit 1
-  - php vendor/bin/coveralls -v -c ../modules/payment/.coveralls.yml
+  - ../../core/vendor/bin/phpunit -c ./phpunit.xml.dist --bootstrap ../../core/tests/bootstrap.php --verbose --debug --coverage-clover ./build/logs/clover.xml || exit 1
+  - php ./vendor/bin/coveralls -v -c ./.coveralls.yml
