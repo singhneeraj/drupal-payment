@@ -20,7 +20,7 @@ class EntityExtraFieldInfoUnitTest extends UnitTestCase {
   /**
    * The service under test.
    *
-   * @var \Drupal\payment\Hook\EntityExtraFieldInfo
+   * @var \Drupal\payment_form\Hook\EntityExtraFieldInfo
    */
   protected $service;
 
