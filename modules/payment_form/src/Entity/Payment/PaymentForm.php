@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Entity\PaymentFormController.
+ * Contains \Drupal\payment_form\Entity\Payment\PaymentForm.
  */
 
 namespace Drupal\payment_form\Entity\Payment;
