@@ -7,7 +7,7 @@
 
 namespace Drupal\payment\Plugin\DataType;
 
-use Drupal\Core\TypedData\Plugin\DataType\String;
+use Drupal\Core\TypedData\Plugin\DataType\StringData;
 
 /**
  * Provides a plugin ID data type.
@@ -17,7 +17,7 @@ use Drupal\Core\TypedData\Plugin\DataType\String;
  *   label = @Translation("Plugin ID")
  * )
  */
-class PluginId extends String {
+class PluginId extends StringData {
 
   /**
    * {@inheritdoc}
