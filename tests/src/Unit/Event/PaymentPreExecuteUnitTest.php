@@ -33,14 +33,19 @@ class PaymentPreExecuteUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
 
+    $this->event = new PaymentPreExecute($this->payment);
+  }
+
+  /**
+   * @covers ::__construct
+   */
+  public function testConstruct() {
     $this->event = new PaymentPreExecute($this->payment);
   }
 

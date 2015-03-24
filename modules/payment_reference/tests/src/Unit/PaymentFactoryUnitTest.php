@@ -40,14 +40,19 @@ class PaymentFactoryUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->entityManager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
 
     $this->paymentLineItemManager = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface');
 
+    $this->factory = new PaymentFactory($this->entityManager, $this->paymentLineItemManager);
+  }
+
+  /**
+   * @covers ::__construct
+   */
+  public function testConstruct() {
     $this->factory = new PaymentFactory($this->entityManager, $this->paymentLineItemManager);
   }
 

@@ -54,8 +54,6 @@ class PaymentQueuePaymentIdsAlterUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->categoryId = $this->randomMachineName();
@@ -64,6 +62,13 @@ class PaymentQueuePaymentIdsAlterUnitTest extends UnitTestCase {
 
     $this->paymentIds = array($this->randomMachineName());
 
+    $this->event = new PaymentQueuePaymentIdsAlter($this->queueId, $this->categoryId, $this->ownerId, $this->paymentIds);
+  }
+
+  /**
+   * @covers ::__construct
+   */
+  public function testConstruct() {
     $this->event = new PaymentQueuePaymentIdsAlter($this->queueId, $this->categoryId, $this->ownerId, $this->paymentIds);
   }
 

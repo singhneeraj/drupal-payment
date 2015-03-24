@@ -105,8 +105,6 @@ class PaymentReferenceUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
@@ -144,6 +142,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
 
   /**
    * @covers ::create
+   * @covers ::__construct
    */
   function testCreate() {
     $entity_manager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');

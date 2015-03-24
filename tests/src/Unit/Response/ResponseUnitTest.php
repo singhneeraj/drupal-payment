@@ -49,8 +49,6 @@ class ResponseUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->routeName = $this->randomMachineName();
@@ -61,6 +59,13 @@ class ResponseUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
+    $this->response = new Response($this->redirectUrl, $this->symfonyResponse);
+  }
+
+  /**
+   * @covers ::__construct
+   */
+  public function testConstruct() {
     $this->response = new Response($this->redirectUrl, $this->symfonyResponse);
   }
 

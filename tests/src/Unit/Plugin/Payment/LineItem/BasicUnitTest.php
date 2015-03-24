@@ -47,8 +47,6 @@ class BasicUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->database = $this->getMockBuilder('\Drupal\Core\Database\Connection')
@@ -67,6 +65,7 @@ class BasicUnitTest extends UnitTestCase {
 
   /**
    * @covers ::create
+   * @covers ::__construct
    */
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');

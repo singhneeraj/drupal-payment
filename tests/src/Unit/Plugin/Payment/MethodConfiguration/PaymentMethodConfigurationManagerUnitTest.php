@@ -55,8 +55,6 @@ class PaymentMethodConfigurationManagerUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->discovery = $this->getMock('\Drupal\Component\Plugin\Discovery\DiscoveryInterface');
@@ -78,6 +76,14 @@ class PaymentMethodConfigurationManagerUnitTest extends UnitTestCase {
     $factory_property = new \ReflectionProperty($this->manager, 'factory');
     $factory_property->setAccessible(TRUE);
     $factory_property->setValue($this->manager, $this->factory);
+  }
+
+  /**
+   * @covers ::__construct
+   */
+  public function testConstruct() {
+    $namespaces = new ArrayObject();
+    $this->manager = new PaymentMethodConfigurationManager($namespaces, $this->cache, $this->moduleHandler);
   }
 
   /**

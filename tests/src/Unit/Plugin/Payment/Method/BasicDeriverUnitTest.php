@@ -41,8 +41,6 @@ class BasicDeriverUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->paymentMethodConfigurationManager = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface');
@@ -54,6 +52,7 @@ class BasicDeriverUnitTest extends UnitTestCase {
 
   /**
    * @covers ::create
+   * @covers ::__construct
    */
   function testCreate() {
     $entity_manager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');

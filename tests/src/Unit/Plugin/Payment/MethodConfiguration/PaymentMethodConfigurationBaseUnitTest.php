@@ -25,8 +25,6 @@ class PaymentMethodConfigurationBaseUnitTest extends PaymentMethodConfigurationB
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
@@ -47,6 +45,7 @@ class PaymentMethodConfigurationBaseUnitTest extends PaymentMethodConfigurationB
 
   /**
    * @covers ::create
+   * @covers ::__construct
    */
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');

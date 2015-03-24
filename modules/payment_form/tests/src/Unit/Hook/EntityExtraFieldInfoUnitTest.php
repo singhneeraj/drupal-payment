@@ -33,12 +33,17 @@ class EntityExtraFieldInfoUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->stringTranslation = $this->getStringTranslationStub();
 
+    $this->service = new EntityExtraFieldInfo($this->stringTranslation);
+  }
+
+  /**
+   * @covers ::__construct
+   */
+  public function testConstruct() {
     $this->service = new EntityExtraFieldInfo($this->stringTranslation);
   }
 

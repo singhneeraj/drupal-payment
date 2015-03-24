@@ -34,8 +34,6 @@ class EditPaymentMethodConfigurationUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   protected function setUp() {
 
@@ -46,6 +44,7 @@ class EditPaymentMethodConfigurationUnitTest extends UnitTestCase {
 
   /**
    * @covers ::create
+   * @covers ::__construct
    */
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');

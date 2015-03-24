@@ -34,8 +34,6 @@ class ConfigDeriverUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->paymentStatusStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
@@ -45,6 +43,7 @@ class ConfigDeriverUnitTest extends UnitTestCase {
 
   /**
    * @covers ::create
+   * @covers ::__construct
    */
   function testCreate() {
     $entity_manager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');

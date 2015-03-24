@@ -62,8 +62,6 @@ class PaymentTypeManagerUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->classResolver = $this->getMock('\Drupal\Core\DependencyInjection\ClassResolverInterface');
@@ -85,6 +83,14 @@ class PaymentTypeManagerUnitTest extends UnitTestCase {
     $property = new \ReflectionProperty($this->paymentTypeManager, 'factory');
     $property->setAccessible(TRUE);
     $property->setValue($this->paymentTypeManager, $this->factory);
+  }
+
+  /**
+   * @covers ::__construct
+   */
+  public function testConstruct() {
+    $namespaces = new ArrayObject();
+    $this->paymentTypeManager = new PaymentTypeManager($namespaces, $this->cache, $this->moduleHandler, $this->classResolver);
   }
 
   /**

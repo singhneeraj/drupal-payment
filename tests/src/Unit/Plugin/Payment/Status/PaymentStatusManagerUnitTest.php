@@ -69,8 +69,6 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->classResolver = $this->getMock('\Drupal\Core\DependencyInjection\ClassResolverInterface');
@@ -95,6 +93,13 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
     $property = new \ReflectionProperty($this->paymentStatusManager, 'factory');
     $property->setAccessible(TRUE);
     $property->setValue($this->paymentStatusManager, $this->factory);
+  }
+
+  /**
+   * @covers ::__construct
+   */
+  public function testConstruct() {
+    $this->paymentStatusManager = new PaymentStatusManager($this->cache, $this->moduleHandler, $this->classResolver, $this->stringTranslation);
   }
 
   /**

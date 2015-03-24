@@ -55,8 +55,6 @@ class DatabaseQueueUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   function setUp() {
     parent::setUp();
@@ -72,6 +70,13 @@ class DatabaseQueueUnitTest extends UnitTestCase {
 
     $this->queueId = $this->randomMachineName();
 
+    $this->queue = new DatabaseQueue($this->queueId, $this->database, $this->eventDispatcher, $this->paymentStatusManager);
+  }
+
+  /**
+   * @covers ::__construct
+   */
+  function testConstruct() {
     $this->queue = new DatabaseQueue($this->queueId, $this->database, $this->eventDispatcher, $this->paymentStatusManager);
   }
 

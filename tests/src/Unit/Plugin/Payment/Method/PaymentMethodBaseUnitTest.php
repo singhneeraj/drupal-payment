@@ -39,8 +39,6 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     parent::setUp();
@@ -56,6 +54,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
 
   /**
    * @covers ::create
+   * @covers ::__construct
    */
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');

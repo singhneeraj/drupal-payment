@@ -55,8 +55,6 @@ class PaymentMethodConfigurationOperationsProviderUnitTest extends UnitTestCase 
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->paymentMethodConfigurationListBuilder = $this->getMock('\Drupal\Core\Entity\EntityListBuilderInterface');
@@ -76,6 +74,7 @@ class PaymentMethodConfigurationOperationsProviderUnitTest extends UnitTestCase 
 
   /**
    * @covers ::create
+   * @covers ::__construct
    */
   function testCreate() {
     $entity_manager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');

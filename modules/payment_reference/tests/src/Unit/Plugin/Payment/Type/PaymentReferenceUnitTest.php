@@ -64,8 +64,6 @@ class PaymentReferenceUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   protected function setUp() {
     $this->eventDispatcher = $this->getMock('\Drupal\payment\EventDispatcherInterface');
@@ -89,6 +87,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
 
   /**
    * @covers ::create
+   * @covers ::__construct
    */
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');

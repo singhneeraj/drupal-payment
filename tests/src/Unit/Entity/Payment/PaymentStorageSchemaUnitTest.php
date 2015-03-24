@@ -61,8 +61,6 @@ class PaymentStorageSchemaUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $entity_type_id_key = $this->randomMachineName();
@@ -77,7 +75,7 @@ class PaymentStorageSchemaUnitTest extends UnitTestCase {
     );
 
     $this->entityManager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
-    $this->entityManager->expects($this->once())
+    $this->entityManager->expects($this->atLeastOnce())
       ->method('getFieldStorageDefinitions')
       ->with($entity_type_id)
       ->willReturn($this->fieldStorageDefinitions);
@@ -91,6 +89,13 @@ class PaymentStorageSchemaUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
+    $this->storageSchema = new PaymentStorageSchema($this->entityManager, $this->entityType, $this->storage, $this->database);
+  }
+
+  /**
+   * @covers ::__construct
+   */
+  public function testConstruct() {
     $this->storageSchema = new PaymentStorageSchema($this->entityManager, $this->entityType, $this->storage, $this->database);
   }
 

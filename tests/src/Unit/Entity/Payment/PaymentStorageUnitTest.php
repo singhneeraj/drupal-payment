@@ -76,8 +76,6 @@ class PaymentStorageUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->cacheBackend = $this->getMock('\Drupal\Core\Cache\CacheBackendInterface');
@@ -101,6 +99,7 @@ class PaymentStorageUnitTest extends UnitTestCase {
 
   /**
    * @covers ::createInstance
+   * @covers ::__construct
    */
   public function testCreateInstance() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');

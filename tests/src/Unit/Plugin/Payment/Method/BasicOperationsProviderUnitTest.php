@@ -54,8 +54,6 @@ class BasicOperationsProviderUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->paymentMethodConfigurationListBuilder = $this->getMock('\Drupal\Core\Entity\EntityListBuilderInterface');
@@ -68,6 +66,13 @@ class BasicOperationsProviderUnitTest extends UnitTestCase {
 
     $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
+    $this->provider = new BasicOperationsProvider($this->requestStack, $this->stringTranslation, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationListBuilder);
+  }
+
+  /**
+   * @covers ::__construct
+   */
+  public function testConstruct() {
     $this->provider = new BasicOperationsProvider($this->requestStack, $this->stringTranslation, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationListBuilder);
   }
 

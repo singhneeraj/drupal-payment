@@ -34,8 +34,6 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
@@ -50,6 +48,7 @@ class PaymentMethodConfigurationAccessControlHandlerUnitTest extends UnitTestCas
 
   /**
    * @covers ::createInstance
+   * @covers ::__construct
    */
   public function testCreateInstance() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');

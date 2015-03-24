@@ -47,8 +47,6 @@ class SupportedCurrencyUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->currencyCode = $this->randomMachineName();
@@ -57,6 +55,13 @@ class SupportedCurrencyUnitTest extends UnitTestCase {
 
     $this->minimumAmount = mt_rand();
 
+    $this->supportedCurrency = new SupportedCurrency($this->currencyCode, $this->minimumAmount, $this->maximumAmount);
+  }
+
+  /**
+   * @covers ::__construct
+   */
+  public function testConstruct() {
     $this->supportedCurrency = new SupportedCurrency($this->currencyCode, $this->minimumAmount, $this->maximumAmount);
   }
 

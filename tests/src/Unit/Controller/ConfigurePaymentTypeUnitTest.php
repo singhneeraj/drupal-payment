@@ -48,8 +48,6 @@ class ConfigurePaymentTypeUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   protected function setUp() {
     $this->formBuilder = $this->getMock('\Drupal\Core\Form\FormBuilderInterface');
@@ -63,6 +61,7 @@ class ConfigurePaymentTypeUnitTest extends UnitTestCase {
 
   /**
    * @covers ::create
+   * @covers ::__construct
    */
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');

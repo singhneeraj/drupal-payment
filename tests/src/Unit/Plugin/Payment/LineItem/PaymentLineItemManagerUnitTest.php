@@ -54,8 +54,6 @@ class PaymentLineItemManagerUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->discovery = $this->getMock('\Drupal\Component\Plugin\Discovery\DiscoveryInterface');
@@ -77,6 +75,14 @@ class PaymentLineItemManagerUnitTest extends UnitTestCase {
     $factory_property = new \ReflectionProperty($this->paymentLineItemManager, 'factory');
     $factory_property->setAccessible(TRUE);
     $factory_property->setValue($this->paymentLineItemManager, $this->factory);
+  }
+
+  /**
+   * @covers ::__construct
+   */
+  public function testConstruct() {
+    $namespaces = new ArrayObject();
+    $this->paymentLineItemManager = new PaymentLineItemManager($namespaces, $this->cache, $this->moduleHandler);
   }
 
   /**

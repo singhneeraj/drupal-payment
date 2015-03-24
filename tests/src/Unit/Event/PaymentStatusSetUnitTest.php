@@ -40,8 +40,6 @@ class PaymentStatusSetUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
@@ -50,6 +48,13 @@ class PaymentStatusSetUnitTest extends UnitTestCase {
 
     $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
 
+    $this->event = new PaymentStatusSet($this->payment, $this->previousPaymentStatus);
+  }
+
+  /**
+   * @covers ::__construct
+   */
+  public function testConstruct() {
     $this->event = new PaymentStatusSet($this->payment, $this->previousPaymentStatus);
   }
 

@@ -49,8 +49,6 @@ class PaymentRefundFormUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->entityManager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
@@ -70,6 +68,7 @@ class PaymentRefundFormUnitTest extends UnitTestCase {
 
   /**
    * @covers ::create
+   * @covers ::__construct
    */
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');

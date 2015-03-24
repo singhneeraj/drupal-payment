@@ -50,8 +50,6 @@ class PaymentExecuteAccessUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->account = $this->getMock('\Drupal\Core\Session\AccountInterface');
@@ -62,6 +60,13 @@ class PaymentExecuteAccessUnitTest extends UnitTestCase {
 
     $this->paymentMethod = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
 
+    $this->event = new PaymentExecuteAccess($this->payment, $this->paymentMethod, $this->account);
+  }
+
+  /**
+   * @covers ::__construct
+   */
+  public function testConstruct() {
     $this->event = new PaymentExecuteAccess($this->payment, $this->paymentMethod, $this->account);
   }
 

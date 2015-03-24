@@ -71,8 +71,6 @@ class AddPaymentMethodConfigurationUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   protected function setUp() {
     $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
@@ -94,6 +92,7 @@ class AddPaymentMethodConfigurationUnitTest extends UnitTestCase {
 
   /**
    * @covers ::create
+   * @covers ::__construct
    */
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');

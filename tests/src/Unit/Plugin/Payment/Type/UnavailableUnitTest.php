@@ -41,8 +41,6 @@ class UnavailableUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->eventDispatcher = $this->getMock('\Drupal\payment\EventDispatcherInterface');
@@ -60,6 +58,7 @@ class UnavailableUnitTest extends UnitTestCase {
 
   /**
    * @covers ::create
+   * @covers ::__construct
    */
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');

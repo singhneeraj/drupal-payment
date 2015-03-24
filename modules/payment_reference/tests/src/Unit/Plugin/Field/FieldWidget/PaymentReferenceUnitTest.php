@@ -65,8 +65,6 @@ class PaymentReferenceUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   protected function setUp() {
     $this->fieldDefinition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
@@ -90,6 +88,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
 
   /**
    * @covers ::create
+   * @covers ::__construct
    */
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');

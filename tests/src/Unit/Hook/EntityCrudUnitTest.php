@@ -40,8 +40,6 @@ class EntityCrudUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     // Because this is an integration test between the default managers, we
@@ -54,6 +52,13 @@ class EntityCrudUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
+    $this->service = new EntityCrud($this->paymentMethodManager, $this->paymentStatusManager);
+  }
+
+  /**
+   * @covers ::__construct
+   */
+  public function testConstruct() {
     $this->service = new EntityCrud($this->paymentMethodManager, $this->paymentStatusManager);
   }
 

@@ -33,8 +33,6 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
-   *
-   * @covers ::__construct
    */
   public function setUp() {
     $this->math = $this->getMock('\Drupal\currency\Math\MathInterface');
@@ -49,6 +47,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
 
   /**
    * @covers ::create
+   * @covers ::__construct
    */
   public function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
