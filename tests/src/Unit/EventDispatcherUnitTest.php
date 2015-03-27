@@ -42,6 +42,13 @@ class EventDispatcherUnitTest extends UnitTestCase {
   }
 
   /**
+   * @covers ::__construct
+   */
+  public function testConstruct() {
+    new EventDispatcher($this->symfonyEventDispatcher);
+  }
+
+  /**
    * @covers ::alterQueueLoadedPaymentIds
    */
   public function testAlterQueueLoadedPaymentIds() {
@@ -58,7 +65,7 @@ class EventDispatcherUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc}
+   * @covers ::setPaymentStatus
    */
   public function testSetPaymentStatus() {
     $payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
@@ -73,7 +80,7 @@ class EventDispatcherUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc}
+   * @covers ::preExecutePayment
    *
    */
   public function testPreExecutePayment() {
@@ -87,14 +94,14 @@ class EventDispatcherUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc}
+   * @covers ::executePaymentAccess
    */
-  public function executePaymentAccess() {
+  public function testExecutePaymentAccess() {
     $payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
 
     $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
 
-    $account = $this->getMock('\Drupa\Core\Session\AccountInterface');
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
     $this->symfonyEventDispatcher->expects($this->once())
       ->method('dispatch')
@@ -104,10 +111,9 @@ class EventDispatcherUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc}
-   *
+   * @covers ::preCapturePayment
    */
-  public function preCapturePayment() {
+  public function testPreCapturePayment() {
     $payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
 
     $this->symfonyEventDispatcher->expects($this->once())
@@ -118,8 +124,7 @@ class EventDispatcherUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc}
-   *
+   * @covers ::preRefundPayment
    */
   public function testPreRefundPayment() {
     $payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
@@ -132,14 +137,14 @@ class EventDispatcherUnitTest extends UnitTestCase {
   }
 
   /**
-   * {@inheritdoc}
+   * @covers ::preResumeContext
    */
-  public function preResumeContext() {
+  public function testPreResumeContext() {
     $payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
 
     $this->symfonyEventDispatcher->expects($this->once())
       ->method('dispatch')
-      ->with(PaymentEvents::PAYMENT_TYPE_PRE_RESUME_CONTEXT, $this->isInstanceOf('\Drupal\payment\Event\PreResumeContext'));
+      ->with(PaymentEvents::PAYMENT_TYPE_PRE_RESUME_CONTEXT, $this->isInstanceOf('\Drupal\payment\Event\PaymentTypePreResumeContext'));
 
     $this->eventDispatcher->preResumeContext($payment);
   }

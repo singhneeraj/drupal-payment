@@ -63,8 +63,6 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
 
     /**
      * {@inheritdoc}
-     *
-     * @covers ::__construct
      */
     public function setUp() {
       $this->entityStorage = $this->getMock('\Drupal\Core\Config\Entity\ConfigEntityStorageInterface');
@@ -85,6 +83,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
 
     /**
      * @covers ::createInstance
+     * @covers ::__construct
      */
     function testCreateInstance() {
       $entity_manager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');

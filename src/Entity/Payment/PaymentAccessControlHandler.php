@@ -10,8 +10,6 @@ namespace Drupal\payment\Entity\Payment;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Field\FieldDefinitionInterface;
-use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface;
@@ -55,7 +53,7 @@ class PaymentAccessControlHandler extends EntityAccessControlHandler {
     elseif ($operation == 'complete') {
       if ($payment->getPaymentMethod()) {
         return AccessResult::allowedIf($payment->getOwnerId() == $account->id())
-          ->andIf(AccessResult::forbiddenIf($payment->getPaymentMethod()->getPaymentExecutionResult()->hasCompleted()));
+          ->orIf(AccessResult::forbiddenIf($payment->getPaymentMethod()->getPaymentExecutionResult()->hasCompleted()));
       }
       else {
         return AccessResult::forbidden();

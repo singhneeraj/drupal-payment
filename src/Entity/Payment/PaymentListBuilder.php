@@ -218,7 +218,7 @@ class PaymentListBuilder extends EntityListBuilder {
         );
     }
     if ($entity->access('complete')) {
-      $operations['resume'] = array(
+      $operations['complete'] = array(
         'title' => $this->t('Complete'),
         'url' => $entity->urlInfo('complete'),
       );
@@ -239,4 +239,5 @@ class PaymentListBuilder extends EntityListBuilder {
 
     return $build;
   }
+
 }

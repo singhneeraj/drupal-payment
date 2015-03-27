@@ -367,6 +367,39 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
     }
 
     /**
+     * @covers ::validate
+     */
+    public function testValidate() {
+      /** @var \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm|\PHPUnit_Framework_MockObject_MockObject $form_object */
+      $form_object = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm')
+        ->setConstructorArgs(array($this->stringTranslation, $this->currentUser, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationManager))
+        ->setMethods(array('copyFormValuesToEntity'))
+        ->getMock();
+      $form_object->setEntity($this->paymentMethodConfiguration);
+
+      $payment_method_configuration_plugin = $this->getMock('\Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface');
+
+      $form = array(
+        'plugin_form' => array(
+          '#type' => $this->randomMachineName(),
+        ),
+      );
+      $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+      $map = array(
+        array('payment_method_configuration', $payment_method_configuration_plugin),
+      );
+      $form_state->expects($this->any())
+        ->method('get')
+        ->willReturnMap($map);
+
+      $payment_method_configuration_plugin->expects($this->once())
+        ->method('validateConfigurationForm')
+        ->with($form['plugin_form'], $form_state);
+
+      $form_object->validate($form, $form_state);
+    }
+
+    /**
      * @covers ::submitForm
      */
     public function testSubmitForm() {

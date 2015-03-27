@@ -56,8 +56,6 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
 
     /**
      * {@inheritdoc}
-     *
-     * @covers ::__construct
      */
     public function setUp() {
       $this->entityManager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
@@ -79,6 +77,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
 
     /**
      * @covers ::create
+     * @covers ::__construct
      */
     function testCreate() {
       $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');

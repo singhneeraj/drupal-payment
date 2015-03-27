@@ -50,8 +50,6 @@ namespace Drupal\Tests\payment\Unit\Element {
 
     /**
      * {@inheritdoc}
-     *
-     * @covers ::__construct
      */
     public function setUp() {
       $this->paymentLineItemManager = $this->getMock('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface');
@@ -68,6 +66,7 @@ namespace Drupal\Tests\payment\Unit\Element {
 
     /**
      * @covers ::create
+     * @covers ::__construct
      */
     function testCreate() {
       $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');

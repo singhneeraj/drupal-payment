@@ -78,8 +78,6 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
 
     /**
      * {@inheritdoc}
-     *
-     * @covers ::__construct
      */
     public function setUp() {
       $this->currencyStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
@@ -108,6 +106,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
 
     /**
      * @covers ::createInstance
+     * @covers ::__construct
      */
     function testCreateInstance() {
       $entity_manager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
@@ -327,6 +326,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
     /**
      * @covers ::load
      * @covers ::render
+     * @covers ::getEntityIds
      *
      * @depends testBuildHeader
      */
@@ -391,31 +391,43 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
       $method->setAccessible(TRUE);
 
       $url_canonical = new Url($this->randomMachineName());
+      $url_edit_form = new Url($this->randomMachineName());
+      $url_delete_form = new Url($this->randomMachineName());
       $url_update_status_form = new Url($this->randomMachineName());
       $url_capture_form = new Url($this->randomMachineName());
       $url_refund_form = new Url($this->randomMachineName());
+      $url_complete = new Url($this->randomMachineName());
 
       $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
         ->disableOriginalConstructor()
         ->getMock();
-      $map = array(
-        array('view', NULL, FALSE, TRUE),
-        array('update_status', NULL, FALSE, TRUE),
-        array('capture', NULL, FALSE, TRUE),
-        array('refund', NULL, FALSE, TRUE),
-      );
-      $payment->expects($this->any())
+      $map = [
+        ['view', NULL, FALSE, TRUE],
+        ['update', NULL, FALSE, TRUE],
+        ['delete', NULL, FALSE, TRUE],
+        ['update_status', NULL, FALSE, TRUE],
+        ['capture', NULL, FALSE, TRUE],
+        ['refund', NULL, FALSE, TRUE],
+        ['complete', NULL, FALSE, TRUE],
+      ];
+      $payment->expects($this->atLeast(count($map)))
         ->method('access')
-        ->will($this->returnValueMap($map));
-      $map = array(
-        array('canonical', [], $url_canonical),
-        array('update-status-form', [], $url_update_status_form),
-        array('capture-form', [], $url_capture_form),
-        array('refund-form', [], $url_refund_form),
-      );
+        ->willReturnMap($map);
       $payment->expects($this->any())
+        ->method('hasLinkTemplate')
+        ->willReturn(TRUE);
+      $map = [
+        ['canonical', [], $url_canonical],
+        ['edit-form', [], $url_edit_form],
+        ['delete-form', [], $url_delete_form],
+        ['update-status-form', [], $url_update_status_form],
+        ['capture-form', [], $url_capture_form],
+        ['refund-form', [], $url_refund_form],
+        ['complete', [], $url_complete],
+      ];
+      $payment->expects($this->atLeast(count($map)))
         ->method('urlInfo')
-        ->will($this->returnValueMap($map));
+        ->willReturnMap($map);
 
       $destination = $this->randomMachineName();
       /** @var \Symfony\Component\HttpFoundation\Request|\PHPUnit_Framework_MockObject_MockObject $request */
@@ -431,6 +443,20 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
         'view' => array(
           'title' => 'View',
           'weight' => -10,
+        ),
+        'edit' => array(
+          'title' => 'Edit',
+          'weight' => 10,
+          'query' => array(
+            'destination' => $destination,
+          ),
+        ),
+        'delete' => array(
+          'title' => 'Delete',
+          'weight' => 100,
+          'query' => array(
+            'destination' => $destination,
+          ),
         ),
         'update_status' => array(
           'title' => 'Update status',
@@ -462,6 +488,9 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
             'destination' => $destination,
           ),
         ),
+        'complete' => array(
+          'title' => 'Complete',
+        ),
       );
       $this->assertEmpty(array_diff_key($expected_operations, $operations));
       $this->assertEmpty(array_diff_key($operations, $expected_operations));
@@ -483,12 +512,6 @@ namespace {
   }
   if (!defined('RESPONSIVE_PRIORITY_MEDIUM')) {
     define('RESPONSIVE_PRIORITY_MEDIUM', 'priority-medium');
-  }
-  if (!function_exists('pager_default_initialize')) {
-    function pager_default_initialize() {}
-  }
-  if (!function_exists('pager_find_page')) {
-    function pager_find_page() {}
   }
 
 }

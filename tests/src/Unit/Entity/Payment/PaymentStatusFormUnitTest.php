@@ -166,6 +166,10 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
     $this->assertInternalType('array', $build);
     $this->assertArrayHasKey('payment_status', $build);
     $this->assertSame($plugin_selector_form, $build['payment_status']);
+
+    // Build the form again to make sure the plugin selector is only created
+    // once.
+    $this->form->form($form, $form_state);
   }
 
   /**

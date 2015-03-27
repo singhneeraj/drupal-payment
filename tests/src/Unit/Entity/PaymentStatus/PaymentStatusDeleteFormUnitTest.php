@@ -49,8 +49,6 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
 
     /**
      * {@inheritdoc}
-     *
-     * @covers ::__construct
      */
     public function setUp() {
       $this->logger = $this->getMock('\Psr\Log\LoggerInterface');
@@ -70,6 +68,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
 
     /**
      * @covers ::create
+     * @covers ::__construct
      */
     function testCreate() {
       $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');

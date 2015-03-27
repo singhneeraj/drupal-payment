@@ -215,6 +215,83 @@ class PaymentAccessControlHandlerUnitTest extends UnitTestCase {
 
   /**
    * @covers ::checkAccess
+   *
+   * @dataProvider providerTestCheckAccessComplete
+   */
+  public function testCheckAccessComplete($expected_access, $account_id, $payment_owner_id, $payment_execution_has_completed) {
+    $operation = 'complete';
+    $language_code = $this->randomMachineName();
+
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account->expects($this->any())
+      ->method('id')
+      ->willReturn($account_id);
+    $account->expects($this->never())
+      ->method('hasPermission');
+
+    $payment_execution_result = $this->getMock('\Drupal\payment\PaymentExecutionResultInterface');
+    $payment_execution_result->expects($this->any())
+      ->method('hasCompleted')
+      ->willReturn($payment_execution_has_completed);
+
+    $payment_method = $this->getMock('\Drupal\Tests\payment\Unit\Entity\Payment\PaymentAccessUnitTestDummyPaymentMethodUpdateStatusInterface');
+    $payment_method->expects($this->once())
+      ->method('getPaymentExecutionResult')
+      ->willReturn($payment_execution_result);
+
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $payment->expects($this->atLeastOnce())
+      ->method('getOwnerId')
+      ->willReturn($payment_owner_id);
+    $payment->expects($this->atLeastOnce())
+      ->method('getPaymentMethod')
+      ->willReturn($payment_method);
+
+    $class = new \ReflectionClass($this->accessControlHandler);
+    $method = $class->getMethod('checkAccess');
+    $method->setAccessible(TRUE);
+    $this->assertSame($expected_access, $method->invokeArgs($this->accessControlHandler, array($payment, $operation, $language_code, $account))->isAllowed());
+  }
+
+  /**
+   * Provides data to self::testCheckAccessComplete()
+   */
+  public function providerTestCheckAccessComplete() {
+    return [
+      [TRUE, 7, 7, FALSE],
+      [FALSE, 7, 7, TRUE],
+      [FALSE, mt_rand(), mt_rand(), FALSE],
+    ];
+  }
+
+  /**
+   * @covers ::checkAccess
+   */
+  public function testCheckAccessCompleteWithoutPaymentMethod() {
+    $operation = 'complete';
+    $language_code = $this->randomMachineName();
+
+    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account->expects($this->never())
+      ->method('hasPermission');
+
+    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $payment->expects($this->atLeastOnce())
+      ->method('getPaymentMethod')
+      ->willReturn(NULL);
+
+    $class = new \ReflectionClass($this->accessControlHandler);
+    $method = $class->getMethod('checkAccess');
+    $method->setAccessible(TRUE);
+    $this->assertFalse($method->invokeArgs($this->accessControlHandler, array($payment, $operation, $language_code, $account))->isAllowed());
+  }
+
+  /**
+   * @covers ::checkAccess
    * @covers ::checkAccessPermission
    */
   public function testCheckAccessWithoutPermission() {

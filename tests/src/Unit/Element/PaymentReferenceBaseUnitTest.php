@@ -112,8 +112,6 @@ namespace Drupal\Tests\payment\Unit\Element {
 
     /**
      * {@inheritdoc}
-     *
-     * @covers ::__construct
      */
     public function setUp() {
       $this->currentUser = $this->getMock('\Drupal\Core\Session\AccountInterface');
@@ -153,6 +151,20 @@ namespace Drupal\Tests\payment\Unit\Element {
       $this->element->expects($this->any())
         ->method('getPaymentQueue')
         ->willReturn($this->paymentQueue);
+    }
+
+    /**
+     * @covers ::__construct
+     */
+    public function testconstruct() {
+      $configuration = [];
+      $plugin_id = $this->randomMachineName();
+
+      $this->pluginDefinition['class'] = $this->randomMachineName();
+
+      $this->element = $this->getMockBuilder('\Drupal\payment\Element\PaymentReferenceBase')
+        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodManager, new Random()))
+        ->getMockForAbstractClass();
     }
 
     /**
