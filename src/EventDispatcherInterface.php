@@ -32,6 +32,9 @@ interface EventDispatcherInterface {
    *   The ID of the user for whom the IDs are retrieved.
    * @param int[] $payment_ids
    *   The IDs to alter.
+   *
+   * @return int[]
+   *   The altered IDs.
    */
   public function alterQueueLoadedPaymentIds($queue_id, $category_id, $owner_id, array $payment_ids);
 
