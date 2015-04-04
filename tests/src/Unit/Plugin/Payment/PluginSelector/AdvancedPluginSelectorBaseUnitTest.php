@@ -465,10 +465,16 @@ class AdvancedPluginSelectorBaseUnitTest extends PluginSelectorBaseUnitTestBase 
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form = [];
 
+    $label = $this->randomMachineName();
+
+    $this->sut->setLabel($label);
+
     $expected_build = $element + array(
       'select' => array(
         'message' => array(
           '#markup' => 'There are no available options.',
+          '#title' => $label,
+          '#type' => 'item',
         ),
         'container' => array(
           '#type' => 'container',
@@ -506,10 +512,17 @@ class AdvancedPluginSelectorBaseUnitTest extends PluginSelectorBaseUnitTestBase 
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
     $form = [];
 
+    $label = $this->randomMachineName();
+
+    $this->sut->setLabel($label);
 
     $expected_build = array(
       '#available_plugins' => array($plugin),
       'select' => array(
+        'message' => [
+          '#title' => $label,
+          '#type' => 'item',
+        ],
         'container' => array(
           '#type' => 'container',
           'plugin_id' => array(
