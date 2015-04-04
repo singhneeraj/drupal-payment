@@ -160,6 +160,7 @@ class PaymentForm extends ContentEntityForm {
       }
       $plugin_selector->setPluginManager($payment_method_manager, $mapper);
       $plugin_selector->setRequired();
+      $plugin_selector->setLabel($this->t('Payment method'));
       $form_state->set('plugin_selector', $plugin_selector);
     }
 

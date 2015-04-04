@@ -178,6 +178,8 @@ abstract class AdvancedPluginSelectorBase extends PluginSelectorBase implements 
     );
     $element['select']['message'] = array(
       '#markup' => $this->t('There are no available options.'),
+      '#title' => $this->getLabel(),
+      '#type' => 'item',
     );
 
     return $element;
@@ -197,6 +199,10 @@ abstract class AdvancedPluginSelectorBase extends PluginSelectorBase implements 
       $this->setSelectedPlugin($plugin);
     }
 
+    $element['select']['message'] = array(
+      '#title' => $this->getLabel(),
+      '#type' => 'item',
+    );
     $element['select']['container'] = array(
       '#type' => 'container',
     );
