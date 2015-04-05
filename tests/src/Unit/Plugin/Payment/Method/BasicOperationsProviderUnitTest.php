@@ -39,11 +39,11 @@ class BasicOperationsProviderUnitTest extends UnitTestCase {
   protected $provider;
 
   /**
-   * The request.
+   * The redirect destination.
    *
-   * @var \Symfony\Component\HttpFoundation\RequestStack|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\Routing\RedirectDestinationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $requestStack;
+  protected $redirectDestination;
 
   /**
    * The string translation service.
@@ -60,20 +60,11 @@ class BasicOperationsProviderUnitTest extends UnitTestCase {
 
     $this->paymentMethodConfigurationStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
 
-    $this->requestStack = $this->getMockBuilder('\Symfony\Component\HttpFoundation\RequestStack')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->redirectDestination = $this->getMock('\Drupal\Core\Routing\RedirectDestinationInterface');
 
     $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
-    $this->provider = new BasicOperationsProvider($this->requestStack, $this->stringTranslation, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationListBuilder);
-  }
-
-  /**
-   * @covers ::__construct
-   */
-  public function testConstruct() {
-    $this->provider = new BasicOperationsProvider($this->requestStack, $this->stringTranslation, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationListBuilder);
+    $this->provider = new BasicOperationsProvider($this->stringTranslation, $this->redirectDestination, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationListBuilder);
   }
 
   /**

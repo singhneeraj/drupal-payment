@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -37,11 +38,11 @@ class PaymentListBuilder extends EntityListBuilder {
   protected $dateFormatter;
 
   /**
-   * The request.
+   * The redirect destination.
    *
-   * @var \Symfony\Component\HttpFoundation\RequestStack
+   * @var \Drupal\Core\Routing\RedirectDestinationInterface
    */
-  protected $requestStack;
+  protected $redirectDestination;
 
   /**
    * Constructs a new class instance.
@@ -54,19 +55,19 @@ class PaymentListBuilder extends EntityListBuilder {
    *   The string translator.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
-   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
-   *   The request.
+   * @param \Drupal\Core\Routing\RedirectDestinationInterface $redirect_destination
+   *   The redirect destination.
    * @param \Drupal\Core\DateTime\DateFormatter $date_formatter
    *   The date formatter.
    * @param \Drupal\Core\Entity\EntityStorageInterface $currency_storage
    *   The currency storage.
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $payment_storage, TranslationInterface $string_translation, ModuleHandlerInterface $module_handler, RequestStack $request_stack, DateFormatter $date_formatter, EntityStorageInterface $currency_storage) {
+  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $payment_storage, TranslationInterface $string_translation, ModuleHandlerInterface $module_handler, RedirectDestinationInterface $redirect_destination, DateFormatter $date_formatter, EntityStorageInterface $currency_storage) {
     parent::__construct($entity_type, $payment_storage);
     $this->currencyStorage = $currency_storage;
     $this->dateFormatter = $date_formatter;
     $this->moduleHandler = $module_handler;
-    $this->requestStack = $request_stack;
+    $this->redirectDestination = $redirect_destination;
     $this->stringTranslation = $string_translation;
   }
 
@@ -77,7 +78,7 @@ class PaymentListBuilder extends EntityListBuilder {
     /** @var \Drupal\Core\Entity\EntityManagerInterface $entity_manager */
     $entity_manager = $container->get('entity.manager');
 
-    return new static($entity_type, $entity_manager->getStorage('payment'), $container->get('string_translation'), $container->get('module_handler'), $container->get('request_stack'), $container->get('date.formatter'), $entity_manager->getStorage('currency'));
+    return new static($entity_type, $entity_manager->getStorage('payment'), $container->get('string_translation'), $container->get('module_handler'), $container->get('redirect.destination'), $container->get('date.formatter'), $entity_manager->getStorage('currency'));
   }
 
   /**
@@ -162,13 +163,10 @@ class PaymentListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   protected function getDefaultOperations(EntityInterface $entity) {
-    $destination = $this->requestStack->getCurrentRequest()->attributes->get('_system_path');
-
+    $destination = $this->redirectDestination->get();
     $operations = parent::getDefaultOperations($entity);
     foreach ($operations as &$operation) {
-      $operation['query'] = array(
-        'destination' => $destination,
-      );
+      $operation['query']['destination'] = $destination;
     }
 
     if ($entity->access('view')) {

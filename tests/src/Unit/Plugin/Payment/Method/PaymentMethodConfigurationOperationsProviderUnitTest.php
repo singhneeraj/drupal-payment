@@ -9,7 +9,6 @@ namespace Drupal\Tests\payment\Unit\Plugin\Payment\Method;
 
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\PaymentMethodConfigurationOperationsProvider
@@ -40,11 +39,11 @@ class PaymentMethodConfigurationOperationsProviderUnitTest extends UnitTestCase 
   protected $provider;
 
   /**
-   * The request.
+   * The redirect destination.
    *
-   * @var \Symfony\Component\HttpFoundation\RequestStack|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\Routing\RedirectDestinationInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $requestStack;
+  protected $redirectDestination;
 
   /**
    * The string translation service.
@@ -61,14 +60,12 @@ class PaymentMethodConfigurationOperationsProviderUnitTest extends UnitTestCase 
 
     $this->paymentMethodConfigurationStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
 
-    $this->requestStack = $this->getMockBuilder('\Symfony\Component\HttpFoundation\RequestStack')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->redirectDestination = $this->getMock('\Drupal\Core\Routing\RedirectDestinationInterface');
 
     $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
     $this->provider = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\Method\PaymentMethodConfigurationOperationsProvider')
-      ->setConstructorArgs(array($this->requestStack, $this->stringTranslation, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationListBuilder))
+      ->setConstructorArgs([$this->stringTranslation, $this->redirectDestination, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationListBuilder])
       ->getMockForAbstractClass();
   }
 
@@ -90,7 +87,7 @@ class PaymentMethodConfigurationOperationsProviderUnitTest extends UnitTestCase 
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
       array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $entity_manager),
-      array('request_stack', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->requestStack),
+      array('redirect.destination', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->redirectDestination),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
     $container->expects($this->any())
@@ -121,15 +118,10 @@ class PaymentMethodConfigurationOperationsProviderUnitTest extends UnitTestCase 
     );
 
     $destination = $this->randomMachineName();
-    $attributes = new ParameterBag();
-    $attributes->set('_system_path', $destination);
-    /** @var \Symfony\Component\HttpFoundation\Request|\PHPUnit_Framework_MockObject_MockObject $request */
-    $request = $this->getMock('\Symfony\Component\HttpFoundation\Request');
-    $request->attributes = new ParameterBag();
-    $request->attributes->set('_system_path', $destination);
-    $this->requestStack->expects($this->atLeastOnce())
-      ->method('getCurrentRequest')
-      ->will($this->returnValue($request));
+
+    $this->redirectDestination->expects($this->atLeastOnce())
+      ->method('get')
+      ->willReturn($destination);
 
     $plugin_id = $this->randomMachineName();
 

@@ -11,7 +11,6 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
   use Drupal\payment\Entity\Payment\PaymentListBuilder;
   use Drupal\Tests\UnitTestCase;
   use Symfony\Component\DependencyInjection\ContainerInterface;
-  use Symfony\Component\HttpFoundation\ParameterBag;
 
   /**
    * @coversDefaultClass \Drupal\payment\Entity\Payment\PaymentListBuilder
@@ -63,11 +62,11 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
     protected $moduleHandler;
 
     /**
-     * The request.
+     * The redirect destination.
      *
-     * @var \Symfony\Component\HttpFoundation\RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Drupal\Core\Routing\RedirectDestinationInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $requestStack;
+    protected $redirectDestination;
 
     /**
      * The string translation service.
@@ -92,16 +91,11 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
 
       $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
 
-      $this->requestStack = $this->getMockBuilder('\Symfony\Component\HttpFoundation\RequestStack')
-        ->disableOriginalConstructor()
-        ->getMock();
+      $this->redirectDestination = $this->getMock('\Drupal\Core\Routing\RedirectDestinationInterface');
 
-      $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
-      $this->stringTranslation->expects($this->any())
-        ->method('translate')
-        ->will($this->returnArgument(0));
+      $this->stringTranslation = $this->getStringTranslationStub();
 
-      $this->listBuilder = new PaymentListBuilder($this->entityType, $this->entityStorage, $this->stringTranslation, $this->moduleHandler, $this->requestStack, $this->dateFormatter, $this->currencyStorage);
+      $this->listBuilder = new PaymentListBuilder($this->entityType, $this->entityStorage, $this->stringTranslation, $this->moduleHandler, $this->redirectDestination, $this->dateFormatter, $this->currencyStorage);
     }
 
     /**
@@ -123,7 +117,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
         array('date.formatter', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->dateFormatter),
         array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $entity_manager),
         array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
-        array('request_stack', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->requestStack),
+        array('redirect.destination', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->redirectDestination),
         array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
       );
       $container->expects($this->any())
@@ -165,17 +159,6 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
      * @covers ::buildOperations
      */
     public function testBuildOperations() {
-      $attributes = new ParameterBag();
-
-      $request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
-        ->disableOriginalConstructor()
-        ->getMock();
-      $request->attributes = $attributes;
-
-      $this->requestStack->expects($this->atLeastOnce())
-        ->method('getCurrentRequest')
-        ->willReturn($request);
-
       $this->moduleHandler->expects($this->any())
         ->method('invokeAll')
         ->will($this->returnValue([]));
@@ -202,17 +185,6 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
      * @depends testBuildOperations
      */
     function testBuildRow($payment_currency_exists) {
-      $attributes = new ParameterBag();
-
-      $request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
-        ->disableOriginalConstructor()
-        ->getMock();
-      $request->attributes = $attributes;
-
-      $this->requestStack->expects($this->atLeastOnce())
-        ->method('getCurrentRequest')
-        ->willReturn($request);
-
       $payment_changed_time = time();
       $payment_changed_time_formatted = $this->randomMachineName();
       $payment_currency_code = $this->randomMachineName();
@@ -361,17 +333,6 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
      * @covers ::getDefaultOperations
      */
     public function testGetDefaultOperationsWithoutAccess() {
-      $attributes = new ParameterBag();
-
-      $request = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Request')
-        ->disableOriginalConstructor()
-        ->getMock();
-      $request->attributes = $attributes;
-
-      $this->requestStack->expects($this->atLeastOnce())
-        ->method('getCurrentRequest')
-        ->willReturn($request);
-
       $method = new \ReflectionMethod($this->listBuilder, 'getDefaultOperations');
       $method->setAccessible(TRUE);
 
@@ -430,13 +391,10 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
         ->willReturnMap($map);
 
       $destination = $this->randomMachineName();
-      /** @var \Symfony\Component\HttpFoundation\Request|\PHPUnit_Framework_MockObject_MockObject $request */
-      $request = $this->getMock('\Symfony\Component\HttpFoundation\Request');
-      $request->attributes = new ParameterBag();
-      $request->attributes->set('_system_path', $destination);
-      $this->requestStack->expects($this->atLeastOnce())
-        ->method('getCurrentRequest')
-        ->will($this->returnValue($request));
+
+      $this->redirectDestination->expects($this->atLeastOnce())
+        ->method('get')
+        ->willReturn($destination);
 
       $operations = $method->invoke($this->listBuilder, $payment);
       $expected_operations = array(
