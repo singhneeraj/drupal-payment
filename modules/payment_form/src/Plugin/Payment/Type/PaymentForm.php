@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\StringTranslation\TranslationWrapper;
 use Drupal\Core\Url;
 use Drupal\payment\EventDispatcherInterface;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeBase;
@@ -107,10 +108,10 @@ class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInter
   /**
    * {@inheritdoc}
    */
-  public function paymentDescription($language_code = NULL) {
+  public function getPaymentDescription() {
     $field_definitions = $this->entityManager->getFieldDefinitions($this->getEntityTypeId(), $this->getBundle());
 
-    return isset($field_definitions[$this->getFieldName()]) ? $field_definitions[$this->getFieldName()]->getLabel() : $this->t('Unavailable');
+    return isset($field_definitions[$this->getFieldName()]) ? $field_definitions[$this->getFieldName()]->getLabel() : new TranslationWrapper('Unavailable');
   }
 
   /**

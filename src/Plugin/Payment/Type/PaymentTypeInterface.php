@@ -19,12 +19,9 @@ interface PaymentTypeInterface extends PluginInspectionInterface, ConfigurablePl
   /**
    * Returns the description of the payment this plugin is of.
    *
-   * @param string $language_code
-   *   The code of the language to return the description in.
-   *
-   * @param string
+   * @param string|\Drupal\Core\StringTranslation\TranslationWrapper
    */
-  public function paymentDescription($language_code = NULL);
+  public function getPaymentDescription();
 
   /**
    * Checks if the payment type context can be resumed.

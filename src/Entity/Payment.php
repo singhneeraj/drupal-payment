@@ -93,8 +93,8 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
-  public function label($langcode = NULL) {
-    return $this->getPaymentType()->paymentDescription($langcode);
+  public function label() {
+    return (string) $this->getPaymentType()->getPaymentDescription();
   }
 
   /**

@@ -22,7 +22,7 @@ class PaymentTest extends PaymentTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function paymentDescription($language_code = NULL) {
+  public function getPaymentDescription() {
     return 'The commander promoted Dirkjan to Major Failure.';
   }
 

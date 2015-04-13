@@ -155,7 +155,7 @@ class PaymentFormUnitTest extends UnitTestCase {
     $this->paymentType->setBundle($bundle);
     $this->paymentType->setFieldName($field_name);
 
-    $this->assertSame($label, $this->paymentType->paymentDescription());
+    $this->assertSame($label, $this->paymentType->getPaymentDescription());
   }
 
   /**
@@ -173,7 +173,7 @@ class PaymentFormUnitTest extends UnitTestCase {
     $this->paymentType->setEntityTypeId($entity_type_id);
     $this->paymentType->setBundle($bundle);
 
-    $this->assertSame('Unavailable', $this->paymentType->paymentDescription());
+    $this->assertInstanceOf('\Drupal\Core\StringTranslation\TranslationWrapper', $this->paymentType->getPaymentDescription());
   }
 
   /**

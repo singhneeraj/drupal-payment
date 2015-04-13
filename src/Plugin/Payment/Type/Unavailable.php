@@ -8,6 +8,7 @@ namespace Drupal\payment\Plugin\Payment\Type;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\StringTranslation\TranslationWrapper;
 use Drupal\payment\EventDispatcherInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -65,10 +66,8 @@ class Unavailable extends PaymentTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function paymentDescription($language_code = NULL) {
-    return $this->t('Unavailable', [], array(
-      'langcode' => $language_code,
-    ));
+  public function getPaymentDescription() {
+    return new TranslationWrapper('Unavailable');
   }
 
 }

@@ -103,6 +103,6 @@ class UnavailableUnitTest extends UnitTestCase {
    * @covers ::paymentDescription
    */
   public function testPaymentDescription() {
-    $this->assertInternalType('string', $this->paymentType->paymentDescription());
+    $this->assertInstanceOf('\Drupal\Core\StringTranslation\TranslationWrapper', $this->paymentType->getPaymentDescription());
   }
 }
