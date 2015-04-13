@@ -8,6 +8,7 @@
 namespace Drupal\Tests\payment\Unit\Element {
 
   use Drupal\Component\Utility\Html;
+  use Drupal\Core\DependencyInjection\Container;
   use Drupal\Core\Form\FormState;
   use Drupal\payment\Element\PaymentLineItemsInput;
   use Drupal\Tests\UnitTestCase;
@@ -57,6 +58,10 @@ namespace Drupal\Tests\payment\Unit\Element {
       $this->renderer = $this->getMock('\Drupal\Core\Render\RendererInterface');
 
       $this->stringTranslation = $this->getStringTranslationStub();
+
+      $container = new Container();
+      $container->set('renderer', $this->renderer);
+      \Drupal::setContainer($container);
 
       $configuration = [];
       $plugin_id = $this->randomMachineName();
@@ -407,6 +412,10 @@ namespace Drupal\Tests\payment\Unit\Element {
 
       $form_state = new FormState();
       $form_state->setTriggeringElement($form_build['foo']['add_more']['add']);
+
+      $this->renderer->expects($this->atLeastOnce())
+        ->method('mergeAttachments')
+        ->willReturn([]);
 
       $response = $this->element->ajaxAddMoreSubmit($form_build, $form_state);
       $this->assertInstanceOf('\Drupal\Core\Ajax\AjaxResponse', $response);

@@ -8,6 +8,7 @@
 namespace Drupal\Tests\payment\Unit\Element {
 
   use Drupal\Component\Utility\Random;
+  use Drupal\Core\DependencyInjection\Container;
   use Drupal\Core\Form\FormState;
   use Drupal\Core\Url;
   use Drupal\Tests\UnitTestCase;
@@ -139,6 +140,10 @@ namespace Drupal\Tests\payment\Unit\Element {
       $this->stringTranslation = $this->getStringTranslationStub();
 
       $this->urlGenerator = $this->getMock('\Drupal\Core\Routing\UrlGeneratorInterface');
+
+      $container = new Container();
+      $container->set('renderer', $this->renderer);
+      \Drupal::setContainer($container);
 
       $configuration = [];
       $plugin_id = $this->randomMachineName();
@@ -375,6 +380,10 @@ namespace Drupal\Tests\payment\Unit\Element {
         ->method('getSelectedPlugin')
         ->willReturn($payment_method);
 
+      $this->renderer->expects($this->atLeastOnce())
+        ->method('mergeAttachments')
+        ->willReturn([]);
+
       $form = array(
         'foo' => array(
           'bar' => array(
@@ -446,6 +455,10 @@ namespace Drupal\Tests\payment\Unit\Element {
       $form_state->expects($this->once())
         ->method('getTriggeringElement')
         ->willReturn($form['foo']['bar']['container']['refresh']);
+
+      $this->renderer->expects($this->atLeastOnce())
+        ->method('mergeAttachments')
+        ->willReturn([]);
 
       $response = $this->element->ajaxRefresh($form, $form_state);
       $this->assertInstanceOf('\Drupal\Core\Ajax\AjaxResponse', $response);
