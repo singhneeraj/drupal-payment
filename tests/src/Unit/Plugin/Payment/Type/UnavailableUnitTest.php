@@ -100,9 +100,9 @@ class UnavailableUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::paymentDescription
+   * @covers ::getPaymentDescription
    */
-  public function testPaymentDescription() {
+  public function testGetPaymentDescription() {
     $this->assertInstanceOf('\Drupal\Core\StringTranslation\TranslationWrapper', $this->paymentType->getPaymentDescription());
   }
 }

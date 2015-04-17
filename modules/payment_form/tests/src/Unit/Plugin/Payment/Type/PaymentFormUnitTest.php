@@ -126,7 +126,7 @@ class PaymentFormUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::paymentDescription
+   * @covers ::getPaymentDescription
    *
    * @depends testGetEntityTypeId
    * @depends testGetBundle
@@ -159,9 +159,9 @@ class PaymentFormUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::paymentDescription
+   * @covers ::getPaymentDescription
    */
-  public function testPaymentDescriptionWithNonExistingField() {
+  public function testGetPaymentDescriptionWithNonExistingField() {
     $entity_type_id = $this->randomMachineName();
     $bundle = $this->randomMachineName();
 
