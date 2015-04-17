@@ -26,7 +26,7 @@ class PaymentTestResponse extends PaymentTestNoResponse {
    * {@inheritdoc}
    */
   public function getPaymentExecutionResult() {
-    return new PaymentExecutionResult(new Response(new Url('http://example.com')));
+    return new PaymentExecutionResult(new Response(Url::fromUri('http://example.com')));
   }
 
 }
