@@ -25,6 +25,13 @@ class RadiosUnitTest extends PluginSelectorBaseUnitTestBase {
   protected $sut;
 
   /**
+   * The response policy.
+   *
+   * @var \Drupal\Core\PageCache\ResponsePolicyInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $responsePolicy;
+
+  /**
    * The string translation service.
    *
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -37,9 +44,13 @@ class RadiosUnitTest extends PluginSelectorBaseUnitTestBase {
   public function setUp() {
     parent::setUp();
 
+    $this->responsePolicy = $this->getMockBuilder('\Drupal\Core\PageCache\ResponsePolicy\KillSwitch')
+      ->disableOriginalConstructor()
+      ->getMock();
+
     $this->stringTranslation = $this->getStringTranslationStub();
 
-    $this->sut = new Radios([], $this->pluginId, $this->pluginDefinition, $this->stringTranslation);
+    $this->sut = new Radios([], $this->pluginId, $this->pluginDefinition, $this->stringTranslation, $this->responsePolicy);
     $this->sut->setPluginManager($this->pluginManager, $this->mapper);
   }
 

@@ -36,15 +36,26 @@ class AdvancedPluginSelectorBaseUnitTest extends PluginSelectorBaseUnitTestBase 
   protected $stringTranslation;
 
   /**
+   * The response policy.
+   *
+   * @var \Drupal\Core\PageCache\ResponsePolicyInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $responsePolicy;
+
+  /**
    * {@inheritdoc}
    */
   public function setUp() {
     parent::setUp();
 
+    $this->responsePolicy = $this->getMockBuilder('\Drupal\Core\PageCache\ResponsePolicy\KillSwitch')
+      ->disableOriginalConstructor()
+      ->getMock();
+
     $this->stringTranslation = $this->getStringTranslationStub();
 
     $this->sut = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\PluginSelector\AdvancedPluginSelectorBase')
-      ->setConstructorArgs(array([], $this->pluginId, $this->pluginDefinition, $this->stringTranslation))
+      ->setConstructorArgs(array([], $this->pluginId, $this->pluginDefinition, $this->stringTranslation, $this->responsePolicy))
       ->getMockForAbstractClass();
     $this->sut->setPluginManager($this->pluginManager, $this->mapper);
   }
@@ -56,6 +67,7 @@ class AdvancedPluginSelectorBaseUnitTest extends PluginSelectorBaseUnitTestBase 
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
+      ['page_cache_kill_switch', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->responsePolicy],
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
     $container->expects($this->any())
@@ -566,7 +578,7 @@ class AdvancedPluginSelectorBaseUnitTest extends PluginSelectorBaseUnitTestBase 
     /** @var \Drupal\payment\Plugin\Payment\PluginSelector\AdvancedPluginSelectorBase|\PHPUnit_Framework_MockObject_MockObject $plugin_selector */
     $plugin_selector = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\PluginSelector\AdvancedPluginSelectorBase')
       ->setMethods(array('buildPluginForm', 'buildSelector'))
-      ->setConstructorArgs(array([], $this->pluginId, $this->pluginDefinition, $this->stringTranslation))
+      ->setConstructorArgs(array([], $this->pluginId, $this->pluginDefinition, $this->stringTranslation, $this->responsePolicy))
       ->getMockForAbstractClass();
     $this->sut->setPluginManager($this->pluginManager, $this->mapper);
     $plugin_selector->expects($this->once())
