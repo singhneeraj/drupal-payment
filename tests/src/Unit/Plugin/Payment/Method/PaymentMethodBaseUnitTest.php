@@ -17,7 +17,7 @@ namespace Drupal\Tests\payment\Unit\Plugin\Payment\Method;
   use Symfony\Component\DependencyInjection\ContainerInterface;
 
   /**
- * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase
+   * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase
    *
    * @group Payment
  */
