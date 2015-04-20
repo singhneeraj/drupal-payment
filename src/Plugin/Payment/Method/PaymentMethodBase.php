@@ -181,7 +181,7 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
 
     return $this->pluginDefinition['active']
     && $this->executePaymentAccessCurrency($account)
-    && $this->eventDispatcher->executePaymentAccess($this->getPayment(), $this, $account)->isAllowed()
+    && !$this->eventDispatcher->executePaymentAccess($this->getPayment(), $this, $account)->isForbidden()
     && $this->doExecutePaymentAccess($account);
   }
 

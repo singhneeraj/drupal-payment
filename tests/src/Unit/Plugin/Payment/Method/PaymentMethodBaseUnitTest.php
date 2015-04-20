@@ -10,6 +10,7 @@ namespace Drupal\Tests\payment\Unit\Plugin\Payment\Method;
   use Drupal\Core\Access\AccessResult;
   use Drupal\Core\Access\AccessResultAllowed;
   use Drupal\Core\Access\AccessResultForbidden;
+  use Drupal\Core\Access\AccessResultInterface;
   use Drupal\Core\Access\AccessResultNeutral;
   use Drupal\payment\Event\PaymentEvents;
   use Drupal\payment\Event\PaymentExecuteAccess;
@@ -241,7 +242,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
    *
    * @dataProvider providerTestExecutePaymentAccess
    */
-  public function testExecutePaymentAccess($expected, $active, $currency_supported, $events, $do) {
+  public function testExecutePaymentAccess($expected, $active, $currency_supported, AccessResultInterface $events_access_result, $do) {
     $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()
       ->getMock();
@@ -259,21 +260,15 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
       ->with($account)
       ->willReturn($currency_supported);
     $payment_method->expects($this->any())
-      ->method('executePaymentAccessEvent')
-      ->with($account)
-      ->willReturn($events);
-    $payment_method->expects($this->any())
       ->method('doExecutePaymentAccess')
       ->with($account)
       ->willReturn($do);
     $payment_method->setPayment($payment);
 
-    $access_result = AccessResult::allowedIf($events);
-
     $this->eventDispatcher->expects($this->any())
       ->method('executePaymentAccess')
       ->with($payment, $payment_method, $account)
-      ->willReturn($access_result);
+      ->willReturn($events_access_result);
 
     $this->assertSame($expected, $payment_method->executePaymentAccess($account));
   }
@@ -283,11 +278,15 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
    */
   public function providerTestExecutePaymentAccess() {
     return array(
-      array(TRUE, TRUE, TRUE, TRUE, TRUE),
-      array(FALSE, FALSE, TRUE, TRUE, TRUE),
-      array(FALSE, TRUE, FALSE, TRUE, TRUE),
-      array(FALSE, TRUE, TRUE, FALSE, TRUE),
-      array(FALSE, TRUE, TRUE, TRUE, FALSE),
+      array(TRUE, TRUE, TRUE, AccessResult::allowed(), TRUE),
+      array(TRUE, TRUE, TRUE, AccessResult::neutral(), TRUE),
+      array(FALSE, FALSE, TRUE, AccessResult::allowed(), TRUE),
+      array(FALSE, FALSE, TRUE, AccessResult::neutral(), TRUE),
+      array(FALSE, TRUE, FALSE, AccessResult::allowed(), TRUE),
+      array(FALSE, TRUE, FALSE, AccessResult::neutral(), TRUE),
+      array(FALSE, TRUE, TRUE, AccessResult::forbidden(), TRUE),
+      array(FALSE, TRUE, TRUE, AccessResult::allowed(), FALSE),
+      array(FALSE, TRUE, TRUE, AccessResult::neutral(), FALSE),
     );
   }
 
