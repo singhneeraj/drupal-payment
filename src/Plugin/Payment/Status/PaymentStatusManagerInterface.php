@@ -35,6 +35,9 @@ interface PaymentStatusManagerInterface extends OperationsProviderPluginManagerI
    *
    * @return array
    *   Keys are plugin IDs. Values are plugin labels.
+   *
+   * @deprecated Scheduled for removal before 8.x-2.0. Use plugin selectors
+   *   instead.
    */
   public function options(array $limit_plugin_ids = NULL);
 
@@ -47,6 +50,9 @@ interface PaymentStatusManagerInterface extends OperationsProviderPluginManagerI
    * @return array
    *   A possibly infinitely nested associative array. Keys are plugin IDs and
    *   values are arrays of similar structure as this method's return value.
+   *
+   * @deprecated Scheduled for removal before 8.x-2.0. Use plugin selectors
+   *   instead.
    */
   public function hierarchy(array $limit_plugin_ids = NULL);
 

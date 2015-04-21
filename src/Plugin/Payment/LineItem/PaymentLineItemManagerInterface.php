@@ -31,6 +31,9 @@ interface PaymentLineItemManagerInterface extends PluginManagerInterface {
    *
    * @return array
    *   Keys are plugin IDs. Values are plugin labels.
+   *
+   * @deprecated Scheduled for removal before 8.x-2.0. Use plugin selectors
+   *   instead.
    */
   public function options();
 
