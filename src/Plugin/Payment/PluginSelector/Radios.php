@@ -42,16 +42,6 @@ class Radios extends AdvancedPluginSelectorBase {
     }
     natcasesort($plugin_options);
     $element['container']['plugin_id'] = array(
-      '#ajax' => array(
-        'callback' => array(get_class(), 'ajaxSubmitConfigurationForm'),
-        'effect' => 'fade',
-        'event' => 'change',
-        'progress' => 'none',
-        'trigger_as' => array(
-          'name' => $element['container']['change']['#name'],
-        ),
-        'wrapper' => $this->getElementId(),
-      ),
       '#attached' => [
         'library' => ['payment/plugin_selector.payment_radios'],
       ],
@@ -62,6 +52,18 @@ class Radios extends AdvancedPluginSelectorBase {
       '#title' => $this->getlabel(),
       '#type' => 'radios',
     );
+    if ($this->getCollectPluginConfiguration()) {
+      $element['container']['plugin_id']['#ajax'] = [
+        'callback' => [get_class(), 'ajaxSubmitConfigurationForm'],
+        'effect' => 'fade',
+        'event' => 'change',
+        'progress' => 'none',
+        'trigger_as' => [
+          'name' => $element['container']['change']['#name'],
+        ],
+        'wrapper' => $this->getElementId(),
+      ];
+    }
 
     return $element;
   }

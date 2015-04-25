@@ -8,6 +8,7 @@
 namespace Drupal\Tests\payment\Unit\Plugin\Action;
 
 use Drupal\Core\Access\AccessResultAllowed;
+use Drupal\Core\Form\FormState;
 use Drupal\payment\Plugin\Action\SetStatus;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -34,6 +35,13 @@ class SetStatusUnitTest extends UnitTestCase {
   protected $paymentStatusManager;
 
   /**
+   * The plugin selector manager.
+   *
+   * @var \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $pluginSelectorManager;
+
+  /**
    * The string translator.
    *
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -46,12 +54,14 @@ class SetStatusUnitTest extends UnitTestCase {
   public function setUp() {
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
-    $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
+    $this->pluginSelectorManager = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface');
+
+    $this->stringTranslation = $this->getStringTranslationStub();
 
     $configuration = [];
     $plugin_definition = [];
     $plugin_id = $this->randomMachineName();
-    $this->action = new SetStatus($configuration, $plugin_id, $plugin_definition, $this->stringTranslation, $this->paymentStatusManager);
+    $this->action = new SetStatus($configuration, $plugin_id, $plugin_definition, $this->stringTranslation, $this->pluginSelectorManager, $this->paymentStatusManager);
   }
 
   /**
@@ -62,6 +72,7 @@ class SetStatusUnitTest extends UnitTestCase {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
       array('plugin.manager.payment.status', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentStatusManager),
+      array('plugin.manager.payment.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
     $container->expects($this->any())
@@ -86,31 +97,94 @@ class SetStatusUnitTest extends UnitTestCase {
 
   /**
    * @covers ::buildConfigurationForm
+   * @covers ::getPluginSelector
    */
   public function testBuildConfigurationForm() {
-    $this->paymentStatusManager->expects($this->once())
-      ->method('options');
-
     $form = [];
-    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state = new FormState();
+
+    $plugin_selector_form = [
+      '#foo' => $this->randomMachineName(),
+    ];
+
+    $plugin_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+    $plugin_selector->expects($this->once())
+      ->method('buildSelectorForm')
+      ->with([], $form_state)
+      ->willReturn($plugin_selector_form);
+
+    $this->pluginSelectorManager->expects($this->atLeastOnce())
+      ->method('createInstance')
+      ->willReturn($plugin_selector);
+
+    $expected_form = [
+      'payment_status_plugin_id' => $plugin_selector_form,
+    ];
+
     $form = $this->action->buildConfigurationForm($form, $form_state);
-    $this->assertInternalType('array', $form);
-    $this->assertArrayHasKey('payment_status_plugin_id', $form);
+    $this->assertSame($expected_form, $form);
+  }
+
+  /**
+   * @covers ::validateConfigurationForm
+   * @covers ::getPluginSelector
+   *
+   * @depends testBuildConfigurationForm
+   */
+  public function testValidateConfigurationForm() {
+    $form = [
+      'payment_status_plugin_id' => [
+        '#foo' => $this->randomMachineName(),
+      ],
+    ];
+    $form_state = new FormState();
+
+    $plugin_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+    $plugin_selector->expects($this->once())
+      ->method('validateSelectorForm')
+      ->with($form['payment_status_plugin_id'], $form_state);
+
+    $this->pluginSelectorManager->expects($this->atLeastOnce())
+      ->method('createInstance')
+      ->willReturn($plugin_selector);
+
+    $this->action->validateConfigurationForm($form, $form_state);
   }
 
   /**
    * @covers ::submitConfigurationForm
+   * @covers ::getPluginSelector
+   *
    * @depends testBuildConfigurationForm
    */
   public function testSubmitConfigurationForm() {
+    $form = [
+      'payment_status_plugin_id' => [
+        '#foo' => $this->randomMachineName(),
+      ],
+    ];
+    $form_state = new FormState();
+
     $plugin_id = $this->randomMachineName();
-    $form = [];
-    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
-    $form_state->expects($this->atLeastOnce())
-      ->method('getValues')
-      ->willReturn(array(
-        'payment_status_plugin_id' => $plugin_id,
-      ));
+
+    $payment_status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
+    $payment_status->expects($this->atLeastOnce())
+      ->method('getPluginId')
+      ->willReturn($plugin_id);
+
+
+    $plugin_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+    $plugin_selector->expects($this->once())
+      ->method('getSelectedPlugin')
+      ->willReturn($payment_status);
+    $plugin_selector->expects($this->once())
+      ->method('submitSelectorForm')
+      ->with($form['payment_status_plugin_id'], $form_state);
+
+    $this->pluginSelectorManager->expects($this->atLeastOnce())
+      ->method('createInstance')
+      ->willReturn($plugin_selector);
+
     $this->action->submitConfigurationForm($form, $form_state);
     $configuration = $this->action->getConfiguration();
     $this->assertSame($plugin_id, $configuration['payment_status_plugin_id']);

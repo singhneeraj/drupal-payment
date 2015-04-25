@@ -23,7 +23,7 @@ class ListPaymentStatusesUnitTest extends UnitTestCase {
    *
    * @var \Drupal\payment\Controller\ListPaymentStatuses
    */
-  protected $controller;
+  protected $sut;
 
   /**
    * The payment method plugin manager used for testing.
@@ -56,7 +56,7 @@ class ListPaymentStatusesUnitTest extends UnitTestCase {
 
     $this->stringTranslation = $this->getStringTranslationStub();
 
-    $this->controller = new ListPaymentStatuses($this->stringTranslation, $this->renderer, $this->paymentStatusManager);
+    $this->sut = new ListPaymentStatuses($this->stringTranslation, $this->renderer, $this->paymentStatusManager);
   }
 
   /**
@@ -81,6 +81,9 @@ class ListPaymentStatusesUnitTest extends UnitTestCase {
   /**
    * @covers ::execute
    * @covers ::buildListingLevel
+   * @covers ::buildHierarchy
+   * @covers ::buildHierarchyLevel
+   * @covers ::sort
    */
   function testListing() {
     $plugin_id_a = $this->randomMachineName();
@@ -94,6 +97,7 @@ class ListPaymentStatusesUnitTest extends UnitTestCase {
       $plugin_id_b => [
         'label' => $this->randomMachineName(),
         'description' => $this->randomMachineName(),
+        'parent_id' => $plugin_id_a,
       ],
     ];
 
@@ -111,9 +115,12 @@ class ListPaymentStatusesUnitTest extends UnitTestCase {
       [$plugin_id_a, TRUE, $definitions[$plugin_id_a]],
       [$plugin_id_b, TRUE, $definitions[$plugin_id_b]],
     ];
-    $this->paymentStatusManager->expects($this->exactly(2))
+    $this->paymentStatusManager->expects($this->exactly(count($map)))
       ->method('getDefinition')
-      ->will($this->returnValueMap($map));
+      ->willReturnMap($map);
+    $this->paymentStatusManager->expects($this->atLeastOnce())
+      ->method('getDefinitions')
+      ->willReturn($definitions);
     $map = [
       [$plugin_id_a, $operations_provider_a],
       [$plugin_id_b, NULL],
@@ -122,21 +129,11 @@ class ListPaymentStatusesUnitTest extends UnitTestCase {
       ->method('getOperationsProvider')
       ->will($this->returnValueMap($map));
 
-    $hierarchy = [
-      $plugin_id_a => [
-        $plugin_id_b => [],
-      ],
-    ];
-
-    $this->paymentStatusManager->expects($this->once())
-      ->method('hierarchy')
-      ->will($this->returnValue($hierarchy));
-
     $this->stringTranslation->expects($this->any())
       ->method('translate')
       ->will($this->returnArgument(0));
 
-    $build = $this->controller->execute();
+    $build = $this->sut->execute();
     $expected = [
       '#header' => ['Title', 'Description', 'Operations'],
       '#type' => 'table',

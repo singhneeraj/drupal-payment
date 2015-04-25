@@ -181,11 +181,11 @@ class PaymentMethodWebTest extends WebTestBase {
       'id' => $id,
       'owner' => $user->label(),
       'plugin_form[plugin_form][brand_label]' => $brand_label,
-      'plugin_form[plugin_form][execute][execute_status_id]' => $execute_status_id,
+      'plugin_form[plugin_form][execute][execute_status][container][select][container][plugin_id]' => $execute_status_id,
       'plugin_form[plugin_form][capture][capture]' => TRUE,
-      'plugin_form[plugin_form][capture][capture_status_id]' => $capture_status_id,
+      'plugin_form[plugin_form][capture][plugin_form][capture_status][container][select][container][plugin_id]' => $capture_status_id,
       'plugin_form[plugin_form][refund][refund]' => TRUE,
-      'plugin_form[plugin_form][refund][refund_status_id]' => $refund_status_id,
+      'plugin_form[plugin_form][refund][plugin_form][refund_status][container][select][container][plugin_id]' => $refund_status_id,
     ), t('Save'));
     /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface $payment_method */
     $payment_method = entity_load('payment_method_configuration', $id);

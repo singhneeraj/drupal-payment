@@ -24,7 +24,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
      *
      * @var \Drupal\payment\Entity\PaymentStatus\PaymentStatusForm
      */
-    protected $form;
+    protected $sut;
 
     /**
      * The payment status.
@@ -48,6 +48,13 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
     protected $paymentStatusStorage;
 
     /**
+     * The plugin selector manager.
+     *
+     * @var \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $pluginSelectorManager;
+
+    /**
      * The string translation service.
      *
      * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -58,7 +65,6 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
      * {@inheritdoc}
      */
     public function setUp() {
-
       $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
       $this->paymentStatusStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
@@ -67,13 +73,12 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
         ->disableOriginalConstructor()
         ->getMock();
 
-      $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
-      $this->stringTranslation->expects($this->any())
-        ->method('translate')
-        ->will($this->returnArgument(0));
+      $this->pluginSelectorManager = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface');
 
-      $this->form = new PaymentStatusForm($this->stringTranslation, $this->paymentStatusStorage, $this->paymentStatusManager);
-      $this->form->setEntity($this->paymentStatus);
+      $this->stringTranslation = $this->getStringTranslationStub();
+
+      $this->sut = new PaymentStatusForm($this->stringTranslation, $this->paymentStatusStorage, $this->pluginSelectorManager, $this->paymentStatusManager);
+      $this->sut->setEntity($this->paymentStatus);
     }
 
     /**
@@ -91,6 +96,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
       $map = array(
         array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $entity_manager),
         array('plugin.manager.payment.status', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentStatusManager),
+        array('plugin.manager.payment.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
         array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
       );
       $container->expects($this->any())
@@ -115,35 +121,40 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
 
       $language = $this->getMock('\Drupal\Core\Language\LanguageInterface');
 
-      $options = array(
-        'foo' => $this->randomMachineName(),
-        'bar' => $this->randomMachineName(),
-      );
+      $parent_selector_form = [
+        '#foo' => $this->randomMachineName(),
+      ];
+
+      $parent_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+      $parent_selector->expects($this->atLeastOnce())
+        ->method('buildSelectorForm')
+        ->with([], $form_state)
+        ->willReturn($parent_selector_form);
+
+      $this->pluginSelectorManager->expects($this->atLeastOnce())
+        ->method('createInstance')
+        ->willReturn($parent_selector);
 
       $this->paymentStatus->expects($this->any())
         ->method('id')
-        ->will($this->returnValue($id));
+        ->willReturn($id);
       $this->paymentStatus->expects($this->any())
         ->method('getDescription')
-        ->will($this->returnValue($description));
+        ->willReturn($description);
       $this->paymentStatus->expects($this->any())
         ->method('getParentId')
-        ->will($this->returnValue($parent_id));
+        ->willReturn($parent_id);
       $this->paymentStatus->expects($this->any())
         ->method('isNew')
-        ->will($this->returnValue($is_new));
+        ->willReturn($is_new);
       $this->paymentStatus->expects($this->any())
         ->method('label')
-        ->will($this->returnValue($label));
+        ->willReturn($label);
       $this->paymentStatus->expects($this->any())
         ->method('language')
-        ->will($this->returnValue($language));
+        ->willReturn($language);
 
-      $this->paymentStatusManager->expects($this->once())
-        ->method('options')
-        ->will($this->returnValue($options));
-
-      $build = $this->form->form([], $form_state);
+      $build = $this->sut->form([], $form_state);
       unset($build['#process']);
       unset($build['langcode']);
       $expected_build = array(
@@ -159,19 +170,13 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
           '#disabled' => !$is_new,
           '#machine_name' => array(
             'source' => array('label'),
-            'exists' => array($this->form, 'PaymentStatusIdExists'),
+            'exists' => array($this->sut, 'PaymentStatusIdExists'),
           ),
           '#maxlength' => 255,
           '#type' => 'machine_name',
           '#required' => TRUE,
         ),
-        'parent_id' => array(
-          '#default_value' => $parent_id,
-          '#empty_value' => '',
-          '#options' => $options,
-          '#title' => 'Parent status',
-          '#type' => 'select',
-        ),
+        'parent_id' => $parent_selector_form,
         'description' => array(
           '#type' => 'textarea',
           '#title' => 'Description',
@@ -205,6 +210,20 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
         ->method('setParentId')
         ->with($parent_id);
 
+      $parent_status = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+      $parent_status->expects($this->atLeastOnce())
+        ->method('getPluginId')
+        ->willReturn($parent_id);
+
+      $parent_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+      $parent_selector->expects($this->atLeastOnce())
+        ->method('getSelectedPlugin')
+        ->willReturn($parent_status);
+
+      $this->pluginSelectorManager->expects($this->atLeastOnce())
+        ->method('createInstance')
+        ->willReturn($parent_selector);
+
       $form = [];
       $form_state = new FormState();
       $form_state->setValue('description', $description);
@@ -212,17 +231,17 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
       $form_state->setValue('label', $label);
       $form_state->setValue('parent_id', $parent_id);
 
-      $method = new \ReflectionMethod($this->form, 'copyFormValuesToEntity');
+      $method = new \ReflectionMethod($this->sut, 'copyFormValuesToEntity');
       $method->setAccessible(TRUE);
 
-      $method->invokeArgs($this->form, array($this->paymentStatus, $form, $form_state));
+      $method->invokeArgs($this->sut, array($this->paymentStatus, $form, $form_state));
     }
 
     /**
      * @covers ::paymentStatusIdExists
      */
     public function testPaymentStatusIdExists() {
-      $method = new \ReflectionMethod($this->form, 'paymentStatusIdExists');
+      $method = new \ReflectionMethod($this->sut, 'paymentStatusIdExists');
       $method->setAccessible(TRUE);
 
       $payment_method_configuration_id = $this->randomMachineName();
@@ -236,8 +255,8 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
         ->with($payment_method_configuration_id)
         ->will($this->returnValue(NULL));
 
-      $this->assertTrue($method->invoke($this->form, $payment_method_configuration_id));
-      $this->assertFalse($method->invoke($this->form, $payment_method_configuration_id));
+      $this->assertTrue($method->invoke($this->sut, $payment_method_configuration_id));
+      $this->assertFalse($method->invoke($this->sut, $payment_method_configuration_id));
     }
 
     /**
@@ -251,7 +270,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
 
       /** @var \Drupal\payment\Entity\PaymentStatus\PaymentStatusForm|\PHPUnit_Framework_MockObject_MockObject $form */
       $form = $this->getMockBuilder('\Drupal\payment\Entity\PaymentStatus\PaymentStatusForm')
-        ->setConstructorArgs(array($this->stringTranslation, $this->paymentStatusStorage, $this->paymentStatusManager))
+        ->setConstructorArgs(array($this->stringTranslation, $this->paymentStatusStorage, $this->pluginSelectorManager, $this->paymentStatusManager))
         ->setMethods(array('copyFormValuesToEntity'))
         ->getMock();
       $form->setEntity($this->paymentStatus);

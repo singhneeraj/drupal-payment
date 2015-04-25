@@ -7,8 +7,8 @@
 
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\MethodConfiguration;
 
+use Drupal\Core\Form\FormState;
 use Drupal\payment\Plugin\Payment\MethodConfiguration\Basic;
-use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -33,6 +33,13 @@ class BasicUnitTest extends PaymentMethodConfigurationBaseUnitTestBase {
   protected $paymentStatusManager;
 
   /**
+   * The plugin selector manager.
+   *
+   * @var \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $pluginSelectorManager;
+
+  /**
    * {@inheritdoc}
    */
   public function setUp() {
@@ -40,7 +47,9 @@ class BasicUnitTest extends PaymentMethodConfigurationBaseUnitTestBase {
 
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
-    $this->paymentMethodConfiguration = new Basic([], '', $this->pluginDefinition, $this->stringTranslation, $this->moduleHandler, $this->paymentStatusManager);
+    $this->pluginSelectorManager = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface');
+
+    $this->paymentMethodConfiguration = new Basic([], '', $this->pluginDefinition, $this->stringTranslation, $this->moduleHandler, $this->pluginSelectorManager, $this->paymentStatusManager);
   }
 
   /**
@@ -52,6 +61,7 @@ class BasicUnitTest extends PaymentMethodConfigurationBaseUnitTestBase {
     $map = array(
       array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
       array('plugin.manager.payment.status', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentStatusManager),
+      array('plugin.manager.payment.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
     $container->expects($this->any())
@@ -134,7 +144,7 @@ class BasicUnitTest extends PaymentMethodConfigurationBaseUnitTestBase {
    */
   public function testBuildConfigurationForm() {
     $form = [];
-    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state = new FormState();
     $elements = $this->paymentMethodConfiguration->buildConfigurationForm($form, $form_state);
     $form['plugin_form']['#process'][] = array($this->paymentMethodConfiguration, 'processBuildConfigurationForm');
     $this->assertArrayHasKey('message', $elements);
@@ -144,31 +154,31 @@ class BasicUnitTest extends PaymentMethodConfigurationBaseUnitTestBase {
 
   /**
    * @covers ::processBuildConfigurationForm
+   * @covers ::getExecutePaymentStatusSelector
+   * @covers ::getCapturePaymentStatusSelector
+   * @covers ::getRefundPaymentStatusSelector
+   * @covers ::getPaymentStatusSelector
    */
   public function testProcessBuildConfigurationForm() {
-    $definitions = array(
-      array(
-        'id' => $this->randomMachineName(),
-        'label' => $this->randomMachineName(),
-      ),
-      array(
-        'id' => $this->randomMachineName(),
-        'label' => $this->randomMachineName(),
-      ),
-    );
+    $payment_status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
+
     $this->paymentStatusManager->expects($this->atLeastOnce())
-      ->method('getDefinitions')
-      ->will($this->returnValue($definitions));
+      ->method('createInstance')
+      ->willReturn($payment_status);
+
+    $payment_status_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+
+    $this->pluginSelectorManager->expects($this->atLeastOnce())
+      ->method('createInstance')
+      ->willReturn($payment_status_selector);
 
     $element = array(
       '#parents' => array('foo', 'bar'),
     );
     $form = [];
-    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
+    $form_state = new FormState();
 
-    $method = new \ReflectionMethod($this->paymentMethodConfiguration ,'processBuildConfigurationForm');
-    $method->setAccessible(TRUE);
-    $elements = $method->invokeArgs($this->paymentMethodConfiguration, array(&$element, $form_state, &$form));
+    $elements = $this->paymentMethodConfiguration->processBuildConfigurationForm($element, $form_state, $form);
     $this->assertInternalType('array', $elements);
     foreach (array('brand_label', 'execute', 'capture', 'refund') as $key) {
       $this->assertArrayHasKey($key, $elements);
@@ -178,6 +188,10 @@ class BasicUnitTest extends PaymentMethodConfigurationBaseUnitTestBase {
 
   /**
    * @covers ::submitConfigurationForm
+   * @covers ::getExecutePaymentStatusSelector
+   * @covers ::getCapturePaymentStatusSelector
+   * @covers ::getRefundPaymentStatusSelector
+   * @covers ::getPaymentStatusSelector
    */
   public function testSubmitConfigurationForm() {
     $brand_label = $this->randomMachineName();
@@ -188,6 +202,21 @@ class BasicUnitTest extends PaymentMethodConfigurationBaseUnitTestBase {
     $refund = TRUE;
     $refund_status_id = $this->randomMachineName();
 
+    $payment_status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
+
+    $this->paymentStatusManager->expects($this->atLeastOnce())
+      ->method('createInstance')
+      ->willReturn($payment_status);
+
+    $payment_status_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+    $payment_status_selector->expects($this->atLeastOnce())
+      ->method('getSelectedPlugin')
+      ->willReturn($payment_status);
+
+    $this->pluginSelectorManager->expects($this->atLeastOnce())
+      ->method('createInstance')
+      ->willReturn($payment_status_selector);
+
     $form = array(
       'message' => array(
         '#parents' => array('foo', 'bar', 'message')
@@ -196,37 +225,53 @@ class BasicUnitTest extends PaymentMethodConfigurationBaseUnitTestBase {
         'brand_label' => array(
           '#parents' => array('foo', 'bar', 'status')
         ),
+        'execute' => [
+          'execute_status' => [
+            '#foo' => $this->randomMachineName(),
+          ],
+        ],
+        'capture' => [
+          'plugin_form' => [
+            'capture_status' => [
+              '#foo' => $this->randomMachineName(),
+            ],
+          ],
+        ],
+        'refund' => [
+          'plugin_form' => [
+            'refund_status' => [
+              '#foo' => $this->randomMachineName(),
+            ],
+          ],
+        ],
       ),
     );
-    $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
-    $form_state->expects($this->atLeastOnce())
-      ->method('getValues')
-      ->willReturn(array(
-        'foo' => array(
-          'bar' => array(
-            'brand_label' => $brand_label,
-            'message' => $message,
-            'execute' => array(
-              'execute_status_id' => $execute_status_id,
-            ),
-            'capture' => array(
-              'capture' => $capture,
-              'capture_status_id' => $capture_status_id,
-            ),
-            'refund' => array(
-              'refund' => $refund,
-              'refund_status_id' => $refund_status_id,
-            ),
+    $form_state = new FormState();
+    $form_state->setValues([
+      'foo' => array(
+        'bar' => array(
+          'brand_label' => $brand_label,
+          'message' => $message,
+          'execute' => array(
+            'execute_status_id' => $execute_status_id,
+          ),
+          'capture' => array(
+            'capture' => $capture,
+            'capture_status_id' => $capture_status_id,
+          ),
+          'refund' => array(
+            'refund' => $refund,
+            'refund_status_id' => $refund_status_id,
           ),
         ),
-      ));
+      ),
+    ]);
 
     $this->paymentMethodConfiguration->submitConfigurationForm($form, $form_state);
 
     $this->assertSame($brand_label, $this->paymentMethodConfiguration->getBrandLabel());
-    $this->assertSame($execute_status_id, $this->paymentMethodConfiguration->getExecuteStatusId());
     $this->assertSame($capture, $this->paymentMethodConfiguration->getCapture());
-    $this->assertSame($capture_status_id, $this->paymentMethodConfiguration->getCaptureStatusId());
+    $this->assertSame($refund, $this->paymentMethodConfiguration->getRefund());
   }
 
   /**

@@ -176,12 +176,30 @@ namespace Drupal\Tests\payment\Unit\Element {
         ->willReturn($line_item_name_b);
       $line_items = array($line_item_a, $line_item_b);
 
+      $line_item_id_a = $this->randomMachineName();
+      $line_item_id_b = $this->randomMachineName();
+      $line_item_definitions = [
+        $line_item_id_a => [
+          'id' => $line_item_id_a,
+          'label' => $this->randomMachineName(),
+        ],
+        $line_item_id_b => [
+          'id' => $line_item_id_b,
+          'label' => $this->randomMachineName(),
+        ],
+      ];
+
+      $this->paymentLineItemManager->expects($this->atLeastOnce())
+        ->method('getDefinitions')
+        ->willReturn($line_item_definitions);
+
       $element = array(
         '#cardinality' => PaymentLineItemsInput::CARDINALITY_UNLIMITED,
         '#default_value' => $line_items,
         '#name' => $this->randomMachineName(),
         '#parents' => [],
       );
+
       $element = $this->element->process($element, $form_state, $form);
 
       $this->assertArrayHasKey($line_item_name_a, $element['line_items']);

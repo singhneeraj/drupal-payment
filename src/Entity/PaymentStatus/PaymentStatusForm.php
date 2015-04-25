@@ -12,6 +12,8 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\payment\Plugin\Payment\DefaultPluginDefinitionMapper;
+use Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -35,11 +37,19 @@ class PaymentStatusForm extends EntityForm {
   protected $paymentStatusStorage;
 
   /**
+   * The plugin selector manager.
+   *
+   * @var \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface
+   */
+  protected $pluginSelectorManager;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(TranslationInterface $string_translation, EntityStorageInterface $payment_status_storage, PaymentStatusManagerInterface $payment_status_manager) {
+  public function __construct(TranslationInterface $string_translation, EntityStorageInterface $payment_status_storage, PluginSelectorManagerInterface $plugin_selector_manager, PaymentStatusManagerInterface $payment_status_manager) {
     $this->paymentStatusManager = $payment_status_manager;
     $this->paymentStatusStorage = $payment_status_storage;
+    $this->pluginSelectorManager = $plugin_selector_manager;
     $this->stringTranslation = $string_translation;
   }
 
@@ -50,7 +60,7 @@ class PaymentStatusForm extends EntityForm {
     /** @var \Drupal\Core\Entity\EntityManagerInterface $entity_manager */
     $entity_manager = $container->get('entity.manager');
 
-    return new static($container->get('string_translation'), $entity_manager->getStorage('payment_status'), $container->get('plugin.manager.payment.status'));
+    return new static($container->get('string_translation'), $entity_manager->getStorage('payment_status'), $container->get('plugin.manager.payment.plugin_selector'), $container->get('plugin.manager.payment.status'));
   }
 
   /**
@@ -77,13 +87,7 @@ class PaymentStatusForm extends EntityForm {
       '#type' => 'machine_name',
       '#required' => TRUE,
     );
-    $form['parent_id'] = array(
-      '#default_value' => $payment_status->getParentId(),
-      '#empty_value' => '',
-      '#options' => $this->paymentStatusManager->options(),
-      '#title' => $this->t('Parent status'),
-      '#type' => 'select',
-    );
+    $form['parent_id'] = $this->getParentPaymentStatusSelector($form_state)->buildSelectorForm([], $form_state);
     $form['description'] = array(
       '#type' => 'textarea',
       '#title' => $this->t('Description'),
@@ -97,13 +101,29 @@ class PaymentStatusForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    $this->getParentPaymentStatusSelector($form_state)->validateSelectorForm($form['parent_id'], $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    $this->getParentPaymentStatusSelector($form_state)->submitSelectorForm($form['parent_id'], $form_state);
+    parent::submitForm($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function copyFormValuesToEntity(EntityInterface $payment_status, array $form, FormStateInterface $form_state) {
     /** @var \Drupal\payment\Entity\PaymentStatusInterface $payment_status */
     parent::copyFormValuesToEntity($payment_status, $form, $form_state);
     $values = $form_state->getValues();
     $payment_status->setId($values['id']);
     $payment_status->setLabel($values['label']);
-    $payment_status->setParentId($values['parent_id']);
+    $selected_parent = $this->getParentPaymentStatusSelector($form_state)->getSelectedPlugin();
+    $payment_status->setParentId($selected_parent ? $selected_parent->getPluginId() : NULL);
     $payment_status->setDescription($values['description']);
   }
 
@@ -129,4 +149,31 @@ class PaymentStatusForm extends EntityForm {
   public function paymentStatusIdExists($id) {
     return (bool) $this->paymentStatusStorage->load($id);
   }
+
+  /**
+   * Gets the parent payment status selector.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface
+   */
+  protected function getParentPaymentStatusSelector(FormStateInterface $form_state) {
+    $key = 'parent_payment_status_selector';
+    if ($form_state->has($key)) {
+      $plugin_selector = $form_state->get($key);
+    }
+    else {
+      $mapper = new DefaultPluginDefinitionMapper();
+
+      $plugin_selector = $this->pluginSelectorManager->createInstance('payment_select_list');
+      $plugin_selector->setPluginManager($this->paymentStatusManager, $mapper);
+      $plugin_selector->setCollectPluginConfiguration(FALSE);
+      $plugin_selector->setLabel($this->t('Parent status'));
+
+      $form_state->set($key, $plugin_selector);
+    }
+
+    return $plugin_selector;
+  }
+
 }

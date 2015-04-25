@@ -33,17 +33,4 @@ class PaymentLineItemManager extends DefaultPluginManager implements PaymentLine
     $this->setCacheBackend($cache_backend, 'payment_line_item');
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function options() {
-    $options = [];
-    foreach ($this->getDefinitions() as $plugin_id => $definition) {
-      $options[$plugin_id] = $definition['label'];
-    }
-    natcasesort($options);
-
-    return $options;
-  }
-
 }

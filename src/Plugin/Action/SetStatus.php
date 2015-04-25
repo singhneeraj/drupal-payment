@@ -14,6 +14,8 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\Plugin\Payment\DefaultPluginDefinitionMapper;
+use Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -36,6 +38,13 @@ class SetStatus extends ConfigurableActionBase implements ContainerFactoryPlugin
   protected $paymentStatusManager;
 
   /**
+   * The plugin selector manager.
+   *
+   * @var \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface
+   */
+  protected $pluginSelectorManager;
+
+  /**
    * Constructs a new class instance.
    *
    * @param array $configuration
@@ -46,12 +55,15 @@ class SetStatus extends ConfigurableActionBase implements ContainerFactoryPlugin
    *   The plugin implementation definition.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translator.
+   * @param \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface $plugin_selector_manager
+   *   The plugin selector manager.
    * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface $payment_status_manager
    *   The payment status manager.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, TranslationInterface $string_translation, PaymentStatusManagerInterface $payment_status_manager) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, TranslationInterface $string_translation, PluginSelectorManagerInterface $plugin_selector_manager, PaymentStatusManagerInterface $payment_status_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->paymentStatusManager = $payment_status_manager;
+    $this->pluginSelectorManager = $plugin_selector_manager;
     $this->stringTranslation = $string_translation;
   }
 
@@ -59,7 +71,7 @@ class SetStatus extends ConfigurableActionBase implements ContainerFactoryPlugin
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'), $container->get('plugin.manager.payment.status'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'), $container->get('plugin.manager.payment.plugin_selector'), $container->get('plugin.manager.payment.status'));
   }
 
   /**
@@ -85,13 +97,7 @@ class SetStatus extends ConfigurableActionBase implements ContainerFactoryPlugin
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $form['payment_status_plugin_id'] = array(
-      '#default_value' => $this->configuration['payment_status_plugin_id'],
-      '#options' => $this->paymentStatusManager->options(),
-      '#required' => TRUE,
-      '#title' => $this->t('Payment status'),
-      '#type' => 'select',
-    );
+    $form['payment_status_plugin_id'] = $this->getPluginSelector($form_state)->buildSelectorForm([], $form_state);
 
     return $form;
   }
@@ -99,9 +105,16 @@ class SetStatus extends ConfigurableActionBase implements ContainerFactoryPlugin
   /**
    * {@inheritdoc}
    */
+  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
+    $this->getPluginSelector($form_state)->validateSelectorForm($form['payment_status_plugin_id'], $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
-    $values = $form_state->getValues();
-    $this->configuration['payment_status_plugin_id'] = $values['payment_status_plugin_id'];
+    $this->getPluginSelector($form_state)->submitSelectorForm($form['payment_status_plugin_id'], $form_state);
+    $this->configuration['payment_status_plugin_id'] = $this->getPluginSelector($form_state)->getSelectedPlugin()->getPluginId();
   }
 
   /**
@@ -113,6 +126,27 @@ class SetStatus extends ConfigurableActionBase implements ContainerFactoryPlugin
     }
     $access = AccessResult::forbidden();
     return $return_as_object ? $access : $access->isAllowed();
+  }
+
+  /**
+   * Gets the plugin selector.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface
+   */
+  protected function getPluginSelector(FormStateInterface $form_state) {
+    if (!$form_state->has('plugin_selector')) {
+      $plugin_selector = $this->pluginSelectorManager->createInstance('payment_select_list');
+      $mapper = new DefaultPluginDefinitionMapper();
+      $plugin_selector->setPluginManager($this->paymentStatusManager, $mapper);
+      $plugin_selector->setRequired();
+      $plugin_selector->setLabel($this->t('Payment status'));
+      $plugin_selector->setCollectPluginConfiguration(FALSE);
+      $form_state->set('plugin_selector', $plugin_selector);
+    }
+
+    return $form_state->get('plugin_selector');
   }
 
 }

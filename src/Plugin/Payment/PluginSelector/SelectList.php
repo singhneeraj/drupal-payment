@@ -25,15 +25,6 @@ class SelectList extends AdvancedPluginSelectorBase {
     $element = parent::buildSelector($root_element, $form_state, $plugins);
     /** @var \Drupal\Component\Plugin\PluginInspectionInterface[] $plugins */
     $element['container']['plugin_id'] = array(
-      '#ajax' => array(
-        'callback' => array(get_class(), 'ajaxSubmitConfigurationForm'),
-        'effect' => 'fade',
-        'event' => 'change',
-        'trigger_as' => array(
-          'name' => $element['container']['change']['#name'],
-        ),
-        'wrapper' => $this->getElementId(),
-      ),
       '#default_value' => $this->getSelectedPlugin() ? $this->getSelectedPlugin()->getPluginId() : NULL,
       '#empty_value' => 'select',
       '#options' => $this->buildOptionsLevel($this->buildHierarchy()),
@@ -41,6 +32,17 @@ class SelectList extends AdvancedPluginSelectorBase {
       '#title' => $this->getLabel(),
       '#type' => 'select',
     );
+    if ($this->getCollectPluginConfiguration()) {
+      $element['container']['plugin_id']['#ajax'] = [
+        'callback' => [get_class(), 'ajaxSubmitConfigurationForm'],
+        'effect' => 'fade',
+        'event' => 'change',
+        'trigger_as' => [
+          'name' => $element['container']['change']['#name'],
+        ],
+        'wrapper' => $this->getElementId(),
+      ];
+    }
 
     return $element;
   }

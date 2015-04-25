@@ -203,8 +203,13 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
       ),
       '#type' => 'container',
     );
+    $options = [];
+    foreach ($this->paymentLineItemManager->getDefinitions() as $line_item_plugin_id => $line_item_definition) {
+      $options[$line_item_plugin_id] = $line_item_definition['label'];
+    }
+    natcasesort($options);
     $element['add_more']['type'] = array(
-      '#options' => $this->paymentLineItemManager->options(),
+      '#options' => $options,
       '#title' => $this->t('Type'),
       '#type' => 'select',
     );

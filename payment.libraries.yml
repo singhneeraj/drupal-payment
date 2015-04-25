@@ -16,11 +16,6 @@ payment_method_configuration.list:
     component:
       css/payment.css: {}
 
-payment_method_configuration.basic.form:
-  version: VERSION
-  js:
-    js/payment.js: {}
-
 payment_reference:
   version: VERSION
   css:

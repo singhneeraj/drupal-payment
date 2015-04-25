@@ -12,7 +12,7 @@ use Drupal\payment\Tests\Generate;
 use Drupal\simpletest\WebTestBase;
 
 /**
- * payment_line_items_input element unit test.
+ * payment_line_items_input element web test.
  *
  * @group Payment
  */
@@ -21,7 +21,7 @@ class PaymentLineItemsInputWebTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('payment_test');
+  public static $modules = array('payment', 'payment_test');
 
   /**
    * Creates line item form data.

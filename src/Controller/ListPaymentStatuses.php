@@ -64,7 +64,7 @@ class ListPaymentStatuses extends ControllerBase {
     return [
       '#header' => [$this->t('Title'), $this->t('Description'), $this->t('Operations')],
       '#type' => 'table',
-    ] + $this->buildListingLevel($this->paymentStatusManager->hierarchy(), 0);
+    ] + $this->buildListingLevel($this->buildHierarchy(), 0);
   }
 
   /**
@@ -105,6 +105,69 @@ class ListPaymentStatuses extends ControllerBase {
     }
 
     return $rows;
+  }
+
+  /**
+   * Returns a hierarchical representation of payment statuses.
+   *
+   * @param string[]|null $limit_plugin_ids
+   *   An array of plugin IDs to limit the statuses to, or NULL to allow all.
+   *
+   * @return array[]
+   *   A possibly infinitely nested associative array. Keys are plugin IDs and
+   *   values are arrays of similar structure as this method's return value.
+   */
+  protected function buildHierarchy(array $limit_plugin_ids = NULL) {
+    static $hierarchy = NULL;
+
+    if (is_null($hierarchy)) {
+      $parents = [];
+      $children = [];
+      $definitions = $this->paymentStatusManager->getDefinitions();
+      if (is_array($limit_plugin_ids)) {
+        $definitions = array_intersect_key($definitions, array_flip($limit_plugin_ids));
+      }
+      uasort($definitions, array($this, 'sort'));
+      foreach ($definitions as $plugin_id => $definition) {
+        if (!empty($definition['parent_id'])) {
+          $children[$definition['parent_id']][] = $plugin_id;
+        }
+        else {
+          $parents[] = $plugin_id;
+        }
+      }
+      $hierarchy = $this->buildHierarchyLevel($parents, $children);
+    }
+
+    return $hierarchy;
+  }
+
+  /**
+   * Helper function for self::hierarchy().
+   *
+   * @param string[] $parent_plugin_ids
+   *   An array with IDs of plugins that are part of the same hierarchy level.
+   * @param string[] $child_plugin_ids
+   *   Keys are plugin IDs. Values are arrays with those plugin's child
+   *   plugin IDs.
+   *
+   * @return array[]
+   *   The return value is identical to that of self::hierarchy().
+   */
+  protected function buildHierarchyLevel(array $parent_plugin_ids, array $child_plugin_ids) {
+    $hierarchy = [];
+    foreach ($parent_plugin_ids as $plugin_id) {
+      $hierarchy[$plugin_id] = isset($child_plugin_ids[$plugin_id]) ? $this->buildHierarchyLevel($child_plugin_ids[$plugin_id], $child_plugin_ids) : [];
+    }
+
+    return $hierarchy;
+  }
+
+  /**
+   * Implements uasort() callback to sort plugin definitions by label.
+   */
+  protected function sort(array $definition_a, array $definition_b) {
+    return strcmp($definition_a['label'], $definition_b['label']);
   }
 
 }

@@ -26,15 +26,4 @@ interface PaymentLineItemManagerInterface extends PluginManagerInterface {
    */
   public function createInstance($plugin_id, array $configuration = []);
 
-  /**
-   * Returns payment line item options.
-   *
-   * @return array
-   *   Keys are plugin IDs. Values are plugin labels.
-   *
-   * @deprecated Scheduled for removal before 8.x-2.0. Use plugin selectors
-   *   instead.
-   */
-  public function options();
-
 }

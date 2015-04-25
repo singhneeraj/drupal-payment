@@ -91,7 +91,7 @@ class PaymentStatusWebTest extends WebTestBase {
     $this->drupalPostForm($path, array(
       'label' => $label,
       'id' => $payment_status_id,
-      'parent_id' => $parent_id,
+      'container[select][container][plugin_id]' => $parent_id,
       'description' => $description,
     ), t('Save'));
     /** @var \Drupal\payment\Entity\PaymentStatusInterface $status */
@@ -111,7 +111,7 @@ class PaymentStatusWebTest extends WebTestBase {
     $description = $this->randomString();
     $this->drupalPostForm(NULL, array(
       'label' => $label,
-      'parent_id' => $parent_id,
+      'container[select][container][plugin_id]' => $parent_id,
       'description' => $description,
     ), t('Save'));
     /** @var \Drupal\payment\Entity\PaymentStatusInterface $status */

@@ -138,69 +138,6 @@ class PaymentStatusManagerUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::hierarchy
-   * @covers ::hierarchyLevel
-   * @covers ::sort
-   * @depends testGetDefinitions
-   */
-  public function testHierarchy() {
-    $parent_label = $this->randomMachineName();
-    $child_label = $this->randomMachineName();
-    $definitions = array(
-      'foo' => array(
-        'label' => $parent_label,
-      ),
-      'bar' => array(
-        'label' => $child_label,
-        'parent_id' => 'foo',
-      ),
-      'baz' => array(
-        'label' => $this->randomMachineName(),
-      ),
-    );
-    $this->discovery->expects($this->once())
-      ->method('getDefinitions')
-      ->will($this->returnValue($definitions));
-    $expected_hierarchy = array(
-      'foo' => array(
-        'bar' => [],
-      ),
-    );
-    $this->assertSame($expected_hierarchy, $this->paymentStatusManager->hierarchy(array('foo', 'bar')));
-  }
-
-  /**
-   * @covers ::options
-   * @covers ::optionsLevel
-   * @depends testGetDefinitions
-   * @depends testHierarchy
-   */
-  public function testOptions() {
-    $parent_label = $this->randomMachineName();
-    $child_label = $this->randomMachineName();
-    $definitions = array(
-      'foo' => array(
-        'label' => $parent_label,
-      ),
-      'bar' => array(
-        'label' => $child_label,
-        'parent_id' => 'foo',
-      ),
-      'baz' => array(
-        'label' => $this->randomMachineName(),
-      ),
-    );
-    $this->discovery->expects($this->once())
-      ->method('getDefinitions')
-      ->will($this->returnValue($definitions));
-    $expected_options = array(
-      'foo' => $parent_label,
-      'bar' => '- ' . $child_label,
-    );
-    $this->assertSame($expected_options, $this->paymentStatusManager->options(array('foo', 'bar')));
-  }
-
-  /**
    * @covers ::getChildren
    * @depends testGetDefinitions
    */

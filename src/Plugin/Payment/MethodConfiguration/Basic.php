@@ -12,6 +12,8 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\payment\Plugin\Payment\DefaultPluginDefinitionMapper;
+use Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -38,6 +40,13 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
   protected $paymentStatusManager;
 
   /**
+   * The plugin selector manager.
+   *
+   * @var \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface
+   */
+  protected $pluginSelectorManager;
+
+  /**
    * Constructs a new class instance.
    *
    * @param array $configuration
@@ -50,20 +59,23 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
    *   The string translator.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
+   * @param \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface
+   *   The plugin selector manager.
    * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    *   The payment status manager.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, TranslationInterface $string_translation, ModuleHandlerInterface $module_handler, PaymentStatusManagerInterface $payment_status_manager) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, TranslationInterface $string_translation, ModuleHandlerInterface $module_handler, PluginSelectorManagerInterface $plugin_selector_manager, PaymentStatusManagerInterface $payment_status_manager) {
     $configuration += $this->defaultConfiguration();
     parent::__construct($configuration, $plugin_id, $plugin_definition, $string_translation, $module_handler);
     $this->paymentStatusManager = $payment_status_manager;
+    $this->pluginSelectorManager = $plugin_selector_manager;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'), $container->get('module_handler'), $container->get('plugin.manager.payment.status'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'), $container->get('module_handler'), $container->get('plugin.manager.payment.plugin_selector'), $container->get('plugin.manager.payment.status'));
   }
 
   /**
@@ -223,24 +235,8 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
       '#title' => $this->t('Brand label'),
       '#type' => 'textfield',
     );
-    $labels = [];
-    foreach ($this->paymentStatusManager->getDefinitions() as $definition) {
-      $labels[$definition['id']] = (string) $definition['label'];
-    }
     $workflow_group = implode('][', array_merge($element['#parents'], array('workflow')));
-    $workflow_id = Html::getUniqueId('workflow');
     $element['workflow'] = array(
-      '#attached' => [
-        'drupalSettings' => [
-          'payment' => [
-            'payment_method_configuration_basic' => $labels,
-          ],
-        ],
-        'library' => [
-          'payment/payment_method_configuration.basic.form',
-        ],
-      ],
-      '#id' => $workflow_id,
       '#type' => 'vertical_tabs',
     );
     $element['execute'] = array(
@@ -249,15 +245,7 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
       '#type' => 'details',
       '#title' => $this->t('Execution'),
     );
-    $element['execute']['execute_status_id'] = array(
-      '#default_value' => !$this->getExecuteStatusId() ?: $this->getExecuteStatusId(),
-      '#description' => $this->t('The status to set payments to after being executed by this payment method.'),
-      '#empty_value' => '',
-      '#options' => $this->paymentStatusManager->options(),
-      '#required' => TRUE,
-      '#title' => $this->t('Payment execution status'),
-      '#type' => 'select',
-    );
+    $element['execute']['execute_status'] = $this->getExecutePaymentStatusSelector($form_state)->buildSelectorForm([], $form_state);
     $element['capture'] = array(
       '#group' => $workflow_group,
       '#open' => TRUE,
@@ -271,21 +259,17 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
       '#title' => $this->t('Add an additional capture step after payments have been executed.'),
       '#default_value' => $this->getCapture(),
     );
-    $element['capture']['capture_status_id'] = array(
-      '#description' => $this->t('The status to set payments to after being captured by this payment method.'),
-      '#default_value' => $this->getCaptureStatusId(),
-      '#options' => $this->paymentStatusManager->options(),
-      '#required' => TRUE,
-      '#states' => array(
+    $element['capture']['plugin_form'] = [
+      '#type' => 'container',
+      '#states' => [
         'visible' => array(
           '#' . $capture_id => array(
             'checked' => TRUE,
           ),
         ),
-      ),
-      '#title' => $this->t('Payment capture status'),
-      '#type' => 'select',
-    );
+      ],
+    ];
+    $element['capture']['plugin_form']['capture_status'] = $this->getCapturePaymentStatusSelector($form_state)->buildSelectorForm([], $form_state);
     $refund_id = Html::getUniqueId('refund');
     $element['refund'] = array(
       '#group' => $workflow_group,
@@ -299,21 +283,17 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
       '#title' => $this->t('Add an additional refund step after payments have been executed.'),
       '#default_value' => $this->getRefund(),
     );
-    $element['refund']['refund_status_id'] = array(
-      '#description' => $this->t('The status to set payments to after being refunded by this payment method.'),
-      '#default_value' => $this->getRefundStatusId(),
-      '#options' => $this->paymentStatusManager->options(),
-      '#required' => TRUE,
-      '#states' => array(
+    $element['refund']['plugin_form'] = [
+      '#type' => 'container',
+      '#states' => [
         'visible' => array(
           '#' . $refund_id => array(
             'checked' => TRUE,
           ),
         ),
-      ),
-      '#title' => $this->t('Payment refund status'),
-      '#type' => 'select',
-    );
+      ],
+    ];
+    $element['refund']['plugin_form']['refund_status'] = $this->getRefundPaymentStatusSelector($form_state)->buildSelectorForm([], $form_state);
 
     return $element;
   }
@@ -321,17 +301,30 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
   /**
    * {@inheritdoc}
    */
+  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
+    $this->getExecutePaymentStatusSelector($form_state)->validateSelectorForm($form['plugin_form']['execute']['execute_status'], $form_state);
+    $this->getCapturePaymentStatusSelector($form_state)->validateSelectorForm($form['plugin_form']['capture']['plugin_form']['capture_status'], $form_state);
+    $this->getRefundPaymentStatusSelector($form_state)->validateSelectorForm($form['plugin_form']['refund']['plugin_form']['refund_status'], $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     parent::submitConfigurationForm($form, $form_state);
+    $this->getExecutePaymentStatusSelector($form_state)->submitSelectorForm($form['plugin_form']['execute']['execute_status'], $form_state);
+    $this->getCapturePaymentStatusSelector($form_state)->submitSelectorForm($form['plugin_form']['capture']['plugin_form']['capture_status'], $form_state);
+    $this->getRefundPaymentStatusSelector($form_state)->submitSelectorForm($form['plugin_form']['refund']['plugin_form']['refund_status'], $form_state);
+
     $parents = $form['plugin_form']['brand_label']['#parents'];
     array_pop($parents);
     $values = $form_state->getValues();
     $values = NestedArray::getValue($values, $parents);
-    $this->setExecuteStatusId($values['execute']['execute_status_id']);
+    $this->setExecuteStatusId($this->getExecutePaymentStatusSelector($form_state)->getSelectedPlugin()->getPluginId());
     $this->setCapture($values['capture']['capture']);
-    $this->setCaptureStatusId($values['capture']['capture_status_id']);
+    $this->setCaptureStatusId($this->getCapturePaymentStatusSelector($form_state)->getSelectedPlugin()->getPluginId());
     $this->setRefund($values['refund']['refund']);
-    $this->setRefundStatusId($values['refund']['refund_status_id']);
+    $this->setRefundStatusId($this->getRefundPaymentStatusSelector($form_state)->getSelectedPlugin()->getPluginId());
     $this->setBrandLabel($values['brand_label']);
   }
 
@@ -355,6 +348,80 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
     $this->configuration['brand_label'] = $label;
 
     return $this;
+  }
+
+  /**
+   * Gets the payment status selector for the execute phase.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface
+   */
+  protected function getExecutePaymentStatusSelector(FormStateInterface $form_state) {
+    $plugin_selector = $this->getPaymentStatusSelector($form_state, 'execute', $this->getExecuteStatusId());
+    $plugin_selector->setLabel($this->t('Payment execution status'));
+    // @todo Add a description: 'The status to set payments to after being executed by this payment method.'.
+
+    return $plugin_selector;
+  }
+
+  /**
+   * Gets the payment status selector for the capture phase.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface
+   */
+  protected function getCapturePaymentStatusSelector(FormStateInterface $form_state) {
+    $plugin_selector = $this->getPaymentStatusSelector($form_state, 'capture', $this->getExecuteStatusId());
+    $plugin_selector->setLabel($this->t('Payment capture status'));
+    // @todo Add a description: 'The status to set payments to after being captured by this payment method.'.
+
+    return $plugin_selector;
+  }
+
+  /**
+   * Gets the payment status selector for the refund phase.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface
+   */
+  protected function getRefundPaymentStatusSelector(FormStateInterface $form_state) {
+    $plugin_selector = $this->getPaymentStatusSelector($form_state, 'refund', $this->getExecuteStatusId());
+    $plugin_selector->setLabel($this->t('Payment refund status'));
+    // @todo Add a description: 'The status to set payments to after being refunded by this payment method.'.
+
+    return $plugin_selector;
+  }
+
+  /**
+   * Gets the payment status selector.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   * @param string $type
+   * @param string $default_plugin_id
+   *
+   * @return \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface
+   */
+  protected function getPaymentStatusSelector(FormStateInterface $form_state, $type, $default_plugin_id) {
+    $key = 'payment_status_selector_' . $type;
+    if ($form_state->has($key)) {
+      $plugin_selector = $form_state->get($key);
+    }
+    else {
+      $mapper = new DefaultPluginDefinitionMapper();
+
+      $plugin_selector = $this->pluginSelectorManager->createInstance('payment_select_list');
+      $plugin_selector->setPluginManager($this->paymentStatusManager, $mapper);
+      $plugin_selector->setRequired(TRUE);
+      $plugin_selector->setCollectPluginConfiguration(FALSE);
+      $plugin_selector->setSelectedPlugin($this->paymentStatusManager->createInstance($default_plugin_id));
+
+      $form_state->set($key, $plugin_selector);
+    }
+
+    return $plugin_selector;
   }
 
 }
