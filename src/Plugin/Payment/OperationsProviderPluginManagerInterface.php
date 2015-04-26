@@ -12,7 +12,7 @@ namespace Drupal\payment\Plugin\Payment;
 interface OperationsProviderPluginManagerInterface {
 
   /**
-   * Gets the payment method's operations provider.
+   * Gets the plugin's operations provider.
    *
    * @param string $plugin_id
    *
