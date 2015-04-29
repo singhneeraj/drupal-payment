@@ -9,6 +9,9 @@ namespace Drupal\payment\Plugin\Payment;
 
 /**
  * Defines a plugin operations provider.
+ *
+ * Classes may also implement any of the following interfaces:
+ * - \Drupal\Core\DependencyInjection\ContainerInjectionInterface
  */
 interface OperationsProviderInterface {
 
