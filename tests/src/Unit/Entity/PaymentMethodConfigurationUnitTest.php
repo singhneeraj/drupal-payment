@@ -114,7 +114,7 @@ class PaymentMethodConfigurationUnitTest extends UnitTestCase {
    * @covers ::label
    */
   public function testLabel() {
-    $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
+    $entity_type = $this->getMock('\Drupal\Core\Config\Entity\ConfigEntityTypeInterface');
     $entity_type->expects($this->atLeastOnce())
       ->method('getKey')
       ->with('label')
@@ -249,7 +249,7 @@ class PaymentMethodConfigurationUnitTest extends UnitTestCase {
     $this->paymentMethodConfiguration->setOwnerId($owner_id);
     $this->paymentMethodConfiguration->setPluginConfiguration($plugin_configuration);
 
-    $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
+    $entity_type = $this->getMock('\Drupal\Core\Config\Entity\ConfigEntityTypeInterface');
     $entity_type->expects($this->atLeastOnce())
       ->method('getConfigPrefix')
       ->willReturn($config_prefix);
