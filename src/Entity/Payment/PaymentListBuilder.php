@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Lists payment entities.
  */
-class PaymentListBuilder extends EntityListBuilder {
+class PaymentListBuilder extends EntityListBuilder implements PaymentListBuilderInterface {
 
   /**
    * The currency storage.
@@ -36,6 +36,14 @@ class PaymentListBuilder extends EntityListBuilder {
    * @var \Drupal\Core\Datetime\DateFormatter
    */
   protected $dateFormatter;
+
+  /**
+   * The ID of the owner to restrict payments by.
+   *
+   * @var int|null
+   *   The owner ID or null to allow payments of all owners.
+   */
+  protected $ownerId;
 
   /**
    * The redirect destination.
@@ -84,10 +92,23 @@ class PaymentListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
+  public function restrictByOwnerId($owner_id) {
+    $this->ownerId = $owner_id;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function getEntityIds() {
     $query = $this->getStorage()->getQuery();
     $header = $this->buildHeader();
     $query->tableSort($header);
+
+    if ($this->ownerId) {
+      $query->condition('owner', $this->ownerId);
+    }
 
     return $query
       ->pager($this->limit)

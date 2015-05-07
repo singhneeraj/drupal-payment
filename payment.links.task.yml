@@ -3,6 +3,11 @@ entity.payment.collection:
   route_name: entity.payment.collection
   title: Payments
 
+payment.payment.collection_by_owner:
+  base_route: entity.user.canonical
+  route_name: payment.payment.collection_by_owner
+  title: Payments
+
 payment.payment.view:
   base_route: entity.payment.canonical
   route_name: entity.payment.canonical

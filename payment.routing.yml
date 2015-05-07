@@ -6,6 +6,14 @@ payment.admin:
   requirements:
     _permission: 'access administration pages'
 
+payment.payment.collection_by_owner:
+  path: '/user/{user}/payment'
+  defaults:
+    _controller: '\Drupal\payment\Controller\ViewPaymentsByOwner::execute'
+    _title: 'Payments'
+  requirements:
+    _custom_access: '\Drupal\payment\Controller\ViewPaymentsByOwner::access'
+
 entity.payment.collection:
   path: '/admin/content/payment'
   defaults:

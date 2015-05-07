@@ -34,6 +34,7 @@ use Drupal\user\UserInterface;
  *     },
  *     "list_builder" = "Drupal\payment\Entity\Payment\PaymentListBuilder",
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
+ *     "views_data" = "Drupal\payment\Entity\Payment\PaymentViewsData",
  *     "storage" = "Drupal\payment\Entity\Payment\PaymentStorage",
  *     "storage_schema" = "Drupal\payment\Entity\Payment\PaymentStorageSchema",
  *   },
