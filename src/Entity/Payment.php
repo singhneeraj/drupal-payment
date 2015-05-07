@@ -324,11 +324,9 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function getAmount() {
-    /** @var \Drupal\currency\Math\MathInterface $math */
-    $math = \Drupal::service('currency.math');
     $total = 0;
     foreach ($this->getLineItems() as $line_item) {
-      $total = $math->add($total, $line_item->getTotalAmount());
+      $total = bcadd($total, $line_item->getTotalAmount(), 6);
     }
 
     return $total;

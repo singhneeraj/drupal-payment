@@ -25,44 +25,15 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
   protected $lineItem;
 
   /**
-   * The math service used for testing.
-   *
-   * @var \Drupal\currency\Math\MathInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $math;
-
-  /**
    * {@inheritdoc}
    */
   public function setUp() {
-    $this->math = $this->getMock('\Drupal\currency\Math\MathInterface');
-
     $configuration = [];
     $plugin_id = $this->randomMachineName();
     $plugin_definition = [];
     $this->lineItem = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase')
-      ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->math))
+      ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition))
       ->getMockForAbstractClass();
-  }
-
-  /**
-   * @covers ::create
-   * @covers ::__construct
-   */
-  public function testCreate() {
-    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
-    $map = array(
-      array('currency.math', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->math),
-    );
-    $container->expects($this->any())
-      ->method('get')
-      ->will($this->returnValueMap($map));
-
-    /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase $class_name */
-    $class_name = get_class($this->lineItem);
-
-    $line_item = $class_name::create($container, [], $this->randomMachineName(), []);
-    $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase', $line_item);
   }
 
   /**
@@ -94,12 +65,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
   public function testGetTotalAmount() {
     $amount= 7;
     $quantity = 7;
-    $total_amount = 49;
-
-    $this->math->expects($this->once())
-      ->method('multiply')
-      ->with($amount, $quantity)
-      ->will($this->returnValue($total_amount));
+    $total_amount = '49';
 
     $configuration = [];
     $plugin_id = $this->randomMachineName();
@@ -107,7 +73,7 @@ class PaymentLineItemBaseUnitTest extends UnitTestCase {
     /** @var \Drupal\payment\Plugin\Payment\LineItem\Basic|\PHPUnit_Framework_MockObject_MockObject $line_item */
     $line_item = $this->getMockBuilder('\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemBase')
       ->setMethods(array('formElements', 'getAmount', 'getConfigurationFromFormValues', 'getCurrencyCode', 'getDescription', 'getQuantity'))
-      ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition, $this->math))
+      ->setConstructorArgs(array($configuration, $plugin_id, $plugin_definition))
       ->getMock();
     $line_item->expects($this->once())
       ->method('getAmount')

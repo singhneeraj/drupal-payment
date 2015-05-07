@@ -32,13 +32,6 @@ class BasicUnitTest extends UnitTestCase {
   protected $lineItem;
 
   /**
-   * The math service used for testing.
-   *
-   * @var \Drupal\currency\Math\MathInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $math;
-
-  /**
    * The string translator.
    *
    * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -53,14 +46,12 @@ class BasicUnitTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->math = $this->getMock('\Drupal\currency\Math\MathInterface');
-
     $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
     $configuration = [];
     $plugin_id = $this->randomMachineName();
     $plugin_definition = [];
-    $this->lineItem = new Basic($configuration, $plugin_id, $plugin_definition, $this->math, $this->stringTranslation, $this->database);
+    $this->lineItem = new Basic($configuration, $plugin_id, $plugin_definition, $this->stringTranslation, $this->database);
   }
 
   /**
@@ -70,7 +61,6 @@ class BasicUnitTest extends UnitTestCase {
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
-      array('currency.math', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->math),
       array('database', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->database),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );

@@ -11,7 +11,6 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\currency\Math\MathInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -43,15 +42,13 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\currency\Math\MathInterface $math
-   *   The math service.
    * @param \Drupal\Core\StringTranslation\TranslationInterface  $string_translation
    *   The translation manager.
    * @param \Drupal\Core\Database\Connection $database
    *   The database connection.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, MathInterface $math, TranslationInterface $string_translation, Connection $database) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $math);
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, TranslationInterface $string_translation, Connection $database) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->database = $database;
     $this->stringTranslation = $string_translation;
   }
@@ -60,7 +57,7 @@ class Basic extends PaymentLineItemBase implements ContainerFactoryPluginInterfa
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('currency.math'), $container->get('string_translation'), $container->get('database'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'), $container->get('database'));
   }
 
   /**
