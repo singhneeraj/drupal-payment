@@ -1,6 +1,6 @@
 Payment
 =======
-[![Build Status](https://travis-ci.org/bartfeenstra/drupal-payment.svg?branch=8.x-2.x)](https://travis-ci.org/bartfeenstra/drupal-payment) [![Coverage Status](https://coveralls.io/repos/bartfeenstra/drupal-payment/badge.svg)](https://coveralls.io/r/bartfeenstra/drupal-payment)
+[![Build Status](https://travis-ci.org/bartfeenstra/drupal-payment.svg?branch=8.x-2.x)](https://travis-ci.org/bartfeenstra/drupal-payment) [![Coverage Status](https://coveralls.io/repos/bartfeenstra/drupal-payment/badge.svg?branch=8.x-2.x)](https://coveralls.io/r/bartfeenstra/drupal-payment?branch=8.x-2.x)
 
 About
 -----
