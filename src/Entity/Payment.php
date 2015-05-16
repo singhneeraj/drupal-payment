@@ -94,6 +94,15 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   /**
    * {@inheritdoc}
    */
+  public function getChangedTimeAcrossTranslations() {
+    // Payments are not translatable, so there are no per-translation changed
+    // times.
+    return $this->getChangedTime();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function label() {
     return (string) $this->getPaymentType()->getPaymentDescription();
   }
