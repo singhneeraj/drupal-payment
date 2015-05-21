@@ -12,6 +12,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\DefaultPluginDefinitionMapper
+ *
+ * @group Payment
  */
 class DefaultPluginDefinitionMapperUnitTest extends UnitTestCase {
 

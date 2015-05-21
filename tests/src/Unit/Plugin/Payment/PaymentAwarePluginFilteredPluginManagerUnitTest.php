@@ -14,6 +14,8 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\PaymentAwarePluginFilteredPluginManager
+ *
+ * @group Payment
  */
 class PaymentAwarePluginFilteredPluginManagerUnitTest extends UnitTestCase {
 
