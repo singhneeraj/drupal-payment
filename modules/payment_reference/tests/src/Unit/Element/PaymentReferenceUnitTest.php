@@ -71,7 +71,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
   /**
    * The plugin selector manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $pluginSelectorManager;
 
@@ -121,7 +121,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
 
     $this->paymentStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
 
-    $this->pluginSelectorManager = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface');
+    $this->pluginSelectorManager = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface');
 
     $this->renderer = $this->getMock('\Drupal\Core\Render\RendererInterface');
 
@@ -159,7 +159,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       array('link_generator', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->linkGenerator),
       array('payment_reference.queue', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentQueue),
       array('plugin.manager.payment.method', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodManager),
-      array('plugin.manager.payment.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
+      array('plugin.manager.plugin_selector.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
       array('renderer', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->renderer),
       array('request_stack', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->requestStack),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),

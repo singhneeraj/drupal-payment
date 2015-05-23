@@ -53,21 +53,21 @@ namespace Drupal\Tests\payment_reference\Unit\Plugin\Payment\Type {
     /**
      * The plugin selector.
      *
-     * @var \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $pluginSelector;
 
     /**
      * The plugin selector manager.
      *
-     * @var \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $pluginSelectorManager;
 
     /**
      * The selected plugin selector.
      *
-     * @var \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $selectedPluginSelector;
 
@@ -94,11 +94,11 @@ namespace Drupal\Tests\payment_reference\Unit\Plugin\Payment\Type {
 
       $this->paymentMethodManager = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface');
 
-      $this->pluginSelector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+      $this->pluginSelector = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface');
 
-      $this->pluginSelectorManager = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface');
+      $this->pluginSelectorManager = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface');
 
-      $this->selectedPluginSelector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+      $this->selectedPluginSelector = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface');
 
       $this->stringTranslation = $this->getStringTranslationStub();
 
@@ -114,7 +114,7 @@ namespace Drupal\Tests\payment_reference\Unit\Plugin\Payment\Type {
       $map = array(
         array('config.factory', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->configFactory),
         array('plugin.manager.payment.method', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodManager),
-        array('plugin.manager.payment.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
+        array('plugin.manager.plugin_selector.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
         array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
       );
       $container->expects($this->any())

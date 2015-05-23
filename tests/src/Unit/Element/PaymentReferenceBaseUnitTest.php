@@ -79,7 +79,7 @@ namespace Drupal\Tests\payment\Unit\Element {
     /**
      * The plugin selector manager.
      *
-     * @var \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $pluginSelectorManager;
 
@@ -129,7 +129,7 @@ namespace Drupal\Tests\payment\Unit\Element {
 
       $this->paymentStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
 
-      $this->pluginSelectorManager = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface');
+      $this->pluginSelectorManager = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface');
 
       $this->renderer = $this->getMock('\Drupal\Core\Render\RendererInterface');
 
@@ -316,7 +316,7 @@ namespace Drupal\Tests\payment\Unit\Element {
         ->method('getCurrentRequest')
         ->willReturn($request);
 
-      $plugin_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+      $plugin_selector = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface');
       $plugin_selector->expects($this->atLeastOnce())
         ->method('getSelectedPlugin')
         ->willReturn($payment_method);
@@ -375,7 +375,7 @@ namespace Drupal\Tests\payment\Unit\Element {
 
       $plugin_selector_plugin_id = $this->randomMachineName();
 
-      $plugin_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+      $plugin_selector = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface');
       $plugin_selector->expects($this->atLeastOnce())
         ->method('getSelectedPlugin')
         ->willReturn($payment_method);
@@ -511,7 +511,7 @@ namespace Drupal\Tests\payment\Unit\Element {
       );
       $form_state = new FormState();
 
-      $plugin_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+      $plugin_selector = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface');
       $plugin_selector->expects($this->once())
         ->method('setRequired')
         ->with($required);
@@ -525,7 +525,7 @@ namespace Drupal\Tests\payment\Unit\Element {
       $method->setAccessible(TRUE);
 
       $retrieved_plugin_selector = $method->invoke($this->element, $element, $form_state);
-      $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface', $retrieved_plugin_selector);
+      $this->assertInstanceOf('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface', $retrieved_plugin_selector);
       $this->assertSame($retrieved_plugin_selector, $method->invoke($this->element, $element, $form_state));
     }
 
@@ -553,7 +553,7 @@ namespace Drupal\Tests\payment\Unit\Element {
       );
       $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 
-      $plugin_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+      $plugin_selector = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface');
 
       $this->element = $this->getMockBuilder('\Drupal\payment\Element\PaymentReferenceBase')
         ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodManager, new Random()))
@@ -591,7 +591,7 @@ namespace Drupal\Tests\payment\Unit\Element {
         ->method('getPayment')
         ->willReturn($payment);
 
-      $plugin_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+      $plugin_selector = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface');
       $plugin_selector->expects($this->atLeastOnce())
         ->method('getSelectedPlugin')
         ->willReturn($payment_method);
@@ -716,7 +716,7 @@ namespace Drupal\Tests\payment\Unit\Element {
 
       $plugin_selector_id = $this->randomMachineName();
 
-      $plugin_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+      $plugin_selector = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface');
 
       $this->pluginSelectorManager->expects($this->atLeastOnce())
         ->method('createInstance')
@@ -770,7 +770,7 @@ namespace Drupal\Tests\payment\Unit\Element {
 
       $payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
 
-      $plugin_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+      $plugin_selector = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface');
       $plugin_selector->expects($this->atLeastOnce())
         ->method('buildSelectorForm')
         ->with([], $form_state)

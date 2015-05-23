@@ -54,22 +54,6 @@ See the drupal.org handbook for more information about configuration schemas.
 See https://www.drupal.org/node/1653226 for more information about derivative
 plugins.
 
-PLUGIN SELECTOR
-===============
-Plugin selectors allow users to select and configure a plugins. They are
-classes that implement
-\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface and live in
-\Drupal\$module\Plugin\Payment\PluginSelector, where $module is the machine
-name of the module that provides the plugins. The classes are annotated using
-\Drupal\payment\Annotations\PluginSelector.
-
-If a plugin provides configuration, it must also provide a configuration schema
-for this configuration of which the type is
-payment.plugin_configuration.plugin_selector.[plugin_id], where
-[plugin_id] is the plugin's ID.
-
-See the drupal.org handbook for more information about configuration schemas.
-
 PAYMENT TYPE
 ============
 Payment types provide information about the type a payment entity is of and the

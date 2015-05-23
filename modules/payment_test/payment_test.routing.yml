@@ -5,14 +5,6 @@ payment_test.payment_line_item_element:
   requirements:
     _access: 'TRUE'
 
-payment_test.plugin_selector.advanced_plugin_selector_base:
-  path: '/payment_test-plugin_selector-advanced_plugin_selector_base/{plugin_id}/{tree}'
-  defaults:
-    _form: '\Drupal\payment_test\AdvancedPluginSelectorBasePluginSelectorForm'
-    tree: 0
-  requirements:
-    _access: 'TRUE'
-
 payment_test.payment_line_item_payment_basic_form_elements:
   path: '/payment_test-plugin-payment-line_item-payment_basic'
   defaults:

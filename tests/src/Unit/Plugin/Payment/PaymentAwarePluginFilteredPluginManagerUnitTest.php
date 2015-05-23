@@ -29,7 +29,7 @@ class PaymentAwarePluginFilteredPluginManagerUnitTest extends UnitTestCase {
   /**
    * The plugin definition mapper.
    *
-   * @var \Drupal\payment\Plugin\Payment\PluginDefinitionMapperInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\plugin_selector\Plugin\PluginDefinitionMapperInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $pluginDefinitionMapper;
 
@@ -50,7 +50,7 @@ class PaymentAwarePluginFilteredPluginManagerUnitTest extends UnitTestCase {
   public function setUp() {
     $this->payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
 
-    $this->pluginDefinitionMapper = $this->getMock('\Drupal\payment\Plugin\Payment\PluginDefinitionMapperInterface');
+    $this->pluginDefinitionMapper = $this->getMock('\Drupal\plugin_selector\Plugin\PluginDefinitionMapperInterface');
 
     $this->pluginManager = $this->getMock('\Drupal\Component\Plugin\PluginManagerInterface');
 

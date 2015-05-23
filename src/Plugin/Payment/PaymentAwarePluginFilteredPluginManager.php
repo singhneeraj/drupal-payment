@@ -9,6 +9,8 @@ namespace Drupal\payment\Plugin\Payment;
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\PaymentAwareInterface;
+use Drupal\plugin_selector\Plugin\FilteredPluginManager;
+use Drupal\plugin_selector\Plugin\PluginDefinitionMapperInterface;
 
 /**
  * Provides a filtered plugin manager for payment-aware plugins.
@@ -27,7 +29,7 @@ class PaymentAwarePluginFilteredPluginManager extends FilteredPluginManager {
    *
    * @param \Drupal\Component\Plugin\PluginManagerInterface $plugin_manager
    *   Another plugin manager that the filters are applied to.
-   * @param \Drupal\payment\Plugin\Payment\PluginDefinitionMapperInterface $plugin_definition_mapper
+   * @param \Drupal\plugin_selector\Plugin\PluginDefinitionMapperInterface $plugin_definition_mapper
    * @param \Drupal\payment\Entity\PaymentInterface $payment
    */
   public function __construct(PluginManagerInterface $plugin_manager, PluginDefinitionMapperInterface $plugin_definition_mapper, PaymentInterface $payment) {

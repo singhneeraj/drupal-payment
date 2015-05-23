@@ -35,7 +35,7 @@ class BasicUnitTest extends PaymentMethodConfigurationBaseUnitTestBase {
   /**
    * The plugin selector manager.
    *
-   * @var \Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $pluginSelectorManager;
 
@@ -47,7 +47,7 @@ class BasicUnitTest extends PaymentMethodConfigurationBaseUnitTestBase {
 
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
-    $this->pluginSelectorManager = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorManagerInterface');
+    $this->pluginSelectorManager = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface');
 
     $this->paymentMethodConfiguration = new Basic([], '', $this->pluginDefinition, $this->stringTranslation, $this->moduleHandler, $this->pluginSelectorManager, $this->paymentStatusManager);
   }
@@ -61,7 +61,7 @@ class BasicUnitTest extends PaymentMethodConfigurationBaseUnitTestBase {
     $map = array(
       array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
       array('plugin.manager.payment.status', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentStatusManager),
-      array('plugin.manager.payment.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
+      array('plugin.manager.plugin_selector.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
     $container->expects($this->any())
@@ -166,7 +166,7 @@ class BasicUnitTest extends PaymentMethodConfigurationBaseUnitTestBase {
       ->method('createInstance')
       ->willReturn($payment_status);
 
-    $payment_status_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+    $payment_status_selector = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface');
 
     $this->pluginSelectorManager->expects($this->atLeastOnce())
       ->method('createInstance')
@@ -208,7 +208,7 @@ class BasicUnitTest extends PaymentMethodConfigurationBaseUnitTestBase {
       ->method('createInstance')
       ->willReturn($payment_status);
 
-    $payment_status_selector = $this->getMock('\Drupal\payment\Plugin\Payment\PluginSelector\PluginSelectorInterface');
+    $payment_status_selector = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface');
     $payment_status_selector->expects($this->atLeastOnce())
       ->method('getSelectedPlugin')
       ->willReturn($payment_status);

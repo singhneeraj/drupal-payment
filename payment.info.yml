@@ -6,3 +6,4 @@ type: module
 package: Payment
 dependencies:
   - currency
+  - plugin_selector
