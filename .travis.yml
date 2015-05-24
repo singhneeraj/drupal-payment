@@ -28,6 +28,7 @@ install:
   # Download module dependencies.
   - cd $TRAVIS_BUILD_DIR/../drupal/modules
   - git clone --branch 8.x-3.x --depth 1 http://git.drupal.org/project/currency.git
+  - git clone --branch 8.x-1.x --depth 1 http://git.drupal.org/project/plugin_selector.git
 
   # Install Composer dependencies.
   - cd $TRAVIS_BUILD_DIR/../drupal/modules/payment
