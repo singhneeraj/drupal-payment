@@ -50,7 +50,7 @@ class PaymentFormWebTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('entity_reference', 'field', 'filter', 'payment', 'payment_form');
+  public static $modules = ['entity_reference', 'field', 'filter', 'payment', 'payment_form'];
 
   /**
    * {@inheritdoc
@@ -65,31 +65,31 @@ class PaymentFormWebTest extends WebTestBase {
 
     // Create the field and field instance.
     $field_name = strtolower($this->randomMachineName());
-    entity_create('field_storage_config', array(
+    entity_create('field_storage_config', [
       'cardinality' => FieldStorageConfigInterface::CARDINALITY_UNLIMITED,
       'entity_type' => 'user',
       'field_name' => $field_name,
       'type' => 'payment_form',
-    ))->save();
-    entity_create('field_config', array(
+    ])->save();
+    entity_create('field_config', [
       'bundle' => 'user',
       'entity_type' => 'user',
       'field_name' => $field_name,
-      'settings' => array(
+      'settings' => [
         'currency_code' => 'EUR',
-      ),
-    ))->save();
+      ],
+    ])->save();
     entity_get_display('user', 'user', 'default')
-      ->setComponent($field_name, array(
+      ->setComponent($field_name, [
         'type' => 'payment_form',
-      ))
+      ])
       ->save();
 
     // Create an entity.
-    $this->user = entity_create('user', array(
+    $this->user = entity_create('user', [
       'name' => $this->randomString(),
       'status' => TRUE,
-    ));
+    ]);
     foreach (Generate::createPaymentLineItems() as $line_item) {
       $this->user->get($field_name)->appendItem([
         'plugin_id' => $line_item->getPluginId(),
@@ -100,9 +100,9 @@ class PaymentFormWebTest extends WebTestBase {
 
     // Create a payment method.
     $this->paymentMethod = Generate::createPaymentMethodConfiguration(2, 'payment_basic');
-    $this->paymentMethod->setPluginConfiguration(array(
+    $this->paymentMethod->setPluginConfiguration([
       'execute_status_id' => $this->executeStatusPluginId,
-    ));
+    ]);
     $this->paymentMethod->save();
   }
 
@@ -112,7 +112,7 @@ class PaymentFormWebTest extends WebTestBase {
   protected function testFormatter() {
     // Make sure there are no payments yet.
     $this->assertEqual(count($this->paymentStorage->loadMultiple()), 0);
-    $user = $this->drupalCreateUser(array('access user profiles'));
+    $user = $this->drupalCreateUser(['access user profiles']);
     $this->drupalLogin($user);
     $path = 'user/' . $this->user->id();
     $this->drupalPostForm($path, [], t('Pay'));

@@ -32,12 +32,12 @@ class EntityExtraFieldInfo {
    * Invokes the implementation.
    */
   public function invoke() {
-    $fields['payment']['payment_reference']['form'] = array(
-      'payment_method' => array(
+    $fields['payment']['payment_reference']['form'] = [
+      'payment_method' => [
         'label' => $this->t('Payment method selection and configuration'),
         'weight' => 1,
-      ),
-    );
+      ],
+    ];
 
     return $fields;
   }

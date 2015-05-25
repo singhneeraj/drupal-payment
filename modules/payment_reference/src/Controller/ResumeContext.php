@@ -49,12 +49,12 @@ class ResumeContext extends ControllerBase implements ContainerInjectionInterfac
   public function execute(PaymentInterface $payment) {
     $message = $this->t('You can now <span class="payment_reference-window-close">close this window</span>.');
     if ($payment->access('view')) {
-      $message = $this->t('Your payment is %status.', array(
+      $message = $this->t('Your payment is %status.', [
           '%status' => $payment->getPaymentStatus()->getPluginDefinition()['label'],
-        )) . ' ' . $message;
+        ]) . ' ' . $message;
     }
 
-    return array(
+    return [
       '#attached' => [
         'library' => [
           'payment_reference/resume_context',
@@ -62,7 +62,7 @@ class ResumeContext extends ControllerBase implements ContainerInjectionInterfac
       ],
       '#type' => 'markup',
       '#markup' => $message,
-    );
+    ];
   }
 
   /**

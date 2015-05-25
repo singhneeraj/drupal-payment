@@ -16,7 +16,6 @@ use Drupal\payment\EventDispatcherInterface;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeBase;
 use Drupal\payment\Response\Response;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * The payment form field payment type.
@@ -83,12 +82,12 @@ class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInter
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return array(
+    return [
       'bundle' => NULL,
       'destination_url' => NULL,
       'entity_type_id' => NULL,
       'field_name' => NULL,
-    ) + parent::defaultConfiguration();
+    ] + parent::defaultConfiguration();
   }
 
   /**

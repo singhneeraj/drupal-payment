@@ -54,7 +54,7 @@ class PaymentFormUnitTest extends UnitTestCase {
 
     $this->fieldType = $this->getMockBuilder('\Drupal\payment_form\Plugin\Field\FieldType\PaymentForm')
       ->disableOriginalConstructor()
-      ->setMethods(array('getSetting'))
+      ->setMethods(['getSetting'])
       ->getMock();
   }
 

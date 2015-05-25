@@ -120,13 +120,13 @@ class PaymentFormUnitTest extends UnitTestCase {
 
     $this->stringTranslation = $this->getStringTranslationStub();
 
-    $this->configFactoryConfiguration = array(
-      'payment_form.payment_type' => array(
+    $this->configFactoryConfiguration = [
+      'payment_form.payment_type' => [
         'limit_allowed_plugins' => TRUE,
-        'allowed_plugin_ids' => array($this->randomMachineName()),
+        'allowed_plugin_ids' => [$this->randomMachineName()],
         'plugin_selector_id' => $this->randomMachineName(),
-      ),
-    );
+      ],
+    ];
 
     $this->configFactory = $this->getConfigFactoryStub($this->configFactoryConfiguration);
 
@@ -141,13 +141,13 @@ class PaymentFormUnitTest extends UnitTestCase {
    */
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
-    $map = array(
-      array('current_user', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->currentUser),
-      array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager),
-      array('plugin.manager.payment.method', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodManager),
-      array('plugin.manager.plugin_selector.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
-      array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
-    );
+    $map = [
+      ['current_user', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->currentUser],
+      ['entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager],
+      ['plugin.manager.payment.method', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodManager],
+      ['plugin.manager.plugin_selector.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager],
+      ['string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation],
+    ];
     $container->expects($this->any())
       ->method('get')
       ->willReturnMap($map);
@@ -161,9 +161,9 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @covers ::getPluginSelector
    */
   public function testForm() {
-    $plugin_selector_build = array(
+    $plugin_selector_build = [
       '#type' => $this->randomMachineName(),
-    );
+    ];
     $this->pluginSelector->expects($this->atLeastOnce())
       ->method('buildSelectorForm')
       ->willReturn($plugin_selector_build);
@@ -182,9 +182,9 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->method('entityInfo')
       ->willReturn($entity_type);
 
-    $form = array(
+    $form = [
       'langcode' => [],
-    );
+    ];
     $form_state = new FormState();
     $this->sut->setFormDisplay($this->formDisplay, $form_state);
     $build = $this->sut->form($form, $form_state);
@@ -203,11 +203,11 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @covers ::getPluginSelector
    */
   public function testValidateForm() {
-    $form = array(
-      'payment_method' => array(
+    $form = [
+      'payment_method' => [
         '#type' => $this->randomMachineName(),
-      ),
-    );
+      ],
+    ];
     $form_state = new FormState();
 
     $this->pluginSelectorManager->expects($this->once())
@@ -235,11 +235,11 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->method('getCompletionResponse')
       ->willReturn($response);
 
-    $form = array(
-      'payment_method' => array(
+    $form = [
+      'payment_method' => [
         '#type' => $this->randomMachineName(),
-      ),
-    );
+      ],
+    ];
     $form_state = new FormState();
 
     $payment_method = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
@@ -305,7 +305,7 @@ class PaymentFormUnitTest extends UnitTestCase {
 
     $method = new \ReflectionMethod($this->sut, 'actions');
     $method->setAccessible(TRUE);
-    $actions = $method->invokeArgs($this->sut, array($form, $form_state));
+    $actions = $method->invokeArgs($this->sut, [$form, $form_state]);
     $this->assertFalse(empty($actions['submit']['#disabled']));
   }
 
@@ -323,7 +323,7 @@ class PaymentFormUnitTest extends UnitTestCase {
 
     $method = new \ReflectionMethod($this->sut, 'actions');
     $method->setAccessible(TRUE);
-    $actions = $method->invokeArgs($this->sut, array($form, $form_state));
+    $actions = $method->invokeArgs($this->sut, [$form, $form_state]);
     $this->assertTrue($actions['submit']['#disabled']);
   }
 

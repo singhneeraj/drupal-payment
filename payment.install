@@ -9,49 +9,49 @@
  * Implements hook_schema().
  */
 function payment_schema() {
-  $schema['payment_queue'] = array(
-    'fields' => array(
-      'acquisition_code' => array(
+  $schema['payment_queue'] = [
+    'fields' => [
+      'acquisition_code' => [
         'default' => '',
         'length' => 255,
         'not null' => TRUE,
         'type' => 'varchar',
-      ),
-      'category_id' => array(
+      ],
+      'category_id' => [
         'length' => 255,
         'not null' => TRUE,
         'type' => 'varchar',
-      ),
-      'claimed' => array(
+      ],
+      'claimed' => [
         'default' => 0,
         'not null' => TRUE,
         'type' => 'int',
-      ),
-      'payment_id' => array(
+      ],
+      'payment_id' => [
         'default' => 0,
         'not null' => TRUE,
         'type' => 'int',
-      ),
-      'queue_id' => array(
+      ],
+      'queue_id' => [
         'length' => 255,
         'not null' => TRUE,
         'type' => 'varchar',
-      ),
-    ),
-    'primary key' => array('payment_id'),
-    'foreign keys' => array(
-      'payment_id' => array(
+      ],
+    ],
+    'primary key' => ['payment_id'],
+    'foreign keys' => [
+      'payment_id' => [
         'table' => 'payment',
-        'columns' => array(
+        'columns' => [
           'payment_id' => 'id',
-        ),
-      ),
-    ),
-    'indexes' => array(
-      'category_id' => array('category_id'),
-      'queue_id' => array('queue_id'),
-    ),
-  );
+        ],
+      ],
+    ],
+    'indexes' => [
+      'category_id' => ['category_id'],
+      'queue_id' => ['queue_id'],
+    ],
+  ];
 
   return $schema;
 }

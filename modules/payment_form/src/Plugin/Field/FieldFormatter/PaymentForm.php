@@ -33,29 +33,29 @@ class PaymentForm extends FormatterBase {
       /** @var \Drupal\payment_form\Plugin\Field\FieldType\PaymentForm $item */
       $plugin_id = $item->get('plugin_id')->getValue();
       if ($plugin_id) {
-        $line_items_data[] = array(
+        $line_items_data[] = [
           'plugin_id' => $plugin_id,
           'plugin_configuration' => $item->get('plugin_configuration')->getValue(),
-        );
+        ];
       }
     }
 
     $callback = __CLASS__ . '::viewElementsPostRenderCache';
-    $context = array(
+    $context = [
       'bundle' => $items->getEntity()->bundle(),
       'entity_type_id' => $items->getEntity()->getEntityTypeId(),
       'field_name' => $this->fieldDefinition->getName(),
       'line_items_data' => serialize($line_items_data),
-    );
+    ];
     $placeholder = drupal_render_cache_generate_placeholder($callback, $context);
 
-    return array(array(
+    return [[
       '#type' => 'markup',
-      '#post_render_cache' => array(
-        $callback => array($context),
-      ),
+      '#post_render_cache' => [
+        $callback => [$context],
+      ],
       '#markup' => $placeholder,
-    ));
+    ]];
   }
 
   /**
@@ -65,9 +65,9 @@ class PaymentForm extends FormatterBase {
     $field_definitions = \Drupal::entityManager()->getFieldDefinitions($context['entity_type_id'], $context['bundle']);
     $field_definition = $field_definitions[$context['field_name']];
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
-    $payment = \Drupal::entityManager()->getStorage('payment')->create(array(
+    $payment = \Drupal::entityManager()->getStorage('payment')->create([
       'bundle' => 'payment_form',
-    ));
+    ]);
     $payment->setCurrencyCode($field_definition->getSetting('currency_code'));
     /** @var \Drupal\payment_form\Plugin\Payment\Type\PaymentForm $payment_type */
     $payment_type = $payment->getPaymentType();

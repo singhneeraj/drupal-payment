@@ -52,13 +52,13 @@ class PaymentForm extends FieldItemBase {
     /** @var \Drupal\currency\FormHelperInterface $form_helper */
     $form_helper = \Drupal::service('currency.form_helper');
 
-    $element['currency_code'] = array(
+    $element['currency_code'] = [
       '#type' => 'select',
       '#title' => $this->t('Payment currency'),
       '#options' => $form_helper->getCurrencyOptions(),
       '#default_value' => $this->getSetting('currency_code'),
       '#required' => TRUE,
-    );
+    ];
 
     return $element;
   }
@@ -67,18 +67,18 @@ class PaymentForm extends FieldItemBase {
    * {@inheritdoc}
    */
   public static function schema(FieldStorageDefinitionInterface $field_storage_definition) {
-    $schema = array(
-      'columns' => array(
-        'plugin_configuration' => array(
+    $schema = [
+      'columns' => [
+        'plugin_configuration' => [
           'type' => 'blob',
           'serialize' => TRUE,
-        ),
-        'plugin_id' => array(
+        ],
+        'plugin_id' => [
           'type' => 'varchar',
           'length' => 255,
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
 
     return $schema;
   }

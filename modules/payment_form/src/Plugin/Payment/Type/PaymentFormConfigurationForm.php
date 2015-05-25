@@ -87,31 +87,31 @@ class PaymentFormConfigurationForm extends ConfigFormBase {
     $form['plugin_selector'] = $this->getPluginSelector($form_state)->buildSelectorForm([], $form_state);
 
     $limit_allowed_plugins_id = Html::getUniqueId('limit_allowed_plugins');
-    $form['limit_allowed_plugins'] = array(
+    $form['limit_allowed_plugins'] = [
       '#default_value' => $config->get('limit_allowed_plugins'),
       '#id' => $limit_allowed_plugins_id,
       '#title' => $this->t('Limit allowed payment methods'),
       '#type' => 'checkbox',
-    );
+    ];
     $allowed_plugin_ids = $config->get('allowed_plugin_ids');
     $options = [];
     foreach ($this->paymentMethodManager->getDefinitions() as $definition) {
       $options[$definition['id']] = $definition['label'];
     }
-    $form['allowed_plugin_ids'] = array(
+    $form['allowed_plugin_ids'] = [
       '#default_value' => $allowed_plugin_ids,
       '#multiple' => TRUE,
       '#options' => $options,
-      '#states' => array(
-        'visible' => array(
-          '#' . $limit_allowed_plugins_id => array(
+      '#states' => [
+        'visible' => [
+          '#' . $limit_allowed_plugins_id => [
             'checked' => TRUE,
-          ),
-        ),
-      ),
+          ],
+        ],
+      ],
       '#title' => $this->t('Allowed payment methods'),
       '#type' => 'select',
-    );
+    ];
 
     return $form + parent::buildForm($form, $form_state);
   }

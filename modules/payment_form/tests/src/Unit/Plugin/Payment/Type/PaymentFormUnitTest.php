@@ -8,7 +8,6 @@
 
 namespace Drupal\Tests\payment_form\Unit\Plugin\Payment\Type;
 
-use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\payment_form\Plugin\Payment\Type\PaymentForm;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -79,11 +78,11 @@ class PaymentFormUnitTest extends UnitTestCase {
    */
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
-    $map = array(
-      array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager),
-      array('payment.event_dispatcher', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->eventDispatcher),
-      array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
-    );
+    $map = [
+      ['entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager],
+      ['payment.event_dispatcher', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->eventDispatcher],
+      ['string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation],
+    ];
     $container->expects($this->any())
       ->method('get')
       ->will($this->returnValueMap($map));
@@ -142,9 +141,9 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->method('getLabel')
       ->will($this->returnValue($label));
 
-    $definitions = array(
+    $definitions = [
       $field_name => $field_definition,
-    );
+    ];
 
     $this->entityManager->expects($this->atLeastOnce())
       ->method('getFieldDefinitions')

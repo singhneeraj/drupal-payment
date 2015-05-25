@@ -114,9 +114,9 @@ class PaymentFormUnitTest extends UnitTestCase {
     $field_name = $this->randomMachineName();
 
     $plugin_id = $this->randomMachineName();
-    $plugin_configuration = array(
+    $plugin_configuration = [
       $this->randomMachineName() => $this->randomMachineName(),
-    );
+    ];
 
     $plugin_id_property = $this->getMock('\Drupal\Core\TypedData\TypedDataInterface');
     $plugin_id_property->expects($this->once())
@@ -126,10 +126,10 @@ class PaymentFormUnitTest extends UnitTestCase {
     $plugin_configuration_property->expects($this->once())
       ->method('getValue')
       ->will($this->returnValue($plugin_configuration));
-    $map = array(
-      array('plugin_id', $plugin_id_property),
-      array('plugin_configuration', $plugin_configuration_property),
-    );
+    $map = [
+      ['plugin_id', $plugin_id_property],
+      ['plugin_configuration', $plugin_configuration_property],
+    ];
     $item = $this->getMockBuilder('\Drupal\payment_form\Plugin\Field\FieldType\PaymentForm')
       ->disableOriginalConstructor()
       ->getMock();
@@ -145,10 +145,10 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->method('getEntityTypeId')
       ->will($this->returnValue($entity_type_id));
 
-    $iterator = new \ArrayIterator(array($item));
+    $iterator = new \ArrayIterator([$item]);
     $items = $this->getMockBuilder('Drupal\Core\Field\FieldItemList')
       ->disableOriginalConstructor()
-      ->setMethods(array('getEntity', 'getIterator'))
+      ->setMethods(['getEntity', 'getIterator'])
       ->getMock();
     $items->expects($this->atLeastOnce())
       ->method('getEntity')
@@ -162,24 +162,24 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->will($this->returnValue($field_name));
 
     // Create a dummy render array.
-    $line_items_data = array(array(
+    $line_items_data = [[
       'plugin_id' => $plugin_id,
       'plugin_configuration' => $plugin_configuration,
-    ));
-    $built_form = array(array(
+    ]];
+    $built_form = [[
       '#type' => 'markup',
-      '#post_render_cache' => array(
-        'Drupal\payment_form\Plugin\Field\FieldFormatter\PaymentForm::viewElementsPostRenderCache' => array(
-          array(
+      '#post_render_cache' => [
+        'Drupal\payment_form\Plugin\Field\FieldFormatter\PaymentForm::viewElementsPostRenderCache' => [
+          [
             'bundle' => $bundle,
             'entity_type_id' => $entity_type_id,
             'field_name' => $field_name,
             'line_items_data' => serialize($line_items_data),
-          ),
-        ),
-      ),
+          ],
+        ],
+      ],
       '#markup' => NULL,
-    ));
+    ]];
 
     $this->assertSame($built_form, $this->fieldFormatter->viewElements($items));
   }
@@ -199,9 +199,9 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->with('currency_code')
       ->will($this->returnValue($currency_code));
 
-    $definitions = array(
+    $definitions = [
       $field_name => $this->fieldDefinition,
-    );
+    ];
     $this->entityManager->expects($this->atLeastOnce())
       ->method('getFieldDefinitions')
       ->with($entity_type_id, $bundle)
@@ -236,9 +236,9 @@ class PaymentFormUnitTest extends UnitTestCase {
     $storage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
     $storage->expects($this->once())
       ->method('create')
-      ->with(array(
+      ->with([
         'bundle' => 'payment_form',
-      ))
+      ])
       ->will($this->returnValue($payment));
 
     $this->entityManager->expects($this->once())
@@ -272,21 +272,21 @@ class PaymentFormUnitTest extends UnitTestCase {
     $container->set('request_stack', $this->requestStack);
     \Drupal::setContainer($container);
 
-    $line_items_data = array(array(
+    $line_items_data = [[
       'plugin_id' => $plugin_id,
       'plugin_configuration' => $plugin_configuration,
-    ));
+    ]];
 
-    $element = array(
+    $element = [
       '#markup' => $this->randomMachineName(),
-    );
-    $context = array(
+    ];
+    $context = [
       'bundle' => $bundle,
       'entity_type_id' => $entity_type_id,
       'field_name' => $field_name,
       'line_items_data' => serialize($line_items_data),
       'token' => $this->randomMachineName(),
-    );
+    ];
 
     $field_formatter = $this->fieldFormatter;
     $this->assertSame($element, $field_formatter::viewElementsPostRenderCache($element, $context));

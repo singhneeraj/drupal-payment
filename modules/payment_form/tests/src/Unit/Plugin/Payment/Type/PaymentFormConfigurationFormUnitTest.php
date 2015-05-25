@@ -82,13 +82,13 @@ namespace Drupal\Tests\payment_form\Unit\Plugin\Payment\Type {
      * {@inheritdoc}
      */
     public function setUp() {
-      $this->configFactoryConfiguration = array(
-        'payment_form.payment_type' => array(
+      $this->configFactoryConfiguration = [
+        'payment_form.payment_type' => [
           'limit_allowed_plugins' => TRUE,
-          'allowed_plugin_ids' => array($this->randomMachineName()),
+          'allowed_plugin_ids' => [$this->randomMachineName()],
           'plugin_selector_id' => $this->randomMachineName(),
-        ),
-      );
+        ],
+      ];
 
       $this->configFactory = $this->getConfigFactoryStub($this->configFactoryConfiguration);
 
@@ -111,12 +111,12 @@ namespace Drupal\Tests\payment_form\Unit\Plugin\Payment\Type {
      */
     function testCreate() {
       $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
-      $map = array(
-        array('config.factory', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->configFactory),
-        array('plugin.manager.payment.method', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodManager),
-        array('plugin.manager.plugin_selector.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
-        array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
-      );
+      $map = [
+        ['config.factory', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->configFactory],
+        ['plugin.manager.payment.method', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodManager],
+        ['plugin.manager.plugin_selector.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager],
+        ['string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation],
+      ];
       $container->expects($this->any())
         ->method('get')
         ->will($this->returnValueMap($map));

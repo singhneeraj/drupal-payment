@@ -50,9 +50,9 @@ class PaymentFactory implements PaymentFactoryInterface {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = $this->entityManager
       ->getStorage('payment')
-      ->create(array(
+      ->create([
         'bundle' => 'payment_reference',
-      ));
+      ]);
     /** @var \Drupal\payment_reference\Plugin\Payment\Type\PaymentReference $payment_type */
     $payment_type = $payment->getPaymentType();
     $payment_type->setEntityTypeId($field_definition->getFieldStorageDefinition()->getTargetEntityTypeId());

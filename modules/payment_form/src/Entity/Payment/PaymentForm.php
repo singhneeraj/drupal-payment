@@ -77,10 +77,10 @@ class PaymentForm extends ContentEntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     $payment = $this->getEntity();
 
-    $form['line_items'] = array(
+    $form['line_items'] = [
       '#payment' => $payment,
       '#type' => 'payment_line_items_display',
-    );
+    ];
     $form['payment_method'] = $this->getPluginSelector($form_state)->buildSelectorForm([], $form_state);
 
     return parent::form($form, $form_state);
@@ -115,9 +115,9 @@ class PaymentForm extends ContentEntityForm {
   protected function actions(array $form, FormStateInterface $form_state) {
     // Only use the existing submit action.
     $actions = parent::actions($form, $form_state);
-    $actions = array(
+    $actions = [
       'submit' => $actions['submit'],
-    );
+    ];
     $actions['submit']['#value'] = $this->t('Pay');
     $payment_method_manager = new FilteredPaymentMethodManager($this->paymentMethodManager, $this->getEntity(), $this->currentUser);
     if (count($payment_method_manager->getDefinitions()) == 0) {

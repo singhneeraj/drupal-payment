@@ -70,20 +70,20 @@ class PaymentFormUnitTest extends UnitTestCase {
    */
   function testCreate() {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
-    $map = array(
-      array('plugin.manager.payment.line_item', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentLineItemManager),
-      array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
-    );
+    $map = [
+      ['plugin.manager.payment.line_item', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentLineItemManager],
+      ['string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation],
+    ];
     $container->expects($this->any())
       ->method('get')
       ->will($this->returnValueMap($map));
 
     $field_definition = $this->getMock('\Drupal\Core\Field\FieldDefinitionInterface');
-    $configuration = array(
+    $configuration = [
       'field_definition' => $field_definition,
       'settings' => [],
       'third_party_settings' => [],
-    );
+    ];
     $plugin_definition = [];
     $plugin_id = $this->randomMachineName();
     $form = PaymentForm::create($container, $configuration, $plugin_id, $plugin_definition);
@@ -94,12 +94,12 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @covers ::settingsSummary
    */
   public function testSettingsSummaryWithOneLineItem() {
-    $line_items_data = array(
-      array(
+    $line_items_data = [
+      [
         'plugin_id' => $this->randomMachineName(),
         'plugin_configuration' => [],
-      ),
-    );
+      ],
+    ];
     $this->fieldWidget->setSetting('line_items', $line_items_data);
     $this->stringTranslation->expects($this->any())
       ->method('formatPlural')
@@ -111,16 +111,16 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @covers ::settingsSummary
    */
   public function testSettingsSummaryWithMultipleLineItems() {
-    $line_items_data = array(
-      array(
+    $line_items_data = [
+      [
         'plugin_id' => $this->randomMachineName(),
         'plugin_configuration' => [],
-      ),
-      array(
+      ],
+      [
         'plugin_id' => $this->randomMachineName(),
         'plugin_configuration' => [],
-      )
-    );
+      ]
+    ];
     $this->fieldWidget->setSetting('line_items', $line_items_data);
     $this->stringTranslation->expects($this->any())
       ->method('formatPlural')
@@ -153,24 +153,24 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->method('getFieldStorageDefinition')
       ->will($this->returnValue($field_storage_definition));
 
-    $iterator = new \ArrayIterator(array(
-      (object) array(
+    $iterator = new \ArrayIterator([
+      (object) [
       'plugin_configuration' => [],
       'plugin_id' => $this->randomMachineName(),
-    )
-    ));
+    ]
+    ]);
     $items = $this->getMockBuilder('Drupal\Core\Field\FieldItemList')
       ->disableOriginalConstructor()
-      ->setMethods(array('getIterator'))
+      ->setMethods(['getIterator'])
       ->getMock();
     $items->expects($this->once())
       ->method('getIterator')
       ->will($this->returnValue($iterator));
 
-    $element = array(
-      '#array_parents' => array('line_items'),
+    $element = [
+      '#array_parents' => ['line_items'],
       '#items' => $items,
-    );
+    ];
     $form = [];
     $form_state = $this->getMock('\Drupal\Core\Form\FormStateInterface');
 

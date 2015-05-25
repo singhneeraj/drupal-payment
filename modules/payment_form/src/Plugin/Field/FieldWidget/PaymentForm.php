@@ -73,7 +73,7 @@ class PaymentForm extends WidgetBase implements ContainerFactoryPluginInterface 
    * {@inheritdoc}
    */
   public function settingsSummary() {
-    return array($this->formatPlural(count($this->getSetting('line_items')), '1 line item.', '@count line items'));
+    return [$this->formatPlural(count($this->getSetting('line_items')), '1 line item.', '@count line items')];
   }
 
   /**
@@ -81,7 +81,7 @@ class PaymentForm extends WidgetBase implements ContainerFactoryPluginInterface 
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $element['#items'] = $items;
-    $element['#process'][] = array($this, 'formElementProcess');
+    $element['#process'][] = [$this, 'formElementProcess'];
 
     return $element;
   }
@@ -90,21 +90,21 @@ class PaymentForm extends WidgetBase implements ContainerFactoryPluginInterface 
    * Implements form API #process callback.
    */
   public function formElementProcess(array $element, FormStateInterface $form_state, array $form) {
-    $element['array_parents'] = array(
+    $element['array_parents'] = [
       '#value' => $element['#array_parents'],
       '#type' => 'value',
-    );
+    ];
     $line_items = [];
     foreach ($element['#items'] as $item) {
       if ($item->plugin_id) {
         $line_items[] = $this->paymentLineItemManager->createInstance($item->plugin_id, $item->plugin_configuration);
       }
     }
-    $element['line_items'] = array(
+    $element['line_items'] = [
       '#cardinality' => $this->fieldDefinition->getFieldStorageDefinition()->getCardinality(),
       '#default_value' => $line_items,
       '#type' => 'payment_line_items_input',
-    );
+    ];
 
     return $element;
   }
@@ -113,15 +113,15 @@ class PaymentForm extends WidgetBase implements ContainerFactoryPluginInterface 
    * {@inheritdoc}
    */
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
-    $element = NestedArray::getValue($form, array_merge(array_slice($values['array_parents'], count($form['#array_parents'])), array('line_items')));
+    $element = NestedArray::getValue($form, array_merge(array_slice($values['array_parents'], count($form['#array_parents'])), ['line_items']));
 
     $line_items_data = [];
     /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface $line_item */
     foreach ($element['#value'] as $line_item) {
-      $line_items_data[] = array(
+      $line_items_data[] = [
         'plugin_id' => $line_item->getPluginId(),
         'plugin_configuration' => $line_item->getConfiguration(),
-      );
+      ];
     }
 
     return $line_items_data;

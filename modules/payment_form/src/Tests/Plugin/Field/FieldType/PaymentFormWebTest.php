@@ -22,7 +22,7 @@ class PaymentFormWebTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('payment', 'payment_form');
+  public static $modules = ['payment', 'payment_form'];
 
   /**
    * Tests the field.
@@ -30,26 +30,26 @@ class PaymentFormWebTest extends WebTestBase {
   protected function testField() {
     // Create the field and field instance.
     $field_name = strtolower($this->randomMachineName());
-    entity_create('field_storage_config', array(
+    entity_create('field_storage_config', [
       'cardinality' => FieldStorageConfigInterface::CARDINALITY_UNLIMITED,
       'entity_type' => 'user',
       'field_name' => $field_name,
       'type' => 'payment_form',
-    ))->save();
+    ])->save();
 
-    entity_create('field_config', array(
+    entity_create('field_config', [
       'bundle' => 'user',
       'entity_type' => 'user',
       'field_name' => $field_name,
-      'settings' => array(
+      'settings' => [
         'currency_code' => 'EUR',
-      ),
-    ))->save();
+      ],
+    ])->save();
 
     // Set a field value on an entity and test getting it.
-    $user = entity_create('user', array(
+    $user = entity_create('user', [
       'name' => $this->randomString(),
-    ));
+    ]);
     foreach (Generate::createPaymentLineItems() as $line_item) {
       $user->get($field_name)->appendItem([
         'plugin_id' => $line_item->getPluginId(),

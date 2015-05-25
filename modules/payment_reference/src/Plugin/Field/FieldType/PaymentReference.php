@@ -37,45 +37,45 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
    * {@inheritdoc}
    */
   public static function defaultStorageSettings() {
-    return array(
+    return [
       'target_bundle' => 'payment_reference',
       'target_type' => 'payment',
-    ) + parent::defaultStorageSettings();
+    ] + parent::defaultStorageSettings();
   }
 
   /**
    * {@inheritdoc}
    */
   public static function defaultFieldSettings() {
-    return parent::defaultFieldSettings() + array(
+    return parent::defaultFieldSettings() + [
       'currency_code' => '',
       'line_items_data' => [],
-    );
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
   public static function schema(FieldStorageDefinitionInterface $field_storage_definition) {
-    return array(
-      'columns' => array(
-        'target_id' => array(
+    return [
+      'columns' => [
+        'target_id' => [
           'type' => 'int',
           'unsigned' => TRUE,
-        ),
-      ),
-      'indexes' => array(
-        'target_id' => array('target_id'),
-      ),
-      'foreign keys' => array(
-        'target_id' => array(
+        ],
+      ],
+      'indexes' => [
+        'target_id' => ['target_id'],
+      ],
+      'foreign keys' => [
+        'target_id' => [
           'table' => 'payment',
-          'columns' => array(
+          'columns' => [
             'target_id' => 'id',
-          ),
-        ),
-      ),
-    );
+          ],
+        ],
+      ],
+    ];
   }
 
   /**
@@ -85,26 +85,26 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
     /** @var \Drupal\currency\FormHelperInterface $form_helper */
     $form_helper = \Drupal::service('currency.form_helper');
 
-    $element['#element_validate'] = array(get_class() . '::fieldSettingsFormValidate');
-    $element['currency_code'] = array(
+    $element['#element_validate'] = [get_class() . '::fieldSettingsFormValidate'];
+    $element['currency_code'] = [
       '#empty_value' => '',
       '#type' => 'select',
       '#title' => $this->t('Payment currency'),
       '#options' => $form_helper->getCurrencyOptions(),
       '#default_value' => $this->getSetting('currency_code'),
       '#required' => TRUE,
-    );
+    ];
     $line_items = [];
     foreach ($this->getSetting('line_items_data') as $line_item_data) {
       $line_items[] = Payment::lineItemManager()->createInstance($line_item_data['plugin_id'], $line_item_data['plugin_configuration']);
     }
-    $element['line_items'] = array(
+    $element['line_items'] = [
       '#type' => 'payment_line_items_input',
       '#title' => $this->t('Line items'),
       '#default_value' => $line_items,
       '#required' => TRUE,
       '#currency_code' => '',
-    );
+    ];
 
     return $element;
   }
@@ -113,7 +113,7 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
    * Implements #element_validate callback for self::fieldSettingsForm().
    */
   public static function fieldSettingsFormValidate(array $element, FormStateInterface $form_state) {
-    $add_more_button_form_parents = array_merge($element['#array_parents'], array('line_items', 'add_more', 'add'));
+    $add_more_button_form_parents = array_merge($element['#array_parents'], ['line_items', 'add_more', 'add']);
     // Only set the field settings as a value when it is not the "Add more"
     // button that has been clicked.
     $triggering_element = $form_state->getTriggeringElement();
@@ -122,15 +122,15 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
       $values = NestedArray::getValue($values, $element['#array_parents']);
       $line_items_data = [];
       foreach (PaymentLineItemsInput::getLineItems($element['line_items'], $form_state) as $line_item) {
-        $line_items_data[] = array(
+        $line_items_data[] = [
           'plugin_id' => $line_item->getPluginId(),
           'plugin_configuration' => $line_item->getConfiguration(),
-        );
+        ];
       }
-      $value = array(
+      $value = [
         'currency_code' => $values['currency_code'],
         'line_items_data' => $line_items_data,
-      );
+      ];
       $form_state->setValueForElement($element, $value);
     }
   }
