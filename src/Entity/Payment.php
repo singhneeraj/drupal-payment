@@ -50,7 +50,6 @@ use Drupal\user\UserInterface;
  *     "canonical" = "/payment/{payment}",
  *     "collection" = "/admin/content/payment",
  *     "complete" = "/payment/{payment}/complete",
- *     "edit-form" = "/payment/{payment}/edit",
  *     "delete-form" = "/payment/{payment}/delete",
  *     "update-status-form" = "/payment/{payment}/update-status",
  *     "capture-form" = "/payment/{payment}/capture",

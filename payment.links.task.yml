@@ -13,11 +13,6 @@ payment.payment.view:
   route_name: entity.payment.canonical
   title: 'View'
 
-payment.payment.edit:
-  base_route: entity.payment.canonical
-  route_name: entity.payment.edit_form
-  title: 'Edit'
-
 payment.payment.update_status:
   base_route: entity.payment.canonical
   route_name: entity.payment.update_status_form
