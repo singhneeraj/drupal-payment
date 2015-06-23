@@ -380,10 +380,6 @@ namespace Drupal\Tests\payment\Unit\Element {
         ->method('getSelectedPlugin')
         ->willReturn($payment_method);
 
-      $this->renderer->expects($this->atLeastOnce())
-        ->method('mergeAttachments')
-        ->willReturn([]);
-
       $form = array(
         'foo' => array(
           'bar' => array(
@@ -455,10 +451,6 @@ namespace Drupal\Tests\payment\Unit\Element {
       $form_state->expects($this->once())
         ->method('getTriggeringElement')
         ->willReturn($form['foo']['bar']['container']['refresh']);
-
-      $this->renderer->expects($this->atLeastOnce())
-        ->method('mergeAttachments')
-        ->willReturn([]);
 
       $response = $this->element->ajaxRefresh($form, $form_state);
       $this->assertInstanceOf('\Drupal\Core\Ajax\AjaxResponse', $response);

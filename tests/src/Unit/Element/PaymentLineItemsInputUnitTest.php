@@ -431,10 +431,6 @@ namespace Drupal\Tests\payment\Unit\Element {
       $form_state = new FormState();
       $form_state->setTriggeringElement($form_build['foo']['add_more']['add']);
 
-      $this->renderer->expects($this->atLeastOnce())
-        ->method('mergeAttachments')
-        ->willReturn([]);
-
       $response = $this->element->ajaxAddMoreSubmit($form_build, $form_state);
       $this->assertInstanceOf('\Drupal\Core\Ajax\AjaxResponse', $response);
     }
