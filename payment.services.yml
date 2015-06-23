@@ -25,11 +25,6 @@ services:
     arguments: ['@container.namespaces', '@cache.discovery', '@module_handler']
     tags:
       - { name: plugin_manager_cache_clear}
-  plugin.manager.plugin_selector.plugin_selector:
-    class: Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManager
-    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler']
-    tags:
-      - { name: plugin_manager_cache_clear}
   plugin.manager.payment.status:
     class: Drupal\payment\Plugin\Payment\Status\PaymentStatusManager
     arguments: ['@cache.discovery', '@module_handler', '@class_resolver', '@string_translation']
