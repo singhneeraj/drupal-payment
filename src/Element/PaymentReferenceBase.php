@@ -286,23 +286,10 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     $plugin_id = $this->getPluginId();
     $build['pay_button'] = array(
       '#ajax' => array(
-        'callback' => function(array $form, FormStateInterface $form_state) use ($plugin_id) {
-            /** @var \Drupal\Component\Plugin\PluginManagerInterface $element_info_manager */
-            $element_info_manager = \Drupal::service('plugin.manager.element_info');
-            /** @var \Drupal\payment\Element\PaymentReferenceBase $element_plugin */
-            $element_plugin = $element_info_manager->createInstance($plugin_id);
-
-            return $element_plugin->ajaxPay($form, $form_state);
-          },
+        'callback' => [get_class(), 'instantiate#ajaxPay#' . $plugin_id],
       ),
       '#limit_validation_errors' => array(array_merge($element['#parents'], array('container', 'payment_form'))),
-      '#submit' => array(function(array $form, FormStateInterface $form_state) use ($plugin_id) {
-        /** @var \Drupal\Component\Plugin\PluginManagerInterface $element_info_manager */
-        $element_info_manager = \Drupal::service('plugin.manager.element_info');
-        /** @var \Drupal\payment\Element\PaymentReferenceBase $element_plugin */
-        $element_plugin = $element_info_manager->createInstance($plugin_id);
-        $element_plugin->pay($form, $form_state);
-      }),
+      '#submit' => [[get_class(), 'instantiate#pay#' . $plugin_id]],
       '#type' => 'submit',
       '#value' => $this->t('Pay'),
       '#process' => array(array(get_class($this), 'processMaxWeight')),
@@ -348,14 +335,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     $plugin_id = $this->getPluginId();
     $build = array(
       '#ajax' => array(
-        'callback' => function(array $form, FormStateInterface $form_state) use ($plugin_id) {
-          /** @var \Drupal\Component\Plugin\PluginManagerInterface $element_info_manager */
-          $element_info_manager = \Drupal::service('plugin.manager.element_info');
-          /** @var \Drupal\payment\Element\PaymentReferenceBase $element_plugin */
-          $element_plugin = $element_info_manager->createInstance($plugin_id);
-
-          return $element_plugin->ajaxRefresh($form, $form_state);
-        },
+        'callback' => [get_class(), 'instantiate#ajaxRefresh#' . $plugin_id],
         'event' => 'mousedown',
         // The AJAX behavior itself does not need a wrapper, but
         // payment_reference.js does.

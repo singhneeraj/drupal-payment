@@ -15,7 +15,7 @@ payment_reference.payment_type:
       type: string
     plugin_selector_configuration:
       label: Plugin selector configuration
-      type: payment.plugin_configuration.plugin_selector.[%parent.plugin_selector_id]
+      type: plugin_selector.plugin_configuration.plugin_selector.[%parent.plugin_selector_id]
   type: mapping
 
 payment.plugin_configuration.payment_type.payment_reference:
