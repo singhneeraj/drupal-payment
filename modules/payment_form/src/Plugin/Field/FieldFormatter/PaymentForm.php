@@ -40,30 +40,24 @@ class PaymentForm extends FormatterBase {
       }
     }
 
-    $callback = __CLASS__ . '::viewElementsPostRenderCache';
-    $context = [
-      'bundle' => $items->getEntity()->bundle(),
-      'entity_type_id' => $items->getEntity()->getEntityTypeId(),
-      'field_name' => $this->fieldDefinition->getName(),
-      'line_items_data' => serialize($line_items_data),
-    ];
-    $placeholder = drupal_render_cache_generate_placeholder($callback, $context);
+    $callback = __CLASS__ . '::lazyBuild';
 
     return [[
-      '#type' => 'markup',
-      '#post_render_cache' => [
-        $callback => [$context],
-      ],
-      '#markup' => $placeholder,
+      '#lazy_builder' => [$callback, [
+        $items->getEntity()->bundle(),
+        $items->getEntity()->getEntityTypeId(),
+        $this->fieldDefinition->getName(),
+        serialize($line_items_data),
+      ]],
     ]];
   }
 
   /**
    * Implements #post_render_cache.
    */
-  public static function viewElementsPostRenderCache(array $element, array $context) {
-    $field_definitions = \Drupal::entityManager()->getFieldDefinitions($context['entity_type_id'], $context['bundle']);
-    $field_definition = $field_definitions[$context['field_name']];
+  public static function lazyBuild($bundle, $entity_type_id, $field_name, $line_items_data) {
+    $field_definitions = \Drupal::entityManager()->getFieldDefinitions($entity_type_id, $bundle);
+    $field_definition = $field_definitions[$field_name];
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
     $payment = \Drupal::entityManager()->getStorage('payment')->create([
       'bundle' => 'payment_form',
@@ -72,23 +66,17 @@ class PaymentForm extends FormatterBase {
     /** @var \Drupal\payment_form\Plugin\Payment\Type\PaymentForm $payment_type */
     $payment_type = $payment->getPaymentType();
     $payment_type->setDestinationUrl(\Drupal::request()->getUri());
-    $payment_type->setEntityTypeId($context['entity_type_id']);
-    $payment_type->setBundle($context['bundle']);
-    $payment_type->setFieldName($context['field_name']);
-    $line_items_data = unserialize($context['line_items_data']);
+    $payment_type->setEntityTypeId($entity_type_id);
+    $payment_type->setBundle($bundle);
+    $payment_type->setFieldName($field_name);
+    $line_items_data = unserialize($line_items_data);
     foreach ($line_items_data as $line_item_data) {
       $payment->setLineItem(Payment::lineItemManager()->createInstance($line_item_data['plugin_id'], $line_item_data['plugin_configuration']));
     }
 
     /** @var \Drupal\Core\Entity\EntityFormBuilderInterface $entity_form_builder */
     $entity_form_builder = \Drupal::service('entity.form_builder');
-    $placeholder = drupal_render_cache_generate_placeholder(__METHOD__, $context, $context['token']);
 
-    $build = $entity_form_builder->getForm($payment, 'payment_form');
-    /** @var \Drupal\Core\Render\RendererInterface $renderer */
-    $renderer = \Drupal::service('renderer');
-    $element['#markup'] = str_replace($placeholder, $renderer->render($build), $element['#markup']);
-
-    return $element;
+    return $entity_form_builder->getForm($payment, 'payment_form');
   }
 }
