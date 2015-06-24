@@ -738,7 +738,7 @@ namespace Drupal\Tests\payment\Unit\Element {
 
       $build = $method->invoke($this->element, $element, $form_state);
       $this->assertInternalType('array', $build);
-      $this->assertInstanceOf('\Closure', $build['#ajax']['callback']);
+      $this->assertTrue(is_callable($build['#ajax']['callback']));
       $this->assertSame($build['#submit'][0][0], $this->pluginDefinition['class']);
     }
 
@@ -790,8 +790,8 @@ namespace Drupal\Tests\payment\Unit\Element {
 
       $build = $method->invoke($this->element, $element, $form_state);
       $this->assertInternalType('array', $build);
-      $this->assertInstanceOf('\Closure', $build['pay_button']['#ajax']['callback']);
-      $this->assertInstanceOf('\Closure', $build['pay_button']['#submit'][0]);
+      $this->assertTrue(is_callable($build['pay_button']['#ajax']['callback']));
+      $this->assertTrue(is_callable($build['pay_button']['#submit'][0]));
       $this->assertTrue(is_callable($build['pay_button']['#process'][0]));
       $this->assertTrue(is_callable($build['pay_link']['#process'][0]));
     }
