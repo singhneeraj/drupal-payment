@@ -167,27 +167,23 @@ class PaymentFormUnitTest extends UnitTestCase {
       'plugin_configuration' => $plugin_configuration,
     ]];
     $built_form = [[
-      '#type' => 'markup',
-      '#post_render_cache' => [
-        'Drupal\payment_form\Plugin\Field\FieldFormatter\PaymentForm::viewElementsPostRenderCache' => [
-          [
-            'bundle' => $bundle,
-            'entity_type_id' => $entity_type_id,
-            'field_name' => $field_name,
-            'line_items_data' => serialize($line_items_data),
-          ],
+      '#lazy_builder' => [
+        'Drupal\payment_form\Plugin\Field\FieldFormatter\PaymentForm::lazyBuild', [
+          $bundle,
+          $entity_type_id,
+          $field_name,
+          serialize($line_items_data),
         ],
       ],
-      '#markup' => NULL,
     ]];
 
     $this->assertSame($built_form, $this->fieldFormatter->viewElements($items));
   }
 
   /**
-   * @covers ::viewElementsPostRenderCache
+   * @covers ::lazyBuild
    */
-  public function testViewElementsPostRenderCache() {
+  public function testLazyBuild() {
     $bundle = $this->randomMachineName();
     $entity_type_id = $this->randomMachineName();
     $field_name = $this->randomMachineName();
@@ -256,9 +252,14 @@ class PaymentFormUnitTest extends UnitTestCase {
       ->with($plugin_id, $plugin_configuration)
       ->will($this->returnValue($payment_line_item));
 
+    $form_build = [
+      '#markup' => $this->randomMachineName(),
+    ];
+
     $this->entityFormBuilder->expects($this->once())
       ->method('getForm')
-      ->with($payment, 'payment_form');
+      ->with($payment, 'payment_form')
+      ->willReturn($form_build);
 
     $this->request->expects($this->atLeastOnce())
       ->method('getUri')
@@ -268,7 +269,6 @@ class PaymentFormUnitTest extends UnitTestCase {
     $container->set('entity.form_builder', $this->entityFormBuilder);
     $container->set('entity.manager', $this->entityManager);
     $container->set('plugin.manager.payment.line_item', $this->paymentLineItemManager);
-    $container->set('renderer', $this->renderer);
     $container->set('request_stack', $this->requestStack);
     \Drupal::setContainer($container);
 
@@ -277,19 +277,8 @@ class PaymentFormUnitTest extends UnitTestCase {
       'plugin_configuration' => $plugin_configuration,
     ]];
 
-    $element = [
-      '#markup' => $this->randomMachineName(),
-    ];
-    $context = [
-      'bundle' => $bundle,
-      'entity_type_id' => $entity_type_id,
-      'field_name' => $field_name,
-      'line_items_data' => serialize($line_items_data),
-      'token' => $this->randomMachineName(),
-    ];
-
     $field_formatter = $this->fieldFormatter;
-    $this->assertSame($element, $field_formatter::viewElementsPostRenderCache($element, $context));
+    $this->assertSame($form_build, $field_formatter::lazyBuild($bundle, $entity_type_id, $field_name, serialize($line_items_data)));
   }
 
 }
