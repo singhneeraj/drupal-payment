@@ -24,7 +24,7 @@ class PaymentStatusCreated extends Timestamp {
    * {@inheritdoc}
    */
   public function setValue($value, $notify = TRUE) {
-    /** @var \Drupal\payment\Plugin\Field\FieldType\PluginBagItemInterface $parent */
+    /** @var \Drupal\plugin\Plugin\Field\FieldType\PluginCollectionItemInterface $parent */
     $parent = $this->getParent();
     $plugin_instance = $parent->getContainedPluginInstance();
     if ($plugin_instance instanceof PaymentStatusInterface) {
@@ -36,7 +36,7 @@ class PaymentStatusCreated extends Timestamp {
    * {@inheritdoc}
    */
   public function getValue() {
-    /** @var \Drupal\payment\Plugin\Field\FieldType\PluginBagItemInterface $parent */
+    /** @var \Drupal\plugin\Plugin\Field\FieldType\PluginCollectionItemInterface $parent */
     $parent = $this->getParent();
     $plugin_instance = $parent->getContainedPluginInstance();
     if ($plugin_instance instanceof PaymentStatusInterface) {

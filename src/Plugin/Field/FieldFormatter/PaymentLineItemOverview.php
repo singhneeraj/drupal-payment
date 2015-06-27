@@ -29,7 +29,7 @@ class PaymentLineItemOverview extends FormatterBase {
    */
   public function viewElements(FieldItemListInterface $items) {
     $payment_line_items = [];
-    /** @var \Drupal\payment\Plugin\Field\FieldType\PluginBagItemInterface $item */
+    /** @var \Drupal\plugin\Plugin\Field\FieldType\PluginCollectionItemInterface $item */
     foreach ($items as $delta => $item) {
       $payment_line_items[$delta] = $item->getContainedPluginInstance();
     }

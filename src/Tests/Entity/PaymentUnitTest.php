@@ -36,7 +36,7 @@ class PaymentUnitTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('currency', 'field', 'payment', 'payment_test', 'system', 'user');
+  public static $modules = array('currency', 'field', 'payment', 'payment_test', 'plugin', 'system', 'user');
 
   /**
    * The payment under test.

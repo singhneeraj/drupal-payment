@@ -9,11 +9,12 @@ namespace Drupal\payment\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\TypedData\MapDataDefinition;
+use Drupal\plugin\Plugin\Field\FieldType\PluginCollectionItemBase;
 
 /**
  * Provides a plugin bag for payment-aware plugins.
  */
-abstract class PaymentAwarePluginBagItemBase extends PluginBagItemBase {
+abstract class PaymentAwarePluginCollectionItemBase extends PluginCollectionItemBase {
 
   /**
    * {@inheritdoc}

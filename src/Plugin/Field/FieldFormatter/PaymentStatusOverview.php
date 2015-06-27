@@ -28,7 +28,7 @@ class PaymentStatusOverview extends FormatterBase {
    */
   public function viewElements(FieldItemListInterface $items) {
     $payment_statuses = [];
-    /** @var \Drupal\payment\Plugin\Field\FieldType\PluginBagItemInterface $item */
+    /** @var \Drupal\plugin\Plugin\Field\FieldType\PluginCollectionItemInterface $item */
     foreach ($items as $delta => $item) {
       $payment_statuses[$delta] = $item->getContainedPluginInstance();
     }

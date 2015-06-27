@@ -110,7 +110,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function getPaymentType() {
-    /** @var \Drupal\payment\Plugin\Field\FieldType\PluginBagItemInterface $field_item */
+    /** @var \Drupal\plugin\Plugin\Field\FieldType\PluginCollectionItemInterface $field_item */
     $field_item = $this->get('payment_type')->first();
 
     return $field_item ? $field_item->getContainedPluginInstance() : NULL;
@@ -179,7 +179,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    */
   public function getLineItems() {
     $line_items = [];
-    /** @var \Drupal\payment\Plugin\Field\FieldType\PluginBagItemInterface $field_item */
+    /** @var \Drupal\plugin\Plugin\Field\FieldType\PluginCollectionItemInterface $field_item */
     foreach ($this->get('line_items') as $field_item) {
       /** @var \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface $line_item */
       $line_item = $field_item->getContainedPluginInstance();
@@ -254,7 +254,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    */
   public function getPaymentStatuses() {
     $payment_statuses = [];
-    /** @var \Drupal\payment\Plugin\Field\FieldType\PluginBagItemInterface $field_item */
+    /** @var \Drupal\plugin\Plugin\Field\FieldType\PluginCollectionItemInterface $field_item */
     foreach ($this->get('payment_statuses') as $field_item) {
       $payment_statuses[] = $field_item->getContainedPluginInstance();
     }
@@ -267,7 +267,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    */
   public function getPaymentStatus() {
     $deltas = [];
-    /** @var \Drupal\payment\Plugin\Field\FieldType\PluginBagItemInterface $field_item */
+    /** @var \Drupal\plugin\Plugin\Field\FieldType\PluginCollectionItemInterface $field_item */
     foreach ($this->get('payment_statuses') as $delta => $field_item) {
       $deltas[] = $delta;
     }
@@ -280,7 +280,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function setPaymentMethod(PluginPaymentMethodInterface $payment_method) {
-    /** @var \Drupal\payment\Plugin\Field\FieldType\PluginBagItemInterface $field_item */
+    /** @var \Drupal\plugin\Plugin\Field\FieldType\PluginCollectionItemInterface $field_item */
     $this->get('payment_method')->applyDefaultValue();
     $this->get('payment_method')->appendItem($payment_method);
 
@@ -291,7 +291,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    * {@inheritdoc}
    */
   public function getPaymentMethod() {
-    /** @var \Drupal\payment\Plugin\Field\FieldType\PluginBagItemInterface $field_item */
+    /** @var \Drupal\plugin\Plugin\Field\FieldType\PluginCollectionItemInterface $field_item */
     $field_item = $this->get('payment_method')->first();
 
     return $field_item ? $field_item->getContainedPluginInstance() : NULL;
@@ -410,7 +410,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
     $fields['payment_method'] = BaseFieldDefinition::create('payment_method')
       ->setLabel(t('Payment method'))
       ->setDisplayOptions('view', array(
-        'type' => 'payment_plugin_label',
+        'type' => 'plugin_label',
         'weight' => 0,
       ))
       ->setDisplayConfigurable('view', TRUE);
@@ -425,7 +425,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
     $fields['payment_type'] = BaseFieldDefinition::create('payment_type')
       ->setLabel(t('Payment type'))
       ->setDisplayOptions('view', array(
-        'type' => 'payment_plugin_label',
+        'type' => 'plugin_label',
         'weight' => 0,
       ))
       ->setDisplayConfigurable('view', TRUE);

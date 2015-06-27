@@ -10,14 +10,14 @@ namespace Drupal\payment\Plugin\Field\FieldType;
 use Drupal\payment\Payment;
 
 /**
- * Provides a plugin bag for payment line item plugins.
+ * Provides a plugin collection for payment line item plugins.
  *
  * @FieldType(
  *   id = "payment_line_item",
  *   label = @Translation("Payment line item plugins")
  * )
  */
-class LineItemItem extends PaymentAwarePluginBagItemBase {
+class LineItemItem extends PaymentAwarePluginCollectionItemBase {
 
   /**
    * {@inheritdoc}

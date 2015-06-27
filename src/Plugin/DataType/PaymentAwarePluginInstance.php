@@ -9,6 +9,7 @@ namespace Drupal\payment\Plugin\DataType;
 
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\PaymentAwareInterface;
+use Drupal\plugin\Plugin\DataType\PluginInstance;
 
 /**
  * Provides a payment-aware plugin instance data type.
