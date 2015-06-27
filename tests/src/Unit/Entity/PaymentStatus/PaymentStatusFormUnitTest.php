@@ -50,7 +50,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
     /**
      * The plugin selector manager.
      *
-     * @var \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $pluginSelectorManager;
 
@@ -73,7 +73,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
         ->disableOriginalConstructor()
         ->getMock();
 
-      $this->pluginSelectorManager = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface');
+      $this->pluginSelectorManager = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface');
 
       $this->stringTranslation = $this->getStringTranslationStub();
 
@@ -96,7 +96,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
       $map = array(
         array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $entity_manager),
         array('plugin.manager.payment.status', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentStatusManager),
-        array('plugin.manager.plugin_selector.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
+        array('plugin.manager.plugin.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
         array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
       );
       $container->expects($this->any())
@@ -125,7 +125,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
         '#foo' => $this->randomMachineName(),
       ];
 
-      $parent_selector = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface');
+      $parent_selector = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface');
       $parent_selector->expects($this->atLeastOnce())
         ->method('buildSelectorForm')
         ->with([], $form_state)
@@ -210,12 +210,12 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
         ->method('setParentId')
         ->with($parent_id);
 
-      $parent_status = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface');
+      $parent_status = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface');
       $parent_status->expects($this->atLeastOnce())
         ->method('getPluginId')
         ->willReturn($parent_id);
 
-      $parent_selector = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface');
+      $parent_selector = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface');
       $parent_selector->expects($this->atLeastOnce())
         ->method('getSelectedPlugin')
         ->willReturn($parent_status);

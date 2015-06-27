@@ -17,7 +17,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Utility\LinkGeneratorInterface;
 use Drupal\payment\Element\PaymentReferenceBase;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
-use Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface;
+use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
 use Drupal\payment\QueueInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -52,7 +52,7 @@ class PaymentReference extends PaymentReferenceBase {
    * @param \Drupal\Core\Utility\LinkGeneratorInterface $link_generator
    * @param \Drupal\Core\Render\RendererInterface $renderer
    * @param \Drupal\Core\Session\AccountInterface $current_user
-   * @param \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface $plugin_selector_manager
+   * @param \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface $plugin_selector_manager
    * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface $payment_method_manager
    * @param \Drupal\payment\QueueInterface $payment_queue
    */
@@ -68,7 +68,7 @@ class PaymentReference extends PaymentReferenceBase {
     /** @var \Drupal\Core\Entity\EntityManagerInterface $entity_manager */
     $entity_manager = $container->get('entity.manager');
 
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('request_stack'), $entity_manager->getStorage('payment'), $container->get('string_translation'), $container->get('date.formatter'), $container->get('link_generator'), $container->get('renderer'), $container->get('current_user'), $container->get('plugin.manager.plugin_selector.plugin_selector'), $container->get('plugin.manager.payment.method'), new Random(), $container->get('payment_reference.queue'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('request_stack'), $entity_manager->getStorage('payment'), $container->get('string_translation'), $container->get('date.formatter'), $container->get('link_generator'), $container->get('renderer'), $container->get('current_user'), $container->get('plugin.manager.plugin.plugin_selector'), $container->get('plugin.manager.payment.method'), new Random(), $container->get('payment_reference.queue'));
   }
 
   /**

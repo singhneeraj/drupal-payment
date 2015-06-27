@@ -37,7 +37,7 @@ class SetStatusUnitTest extends UnitTestCase {
   /**
    * The plugin selector manager.
    *
-   * @var \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $pluginSelectorManager;
 
@@ -54,7 +54,7 @@ class SetStatusUnitTest extends UnitTestCase {
   public function setUp() {
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
-    $this->pluginSelectorManager = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface');
+    $this->pluginSelectorManager = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface');
 
     $this->stringTranslation = $this->getStringTranslationStub();
 
@@ -72,7 +72,7 @@ class SetStatusUnitTest extends UnitTestCase {
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
       array('plugin.manager.payment.status', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentStatusManager),
-      array('plugin.manager.plugin_selector.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
+      array('plugin.manager.plugin.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
     $container->expects($this->any())
@@ -107,7 +107,7 @@ class SetStatusUnitTest extends UnitTestCase {
       '#foo' => $this->randomMachineName(),
     ];
 
-    $plugin_selector = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface');
+    $plugin_selector = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface');
     $plugin_selector->expects($this->once())
       ->method('buildSelectorForm')
       ->with([], $form_state)
@@ -139,7 +139,7 @@ class SetStatusUnitTest extends UnitTestCase {
     ];
     $form_state = new FormState();
 
-    $plugin_selector = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface');
+    $plugin_selector = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface');
     $plugin_selector->expects($this->once())
       ->method('validateSelectorForm')
       ->with($form['payment_status_plugin_id'], $form_state);
@@ -173,7 +173,7 @@ class SetStatusUnitTest extends UnitTestCase {
       ->willReturn($plugin_id);
 
 
-    $plugin_selector = $this->getMock('\Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface');
+    $plugin_selector = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface');
     $plugin_selector->expects($this->once())
       ->method('getSelectedPlugin')
       ->willReturn($payment_status);

@@ -12,8 +12,8 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\plugin_selector\Plugin\DefaultPluginDefinitionMapper;
-use Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface;
+use Drupal\plugin\Plugin\DefaultPluginDefinitionMapper;
+use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -42,7 +42,7 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
   /**
    * The plugin selector manager.
    *
-   * @var \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface
+   * @var \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface
    */
   protected $pluginSelectorManager;
 
@@ -59,7 +59,7 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
    *   The string translator.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
-   * @param \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface
+   * @param \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface
    *   The plugin selector manager.
    * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
    *   The payment status manager.
@@ -75,7 +75,7 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'), $container->get('module_handler'), $container->get('plugin.manager.plugin_selector.plugin_selector'), $container->get('plugin.manager.payment.status'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'), $container->get('module_handler'), $container->get('plugin.manager.plugin.plugin_selector'), $container->get('plugin.manager.payment.status'));
   }
 
   /**
@@ -355,7 +355,7 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
    *
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
-   * @return \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface
+   * @return \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface
    */
   protected function getExecutePaymentStatusSelector(FormStateInterface $form_state) {
     $plugin_selector = $this->getPaymentStatusSelector($form_state, 'execute', $this->getExecuteStatusId());
@@ -370,7 +370,7 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
    *
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
-   * @return \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface
+   * @return \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface
    */
   protected function getCapturePaymentStatusSelector(FormStateInterface $form_state) {
     $plugin_selector = $this->getPaymentStatusSelector($form_state, 'capture', $this->getExecuteStatusId());
@@ -385,7 +385,7 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
    *
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
-   * @return \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface
+   * @return \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface
    */
   protected function getRefundPaymentStatusSelector(FormStateInterface $form_state) {
     $plugin_selector = $this->getPaymentStatusSelector($form_state, 'refund', $this->getExecuteStatusId());
@@ -402,7 +402,7 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
    * @param string $type
    * @param string $default_plugin_id
    *
-   * @return \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface
+   * @return \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface
    */
   protected function getPaymentStatusSelector(FormStateInterface $form_state, $type, $default_plugin_id) {
     $key = 'payment_status_selector_' . $type;

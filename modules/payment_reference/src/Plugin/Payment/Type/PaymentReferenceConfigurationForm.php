@@ -12,9 +12,9 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\plugin_selector\Plugin\DefaultPluginDefinitionMapper;
+use Drupal\plugin\Plugin\DefaultPluginDefinitionMapper;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
-use Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface;
+use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -32,7 +32,7 @@ class PaymentReferenceConfigurationForm extends ConfigFormBase {
   /**
    * The plugin selector manager.
    *
-   * @var \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface
+   * @var \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface
    */
   protected $pluginSelectorManager;
 
@@ -42,7 +42,7 @@ class PaymentReferenceConfigurationForm extends ConfigFormBase {
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface $payment_method_manager
-   * @param \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface $plugin_selector_manager
+   * @param \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface $plugin_selector_manager
    */
   public function __construct(ConfigFactoryInterface $config_factory, TranslationInterface $string_translation, PaymentMethodManagerInterface $payment_method_manager, PluginSelectorManagerInterface $plugin_selector_manager) {
     parent::__construct($config_factory);
@@ -59,7 +59,7 @@ class PaymentReferenceConfigurationForm extends ConfigFormBase {
       $container->get('config.factory'),
       $container->get('string_translation'),
       $container->get('plugin.manager.payment.method'),
-      $container->get('plugin.manager.plugin_selector.plugin_selector')
+      $container->get('plugin.manager.plugin.plugin_selector')
     );
   }
 
@@ -150,7 +150,7 @@ class PaymentReferenceConfigurationForm extends ConfigFormBase {
    *
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
-   * @return \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface
+   * @return \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface
    */
   protected function getPluginSelector(FormStateInterface $form_state) {
     $config = $this->config('payment_reference.payment_type');

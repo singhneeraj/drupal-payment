@@ -14,8 +14,8 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\plugin_selector\Plugin\DefaultPluginDefinitionMapper;
-use Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface;
+use Drupal\plugin\Plugin\DefaultPluginDefinitionMapper;
+use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -40,7 +40,7 @@ class SetStatus extends ConfigurableActionBase implements ContainerFactoryPlugin
   /**
    * The plugin selector manager.
    *
-   * @var \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface
+   * @var \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface
    */
   protected $pluginSelectorManager;
 
@@ -55,7 +55,7 @@ class SetStatus extends ConfigurableActionBase implements ContainerFactoryPlugin
    *   The plugin implementation definition.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translator.
-   * @param \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface $plugin_selector_manager
+   * @param \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface $plugin_selector_manager
    *   The plugin selector manager.
    * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface $payment_status_manager
    *   The payment status manager.
@@ -71,7 +71,7 @@ class SetStatus extends ConfigurableActionBase implements ContainerFactoryPlugin
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'), $container->get('plugin.manager.plugin_selector.plugin_selector'), $container->get('plugin.manager.payment.status'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'), $container->get('plugin.manager.plugin.plugin_selector'), $container->get('plugin.manager.payment.status'));
   }
 
   /**
@@ -133,7 +133,7 @@ class SetStatus extends ConfigurableActionBase implements ContainerFactoryPlugin
    *
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
-   * @return \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface
+   * @return \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface
    */
   protected function getPluginSelector(FormStateInterface $form_state) {
     if (!$form_state->has('plugin_selector')) {

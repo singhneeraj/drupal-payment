@@ -33,10 +33,10 @@ class Payment {
   /**
    * Returns the plugin selector manager.
    *
-   * @return \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface
+   * @return \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface
    */
   public static function pluginSelectorManager() {
-    return \Drupal::service('plugin.manager.plugin_selector.plugin_selector');
+    return \Drupal::service('plugin.manager.plugin.plugin_selector');
   }
 
   /**

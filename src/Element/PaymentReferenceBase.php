@@ -28,10 +28,10 @@ use Drupal\Core\Utility\LinkGeneratorInterface;
 use Drupal\currency\FormElementCallbackTrait;
 use Drupal\payment\Entity\Payment;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\plugin_selector\Plugin\DefaultPluginDefinitionMapper;
+use Drupal\plugin\Plugin\DefaultPluginDefinitionMapper;
 use Drupal\payment\Plugin\Payment\Method\FilteredPaymentMethodManager;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
-use Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface;
+use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -89,7 +89,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
   /**
    * The plugin selector manager.
    *
-   * @var \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface
+   * @var \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface
    */
   protected $pluginSelectorManager;
 
@@ -130,7 +130,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
    * @param \Drupal\Core\Utility\LinkGeneratorInterface $link_generator
    * @param \Drupal\Core\Render\RendererInterface $renderer
    * @param \Drupal\Core\Session\AccountInterface $current_user
-   * @param \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorManagerInterface $plugin_selector_manager
+   * @param \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface $plugin_selector_manager
    * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface $payment_method_manager
    * @param \Drupal\Component\Utility\Random $random
    */
@@ -535,7 +535,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
    * @param array $element
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
-   * @return \Drupal\plugin_selector\Plugin\PluginSelector\PluginSelector\PluginSelectorInterface
+   * @return \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface
    */
   protected function getPluginSelector(array $element, FormStateInterface $form_state) {
     $key = 'payment_reference.element.payment_reference.plugin_selector.' . $element['#name'];
