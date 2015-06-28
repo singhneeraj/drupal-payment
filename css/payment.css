@@ -12,30 +12,6 @@
 
 /* @end */
 
-/* @group payment_radios plugin selector */
-
-.payment-plugin-selector-payment-radios-selector {
-    float: left;
-    min-width: 200px;
-    width: 25%;
-}
-
-.payment-plugin-selector-payment-radios-payment-method-form {
-    float: left;
-    min-width: 400px;
-    width: 75%;
-}
-
-[dir="rtl"] .payment-plugin-selector-payment-radios-selector {
-    float: right; /* LTR */
-}
-
-[dir="rtl"] .payment-plugin-selector-payment-radios-payment-method-form {
-    float: right; /* LTR */
-}
-
-/* @end */
-
 .payment-reference-hidden {
     display: none !important;
 }
