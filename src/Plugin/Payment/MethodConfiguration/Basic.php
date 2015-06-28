@@ -360,7 +360,7 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
   protected function getExecutePaymentStatusSelector(FormStateInterface $form_state) {
     $plugin_selector = $this->getPaymentStatusSelector($form_state, 'execute', $this->getExecuteStatusId());
     $plugin_selector->setLabel($this->t('Payment execution status'));
-    // @todo Add a description: 'The status to set payments to after being executed by this payment method.'.
+    $plugin_selector->setDescription($this->t('The status to set payments to after being executed by this payment method.'));
 
     return $plugin_selector;
   }
@@ -375,7 +375,7 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
   protected function getCapturePaymentStatusSelector(FormStateInterface $form_state) {
     $plugin_selector = $this->getPaymentStatusSelector($form_state, 'capture', $this->getExecuteStatusId());
     $plugin_selector->setLabel($this->t('Payment capture status'));
-    // @todo Add a description: 'The status to set payments to after being captured by this payment method.'.
+    $plugin_selector->setDescription($this->t('The status to set payments to after being captured by this payment method.'));
 
     return $plugin_selector;
   }
@@ -390,7 +390,7 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
   protected function getRefundPaymentStatusSelector(FormStateInterface $form_state) {
     $plugin_selector = $this->getPaymentStatusSelector($form_state, 'refund', $this->getExecuteStatusId());
     $plugin_selector->setLabel($this->t('Payment refund status'));
-    // @todo Add a description: 'The status to set payments to after being refunded by this payment method.'.
+    $plugin_selector->setDescription($this->t('The status to set payments to after being refunded by this payment method.'));
 
     return $plugin_selector;
   }
