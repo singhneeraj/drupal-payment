@@ -128,8 +128,8 @@ class PaymentMethodConfigurationForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function validate(array $form, FormStateInterface $form_state) {
-    parent::validate($form, $form_state);
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
     /** @var \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationInterface $payment_method_configuration */
     $payment_method_configuration = $form_state->get('payment_method_configuration');
     $payment_method_configuration->validateConfigurationForm($form['plugin_form'], $form_state);

@@ -367,9 +367,9 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
     }
 
     /**
-     * @covers ::validate
+     * @covers ::validateForm
      */
-    public function testValidate() {
+    public function testValidateForm() {
       /** @var \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm|\PHPUnit_Framework_MockObject_MockObject $form_object */
       $form_object = $this->getMockBuilder('\Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm')
         ->setConstructorArgs(array($this->stringTranslation, $this->currentUser, $this->paymentMethodConfigurationStorage, $this->paymentMethodConfigurationManager))
@@ -396,7 +396,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
         ->method('validateConfigurationForm')
         ->with($form['plugin_form'], $form_state);
 
-      $form_object->validate($form, $form_state);
+      $form_object->validateForm($form, $form_state);
     }
 
     /**
