@@ -16,7 +16,7 @@ use Drupal\Core\Plugin\Discovery\YamlDiscovery;
 use Drupal\Core\Plugin\Factory\ContainerFactory;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\StringTranslation\TranslationWrapper;
-use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait;
+use Drupal\plugin\Plugin\PluginOperationsProviderPluginManagerTrait;
 
 /**
  * Manages discovery and instantiation of payment status plugins.
@@ -25,7 +25,7 @@ use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait;
  */
 class PaymentStatusManager extends DefaultPluginManager implements PaymentStatusManagerInterface, FallbackPluginManagerInterface {
 
-  use OperationsProviderPluginManagerTrait;
+  use PluginOperationsProviderPluginManagerTrait;
 
   /**
    * The string translator.
@@ -47,9 +47,7 @@ class PaymentStatusManager extends DefaultPluginManager implements PaymentStatus
     // The human-readable plugin description (optional).
     'description' => NULL,
     // The name of the class that provides plugin operations. The class must
-    // implement \Drupal\payment\Plugin\Payment\OperationsProviderInterface and
-    // may implement
-    // \Drupal\Core\DependencyInjection\ContainerInjectionInterface.
+    // implement \Drupal\plugin\PluginOperationsProviderInterface.
     'operations_provider' => NULL,
     // The default plugin class name. Any class must implement
     // \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface.

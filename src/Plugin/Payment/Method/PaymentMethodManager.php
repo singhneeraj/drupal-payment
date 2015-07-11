@@ -11,7 +11,7 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
-use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait;
+use Drupal\plugin\Plugin\PluginOperationsProviderPluginManagerTrait;
 
 /**
  * Manages discovery and instantiation of payment method plugins.
@@ -20,7 +20,7 @@ use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerTrait;
  */
 class PaymentMethodManager extends DefaultPluginManager implements PaymentMethodManagerInterface, FallbackPluginManagerInterface {
 
-  use OperationsProviderPluginManagerTrait;
+  use PluginOperationsProviderPluginManagerTrait;
 
   /**
    * Constructs a new class instance.

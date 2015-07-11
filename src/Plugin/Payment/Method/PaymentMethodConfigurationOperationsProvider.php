@@ -12,14 +12,14 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\payment\Plugin\Payment\OperationsProviderInterface;
+use Drupal\plugin\PluginOperationsProviderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Provides operations for payment methods based on config entities.
  */
-abstract class PaymentMethodConfigurationOperationsProvider implements OperationsProviderInterface, ContainerInjectionInterface {
+abstract class PaymentMethodConfigurationOperationsProvider implements PluginOperationsProviderInterface, ContainerInjectionInterface {
 
   use StringTranslationTrait;
 

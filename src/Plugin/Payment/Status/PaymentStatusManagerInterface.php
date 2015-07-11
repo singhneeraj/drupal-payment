@@ -8,12 +8,12 @@
 namespace Drupal\payment\Plugin\Payment\Status;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
-use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerInterface;
+use Drupal\plugin\PluginOperationsProviderProviderInterface;
 
 /**
  * Defines a payment status manager.
  */
-interface PaymentStatusManagerInterface extends OperationsProviderPluginManagerInterface, PluginManagerInterface {
+interface PaymentStatusManagerInterface extends PluginOperationsProviderProviderInterface, PluginManagerInterface {
 
   /**
    * Creates a payment status.

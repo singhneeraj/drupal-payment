@@ -8,13 +8,13 @@ namespace Drupal\payment\Plugin\Payment\Status;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityListBuilderInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\payment\Plugin\Payment\OperationsProviderInterface;
+use Drupal\plugin\PluginOperationsProviderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides payment status operations payment statuses based on config entities.
  */
-class ConfigOperationsProvider implements OperationsProviderInterface, ContainerInjectionInterface {
+class ConfigOperationsProvider implements PluginOperationsProviderInterface, ContainerInjectionInterface {
 
   /**
    * The payment status list builder.

@@ -110,7 +110,7 @@ class ListPaymentTypesUnitTest extends UnitTestCase {
       ],
     ];
 
-    $operations_provider_foo = $this->getMock('\Drupal\payment\Plugin\Payment\OperationsProviderInterface');
+    $operations_provider_foo = $this->getMock('\Drupal\plugin\PluginOperationsProviderInterface');
     $operations_provider_foo->expects($this->once())
       ->method('getOperations')
       ->with('foo')

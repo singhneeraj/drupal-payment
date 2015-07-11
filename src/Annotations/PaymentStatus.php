@@ -40,9 +40,7 @@ class PaymentStatus extends Plugin {
   /**
    * The name of the class that provides plugin operations.
    *
-   * The class must implement
-   * \Drupal\payment\Plugin\Payment\OperationsProviderInterface and may
-   * implement \Drupal\Core\DependencyInjection\ContainerInjectionInterface.
+   * The class must implement \Drupal\plugin\PluginOperationsProviderInterface.
    *
    * @var string
    */

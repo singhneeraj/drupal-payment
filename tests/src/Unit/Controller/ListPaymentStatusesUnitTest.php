@@ -105,7 +105,7 @@ class ListPaymentStatusesUnitTest extends UnitTestCase {
       'title' => $this->randomMachineName(),
     ];
 
-    $operations_provider_a = $this->getMock('\Drupal\payment\Plugin\Payment\OperationsProviderInterface');
+    $operations_provider_a = $this->getMock('\Drupal\plugin\PluginOperationsProviderInterface');
     $operations_provider_a->expects($this->once())
       ->method('getOperations')
       ->with($plugin_id_a)

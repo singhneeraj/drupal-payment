@@ -93,9 +93,8 @@ and contain the following keys per plugin:
 - description (optional): The US English human-readable description.
 - label (required): The US English human-readable label.
 - operations_provider (optional): The fully qualified name of a class that must
-  implement
-  `\Drupal\payment\Plugin\Payment\OperationsProviderInterface` and may 
-  implement `\Drupal\Core\DependencyInjection\ContainerInjectionInterface`.
+  implement `\Drupal\plugin\PluginOperationsProviderInterface` and may implement 
+  `\Drupal\Core\DependencyInjection\ContainerInjectionInterface`.
 - parent_id (optional): payment_no_money_transferred
 
 Multiple payment status instances belong to one payment entity, but only one

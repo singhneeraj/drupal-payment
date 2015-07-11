@@ -8,12 +8,12 @@
 namespace Drupal\payment\Plugin\Payment\Method;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
-use Drupal\payment\Plugin\Payment\OperationsProviderPluginManagerInterface;
+use Drupal\plugin\PluginOperationsProviderProviderInterface;
 
 /**
  * Defines a payment method manager.
  */
-interface PaymentMethodManagerInterface extends OperationsProviderPluginManagerInterface, PluginManagerInterface {
+interface PaymentMethodManagerInterface extends PluginOperationsProviderProviderInterface, PluginManagerInterface {
 
   /**
    * Creates a payment method.

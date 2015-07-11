@@ -133,7 +133,7 @@ class FilteredPaymentMethodManagerUnitTest extends UnitTestCase {
       ->method('createInstance')
       ->with($payment_method_id)
       ->willReturn($payment_method);
-    $operations_provider = $this->getMock('\Drupal\payment\Plugin\Payment\OperationsProviderInterface');
+    $operations_provider = $this->getMock('\Drupal\plugin\PluginOperationsProviderInterface');
     $this->paymentMethodManager->expects($this->atLeastOnce())
       ->method('getOperationsProvider')
       ->with($payment_method_id)
