@@ -3,7 +3,7 @@ payment.type:
   plugin_manager_service_id: plugin.manager.payment.type
 payment.line_item:
   label: Payment line item
-  plugin_manager_service_id: plugin.manager.paymentline_item
+  plugin_manager_service_id: plugin.manager.payment.line_item
 payment.method:
   label: Payment method
   plugin_manager_service_id: plugin.manager.payment.method
