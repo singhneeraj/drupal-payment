@@ -11,6 +11,7 @@ namespace Drupal\Tests\payment\Unit\Element {
   use Drupal\Core\DependencyInjection\Container;
   use Drupal\Core\Form\FormState;
   use Drupal\Core\Url;
+  use Drupal\plugin\PluginType;
   use Drupal\Tests\UnitTestCase;
 
   /**
@@ -54,6 +55,13 @@ namespace Drupal\Tests\payment\Unit\Element {
      * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $paymentMethodManager;
+
+    /**
+     * The payment method type.
+     *
+     * @var \Drupal\plugin\PluginTypeInterface
+     */
+    protected $paymentMethodType;
 
     /**
      * The payment queue.
@@ -125,6 +133,13 @@ namespace Drupal\Tests\payment\Unit\Element {
 
       $this->paymentMethodManager = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface');
 
+      $plugin_type_definition = [
+        'id' => $this->randomMachineName(),
+        'label' => $this->randomMachineName(),
+        'provider' => $this->randomMachineName(),
+      ];
+      $this->paymentMethodType = new PluginType($plugin_type_definition, $this->paymentMethodManager);
+
       $this->paymentQueue = $this->getMock('\Drupal\payment\QueueInterface');
 
       $this->paymentStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
@@ -151,7 +166,7 @@ namespace Drupal\Tests\payment\Unit\Element {
       $this->pluginDefinition['class'] = $this->randomMachineName();
 
       $this->element = $this->getMockBuilder('\Drupal\payment\Element\PaymentReferenceBase')
-        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodManager, new Random()))
+        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodType, new Random()))
         ->getMockForAbstractClass();
       $this->element->expects($this->any())
         ->method('getPaymentQueue')
@@ -161,14 +176,14 @@ namespace Drupal\Tests\payment\Unit\Element {
     /**
      * @covers ::__construct
      */
-    public function testconstruct() {
+    public function testConstruct() {
       $configuration = [];
       $plugin_id = $this->randomMachineName();
 
       $this->pluginDefinition['class'] = $this->randomMachineName();
 
       $this->element = $this->getMockBuilder('\Drupal\payment\Element\PaymentReferenceBase')
-        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodManager, new Random()))
+        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodType, new Random()))
         ->getMockForAbstractClass();
     }
 
@@ -256,7 +271,7 @@ namespace Drupal\Tests\payment\Unit\Element {
       $this->pluginDefinition = [];
 
       $this->element = $this->getMockBuilder('\Drupal\payment\Element\PaymentReferenceBase')
-        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodManager, new Random()))
+        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodType, new Random()))
         ->setMethods(array('getEntityFormDisplay', 'getPluginSelector'))
         ->getMockForAbstractClass();
 
@@ -548,7 +563,7 @@ namespace Drupal\Tests\payment\Unit\Element {
       $plugin_selector = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface');
 
       $this->element = $this->getMockBuilder('\Drupal\payment\Element\PaymentReferenceBase')
-        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodManager, new Random()))
+        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodType, new Random()))
         ->setMethods(array('getPluginSelector'))
         ->getMockForAbstractClass();
       $this->element->expects($this->atLeastOnce())
@@ -589,7 +604,7 @@ namespace Drupal\Tests\payment\Unit\Element {
         ->willReturn($payment_method);
 
       $this->element = $this->getMockBuilder('\Drupal\payment\Element\PaymentReferenceBase')
-        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodManager, new Random()))
+        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodType, new Random()))
         ->setMethods(array('getPluginSelector'))
         ->getMockForAbstractClass();
       $this->element->expects($this->atLeastOnce())
@@ -777,7 +792,7 @@ namespace Drupal\Tests\payment\Unit\Element {
         ->with($payment, $this->isType('array'), $form_state);
 
       $this->element = $this->getMockBuilder('\Drupal\payment\Element\PaymentReferenceBase')
-        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodManager, new Random()))
+        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodType, new Random()))
         ->setMethods(array('getEntityFormDisplay', 'getPluginSelector'))
         ->getMockForAbstractClass();
       $this->element->expects($this->atLeastOnce())
@@ -865,7 +880,7 @@ namespace Drupal\Tests\payment\Unit\Element {
       );
 
       $this->element = $this->getMockBuilder('\Drupal\payment\Element\PaymentReferenceBase')
-        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodManager, new Random()))
+        ->setConstructorArgs(array($configuration, $plugin_id, $this->pluginDefinition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodType, new Random()))
         ->setMethods(array('buildPaymentForm', 'buildPaymentView', 'buildRefreshButton'))
         ->getMockForAbstractClass();
       $this->element->expects($this->atLeastOnce())

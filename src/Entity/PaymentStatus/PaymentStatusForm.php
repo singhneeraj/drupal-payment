@@ -12,22 +12,14 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\plugin\Plugin\DefaultPluginDefinitionMapper;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
-use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
+use Drupal\plugin\PluginTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides the payment status add/edit form.
  */
 class PaymentStatusForm extends EntityForm {
-
-  /**
-   * The payment status manager.
-   *
-   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
-   */
-  protected $paymentStatusManager;
 
   /**
    * The payment status storage.
@@ -44,12 +36,28 @@ class PaymentStatusForm extends EntityForm {
   protected $pluginSelectorManager;
 
   /**
-   * {@inheritdoc}
+   * The plugin type manager.
+   *
+   * @var \Drupal\plugin\PluginTypeManagerInterface
    */
-  public function __construct(TranslationInterface $string_translation, EntityStorageInterface $payment_status_storage, PluginSelectorManagerInterface $plugin_selector_manager, PaymentStatusManagerInterface $payment_status_manager) {
-    $this->paymentStatusManager = $payment_status_manager;
+  protected $pluginTypeManager;
+
+  /**
+   * Constructs a new instance.
+   *
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translator.
+   * @param \Drupal\Core\Entity\EntityStorageInterface $payment_status_storage
+   *   The payment status storage.
+   * @param \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface $plugin_selector_manager
+   *   The plugin selector manager.
+   * @param \Drupal\plugin\PluginTypeManagerInterface $plugin_type_manager
+   *   The plugin type manager.
+   */
+  public function __construct(TranslationInterface $string_translation, EntityStorageInterface $payment_status_storage, PluginSelectorManagerInterface $plugin_selector_manager, PluginTypeManagerInterface $plugin_type_manager) {
     $this->paymentStatusStorage = $payment_status_storage;
     $this->pluginSelectorManager = $plugin_selector_manager;
+    $this->pluginTypeManager = $plugin_type_manager;
     $this->stringTranslation = $string_translation;
   }
 
@@ -60,7 +68,7 @@ class PaymentStatusForm extends EntityForm {
     /** @var \Drupal\Core\Entity\EntityManagerInterface $entity_manager */
     $entity_manager = $container->get('entity.manager');
 
-    return new static($container->get('string_translation'), $entity_manager->getStorage('payment_status'), $container->get('plugin.manager.plugin.plugin_selector'), $container->get('plugin.manager.payment.status'));
+    return new static($container->get('string_translation'), $entity_manager->getStorage('payment_status'), $container->get('plugin.manager.plugin.plugin_selector'), $container->get('plugin.plugin_type_manager'));
   }
 
   /**
@@ -163,10 +171,8 @@ class PaymentStatusForm extends EntityForm {
       $plugin_selector = $form_state->get($key);
     }
     else {
-      $mapper = new DefaultPluginDefinitionMapper();
-
       $plugin_selector = $this->pluginSelectorManager->createInstance('payment_select_list');
-      $plugin_selector->setPluginManager($this->paymentStatusManager, $mapper);
+      $plugin_selector->setSelectablePluginType($this->pluginTypeManager->getPluginType('payment.status'));
       $plugin_selector->setCollectPluginConfiguration(FALSE);
       $plugin_selector->setLabel($this->t('Parent status'));
 

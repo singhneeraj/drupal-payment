@@ -10,6 +10,7 @@ namespace Drupal\Tests\payment_form\Unit\Plugin\Payment\Type {
 
   use Drupal\Core\Form\FormState;
   use Drupal\payment_form\Plugin\Payment\Type\PaymentFormConfigurationForm;
+  use Drupal\plugin\PluginType;
   use Drupal\Tests\UnitTestCase;
   use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -65,6 +66,13 @@ namespace Drupal\Tests\payment_form\Unit\Plugin\Payment\Type {
     protected $pluginSelectorManager;
 
     /**
+     * The plugin selector plugin type.
+     *
+     * @var \Drupal\plugin\PluginTypeInterface
+     */
+    protected $pluginSelectorType;
+
+    /**
      * The selected plugin selector.
      *
      * @var \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -98,11 +106,18 @@ namespace Drupal\Tests\payment_form\Unit\Plugin\Payment\Type {
 
       $this->pluginSelectorManager = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface');
 
+      $plugin_type_definition = [
+        'id' => $this->randomMachineName(),
+        'label' => $this->randomMachineName(),
+        'provider' => $this->randomMachineName(),
+      ];
+      $this->pluginSelectorType = new PluginType($plugin_type_definition, $this->pluginSelectorManager);
+
       $this->selectedPluginSelector = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface');
 
       $this->stringTranslation = $this->getStringTranslationStub();
 
-      $this->form = new PaymentFormConfigurationForm($this->configFactory, $this->stringTranslation, $this->paymentMethodManager, $this->pluginSelectorManager);
+      $this->form = new PaymentFormConfigurationForm($this->configFactory, $this->stringTranslation, $this->paymentMethodManager, $this->pluginSelectorType);
     }
 
     /**
@@ -110,11 +125,17 @@ namespace Drupal\Tests\payment_form\Unit\Plugin\Payment\Type {
      * @covers ::__construct
      */
     function testCreate() {
+      $plugin_type_manager = $this->getMock('\Drupal\plugin\PluginTypeManagerInterface');
+      $plugin_type_manager->expects($this->any())
+        ->method('getPluginType')
+        ->with('plugin.plugin_selector')
+        ->willReturn($this->pluginSelectorType);
+
       $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
       $map = [
         ['config.factory', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->configFactory],
         ['plugin.manager.payment.method', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodManager],
-        ['plugin.manager.plugin.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager],
+        ['plugin.plugin_type_manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $plugin_type_manager],
         ['string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation],
       ];
       $container->expects($this->any())

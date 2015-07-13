@@ -18,7 +18,7 @@ use Drupal\plugin\Plugin\DefaultPluginDefinitionMapper;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodUpdatePaymentStatusInterface;
 use Drupal\payment\Plugin\Payment\PaymentAwarePluginFilteredPluginManager;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
-use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
+use Drupal\plugin\PluginTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -27,18 +27,18 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class PaymentStatusForm extends EntityForm {
 
   /**
-   * The payment status plugin manager.
-   *
-   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
-   */
-  protected $paymentStatusManager;
-
-  /**
    * The plugin selector manager.
    *
    * @var \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface
    */
   protected $pluginSelectorManager;
+
+  /**
+   * The plugin type manager.
+   *
+   * @var \Drupal\plugin\PluginTypeManagerInterface
+   */
+  protected $pluginTypeManager;
 
   /**
    * Constructs a new class instance.
@@ -50,12 +50,12 @@ class PaymentStatusForm extends EntityForm {
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *    The string translator.
    * @param \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface $plugin_selector_manager
-   * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface $payment_status_manager
-   *   The payment status plugin manager.
+   * @param \Drupal\plugin\PluginTypeManagerInterface $plugin_type_manager
+   *   The plugin type manager.
    */
-  function __construct(AccountInterface $current_user, UrlGeneratorInterface $url_generator, TranslationInterface $string_translation, PluginSelectorManagerInterface $plugin_selector_manager, PaymentStatusManagerInterface $payment_status_manager) {
+  function __construct(AccountInterface $current_user, UrlGeneratorInterface $url_generator, TranslationInterface $string_translation, PluginSelectorManagerInterface $plugin_selector_manager, PluginTypeManagerInterface $plugin_type_manager) {
     $this->currentUser = $current_user;
-    $this->paymentStatusManager = $payment_status_manager;
+    $this->pluginTypeManager = $plugin_type_manager;
     $this->pluginSelectorManager = $plugin_selector_manager;
     $this->stringTranslation = $string_translation;
     $this->urlGenerator = $url_generator;
@@ -65,7 +65,7 @@ class PaymentStatusForm extends EntityForm {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('current_user'), $container->get('url_generator'), $container->get('string_translation'), $container->get('plugin.manager.plugin.plugin_selector'), $container->get('plugin.manager.payment.status'));
+    return new static($container->get('current_user'), $container->get('url_generator'), $container->get('string_translation'), $container->get('plugin.manager.plugin.plugin_selector'), $container->get('plugin.plugin_type_manager'));
   }
 
   /**
@@ -123,15 +123,17 @@ class PaymentStatusForm extends EntityForm {
       /** @var \Drupal\payment\Entity\PaymentInterface $payment */
       $payment = $this->getEntity();
 
+      $plugin_type = $this->pluginTypeManager->getPluginType('payment.method');
+
       $mapper = new DefaultPluginDefinitionMapper();
-      $payment_status_manager = new PaymentAwarePluginFilteredPluginManager($this->paymentStatusManager, $mapper, $payment);
+      $payment_status_manager = new PaymentAwarePluginFilteredPluginManager($plugin_type->getPluginManager(), $mapper, $payment);
       $payment_method = $payment->getPaymentMethod();
       if ($payment_method instanceof PaymentMethodUpdatePaymentStatusInterface) {
         $payment_status_manager->setPluginIdFilter($payment_method->getSettablePaymentStatuses($this->currentUser, $payment));
       }
 
       $plugin_selector = $this->pluginSelectorManager->createInstance('payment_select_list');
-      $plugin_selector->setPluginManager($payment_status_manager, $mapper);
+      $plugin_selector->setSelectablePluginType($plugin_type, $payment_status_manager);
       $plugin_selector->setRequired();
       $plugin_selector->setLabel($this->t('Payment status'));
 

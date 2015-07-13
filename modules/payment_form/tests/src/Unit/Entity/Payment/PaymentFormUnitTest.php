@@ -11,6 +11,7 @@ use Drupal\Core\Form\FormState;
 use Drupal\Core\Url;
 use Drupal\payment\Response\Response;
 use Drupal\payment_form\Entity\Payment\PaymentForm;
+use Drupal\plugin\PluginType;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -80,6 +81,13 @@ class PaymentFormUnitTest extends UnitTestCase {
   protected $paymentMethodManager;
 
   /**
+   * The payment method plugin type.
+   *
+   * @var \Drupal\plugin\PluginTypeInterface
+   */
+  protected $paymentMethodType;
+
+  /**
    * The plugin selector.
    *
    * @var \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -114,6 +122,13 @@ class PaymentFormUnitTest extends UnitTestCase {
 
     $this->paymentMethodManager = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface');
 
+    $plugin_type_definition = [
+      'id' => $this->randomMachineName(),
+      'label' => $this->randomMachineName(),
+      'provider' => $this->randomMachineName(),
+    ];
+    $this->paymentMethodType = new PluginType($plugin_type_definition, $this->paymentMethodManager);
+
     $this->pluginSelector = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface');
 
     $this->pluginSelectorManager = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface');
@@ -130,7 +145,7 @@ class PaymentFormUnitTest extends UnitTestCase {
 
     $this->configFactory = $this->getConfigFactoryStub($this->configFactoryConfiguration);
 
-    $this->sut = new PaymentForm($this->entityManager, $this->stringTranslation, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodManager);
+    $this->sut = new PaymentForm($this->entityManager, $this->stringTranslation, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodType);
     $this->sut->setConfigFactory($this->configFactory);
     $this->sut->setEntity($this->payment);
   }
@@ -140,12 +155,18 @@ class PaymentFormUnitTest extends UnitTestCase {
    * @covers ::__construct
    */
   function testCreate() {
+    $plugin_type_manager = $this->getMock('\Drupal\plugin\PluginTypeManagerInterface');
+    $plugin_type_manager->expects($this->any())
+      ->method('getPluginType')
+      ->with('payment.method')
+      ->willReturn($this->paymentMethodType);
+
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = [
       ['current_user', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->currentUser],
       ['entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager],
-      ['plugin.manager.payment.method', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodManager],
       ['plugin.manager.plugin.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager],
+      ['plugin.plugin_type_manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $plugin_type_manager],
       ['string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation],
     ];
     $container->expects($this->any())

@@ -9,6 +9,7 @@ namespace Drupal\Tests\payment_reference\Unit\Element;
 
 use Drupal\Component\Utility\Random;
 use Drupal\payment_reference\Element\PaymentReference;
+use Drupal\plugin\PluginType;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -53,6 +54,13 @@ class PaymentReferenceUnitTest extends UnitTestCase {
    * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface
    */
   protected $paymentMethodManager;
+
+  /**
+   * The payment method type.
+   *
+   * @var \Drupal\plugin\PluginTypeInterface
+   */
+  protected $paymentMethodType;
 
   /**
    * The payment queue.
@@ -117,6 +125,13 @@ class PaymentReferenceUnitTest extends UnitTestCase {
 
     $this->paymentMethodManager = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface');
 
+    $plugin_type_definition = [
+      'id' => $this->randomMachineName(),
+      'label' => $this->randomMachineName(),
+      'provider' => $this->randomMachineName(),
+    ];
+    $this->paymentMethodType = new PluginType($plugin_type_definition, $this->paymentMethodManager);
+
     $this->paymentQueue = $this->getMock('\Drupal\payment\QueueInterface');
 
     $this->paymentStorage = $this->getMock('\Drupal\Core\Entity\EntityStorageInterface');
@@ -137,7 +152,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
     $plugin_id = $this->randomMachineName();
     $plugin_definition = [];
 
-    $this->element = new PaymentReference($configuration, $plugin_id, $plugin_definition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodManager, new Random(), $this->paymentQueue);
+    $this->element = new PaymentReference($configuration, $plugin_id, $plugin_definition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodType, new Random(), $this->paymentQueue);
   }
 
   /**
@@ -151,6 +166,12 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       ->with('payment')
       ->willReturn($this->paymentStorage);
 
+    $plugin_type_manager = $this->getMock('\Drupal\plugin\PluginTypeManagerInterface');
+    $plugin_type_manager->expects($this->any())
+      ->method('getPluginType')
+      ->with('payment.method')
+      ->willReturn($this->paymentMethodType);
+
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
       array('current_user', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->currentUser),
@@ -158,8 +179,8 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $entity_manager),
       array('link_generator', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->linkGenerator),
       array('payment_reference.queue', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentQueue),
-      array('plugin.manager.payment.method', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodManager),
       array('plugin.manager.plugin.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
+      array('plugin.plugin_type_manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $plugin_type_manager),
       array('renderer', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->renderer),
       array('request_stack', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->requestStack),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),

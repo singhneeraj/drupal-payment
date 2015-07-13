@@ -15,6 +15,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\plugin\Plugin\DefaultPluginDefinitionMapper;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
+use Drupal\plugin\PluginTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -30,11 +31,11 @@ class PaymentReferenceConfigurationForm extends ConfigFormBase {
   protected $paymentMethodManager;
 
   /**
-   * The plugin selector manager.
+   * The plugin selector plugin type.
    *
-   * @var \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface
+   * @var \Drupal\plugin\PluginTypeInterface
    */
-  protected $pluginSelectorManager;
+  protected $pluginSelectorType;
 
   /**
    * Constructs a \Drupal\system\ConfigFormBase object.
@@ -42,12 +43,12 @@ class PaymentReferenceConfigurationForm extends ConfigFormBase {
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface $payment_method_manager
-   * @param \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface $plugin_selector_manager
+   * @param \Drupal\plugin\PluginTypeInterface $plugin_selector_type
    */
-  public function __construct(ConfigFactoryInterface $config_factory, TranslationInterface $string_translation, PaymentMethodManagerInterface $payment_method_manager, PluginSelectorManagerInterface $plugin_selector_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, TranslationInterface $string_translation, PaymentMethodManagerInterface $payment_method_manager, PluginTypeInterface $plugin_selector_type) {
     parent::__construct($config_factory);
     $this->paymentMethodManager = $payment_method_manager;
-    $this->pluginSelectorManager = $plugin_selector_manager;
+    $this->pluginSelectorType = $plugin_selector_type;
     $this->stringTranslation = $string_translation;
   }
 
@@ -55,11 +56,14 @@ class PaymentReferenceConfigurationForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
+    /** @var \Drupal\plugin\PluginTypeManagerInterface $plugin_type_manager */
+    $plugin_type_manager = $container->get('plugin.plugin_type_manager');
+
     return new static(
       $container->get('config.factory'),
       $container->get('string_translation'),
       $container->get('plugin.manager.payment.method'),
-      $container->get('plugin.manager.plugin.plugin_selector')
+      $plugin_type_manager->getPluginType('plugin.plugin_selector')
     );
   }
 
@@ -158,12 +162,12 @@ class PaymentReferenceConfigurationForm extends ConfigFormBase {
       $plugin_selector = $form_state->get('plugin_selector');
     }
     else {
-      $plugin_selector = $this->pluginSelectorManager->createInstance('payment_radios');
-      $mapper = new DefaultPluginDefinitionMapper();
-      $plugin_selector->setPluginManager($this->pluginSelectorManager, $mapper);
+      $plugin_selector_manager = $this->pluginSelectorType->getPluginManager();
+      $plugin_selector = $plugin_selector_manager->createInstance('payment_radios');
+      $plugin_selector->setSelectablePluginType($this->pluginSelectorType);
       $plugin_selector->setLabel($this->t('Payment method selector'));
       $plugin_selector->setRequired();
-      $plugin_selector->setSelectedPlugin($this->pluginSelectorManager->createInstance($config->get('plugin_selector_id')));
+      $plugin_selector->setSelectedPlugin($plugin_selector_manager->createInstance($config->get('plugin_selector_id')));
       $form_state->set('plugin_selector', $plugin_selector);
     }
 

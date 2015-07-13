@@ -14,7 +14,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\plugin\Plugin\DefaultPluginDefinitionMapper;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
-use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
+use Drupal\plugin\PluginTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -33,11 +33,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The payment status manager.
+   * The payment status plugin type.
    *
-   * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
+   * @var \Drupal\plugin\PluginTypeInterface
    */
-  protected $paymentStatusManager;
+  protected $paymentStatusType;
 
   /**
    * The plugin selector manager.
@@ -61,13 +61,13 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
    *   The module handler.
    * @param \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface
    *   The plugin selector manager.
-   * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface
-   *   The payment status manager.
+   * @param \Drupal\plugin\PluginTypeInterface $payment_status_type
+   *   The payment status plugin type.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, TranslationInterface $string_translation, ModuleHandlerInterface $module_handler, PluginSelectorManagerInterface $plugin_selector_manager, PaymentStatusManagerInterface $payment_status_manager) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, TranslationInterface $string_translation, ModuleHandlerInterface $module_handler, PluginSelectorManagerInterface $plugin_selector_manager, PluginTypeInterface $payment_status_type) {
     $configuration += $this->defaultConfiguration();
     parent::__construct($configuration, $plugin_id, $plugin_definition, $string_translation, $module_handler);
-    $this->paymentStatusManager = $payment_status_manager;
+    $this->paymentStatusType = $payment_status_type;
     $this->pluginSelectorManager = $plugin_selector_manager;
   }
 
@@ -75,7 +75,10 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'), $container->get('module_handler'), $container->get('plugin.manager.plugin.plugin_selector'), $container->get('plugin.manager.payment.status'));
+    /** @var \Drupal\plugin\PluginTypeManagerInterface $plugin_type_manager */
+    $plugin_type_manager = $container->get('plugin.plugin_type_manager');
+
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'), $container->get('module_handler'), $container->get('plugin.manager.plugin.plugin_selector'), $plugin_type_manager->getPluginType('payment.status'));
   }
 
   /**
@@ -410,13 +413,11 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
       $plugin_selector = $form_state->get($key);
     }
     else {
-      $mapper = new DefaultPluginDefinitionMapper();
-
       $plugin_selector = $this->pluginSelectorManager->createInstance('payment_select_list');
-      $plugin_selector->setPluginManager($this->paymentStatusManager, $mapper);
+      $plugin_selector->setSelectablePluginType($this->paymentStatusType);
       $plugin_selector->setRequired(TRUE);
       $plugin_selector->setCollectPluginConfiguration(FALSE);
-      $plugin_selector->setSelectedPlugin($this->paymentStatusManager->createInstance($default_plugin_id));
+      $plugin_selector->setSelectedPlugin($this->paymentStatusType->getPluginManager()->createInstance($default_plugin_id));
 
       $form_state->set($key, $plugin_selector);
     }

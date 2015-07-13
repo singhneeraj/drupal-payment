@@ -28,10 +28,9 @@ use Drupal\Core\Utility\LinkGeneratorInterface;
 use Drupal\currency\FormElementCallbackTrait;
 use Drupal\payment\Entity\Payment;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\plugin\Plugin\DefaultPluginDefinitionMapper;
 use Drupal\payment\Plugin\Payment\Method\FilteredPaymentMethodManager;
-use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
+use Drupal\plugin\PluginTypeInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -73,11 +72,11 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
   protected $linkGenerator;
 
   /**
-   * The payment method manager.
+   * The payment method type.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface
+   * @var \Drupal\plugin\PluginTypeInterface
    */
-  protected $paymentMethodManager;
+  protected $paymentMethodType;
 
   /**
    * The payment storage.
@@ -131,15 +130,15 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
    * @param \Drupal\Core\Render\RendererInterface $renderer
    * @param \Drupal\Core\Session\AccountInterface $current_user
    * @param \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface $plugin_selector_manager
-   * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface $payment_method_manager
+   * @param \Drupal\plugin\PluginTypeInterface $payment_method_type
    * @param \Drupal\Component\Utility\Random $random
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, RequestStack $request_stack, EntityStorageInterface $payment_storage, TranslationInterface $string_translation, DateFormatter $date_formatter, LinkGeneratorInterface $link_generator, RendererInterface $renderer, AccountInterface $current_user, PluginSelectorManagerInterface $plugin_selector_manager, PaymentMethodManagerInterface $payment_method_manager, Random $random) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, RequestStack $request_stack, EntityStorageInterface $payment_storage, TranslationInterface $string_translation, DateFormatter $date_formatter, LinkGeneratorInterface $link_generator, RendererInterface $renderer, AccountInterface $current_user, PluginSelectorManagerInterface $plugin_selector_manager, PluginTypeInterface $payment_method_type, Random $random) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->currentUser = $current_user;
     $this->dateFormatter = $date_formatter;
     $this->linkGenerator = $link_generator;
-    $this->paymentMethodManager = $payment_method_manager;
+    $this->paymentMethodType = $payment_method_type;
     $this->paymentStorage = $payment_storage;
     $this->pluginSelectorManager = $plugin_selector_manager;
     $this->random = $random;
@@ -541,9 +540,8 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     $key = 'payment_reference.element.payment_reference.plugin_selector.' . $element['#name'];
     if (!$form_state->has($key)) {
       $plugin_selector = $this->pluginSelectorManager->createInstance($element['#plugin_selector_id']);
-      $mapper = new DefaultPluginDefinitionMapper();
-      $payment_method_manager = new FilteredPaymentMethodManager($this->paymentMethodManager, $this->getPayment($element, $form_state), $this->currentUser);
-      $plugin_selector->setPluginManager($payment_method_manager, $mapper);
+      $payment_method_manager = new FilteredPaymentMethodManager($this->paymentMethodType->getPluginManager(), $this->getPayment($element, $form_state), $this->currentUser);
+      $plugin_selector->setSelectablePluginType($this->paymentMethodType, $payment_method_manager);
       $plugin_selector->setRequired($element['#required']);
       if (!is_null($element['#limit_allowed_plugin_ids'])) {
         $payment_method_manager->setPluginIdFilter($element['#limit_allowed_plugin_ids']);

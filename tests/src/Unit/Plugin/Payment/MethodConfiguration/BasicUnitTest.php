@@ -9,6 +9,7 @@ namespace Drupal\Tests\payment\Unit\Plugin\Payment\MethodConfiguration;
 
 use Drupal\Core\Form\FormState;
 use Drupal\payment\Plugin\Payment\MethodConfiguration\Basic;
+use Drupal\plugin\PluginType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -33,6 +34,13 @@ class BasicUnitTest extends PaymentMethodConfigurationBaseUnitTestBase {
   protected $paymentStatusManager;
 
   /**
+   * The payment status plugin type.
+   *
+   * @var \Drupal\plugin\PluginTypeInterface
+   */
+  protected $paymentStatusType;
+
+  /**
    * The plugin selector manager.
    *
    * @var \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -47,9 +55,16 @@ class BasicUnitTest extends PaymentMethodConfigurationBaseUnitTestBase {
 
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
+    $plugin_type_definition = [
+      'id' => $this->randomMachineName(),
+      'label' => $this->randomMachineName(),
+      'provider' => $this->randomMachineName(),
+    ];
+    $this->paymentStatusType = new PluginType($plugin_type_definition, $this->paymentStatusManager);
+
     $this->pluginSelectorManager = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface');
 
-    $this->paymentMethodConfiguration = new Basic([], '', $this->pluginDefinition, $this->stringTranslation, $this->moduleHandler, $this->pluginSelectorManager, $this->paymentStatusManager);
+    $this->paymentMethodConfiguration = new Basic([], '', $this->pluginDefinition, $this->stringTranslation, $this->moduleHandler, $this->pluginSelectorManager, $this->paymentStatusType);
   }
 
   /**
@@ -57,11 +72,17 @@ class BasicUnitTest extends PaymentMethodConfigurationBaseUnitTestBase {
    * @covers ::__construct
    */
   function testCreate() {
+    $plugin_type_manager = $this->getMock('\Drupal\plugin\PluginTypeManagerInterface');
+    $plugin_type_manager->expects($this->any())
+      ->method('getPluginType')
+      ->with('payment.status')
+      ->willReturn($this->paymentStatusType);
+
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
     $map = array(
       array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
-      array('plugin.manager.payment.status', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentStatusManager),
       array('plugin.manager.plugin.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
+      array('plugin.plugin_type_manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $plugin_type_manager),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
     $container->expects($this->any())
