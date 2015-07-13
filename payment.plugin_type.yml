@@ -1,0 +1,15 @@
+payment.type:
+  label: Payment type
+  plugin_manager_service_id: plugin.manager.payment.type
+payment.line_item:
+  label: Payment line item
+  plugin_manager_service_id: plugin.manager.paymentline_item
+payment.method:
+  label: Payment method
+  plugin_manager_service_id: plugin.manager.payment.method
+payment.method_configuration:
+  label: Payment method configuration
+  plugin_manager_service_id: plugin.manager.payment.method_configuration
+payment.status:
+  label: Payment status
+  plugin_manager_service_id: plugin.manager.payment.status
