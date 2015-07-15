@@ -96,7 +96,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
       $plugin_type = new PluginType($plugin_type_definition, $this->stringTranslation, $class_resolver, $this->paymentStatusManager);
       $this->pluginTypeManager->expects($this->any())
         ->method('getPluginType')
-        ->with('payment.status')
+        ->with('payment_status')
         ->willReturn($plugin_type);
 
       $this->sut = new PaymentStatusForm($this->stringTranslation, $this->paymentStatusStorage, $this->pluginSelectorManager, $this->pluginTypeManager);

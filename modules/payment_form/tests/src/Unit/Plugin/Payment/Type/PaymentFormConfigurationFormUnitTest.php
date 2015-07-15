@@ -130,7 +130,7 @@ namespace Drupal\Tests\payment_form\Unit\Plugin\Payment\Type {
       $plugin_type_manager = $this->getMock('\Drupal\plugin\PluginTypeManagerInterface');
       $plugin_type_manager->expects($this->any())
         ->method('getPluginType')
-        ->with('plugin.plugin_selector')
+        ->with('plugin_selector')
         ->willReturn($this->pluginSelectorType);
 
       $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');

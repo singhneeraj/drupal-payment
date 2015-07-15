@@ -111,7 +111,7 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
     $plugin_type = new PluginType($plugin_type_definition, $this->stringTranslation, $class_resolver, $this->paymentStatusManager);
     $this->pluginTypeManager->expects($this->any())
       ->method('getPluginType')
-      ->with('payment.method')
+      ->with('payment_method')
       ->willReturn($plugin_type);
 
     $this->urlGenerator = $this->getmock('\Drupal\Core\Routing\UrlGeneratorInterface');

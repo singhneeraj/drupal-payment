@@ -77,7 +77,7 @@ class BasicUnitTest extends PaymentMethodConfigurationBaseUnitTestBase {
     $plugin_type_manager = $this->getMock('\Drupal\plugin\PluginTypeManagerInterface');
     $plugin_type_manager->expects($this->any())
       ->method('getPluginType')
-      ->with('payment.status')
+      ->with('payment_status')
       ->willReturn($this->paymentStatusType);
 
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');

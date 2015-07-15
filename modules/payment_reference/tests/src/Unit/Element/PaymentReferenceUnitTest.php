@@ -171,7 +171,7 @@ class PaymentReferenceUnitTest extends UnitTestCase {
     $plugin_type_manager = $this->getMock('\Drupal\plugin\PluginTypeManagerInterface');
     $plugin_type_manager->expects($this->any())
       ->method('getPluginType')
-      ->with('payment.method')
+      ->with('payment_method')
       ->willReturn($this->paymentMethodType);
 
     $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
