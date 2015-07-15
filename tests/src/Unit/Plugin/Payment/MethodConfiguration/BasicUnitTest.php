@@ -55,12 +55,14 @@ class BasicUnitTest extends PaymentMethodConfigurationBaseUnitTestBase {
 
     $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
 
+    $class_resolver = $this->getMock('\Drupal\Core\DependencyInjection\ClassResolverInterface');
+
     $plugin_type_definition = [
       'id' => $this->randomMachineName(),
       'label' => $this->randomMachineName(),
       'provider' => $this->randomMachineName(),
     ];
-    $this->paymentStatusType = new PluginType($plugin_type_definition, $this->paymentStatusManager);
+    $this->paymentStatusType = new PluginType($plugin_type_definition, $this->getStringTranslationStub(), $class_resolver, $this->paymentStatusManager);
 
     $this->pluginSelectorManager = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface');
 

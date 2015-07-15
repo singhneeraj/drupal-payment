@@ -399,7 +399,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
         'weight' => 0,
       ))
       ->setDisplayConfigurable('view', TRUE);
-    $fields['line_items'] = BaseFieldDefinition::create('payment_line_item')
+    $fields['line_items'] = BaseFieldDefinition::create('plugin:payment_line_item')
       ->setLabel(t('Line items'))
       ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', array(
@@ -407,14 +407,14 @@ class Payment extends ContentEntityBase implements PaymentInterface {
         'weight' => 0,
       ))
       ->setDisplayConfigurable('view', TRUE);
-    $fields['payment_method'] = BaseFieldDefinition::create('payment_method')
+    $fields['payment_method'] = BaseFieldDefinition::create('plugin:payment_method')
       ->setLabel(t('Payment method'))
       ->setDisplayOptions('view', array(
         'type' => 'plugin_label',
         'weight' => 0,
       ))
       ->setDisplayConfigurable('view', TRUE);
-    $fields['payment_statuses'] = BaseFieldDefinition::create('payment_status')
+    $fields['payment_statuses'] = BaseFieldDefinition::create('plugin:payment_status')
       ->setLabel(t('Payment statuses'))
       ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', array(
@@ -422,7 +422,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
         'weight' => 0,
       ))
       ->setDisplayConfigurable('view', TRUE);
-    $fields['payment_type'] = BaseFieldDefinition::create('payment_type')
+    $fields['payment_type'] = BaseFieldDefinition::create('plugin:payment_type')
       ->setLabel(t('Payment type'))
       ->setDisplayOptions('view', array(
         'type' => 'plugin_label',

@@ -72,7 +72,7 @@ class PaymentForm extends ContentEntityForm {
     /** @var \Drupal\plugin\PluginTypeManagerInterface $plugin_type_manager */
     $plugin_type_manager = $container->get('plugin.plugin_type_manager');
 
-    return new static($container->get('entity.manager'), $container->get('string_translation'), $container->get('current_user'), $container->get('plugin.manager.plugin.plugin_selector'), $plugin_type_manager->getPluginType('payment.method'));
+    return new static($container->get('entity.manager'), $container->get('string_translation'), $container->get('current_user'), $container->get('plugin.manager.plugin.plugin_selector'), $plugin_type_manager->getPluginType('payment_method'));
   }
 
   /**

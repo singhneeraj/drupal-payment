@@ -98,21 +98,23 @@ class PaymentStatusFormUnitTest extends UnitTestCase {
 
     $this->pluginSelectorManager = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface');
 
+    $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
+
+    $class_resolver = $this->getMock('\Drupal\Core\DependencyInjection\ClassResolverInterface');
+
     $this->pluginTypeManager = $this->getmock('\Drupal\plugin\PluginTypeManagerInterface');
     $plugin_type_definition = [
       'id' => $this->randomMachineName(),
       'label' => $this->randomMachineName(),
       'provider' => $this->randomMachineName(),
     ];
-    $plugin_type = new PluginType($plugin_type_definition, $this->paymentStatusManager);
+    $plugin_type = new PluginType($plugin_type_definition, $this->stringTranslation, $class_resolver, $this->paymentStatusManager);
     $this->pluginTypeManager->expects($this->any())
       ->method('getPluginType')
       ->with('payment.method')
       ->willReturn($plugin_type);
 
     $this->urlGenerator = $this->getmock('\Drupal\Core\Routing\UrlGeneratorInterface');
-
-    $this->stringTranslation = $this->getMock('\Drupal\Core\StringTranslation\TranslationInterface');
 
     $this->payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
       ->disableOriginalConstructor()

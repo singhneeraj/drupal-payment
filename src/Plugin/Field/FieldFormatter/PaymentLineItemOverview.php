@@ -18,7 +18,7 @@ use Drupal\payment\Entity\PaymentInterface;
  *   id = "payment_line_item_overview",
  *   label = @Translation("Overview"),
  *   field_types = {
- *     "payment_line_item",
+ *     "plugin:payment_line_item",
  *   }
  * )
  */

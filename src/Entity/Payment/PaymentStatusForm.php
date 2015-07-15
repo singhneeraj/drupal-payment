@@ -123,7 +123,7 @@ class PaymentStatusForm extends EntityForm {
       /** @var \Drupal\payment\Entity\PaymentInterface $payment */
       $payment = $this->getEntity();
 
-      $plugin_type = $this->pluginTypeManager->getPluginType('payment.method');
+      $plugin_type = $this->pluginTypeManager->getPluginType('payment_method');
 
       $mapper = new DefaultPluginDefinitionMapper();
       $payment_status_manager = new PaymentAwarePluginFilteredPluginManager($plugin_type->getPluginManager(), $mapper, $payment);

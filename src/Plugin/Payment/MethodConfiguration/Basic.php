@@ -78,7 +78,7 @@ class Basic extends PaymentMethodConfigurationBase implements ContainerFactoryPl
     /** @var \Drupal\plugin\PluginTypeManagerInterface $plugin_type_manager */
     $plugin_type_manager = $container->get('plugin.plugin_type_manager');
 
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'), $container->get('module_handler'), $container->get('plugin.manager.plugin.plugin_selector'), $plugin_type_manager->getPluginType('payment.status'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'), $container->get('module_handler'), $container->get('plugin.manager.plugin.plugin_selector'), $plugin_type_manager->getPluginType('payment_status'));
   }
 
   /**

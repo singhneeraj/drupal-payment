@@ -63,7 +63,7 @@ class PaymentReferenceConfigurationForm extends ConfigFormBase {
       $container->get('config.factory'),
       $container->get('string_translation'),
       $container->get('plugin.manager.payment.method'),
-      $plugin_type_manager->getPluginType('plugin.plugin_selector')
+      $plugin_type_manager->getPluginType('plugin_selector')
     );
   }
 

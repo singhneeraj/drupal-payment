@@ -125,12 +125,16 @@ class PaymentReferenceUnitTest extends UnitTestCase {
 
     $this->paymentMethodManager = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface');
 
+    $class_resolver = $this->getMock('\Drupal\Core\DependencyInjection\ClassResolverInterface');
+
+    $this->stringTranslation = $this->getStringTranslationStub();
+
     $plugin_type_definition = [
       'id' => $this->randomMachineName(),
       'label' => $this->randomMachineName(),
       'provider' => $this->randomMachineName(),
     ];
-    $this->paymentMethodType = new PluginType($plugin_type_definition, $this->paymentMethodManager);
+    $this->paymentMethodType = new PluginType($plugin_type_definition, $this->stringTranslation, $class_resolver, $this->paymentMethodManager);
 
     $this->paymentQueue = $this->getMock('\Drupal\payment\QueueInterface');
 
@@ -143,8 +147,6 @@ class PaymentReferenceUnitTest extends UnitTestCase {
     $this->requestStack = $this->getMockBuilder('\Symfony\Component\HttpFoundation\RequestStack')
       ->disableOriginalConstructor()
       ->getMock();
-
-    $this->stringTranslation = $this->getStringTranslationStub();
 
     $this->urlGenerator = $this->getMock('\Drupal\Core\Routing\UrlGeneratorInterface');
 

@@ -9,25 +9,15 @@ namespace Drupal\payment\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\TypedData\DataDefinition;
-use Drupal\payment\Payment;
 
 /**
  * Provides a plugin collection for payment type plugins.
  *
  * @FieldType(
- *   id = "payment_status",
- *   label = @Translation("Payment status plugins")
+ *   id = "plugin:payment_status"
  * )
  */
-class PaymentStatusItem extends PaymentAwarePluginCollectionItemBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getPluginManager() {
-    // @todo Unit-test this.
-    return Payment::statusManager();
-  }
+class PaymentStatusItem extends PaymentAwarePluginCollectionItem {
 
   /**
    * {@inheritdoc}

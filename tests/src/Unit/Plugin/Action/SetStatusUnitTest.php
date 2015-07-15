@@ -64,14 +64,16 @@ class SetStatusUnitTest extends UnitTestCase {
 
     $this->pluginSelectorManager = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface');
 
+    $class_resolver = $this->getMock('\Drupal\Core\DependencyInjection\ClassResolverInterface');
+
+    $this->stringTranslation = $this->getStringTranslationStub();
+
     $plugin_type_definition = [
       'id' => $this->randomMachineName(),
       'label' => $this->randomMachineName(),
       'provider' => $this->randomMachineName(),
     ];
-    $this->paymentStatusType = new PluginType($plugin_type_definition, $this->paymentStatusManager);
-
-    $this->stringTranslation = $this->getStringTranslationStub();
+    $this->paymentStatusType = new PluginType($plugin_type_definition, $this->stringTranslation, $class_resolver, $this->paymentStatusManager);
 
     $configuration = [];
     $plugin_definition = [];

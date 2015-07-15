@@ -7,24 +7,11 @@
 
 namespace Drupal\payment\Plugin\Field\FieldType;
 
-use Drupal\payment\Payment;
-
 /**
  * Provides a plugin collection for payment method plugins.
  *
  * @FieldType(
- *   id = "payment_method",
- *   label = @Translation("Payment method plugins")
+ *   id = "plugin:payment_method"
  * )
  */
-class PaymentMethodItem extends PaymentAwarePluginCollectionItemBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getPluginManager() {
-    // @todo Unit-test this.
-    return Payment::methodManager();
-  }
-
-}
+class PaymentMethodItem extends PaymentAwarePluginCollectionItem {}

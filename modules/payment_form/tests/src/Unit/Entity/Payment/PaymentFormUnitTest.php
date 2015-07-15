@@ -122,18 +122,20 @@ class PaymentFormUnitTest extends UnitTestCase {
 
     $this->paymentMethodManager = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface');
 
+    $class_resolver = $this->getMock('\Drupal\Core\DependencyInjection\ClassResolverInterface');
+
+    $this->stringTranslation = $this->getStringTranslationStub();
+
     $plugin_type_definition = [
       'id' => $this->randomMachineName(),
       'label' => $this->randomMachineName(),
       'provider' => $this->randomMachineName(),
     ];
-    $this->paymentMethodType = new PluginType($plugin_type_definition, $this->paymentMethodManager);
+    $this->paymentMethodType = new PluginType($plugin_type_definition, $this->stringTranslation, $class_resolver, $this->paymentMethodManager);
 
     $this->pluginSelector = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface');
 
     $this->pluginSelectorManager = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface');
-
-    $this->stringTranslation = $this->getStringTranslationStub();
 
     $this->configFactoryConfiguration = [
       'payment_form.payment_type' => [

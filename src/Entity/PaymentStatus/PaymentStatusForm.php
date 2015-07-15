@@ -172,7 +172,7 @@ class PaymentStatusForm extends EntityForm {
     }
     else {
       $plugin_selector = $this->pluginSelectorManager->createInstance('payment_select_list');
-      $plugin_selector->setSelectablePluginType($this->pluginTypeManager->getPluginType('payment.status'));
+      $plugin_selector->setSelectablePluginType($this->pluginTypeManager->getPluginType('payment_status'));
       $plugin_selector->setCollectPluginConfiguration(FALSE);
       $plugin_selector->setLabel($this->t('Parent status'));
 

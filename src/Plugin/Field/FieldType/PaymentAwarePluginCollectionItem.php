@@ -2,19 +2,19 @@
 
 /**
  * @file
- * Contains \Drupal\payment\Plugin\Field\FieldType\PaymentAwarePluginBagItemBase.
+ * Contains \Drupal\payment\Plugin\Field\FieldType\PaymentAwarePluginBagItem.
  */
 
 namespace Drupal\payment\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\TypedData\MapDataDefinition;
-use Drupal\plugin\Plugin\Field\FieldType\PluginCollectionItemBase;
+use Drupal\plugin\Plugin\Field\FieldType\PluginCollectionItem;
 
 /**
- * Provides a plugin bag for payment-aware plugins.
+ * Provides a plugin item for payment-aware plugins.
  */
-abstract class PaymentAwarePluginCollectionItemBase extends PluginCollectionItemBase {
+class PaymentAwarePluginCollectionItem extends PluginCollectionItem {
 
   /**
    * {@inheritdoc}

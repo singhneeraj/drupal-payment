@@ -83,19 +83,21 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
 
       $this->pluginSelectorManager = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface');
 
+      $class_resolver = $this->getMock('\Drupal\Core\DependencyInjection\ClassResolverInterface');
+
+      $this->stringTranslation = $this->getStringTranslationStub();
+
       $this->pluginTypeManager = $this->getMock('\Drupal\plugin\PluginTypeManagerInterface');
       $plugin_type_definition = [
         'id' => $this->randomMachineName(),
         'label' => $this->randomMachineName(),
         'provider' => $this->randomMachineName(),
       ];
-      $plugin_type = new PluginType($plugin_type_definition, $this->paymentStatusManager);
+      $plugin_type = new PluginType($plugin_type_definition, $this->stringTranslation, $class_resolver, $this->paymentStatusManager);
       $this->pluginTypeManager->expects($this->any())
         ->method('getPluginType')
         ->with('payment.status')
         ->willReturn($plugin_type);
-
-      $this->stringTranslation = $this->getStringTranslationStub();
 
       $this->sut = new PaymentStatusForm($this->stringTranslation, $this->paymentStatusStorage, $this->pluginSelectorManager, $this->pluginTypeManager);
       $this->sut->setEntity($this->paymentStatus);

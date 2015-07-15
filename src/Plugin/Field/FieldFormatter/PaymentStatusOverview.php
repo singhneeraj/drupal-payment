@@ -17,7 +17,7 @@ use Drupal\Core\Field\FormatterBase;
  *   id = "payment_status_overview",
  *   label = @Translation("Overview"),
  *   field_types = {
- *     "payment_status",
+ *     "plugin:payment_status",
  *   }
  * )
  */

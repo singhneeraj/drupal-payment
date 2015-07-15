@@ -106,16 +106,18 @@ namespace Drupal\Tests\payment_form\Unit\Plugin\Payment\Type {
 
       $this->pluginSelectorManager = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface');
 
+      $class_resolver = $this->getMock('\Drupal\Core\DependencyInjection\ClassResolverInterface');
+
+      $this->stringTranslation = $this->getStringTranslationStub();
+
       $plugin_type_definition = [
         'id' => $this->randomMachineName(),
         'label' => $this->randomMachineName(),
         'provider' => $this->randomMachineName(),
       ];
-      $this->pluginSelectorType = new PluginType($plugin_type_definition, $this->pluginSelectorManager);
+      $this->pluginSelectorType = new PluginType($plugin_type_definition, $this->stringTranslation, $class_resolver, $this->pluginSelectorManager);
 
       $this->selectedPluginSelector = $this->getMock('\Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface');
-
-      $this->stringTranslation = $this->getStringTranslationStub();
 
       $this->form = new PaymentFormConfigurationForm($this->configFactory, $this->stringTranslation, $this->paymentMethodManager, $this->pluginSelectorType);
     }
