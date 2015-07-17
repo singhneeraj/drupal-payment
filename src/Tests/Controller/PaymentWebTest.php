@@ -56,9 +56,9 @@ class PaymentWebTest extends WebTestBase {
       $count_pages = ceil($count_payments / 50);
       if ($count_pages) {
         foreach (range(1, $count_pages - 1) as $page) {
-          $this->assertLinkByHref('admin/content/payment?page=' . $page);
+          $this->assertLinkByHref('?page=' . $page);
         }
-        $this->assertNoLinkByHref('admin/content/payment?page=' . ($page + 1));
+        $this->assertNoLinkByHref('?page=' . ($page + 1));
       }
       $this->assertLinkByHref('payment/1');
       $this->assertLinkByHref('payment/99');
