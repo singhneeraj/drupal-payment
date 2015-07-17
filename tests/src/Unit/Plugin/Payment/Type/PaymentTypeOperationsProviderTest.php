@@ -5,9 +5,10 @@
  * Contains \Drupal\Tests\payment\Unit\Plugin\Payment\Type\PaymentTypeOperationsProviderTest.
  */
 
-namespace Drupal\Tests\plugin\Unit;
+namespace Drupal\Tests\payment\Unit\Plugin\Payment\Type;
 
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeOperationsProvider;
+use Drupal\Tests\plugin\Unit\DefaultPluginTypeOperationsProviderTest;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Type\PaymentTypeOperationsProvider
