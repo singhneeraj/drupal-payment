@@ -96,13 +96,11 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $method = new \ReflectionMethod($this->plugin, 'doExecutePaymentAccess');
     $method->setAccessible(TRUE);
 
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
-
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
-    $this->assertTrue($method->invoke($this->plugin, $account));
+    $access = $method->invoke($this->plugin, $account);
+    $this->assertInstanceOf('\Drupal\Core\Access\AccessResultInterface', $access);
+    $this->assertTrue($access->isAllowed());
   }
 
   /**
@@ -242,10 +240,11 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
    *
    * @dataProvider providerTestExecutePaymentAccess
    */
-  public function testExecutePaymentAccess($expected, $active, $currency_supported, AccessResultInterface $events_access_result, $do) {
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
+  public function testExecutePaymentAccess($expected, $active, AccessResultInterface $currency_supported, AccessResultInterface $events_access_result, AccessResultInterface $do) {
+    $payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
+    $payment->expects($this->atLeastOnce())
+      ->method('getCacheTags')
+      ->willReturn([]);
 
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
@@ -270,7 +269,9 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
       ->with($payment, $payment_method, $account)
       ->willReturn($events_access_result);
 
-    $this->assertSame($expected, $payment_method->executePaymentAccess($account));
+    $access = $payment_method->executePaymentAccess($account);
+    $this->assertInstanceOf('\Drupal\Core\Access\AccessResultInterface', $access);
+    $this->assertSame($expected, $access->isAllowed());
   }
 
   /**
@@ -278,15 +279,15 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
    */
   public function providerTestExecutePaymentAccess() {
     return array(
-      array(TRUE, TRUE, TRUE, AccessResult::allowed(), TRUE),
-      array(TRUE, TRUE, TRUE, AccessResult::neutral(), TRUE),
-      array(FALSE, FALSE, TRUE, AccessResult::allowed(), TRUE),
-      array(FALSE, FALSE, TRUE, AccessResult::neutral(), TRUE),
-      array(FALSE, TRUE, FALSE, AccessResult::allowed(), TRUE),
-      array(FALSE, TRUE, FALSE, AccessResult::neutral(), TRUE),
-      array(FALSE, TRUE, TRUE, AccessResult::forbidden(), TRUE),
-      array(FALSE, TRUE, TRUE, AccessResult::allowed(), FALSE),
-      array(FALSE, TRUE, TRUE, AccessResult::neutral(), FALSE),
+      array(TRUE, TRUE, AccessResult::allowed(), AccessResult::allowed(), AccessResult::allowed()),
+      array(FALSE, TRUE, AccessResult::allowed(), AccessResult::neutral(), AccessResult::allowed()),
+      array(FALSE, FALSE, AccessResult::allowed(), AccessResult::allowed(), AccessResult::allowed()),
+      array(FALSE, FALSE, AccessResult::allowed(), AccessResult::neutral(), AccessResult::allowed()),
+      array(FALSE, TRUE, AccessResult::forbidden(), AccessResult::allowed(), AccessResult::allowed()),
+      array(FALSE, TRUE, AccessResult::forbidden(), AccessResult::neutral(), AccessResult::allowed()),
+      array(FALSE, TRUE, AccessResult::allowed(), AccessResult::forbidden(), AccessResult::allowed()),
+      array(FALSE, TRUE, AccessResult::allowed(), AccessResult::allowed(), AccessResult::forbidden()),
+      array(FALSE, TRUE, AccessResult::allowed(), AccessResult::neutral(), AccessResult::forbidden()),
     );
   }
 
@@ -326,7 +327,9 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
 
     $this->plugin->setPayment($payment);
 
-    $this->assertFalse($this->plugin->capturePaymentAccess($account));
+    $access = $this->plugin->capturePaymentAccess($account);
+    $this->assertInstanceOf('\Drupal\Core\Access\AccessResultInterface', $access);
+    $this->assertFalse($access->isAllowed());
   }
 
   /**
@@ -377,7 +380,9 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase|\PHPUnit_Framework_MockObject_MockObject $payment_method */
     $this->plugin->setPayment($payment);
 
-    $this->assertFalse($this->plugin->refundPaymentAccess($account));
+    $access = $this->plugin->refundPaymentAccess($account);
+    $this->assertInstanceOf('\Drupal\Core\Access\AccessResultInterface', $access);
+    $this->assertFalse($access->isAllowed());
   }
 
   /**
@@ -431,7 +436,7 @@ class PaymentMethodBaseUnitTest extends PaymentMethodBaseUnitTestBase {
     $method = new \ReflectionMethod($this->plugin, 'executePaymentAccessCurrency');
     $method->setAccessible(TRUE);
 
-    $this->assertSame($expected, $method->invoke($this->plugin, $account));
+    $this->assertSame($expected, $method->invoke($this->plugin, $account)->isAllowed());
   }
 
   /**

@@ -153,7 +153,7 @@ class UnavailableUnitTest extends UnitTestCase {
   public function testExecutePaymentAccess() {
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
-    $this->assertFalse($this->plugin->executePaymentAccess($account));
+    $this->assertFalse($this->plugin->executePaymentAccess($account)->isAllowed());
   }
 
   /**
@@ -162,23 +162,6 @@ class UnavailableUnitTest extends UnitTestCase {
    */
   public function testExecutePayment() {
     $this->plugin->executePayment();
-  }
-
-  /**
-   * @covers ::capturePaymentAccess
-   */
-  public function testCapturePaymentAccess() {
-    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
-
-    $this->assertFalse($this->plugin->capturePaymentAccess($account));
-  }
-
-  /**
-   * @covers ::capturePayment
-   * @expectedException \RuntimeException
-   */
-  public function testCapturePayment() {
-    $this->plugin->capturePayment();
   }
 
 }

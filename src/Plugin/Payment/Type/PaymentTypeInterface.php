@@ -28,7 +28,7 @@ interface PaymentTypeInterface extends PluginInspectionInterface, ConfigurablePl
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *
-   * @return bool
+   * @return \Drupal\Core\Access\AccessResultInterface
    *
    * @see self::getResumeContextResponse
    */

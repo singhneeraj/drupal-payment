@@ -83,7 +83,9 @@ class UnavailableUnitTest extends UnitTestCase {
   public function testResumeContextAccess() {
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
-    $this->assertFalse($this->paymentType->resumeContextAccess($account));
+    $access = $this->paymentType->resumeContextAccess($account);
+    $this->assertInstanceOf('\Drupal\Core\Access\AccessResultInterface', $access);
+    $this->assertTrue($access->isForbidden());
   }
 
   /**

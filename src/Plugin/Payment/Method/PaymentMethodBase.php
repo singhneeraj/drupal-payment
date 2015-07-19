@@ -6,6 +6,7 @@
 
 namespace Drupal\payment\Plugin\Payment\Method;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -179,10 +180,11 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
       throw new \LogicException('Trying to check access for a non-existing payment. A payment must be set trough self::setPayment() first.');
     }
 
-    return $this->pluginDefinition['active']
-    && $this->executePaymentAccessCurrency($account)
-    && !$this->eventDispatcher->executePaymentAccess($this->getPayment(), $this, $account)->isForbidden()
-    && $this->doExecutePaymentAccess($account);
+    return AccessResult::allowedIf($this->pluginDefinition['active'])
+      ->andIf($this->executePaymentAccessCurrency($account))
+      ->andIf($this->eventDispatcher->executePaymentAccess($this->getPayment(), $this, $account))
+      ->andIf($this->doExecutePaymentAccess($account))
+      ->cacheUntilEntityChanges($this->getPayment());
   }
 
   /**
@@ -190,10 +192,10 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *
-   * @return bool
+   * @return \Drupal\Core\Access\AccessResultInterface
    */
   protected function doExecutePaymentAccess(AccountInterface $account) {
-    return TRUE;
+    return AccessResult::allowed();
   }
 
   /**
@@ -246,7 +248,7 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    */
   protected function doCapturePaymentAccess(AccountInterface $account) {
     // Child classes must override this method to support payment capture.
-    return FALSE;
+    return AccessResult::forbidden();
   }
 
   /**
@@ -287,7 +289,7 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    */
   protected function doRefundPaymentAccess(AccountInterface $account) {
     // Child classes must override this method to support payment refund.
-    return FALSE;
+    return AccessResult::forbidden();
   }
 
   /**
@@ -313,16 +315,18 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *
-   * @return bool
+   * @return \Drupal\Core\Access\AccessResultInterface
    */
   protected function executePaymentAccessCurrency(AccountInterface $account) {
     $supported_currencies = $this->getSupportedCurrencies();
     $payment_currency_code = $this->getPayment()->getCurrencyCode();
     $payment_amount = $this->getPayment()->getAmount();
+
     // If all currencies are allowed, grant access.
     if ($supported_currencies === TRUE) {
-      return TRUE;
+      return AccessResult::allowed();
     }
+
     // If the payment's currency is not specified, access is denied.
     foreach ($supported_currencies as $supported_currency) {
       if ($supported_currency->getCurrencyCode() != $payment_currency_code) {
@@ -330,17 +334,18 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
       }
       // Confirm the payment amount is higher than the supported minimum.
       elseif ($supported_currency->getMinimumAmount() && $payment_amount < $supported_currency->getMinimumAmount()) {
-        return FALSE;
+        return AccessResult::forbidden();
       }
       // Confirm the payment amount does not exceed the maximum.
       elseif ($supported_currency->getMaximumAmount() && $payment_amount > $supported_currency->getMaximumAmount()) {
-        return FALSE;
+        return AccessResult::forbidden();
       }
       else {
-        return TRUE;
+        return AccessResult::allowed();
       }
     }
-    return FALSE;
+
+    return AccessResult::forbidden();
   }
 
   /**

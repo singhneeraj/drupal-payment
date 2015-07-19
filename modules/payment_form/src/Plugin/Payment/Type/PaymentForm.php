@@ -6,6 +6,7 @@
 
 namespace Drupal\payment_form\Plugin\Payment\Type;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -101,7 +102,7 @@ class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInter
    * {@inheritdoc}
    */
   public function resumeContextAccess(AccountInterface $account) {
-    return TRUE;
+    return AccessResult::allowed();
   }
 
   /**

@@ -25,7 +25,7 @@ interface PaymentMethodUpdatePaymentStatusInterface {
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *
-   * @return bool
+   * @return \Drupal\Core\Access\AccessResultInterface
    */
   public function updatePaymentStatusAccess(AccountInterface $account);
 

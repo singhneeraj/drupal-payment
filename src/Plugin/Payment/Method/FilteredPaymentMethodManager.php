@@ -46,9 +46,10 @@ class FilteredPaymentMethodManager extends PaymentAwarePluginFilteredPluginManag
       return FALSE;
     }
 
+    /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface $payment_method */
     $payment_method = $this->createInstance($this->pluginDefinitionMapper->getPluginId($plugin_definition));
 
-    return $payment_method->executePaymentAccess($this->account);
+    return $payment_method->executePaymentAccess($this->account)->isAllowed();
   }
 
   /**

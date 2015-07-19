@@ -24,7 +24,7 @@ interface PaymentMethodRefundPaymentInterface {
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *
-   * @return bool
+   * @return \Drupal\Core\Access\AccessResultInterface
    *
    * @see self::refundPayment
    */

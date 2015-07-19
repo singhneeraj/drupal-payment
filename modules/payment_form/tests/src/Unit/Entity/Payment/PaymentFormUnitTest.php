@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\payment_form\Unit\Entity\Payment;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Url;
 use Drupal\payment\Response\Response;
@@ -304,7 +305,15 @@ class PaymentFormUnitTest extends UnitTestCase {
     $plugin_id_b = $this->randomMachineName();
 
     $plugin_a = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
+    $plugin_a->expects($this->atLeastOnce())
+      ->method('executePaymentAccess')
+      ->with($this->currentUser)
+      ->willReturn(AccessResult::allowedIf((bool) mt_rand(0, 1)));
     $plugin_b = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
+    $plugin_b->expects($this->atLeastOnce())
+      ->method('executePaymentAccess')
+      ->with($this->currentUser)
+      ->willReturn(AccessResult::forbidden());
 
     $plugin_definitions = [
       [

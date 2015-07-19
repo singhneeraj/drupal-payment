@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\Method;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\payment\Plugin\Payment\Method\FilteredPaymentMethodManager;
 use Drupal\Tests\UnitTestCase;
 
@@ -74,13 +75,13 @@ class FilteredPaymentMethodManagerUnitTest extends UnitTestCase {
     $payment_method_a->expects($this->atLeastOnce())
       ->method('executePaymentAccess')
       ->with($this->account)
-      ->willReturn(TRUE);
+      ->willReturn(AccessResult::allowed());
     $payment_method_id_b = $this->randomMachineName();
     $payment_method_b = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
     $payment_method_b->expects($this->atLeastOnce())
       ->method('executePaymentAccess')
       ->with($this->account)
-      ->willReturn(FALSE);
+      ->willReturn(AccessResult::forbidden());
 
     $payment_method_definitions = [
       $payment_method_id_a => [
@@ -119,7 +120,7 @@ class FilteredPaymentMethodManagerUnitTest extends UnitTestCase {
     $payment_method->expects($this->atLeastOnce())
       ->method('executePaymentAccess')
       ->with($this->account)
-      ->willReturn(TRUE);
+      ->willReturn(AccessResult::allowed());
 
     $payment_method_definitions = [
       $payment_method_id => [

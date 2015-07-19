@@ -211,7 +211,9 @@ class PaymentReferenceUnitTest extends UnitTestCase {
       ->method('getOwnerId')
       ->willReturn($payment_owner_id);
 
-    $this->assertSame($expected, $this->paymentType->resumeContextAccess($account));
+    $access = $this->paymentType->resumeContextAccess($account);
+    $this->assertInstanceOf('\Drupal\Core\Access\AccessResultInterface', $access);
+    $this->assertSame($expected, $access->isAllowed());
   }
 
   /**

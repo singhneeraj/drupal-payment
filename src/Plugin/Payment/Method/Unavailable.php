@@ -7,6 +7,7 @@
 namespace Drupal\payment\Plugin\Payment\Method;
 
 use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
@@ -81,7 +82,7 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
    * {@inheritdoc}
    */
   public function executePaymentAccess(AccountInterface $account) {
-    return FALSE;
+    return AccessResult::forbidden();
   }
 
   /**
@@ -89,20 +90,6 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
    */
   public function executePayment() {
     throw new \RuntimeException('This plugin cannot execute payments.');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function capturePaymentAccess(AccountInterface $account) {
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function capturePayment() {
-    throw new \RuntimeException('This plugin cannot capture payments.');
   }
 
   /**

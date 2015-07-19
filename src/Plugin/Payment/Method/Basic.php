@@ -6,6 +6,7 @@
 
 namespace Drupal\payment\Plugin\Payment\Method;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -183,7 +184,7 @@ class Basic extends PaymentMethodBase implements ContainerFactoryPluginInterface
    * {@inheritdoc}
    */
   public function updatePaymentStatusAccess(AccountInterface $account) {
-    return FALSE;
+    return AccessResult::forbidden();
   }
 
   /**

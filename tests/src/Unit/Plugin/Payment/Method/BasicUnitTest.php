@@ -311,7 +311,7 @@ class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
   public function testUpdatePaymentStatusAccess() {
     $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
 
-    $this->assertFalse($this->paymentMethod->updatePaymentStatusAccess($account));
+    $this->assertFalse($this->paymentMethod->updatePaymentStatusAccess($account)->isAllowed());
   }
 
   /**

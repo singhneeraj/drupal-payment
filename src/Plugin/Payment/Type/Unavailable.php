@@ -6,6 +6,7 @@
 
 namespace Drupal\payment\Plugin\Payment\Type;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\StringTranslation\TranslationWrapper;
@@ -53,7 +54,7 @@ class Unavailable extends PaymentTypeBase {
    * {@inheritdoc}
    */
   public function resumeContextAccess(AccountInterface $account) {
-    return FALSE;
+    return AccessResult::forbidden();
   }
 
   /**

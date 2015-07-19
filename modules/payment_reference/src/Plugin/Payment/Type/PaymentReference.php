@@ -6,6 +6,7 @@
 
 namespace Drupal\payment_reference\Plugin\Payment\Type;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
@@ -111,7 +112,7 @@ class PaymentReference extends PaymentTypeBase implements ContainerFactoryPlugin
    * {@inheritdoc}
    */
   public function resumeContextAccess(AccountInterface $account) {
-    return $this->getPayment()->getOwnerId() == $account->id();
+    return AccessResult::allowedIf($this->getPayment()->getOwnerId() == $account->id());
   }
 
   /**
