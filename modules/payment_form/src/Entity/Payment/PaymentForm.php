@@ -124,9 +124,7 @@ class PaymentForm extends ContentEntityForm {
     ];
     $actions['submit']['#value'] = $this->t('Pay');
     $payment_method_manager = new FilteredPaymentMethodManager($this->paymentMethodType->getPluginManager(), $this->getEntity(), $this->currentUser);
-    if (count($payment_method_manager->getDefinitions()) == 0) {
-      $actions['submit']['#disabled'] = TRUE;
-    }
+    $actions['submit']['#disabled'] = count($payment_method_manager->getDefinitions()) == 0;
 
     return $actions;
   }

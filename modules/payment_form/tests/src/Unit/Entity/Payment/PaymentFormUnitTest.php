@@ -308,7 +308,7 @@ class PaymentFormUnitTest extends UnitTestCase {
     $plugin_a->expects($this->atLeastOnce())
       ->method('executePaymentAccess')
       ->with($this->currentUser)
-      ->willReturn(AccessResult::allowedIf((bool) mt_rand(0, 1)));
+      ->willReturn(AccessResult::allowed());
     $plugin_b = $this->getMock('\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface');
     $plugin_b->expects($this->atLeastOnce())
       ->method('executePaymentAccess')
@@ -338,7 +338,7 @@ class PaymentFormUnitTest extends UnitTestCase {
     $method = new \ReflectionMethod($this->sut, 'actions');
     $method->setAccessible(TRUE);
     $actions = $method->invokeArgs($this->sut, [$form, $form_state]);
-    $this->assertFalse(empty($actions['submit']['#disabled']));
+    $this->assertFalse($actions['submit']['#disabled']);
   }
 
   /**
