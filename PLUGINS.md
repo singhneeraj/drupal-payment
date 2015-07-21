@@ -1,8 +1,7 @@
 Payment offers the following plugin types for which plugins can be provided by
 other modules:
 
-PAYMENT METHOD
-==============
+# Payment method
 Payment methods are responsible for executing, refunding, and capturing
 payments. They are classes that implement
 `\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface` and live in
@@ -24,8 +23,7 @@ is the plugin's ID.
 See the [drupal.org handbook](https://www.drupal.org/node/1905070) for more 
 information about configuration schemas.
 
-PAYMENT METHOD CONFIGURATION
-=============================
+# Payment method configuration
 Payment method configuration plugins allow you to configure payment method
 configuration entities through the administrative user interface. They are
 classes that implement
@@ -56,8 +54,7 @@ information about configuration schemas.
 See the [drupal.org handbook](https://www.drupal.org/node/1653226) for more 
 information about derivative plugins.
 
-PAYMENT TYPE
-============
+# Payment type
 Payment types provide information about the type a payment entity is of and the
 context it was created in. They are classes that implement
 `\Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface` and live in
@@ -79,8 +76,7 @@ for this configuration of which the type is
 See the [drupal.org handbook](https://www.drupal.org/node/1905070) for more 
 information about configuration schemas.
 
-PAYMENT STATUS
-==============
+# Payment status
 Payment statuses describe a payment entity's past and current status. They are
 classes that implement
 `\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface`. Plugins are
@@ -114,8 +110,7 @@ for this configuration of which the type is
 See the [drupal.org handbook](https://www.drupal.org/node/1905070) for more 
 information about configuration schemas.
 
-LINE ITEM
-=========
+# Line item
 Line items describe the amounts that make up a payment's total amount, just 
 like line items on an invoice. They are classes that implement
 `\Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface` and live in
