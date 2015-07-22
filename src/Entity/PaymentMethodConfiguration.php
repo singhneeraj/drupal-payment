@@ -35,6 +35,15 @@ use Drupal\user\UserStorageInterface;
  *     "uuid" = "uuid",
  *     "status" = "status"
  *   },
+ *   config_export = {
+ *     "id",
+ *     "label",
+ *     "ownerId",
+ *     "pluginConfiguration",
+ *     "pluginId",
+ *     "status",
+ *     "uuid",
+ *   },
  *   id = "payment_method_configuration",
  *   label = @Translation("Payment method configuration"),
  *   links = {
@@ -118,20 +127,6 @@ class PaymentMethodConfiguration extends ConfigEntityBase implements PaymentMeth
    */
   public function bundle() {
     return $this->getPluginId();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function toArray() {
-    $properties = parent::toArray();
-    $properties['id'] = $this->id();
-    $properties['label'] = $this->label();
-    $properties['ownerId'] = $this->getOwnerId();
-    $properties['pluginId'] = $this->bundle();
-    $properties['pluginConfiguration'] = $this->getPluginConfiguration();
-
-    return $properties;
   }
 
   /**

@@ -30,6 +30,13 @@ use Drupal\Core\Entity\EntityManagerInterface;
  *     "label" = "label",
  *     "uuid" = "uuid"
  *   },
+ *   config_export = {
+ *     "description",
+ *     "id",
+ *     "label",
+ *     "parentId",
+ *     "uuid",
+ *   },
  *   id = "payment_status",
  *   label = @Translation("Payment status"),
  *   links = {
@@ -139,19 +146,6 @@ class PaymentStatus extends ConfigEntityBase implements PaymentStatusInterface {
    */
   public function getDescription() {
     return $this->description;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function toArray() {
-    $properties = parent::toArray();
-    $properties['id'] = $this->id();
-    $properties['label'] = $this->label();
-    $properties['parentId'] = $this->getParentId();
-    $properties['description'] = $this->getDescription();
-
-    return $properties;
   }
 
   /**

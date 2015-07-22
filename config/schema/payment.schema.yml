@@ -1,5 +1,5 @@
 payment.payment_method_configuration.*:
-  type: mapping
+  type: config_entity
   label: Payment method
   mapping:
     id:
@@ -25,7 +25,7 @@ payment.payment_method_configuration.*:
       label: UUID
 
 payment.payment_status.*:
-  type: mapping
+  type: config_entity
   label: Payment status
   mapping:
     description:
@@ -40,9 +40,6 @@ payment.payment_status.*:
     parentId:
       type: string
       label: Parent ID
-    uuid:
-      type: string
-      label: UUID
 
 payment.plugin_configuration.payment_method_configuration.payment_base:
   type: mapping
