@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * Plugins extending this class should provide a configuration schema that
  * extends
- * payment.plugin_configuration.payment_method_configuration.payment_base.
+ * plugin.plugin_configuration.payment_method_configuration.payment_base.
  */
 abstract class PaymentMethodConfigurationBase extends PluginBase implements PaymentMethodConfigurationInterface {
 

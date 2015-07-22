@@ -18,7 +18,7 @@ payment_reference.payment_type:
       type: plugin.plugin_configuration.selector.[%parent.plugin_selector_id]
   type: mapping
 
-payment.plugin_configuration.payment_type.payment_reference:
+plugin.plugin_configuration.payment_type.payment_reference:
   label: Payment Reference payment type configuration
   mapping:
     bundle:
@@ -53,5 +53,5 @@ field.field_settings.payment_reference:
               type: string
             plugin_configuration:
               label: Plugin configuration
-              type: payment.plugin_configuration.line_item.[%parent.plugin_id]
+              type: plugin.plugin_configuration.line_item.[%parent.plugin_id]
           type: mapping

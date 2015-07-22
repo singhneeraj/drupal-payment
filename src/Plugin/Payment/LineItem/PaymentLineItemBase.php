@@ -14,7 +14,7 @@ use Drupal\payment\PaymentAwareTrait;
  * Provides a base line item.
  *
  * Plugins extending this class should provide a configuration schema that
- * extends payment.plugin_configuration.line_item.payment_base.
+ * extends plugin.plugin_configuration.line_item.payment_base.
  */
 abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItemInterface {
 

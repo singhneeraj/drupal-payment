@@ -22,7 +22,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * Plugins extending this class should provide a configuration schema that
  * extends
- * payment.plugin_configuration.payment_method_configuration.payment_basic.
+ * plugin.plugin_configuration.payment_method_configuration.payment_basic.
  *
  * @PaymentMethodConfiguration(
  *   description = @Translation("A payment method type that always successfully executes payments, but never actually transfers money."),

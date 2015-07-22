@@ -17,7 +17,7 @@ One payment method instance belongs to one payment entity and vice versa. See
 
 If a plugin provides configuration, it must also provide a configuration schema
 for this configuration of which the type is
-`payment.plugin_configuration.payment_method.[plugin_id]`, where `[plugin_id]` 
+`plugin.plugin_configuration.payment_method.[plugin_id]`, where `[plugin_id]` 
 is the plugin's ID.
 
 See the [drupal.org handbook](https://www.drupal.org/node/1905070) for more 
@@ -45,7 +45,7 @@ and
 
 If a plugin provides configuration, it must also provide a configuration schema
 for this configuration of which the type is
-`payment.plugin_configuration.payment_method_configuration.[plugin_id]`, where
+`plugin.plugin_configuration.payment_method_configuration.[plugin_id]`, where
 `[plugin_id]` is the plugin's ID.
 
 See the [drupal.org handbook](https://www.drupal.org/node/1905070) for more 
@@ -70,7 +70,7 @@ One payment type instance belongs to one payment entity and vice versa. See
 
 If a plugin provides configuration, it must also provide a configuration schema
 for this configuration of which the type is
-`payment.plugin_configuration.payment_method_type.[plugin_id]`, where 
+`plugin.plugin_configuration.payment_method_type.[plugin_id]`, where 
 `[plugin_id]` is the plugin's ID.
 
 See the [drupal.org handbook](https://www.drupal.org/node/1905070) for more 
@@ -104,7 +104,7 @@ payment entity belongs to any payment status instance. See
 
 If a plugin provides configuration, it must also provide a configuration schema
 for this configuration of which the type is
-`payment.plugin_configuration.payment_method_status.[plugin_id]`, where
+`plugin.plugin_configuration.payment_method_status.[plugin_id]`, where
 `[plugin_id]` is the plugin's ID.
 
 See the [drupal.org handbook](https://www.drupal.org/node/1905070) for more 
@@ -130,7 +130,7 @@ entity belongs to any payment status instance. See
 
 If a plugin provides configuration, it must also provide a configuration schema
 for this configuration of which the type is
-`payment.plugin_configuration.payment_method_line_item.[plugin_id]`, where
+`plugin.plugin_configuration.payment_method_line_item.[plugin_id]`, where
 `[plugin_id]` is the plugin's ID.
 
 See the [drupal.org handbook](https://www.drupal.org/node/1905070) for more 

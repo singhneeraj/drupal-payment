@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * A basic line item.
  *
  * Plugins extending this class should provide a configuration schema that
- * extends payment.plugin_configuration.line_item.payment_basic.
+ * extends plugin.plugin_configuration.line_item.payment_basic.
  *
  * @PaymentLineItem(
  *   id = "payment_basic",

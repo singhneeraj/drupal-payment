@@ -12,7 +12,7 @@ payment.payment_method_configuration.*:
       type: integer
       label: Owner ID
     pluginConfiguration:
-      type: payment.plugin_configuration.payment_method_configuration.[%parent.pluginId]
+      type: plugin.plugin_configuration.payment_method_configuration.[%parent.pluginId]
       label: Plugin configuration
     pluginId:
       type: string
@@ -41,7 +41,7 @@ payment.payment_status.*:
       type: string
       label: Parent ID
 
-payment.plugin_configuration.payment_method_configuration.payment_base:
+plugin.plugin_configuration.payment_method_configuration.payment_base:
   type: mapping
   mapping:
     message_text:
@@ -51,8 +51,8 @@ payment.plugin_configuration.payment_method_configuration.payment_base:
       label: Message text format
       type: string
 
-payment.plugin_configuration.payment_method_configuration.payment_basic:
-  type: payment.plugin_configuration.payment_method_configuration.payment_base
+plugin.plugin_configuration.payment_method_configuration.payment_basic:
+  type: plugin.plugin_configuration.payment_method_configuration.payment_base
   mapping:
     brand_label:
       label: Brand label
@@ -73,7 +73,7 @@ payment.plugin_configuration.payment_method_configuration.payment_basic:
       label: Refund payment status
       type: string
 
-payment.plugin_configuration.line_item.payment_base:
+plugin.plugin_configuration.line_item.payment_base:
   type: mapping
   mapping:
     name:
@@ -83,8 +83,8 @@ payment.plugin_configuration.line_item.payment_base:
       label: Quantity
       type: float
 
-payment.plugin_configuration.line_item.payment_basic:
-  type: payment.plugin_configuration.line_item.payment_base
+plugin.plugin_configuration.line_item.payment_basic:
+  type: plugin.plugin_configuration.line_item.payment_base
   mapping:
     amount:
       label: Amount
@@ -96,7 +96,7 @@ payment.plugin_configuration.line_item.payment_basic:
       label: Description
       type: text
 
-payment.plugin_configuration.payment_status.payment_base:
+plugin.plugin_configuration.payment_status.payment_base:
   type: mapping
   mapping:
     created:
