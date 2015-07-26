@@ -41,7 +41,7 @@ class PaymentStatusForm extends EntityForm {
   protected $pluginTypeManager;
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param \Drupal\Core\Session\AccountInterface
    *   The current user.

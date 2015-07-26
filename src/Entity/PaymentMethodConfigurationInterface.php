@@ -52,7 +52,7 @@ interface PaymentMethodConfigurationInterface extends ConfigEntityInterface, Ent
   /**
    * Sets the payment method configuration's plugin configuration.
    *
-   * @param array $configuration
+   * @param mixed[] $configuration
    *
    * @return static
    */

@@ -51,7 +51,7 @@ class PaymentExecuteAccess extends Event {
   protected $paymentMethod;
 
   /**-
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param \Drupal\payment\Entity\PaymentInterface $payment
    *   The payment for which the context will be resumed

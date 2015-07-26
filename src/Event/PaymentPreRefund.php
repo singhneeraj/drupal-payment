@@ -25,7 +25,7 @@ class PaymentPreRefund extends Event {
   protected $payment;
 
   /**-
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param \Drupal\payment\Entity\PaymentInterface $payment
    *   The payment that will be refunded.

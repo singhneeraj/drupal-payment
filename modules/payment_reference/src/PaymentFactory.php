@@ -31,7 +31,7 @@ class PaymentFactory implements PaymentFactoryInterface {
   protected $paymentLineItemManager;
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    *   The entity manager.

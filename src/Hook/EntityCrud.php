@@ -32,7 +32,7 @@ class EntityCrud {
   protected $paymentStatusManager;
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface $payment_method_manager
    *   The payment method plugin manager.

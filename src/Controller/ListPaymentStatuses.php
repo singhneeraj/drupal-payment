@@ -33,7 +33,7 @@ class ListPaymentStatuses extends ControllerBase {
   protected $renderer;
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translator.
@@ -70,9 +70,9 @@ class ListPaymentStatuses extends ControllerBase {
   /**
    * Helper function for self::listing() to build table rows.
    *
-   * @param array $hierarchy
-   *   A payment status hierarchy as returned by
-   *   \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface::hierarchy().
+   * @param array[] $hierarchy
+   *   Keys are plugin IDs, and values are arrays of the same structure as this
+   *   parameter. The depth is unlimited.
    * @param integer $depth
    *   The depth of $hierarchy's top-level items as seen from the original
    *   hierarchy's root (this function is recursive), starting with 0.

@@ -25,7 +25,7 @@ class ConfigDeriver extends DeriverBase implements ContainerDeriverInterface {
   protected $paymentStatusStorage;
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    */
   public function __construct(EntityStorageInterface $payment_status_storage) {
     $this->paymentStatusStorage = $payment_status_storage;

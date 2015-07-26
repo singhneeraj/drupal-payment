@@ -19,7 +19,7 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 class PaymentMethodConfigurationManager extends DefaultPluginManager implements PaymentMethodConfigurationManagerInterface, FallbackPluginManagerInterface {
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths

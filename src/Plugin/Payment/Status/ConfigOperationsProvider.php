@@ -31,7 +31,7 @@ class ConfigOperationsProvider implements PluginOperationsProviderInterface, Con
   protected $paymentStatusStorage;
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param \Drupal\Core\Entity\EntityStorageInterface $payment_status_storage
    *   The payment status storage.

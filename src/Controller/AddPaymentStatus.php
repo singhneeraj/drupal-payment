@@ -25,7 +25,7 @@ class AddPaymentStatus extends ControllerBase {
   protected $paymentStatusStorage;
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param \Drupal\Core\Entity\EntityFormBuilderInterface $entity_form_builder
    *   The entity form builder.

@@ -18,7 +18,7 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 class PaymentLineItemManager extends DefaultPluginManager implements PaymentLineItemManagerInterface {
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param \Traversable $namespaces
    *   The namespaces in which to look for plugins.

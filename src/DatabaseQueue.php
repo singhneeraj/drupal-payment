@@ -68,7 +68,7 @@ class DatabaseQueue implements QueueInterface {
   protected $queueId;
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param string $queue_id
    *   The unique ID of the queue (instance).

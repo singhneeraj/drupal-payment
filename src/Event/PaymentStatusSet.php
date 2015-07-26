@@ -33,7 +33,7 @@ class PaymentStatusSet extends Event {
   protected $previousPaymentStatus;
 
   /**-
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param \Drupal\payment\Entity\PaymentInterface $payment
    *   The payment the status was set on.

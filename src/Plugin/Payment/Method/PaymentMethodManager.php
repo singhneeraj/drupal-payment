@@ -23,7 +23,7 @@ class PaymentMethodManager extends DefaultPluginManager implements PaymentMethod
   use PluginOperationsProviderPluginManagerTrait;
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths

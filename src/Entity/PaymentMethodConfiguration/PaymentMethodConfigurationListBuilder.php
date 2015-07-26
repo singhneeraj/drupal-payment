@@ -29,7 +29,7 @@ class PaymentMethodConfigurationListBuilder extends ConfigEntityListBuilder {
   protected $paymentMethodConfigurationManager;
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type definition.

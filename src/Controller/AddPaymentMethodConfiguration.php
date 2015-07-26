@@ -36,7 +36,7 @@ class AddPaymentMethodConfiguration extends ControllerBase {
   protected $requestStack;
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation

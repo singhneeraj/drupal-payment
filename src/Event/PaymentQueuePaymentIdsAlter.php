@@ -46,7 +46,7 @@ class PaymentQueuePaymentIdsAlter extends Event {
   protected $queueId;
 
   /**-
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param string $queue_id
    *   The queue ID.

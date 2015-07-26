@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ViewPayment extends ControllerBase {
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translator.

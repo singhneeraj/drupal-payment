@@ -55,7 +55,7 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
   /**
    * Creates a new instance.
    *
-   * @param array $configuration
+   * @param mixed[] $configuration
    *   A configuration array containing information about the plugin instance.
    * @param string $plugin_id
    *   The plugin_id for the plugin instance.
@@ -328,7 +328,7 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
   /**
    * Creates a unique line item name.
    *
-   * @param array $element
+   * @param mixed[] $element
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    * @param string $name
    *   The preferred name.
@@ -347,7 +347,7 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
   /**
    * Checks if a line item name already exists.
    *
-   * @param array $element
+   * @param mixed[] $element
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    * @param string $name
    *
@@ -365,7 +365,7 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
   /**
    * Stores the line items in the form's state.
    *
-   * @param array $element
+   * @param mixed[] $element
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    * @param \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[] $line_items
    */
@@ -376,7 +376,7 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
   /**
    * Retrieves the line items from the form's state.
    *
-   * @param array $element
+   * @param mixed[] $element
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
    * @return \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[]
@@ -390,7 +390,7 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
   /**
    * Gets the root element's HTML ID.
    *
-   * @param array $element
+   * @param mixed[] $element
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
    * @return string
@@ -408,7 +408,7 @@ class PaymentLineItemsInput extends FormElement implements ContainerFactoryPlugi
   /**
    * Initializes stored line items.
    *
-   * @param array $element
+   * @param mixed[] $element
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
    * @return bool

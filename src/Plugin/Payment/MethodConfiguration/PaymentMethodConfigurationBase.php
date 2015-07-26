@@ -30,11 +30,11 @@ abstract class PaymentMethodConfigurationBase extends PluginBase implements Paym
   protected $moduleHandler;
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
-   * @param array $configuration
+   * @param mixed[] $configuration
    * @param string $plugin_id
-   * @param array $plugin_definition
+   * @param mixed[] $plugin_definition
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translator.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler

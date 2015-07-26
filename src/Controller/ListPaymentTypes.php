@@ -28,7 +28,7 @@ class ListPaymentTypes extends ControllerBase {
   protected $paymentTypeManager;
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.

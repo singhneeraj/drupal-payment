@@ -35,7 +35,7 @@ class BasicDeriver extends DeriverBase implements ContainerDeriverInterface {
   protected $paymentMethodConfigurationStorage;
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    */
   public function __construct(EntityStorageInterface $payment_method_configuration_storage, PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager) {
     $this->paymentMethodConfigurationStorage = $payment_method_configuration_storage;

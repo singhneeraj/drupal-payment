@@ -28,7 +28,7 @@ class SelectPaymentMethodConfiguration extends ControllerBase {
   protected $paymentMethodConfigurationManager;
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    * @param \Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface $payment_method_configuration_manager

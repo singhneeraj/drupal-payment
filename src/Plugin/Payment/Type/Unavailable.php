@@ -25,13 +25,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class Unavailable extends PaymentTypeBase {
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
-   * @param array $configuration
+   * @param mixed[] $configuration
    *   A configuration array containing information about the plugin instance.
    * @param string $plugin_id
    *   The plugin_id for the plugin instance.
-   * @param array $plugin_definition
+   * @param mixed[] $plugin_definition
    *   The plugin implementation definition.
    * @param \Drupal\payment\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher.

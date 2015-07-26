@@ -55,13 +55,13 @@ abstract class PaymentStatusBase extends PluginBase implements ContainerFactoryP
   protected $paymentStatusManager;
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
-   * @param array $configuration
+   * @param mixed[] $configuration
    *   A configuration array containing information about the plugin instance.
    * @param string $plugin_id
    *   The plugin_id for the plugin instance.
-   * @param array $plugin_definition
+   * @param mixed[] $plugin_definition
    *   The plugin implementation definition.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface
    * @param \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface $payment_status_manager

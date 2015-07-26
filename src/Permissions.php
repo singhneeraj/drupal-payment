@@ -28,7 +28,7 @@ class Permissions implements ContainerInjectionInterface {
   protected $paymentMethodConfigurationManager;
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    * @param \Drupal\Component\Plugin\PluginManagerInterface $payment_method_configuration_manager

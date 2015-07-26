@@ -31,7 +31,7 @@ class EntityBundleInfo {
   protected $paymentTypeManager;
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param \Drupal\Component\Plugin\PluginManagerInterface $payment_type_manager
    * @param \Drupal\Component\Plugin\PluginManagerInterface $payment_method_configuration_manager

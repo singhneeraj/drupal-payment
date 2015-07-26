@@ -26,7 +26,7 @@ class PaymentLineItemsInputWebTest extends WebTestBase {
   /**
    * Creates line item form data.
    *
-   * @param array $names
+   * @param string[] $names
    *   Line item machine names.
    *
    * @return array

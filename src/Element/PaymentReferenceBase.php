@@ -116,7 +116,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
   /**
    * Creates a new instance.
    *
-   * @param array $configuration
+   * @param mixed[] $configuration
    *   A configuration array containing information about the plugin instance.
    * @param string $plugin_id
    *   The plugin_id for the plugin instance.
@@ -254,7 +254,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
   /**
    * Builds the payment form.
    *
-   * @param array $element
+   * @param mixed[] $element
    *   The root element.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
@@ -314,7 +314,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
   /**
    * Builds the refresh button.
    *
-   * @param array $element
+   * @param mixed[] $element
    *   The root element.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
@@ -362,7 +362,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
   /**
    * Builds the payment view.
    *
-   * @param array $element
+   * @param mixed[] $element
    *   The root element.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
@@ -409,7 +409,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
   /**
    * Builds the "Complete payment" link.
    *
-   * @param array $element
+   * @param mixed[] $element
    *   The root element.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
@@ -531,7 +531,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
   /**
    * Gets the plugin selector.
    *
-   * @param array $element
+   * @param mixed[] $element
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
    * @return \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface
@@ -556,7 +556,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
   /**
    * Gets the payment.
    *
-   * @param array $element
+   * @param mixed[] $element
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
    * @return \Drupal\payment\Entity\PaymentInterface
@@ -577,7 +577,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
   /**
    * Gets the entity form display.
    *
-   * @param array $element
+   * @param mixed[] $element
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
    * @return \Drupal\Core\Entity\Display\EntityFormDisplayInterface

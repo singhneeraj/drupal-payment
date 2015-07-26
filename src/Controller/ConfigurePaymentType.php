@@ -27,7 +27,7 @@ class ConfigurePaymentType extends ControllerBase {
   protected $paymentTypeManager;
 
   /**
-   * Constructs a new class instance.
+   * Constructs a new instance.
    *
    * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
    *   The form builder.
