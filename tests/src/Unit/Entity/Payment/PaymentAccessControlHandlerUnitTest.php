@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\payment\Unit\Entity\Payment;
 
+use Drupal\Core\DependencyInjection\Container;
 use Drupal\payment\Entity\Payment\PaymentAccessControlHandler;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
@@ -32,8 +33,31 @@ class PaymentAccessControlHandlerUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   public function setUp() {
+    $cache_context_manager = $this->getMockBuilder('\Drupal\Core\Cache\Context\CacheContextsManager')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $container = new Container();
+    $container->set('cache_contexts_manager', $cache_context_manager);
+    \Drupal::setContainer($container);
+
     $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
+
     $this->accessControlHandler = new PaymentAccessControlHandler($entity_type);
+  }
+
+  /**
+   * Gets a mock payment.
+   *
+   * @return \Drupal\payment\Entity\PaymentInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected function getMockPayment() {
+    $payment = $this->getMock('\Drupal\payment\Entity\PaymentInterface');
+    $payment->expects($this->any())
+      ->method('getCacheContexts')
+      ->willReturn([]);
+
+    return $payment;
   }
 
   /**
@@ -60,9 +84,7 @@ class PaymentAccessControlHandlerUnitTest extends UnitTestCase {
       ->with($account)
       ->will($this->returnValue($payment_method_capture_access));
 
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $payment = $this->getMockPayment();
     $payment->expects($this->atLeastOnce())
       ->method('getPaymentMethod')
       ->will($this->returnValue($payment_method));
@@ -114,9 +136,7 @@ class PaymentAccessControlHandlerUnitTest extends UnitTestCase {
       ->with($account)
       ->will($this->returnValue($payment_method_refund_access));
 
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $payment = $this->getMockPayment();
     $payment->expects($this->atLeastOnce())
       ->method('getPaymentMethod')
       ->will($this->returnValue($payment_method));
@@ -167,9 +187,7 @@ class PaymentAccessControlHandlerUnitTest extends UnitTestCase {
       ->with($account)
       ->will($this->returnValue(TRUE));
 
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $payment = $this->getMockPayment();
     $payment->expects($this->atLeastOnce())
       ->method('getPaymentMethod')
       ->will($this->returnValue($payment_method));
@@ -200,9 +218,7 @@ class PaymentAccessControlHandlerUnitTest extends UnitTestCase {
       ->with($account)
       ->will($this->returnValue(FALSE));
 
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $payment = $this->getMockPayment();
     $payment->expects($this->atLeastOnce())
       ->method('getPaymentMethod')
       ->will($this->returnValue($payment_method));
@@ -239,9 +255,7 @@ class PaymentAccessControlHandlerUnitTest extends UnitTestCase {
       ->method('getPaymentExecutionResult')
       ->willReturn($payment_execution_result);
 
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $payment = $this->getMockPayment();
     $payment->expects($this->atLeastOnce())
       ->method('getOwnerId')
       ->willReturn($payment_owner_id);
@@ -277,9 +291,7 @@ class PaymentAccessControlHandlerUnitTest extends UnitTestCase {
     $account->expects($this->never())
       ->method('hasPermission');
 
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $payment = $this->getMockPayment();
     $payment->expects($this->atLeastOnce())
       ->method('getPaymentMethod')
       ->willReturn(NULL);
@@ -301,9 +313,7 @@ class PaymentAccessControlHandlerUnitTest extends UnitTestCase {
     $account->expects($this->any())
       ->method('hasPermission')
       ->will($this->returnValue(FALSE));
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $payment = $this->getMockPayment();
     $payment->expects($this->any())
       ->method('getCacheTags')
       ->willReturn(array('payment'));
@@ -331,9 +341,7 @@ class PaymentAccessControlHandlerUnitTest extends UnitTestCase {
       ->with('payment.payment.' . $operation . '.own')
       ->will($this->returnValue(FALSE));
 
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $payment = $this->getMockPayment();
     $payment->expects($this->any())
       ->method('getCacheTags')
       ->willReturn(array('payment'));
@@ -363,9 +371,7 @@ class PaymentAccessControlHandlerUnitTest extends UnitTestCase {
     $account->expects($this->any())
       ->method('hasPermission')
       ->will($this->returnValueMap($map));
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $payment = $this->getMockPayment();
     $payment->expects($this->at(0))
       ->method('getOwnerId')
       ->will($this->returnValue($owner_id));

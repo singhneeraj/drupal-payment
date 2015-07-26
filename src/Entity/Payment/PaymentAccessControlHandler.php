@@ -76,7 +76,7 @@ class PaymentAccessControlHandler extends EntityAccessControlHandler {
     return AccessResult::allowedIfHasPermission($account, 'payment.payment.' . $operation . '.any')
       ->orIf(
         AccessResult::allowedIfHasPermission($account, 'payment.payment.' . $operation . '.own')
-          ->andIf(AccessResult::allowedIf($account->id() == $payment->getOwnerId())->cacheUntilEntityChanges($payment))
+          ->andIf(AccessResult::allowedIf($account->id() == $payment->getOwnerId())->addCacheableDependency($payment))
       );
   }
 
