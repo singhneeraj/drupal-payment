@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @group Payment
  */
-class BasicUnitTest extends PaymentMethodBaseUnitTestBase {
+class BasicTest extends PaymentMethodBaseTestBase {
 
   /**
    * The module handler.

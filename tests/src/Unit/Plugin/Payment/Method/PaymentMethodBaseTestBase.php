@@ -7,13 +7,26 @@
 
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\Method;
 
+use Drupal\Core\Cache\Context\CacheContextsManager;
+use Drupal\Core\DependencyInjection\Container;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Utility\Token;
+use Drupal\payment\EventDispatcherInterface;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Drupal\Tests\UnitTestCase;
 
 /**
  * Provides a base for tests for classes that extend
  * \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase.
  */
-abstract class PaymentMethodBaseUnitTestBase extends UnitTestCase {
+abstract class PaymentMethodBaseTestBase extends UnitTestCase {
+
+  /**
+   * The cache context manager.
+   *
+   * @var \Drupal\Core\Cache\Context\CacheContextsManager
+   */
+  protected $cacheCContextManager;
 
   /**
    * The event dispatcher.
@@ -46,14 +59,14 @@ abstract class PaymentMethodBaseUnitTestBase extends UnitTestCase {
   /**
    * The definition of the payment method plugin under test.
    *
-   * @var array
+   * @var mixed[]
    */
   protected $pluginDefinition = [];
 
   /**
    * The ID of the payment method plugin under test.
    *
-   * @var array
+   * @var string
    */
   protected $pluginId;
 
@@ -63,23 +76,30 @@ abstract class PaymentMethodBaseUnitTestBase extends UnitTestCase {
   public function setUp() {
     parent::setUp();
 
-    $this->eventDispatcher = $this->getMock('\Drupal\payment\EventDispatcherInterface');
+    $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
 
-    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
+    $this->moduleHandler = $this->getMock(ModuleHandlerInterface::class);
 
-    $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
+    $this->paymentStatusManager = $this->getMock(PaymentStatusManagerInterface::class);
 
-    $this->token = $this->getMockBuilder('\Drupal\Core\Utility\Token')
+    $this->token = $this->getMockBuilder(Token::class)
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->pluginDefinition = array(
+    $this->pluginDefinition = [
       'active' => TRUE,
       'message_text' => $this->randomMachineName(),
       'message_text_format' => $this->randomMachineName(),
-    );
+    ];
 
     $this->pluginId = $this->randomMachineName();
+    $this->cacheCContextManager = $this->getMockBuilder(CacheContextsManager::class)
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $container = new Container();
+    $container->set('cache_contexts_manager', $this->cacheCContextManager);
+    \Drupal::setContainer($container);
   }
 
 }

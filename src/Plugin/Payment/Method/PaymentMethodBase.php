@@ -184,7 +184,7 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
       ->andIf($this->executePaymentAccessCurrency($account))
       ->andIf($this->eventDispatcher->executePaymentAccess($this->getPayment(), $this, $account))
       ->andIf($this->doExecutePaymentAccess($account))
-      ->cacheUntilEntityChanges($this->getPayment());
+      ->addCacheableDependency($this->getPayment());
   }
 
   /**

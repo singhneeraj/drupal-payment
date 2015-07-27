@@ -59,7 +59,7 @@ class PaymentMethodConfigurationAccessControlHandler extends EntityAccessControl
       return AccessResult::allowedIfHasPermission($account, $permission_prefix . '.any')
         ->orIf(
           AccessResult::allowedIfHasPermission($account, $permission_prefix . '.own')
-            ->andIf(AccessResult::allowedIf($account->id() == $payment_method_configuration->getOwnerId())->cacheUntilEntityChanges($payment_method_configuration))
+            ->andIf(AccessResult::allowedIf($account->id() == $payment_method_configuration->getOwnerId())->addCacheableDependency($payment_method_configuration))
         );
     }
   }
