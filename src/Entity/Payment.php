@@ -392,7 +392,7 @@ class Payment extends ContentEntityBase implements PaymentInterface {
       ->setDefaultValue(0)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
-      ->setDefaultValueCallback('Drupal\payment\Entity\Payment::getCurrentUserId')
+      ->setDefaultValueCallback(Payment::class . '::getCurrentUserId')
       ->setTranslatable(TRUE)
       ->setDisplayOptions('view', array(
         'type' => 'author',

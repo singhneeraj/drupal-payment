@@ -285,9 +285,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
         ->method('setStatus')
         ->with($status);
 
-      $owner = $this->getMockBuilder('\Drupal\user\Entity\User')
-        ->disableOriginalConstructor()
-        ->getMock();
+      $owner = $this->getMock(UserInterface::class);
       $owner->expects($this->any())
         ->method('id')
         ->willReturn($owner_id);

@@ -9,6 +9,7 @@
 namespace Drupal\Tests\payment_reference\Unit\Plugin\Field\FieldType;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\payment_reference\Plugin\Field\FieldType\PaymentReferenceItemList;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -29,7 +30,7 @@ class PaymentReferenceItemListTest extends UnitTestCase {
    * {@inheritdoc}
    */
   protected function setUp() {
-    $this->sut = $this->getMockBuilder('\Drupal\payment_reference\Plugin\Field\FieldType\PaymentReferenceItemList')
+    $this->sut = $this->getMockBuilder(PaymentReferenceItemList::class)
       ->disableOriginalConstructor()
       ->setMethods(NULL)
       ->getMock();

@@ -11,6 +11,7 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\payment\Annotations\PaymentMethod;
 use Drupal\plugin\Plugin\PluginOperationsProviderPluginManagerTrait;
 
 /**
@@ -36,7 +37,7 @@ class PaymentMethodManager extends DefaultPluginManager implements PaymentMethod
    *   The class_resolver.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, ClassResolverInterface $class_resolver) {
-    parent::__construct('Plugin/Payment/Method', $namespaces, $module_handler, '\Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface', '\Drupal\payment\Annotations\PaymentMethod');
+    parent::__construct('Plugin/Payment/Method', $namespaces, $module_handler, PaymentMethodInterface::class, PaymentMethod::class);
     $this->alterInfo('payment_method');
     $this->setCacheBackend($cache_backend, 'payment_method');
     $this->classResolver = $class_resolver;

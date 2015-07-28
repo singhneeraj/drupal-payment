@@ -51,7 +51,7 @@ class PaymentStatusManager extends DefaultPluginManager implements PaymentStatus
     'operations_provider' => NULL,
     // The default plugin class name. Any class must implement
     // \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface.
-    'class' => 'Drupal\payment\Plugin\Payment\Status\DefaultPaymentStatus',
+    'class' => DefaultPaymentStatus::class,
   );
 
   /**
@@ -72,7 +72,7 @@ class PaymentStatusManager extends DefaultPluginManager implements PaymentStatus
     $this->classResolver = $class_resolver;
     $this->discovery = new YamlDiscovery('payment.status', $module_handler->getModuleDirectories());
     $this->discovery = new ContainerDerivativeDiscoveryDecorator($this->discovery);
-    $this->factory = new ContainerFactory($this, 'Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
+    $this->factory = new ContainerFactory($this, PaymentStatusInterface::class);
     $this->moduleHandler = $module_handler;
     $this->stringTranslation = $string_translation;
   }
