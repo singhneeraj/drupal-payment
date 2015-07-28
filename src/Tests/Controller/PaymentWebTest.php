@@ -7,7 +7,6 @@
 
 namespace Drupal\payment\Tests\Controller;
 
-use Drupal\payment\Entity\Payment\PaymentListBuilder;
 use Drupal\payment\Payment;
 use Drupal\payment\Tests\Generate;
 use Drupal\simpletest\WebTestBase;

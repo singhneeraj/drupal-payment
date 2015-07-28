@@ -18,7 +18,6 @@ use Drupal\payment\EventDispatcherInterface;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeBase;
 use Drupal\payment\Response\Response;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * The payment reference field payment type.

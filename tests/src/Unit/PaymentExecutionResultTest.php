@@ -7,7 +7,6 @@
 
 namespace Drupal\Tests\payment\Unit;
 
-use Drupal\Core\Url;
 use Drupal\payment\PaymentExecutionResult;
 use Drupal\payment\Response\ResponseInterface;
 use Drupal\Tests\UnitTestCase;

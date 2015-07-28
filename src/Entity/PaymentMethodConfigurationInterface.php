@@ -8,7 +8,6 @@
 namespace Drupal\payment\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
-use Drupal\Core\Config\Entity\ThirdPartySettingsInterface;
 use Drupal\user\EntityOwnerInterface;
 
 /**

@@ -11,9 +11,7 @@ use Drupal\payment\Entity\PaymentMethodConfigurationInterface;
 use Drupal\payment\Entity\PaymentStatusInterface;
 use Drupal\payment\Hook\EntityCrud;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodManager;
-use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManager;
-use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Drupal\Tests\UnitTestCase;
 
 /**

@@ -9,7 +9,6 @@ namespace Drupal\payment\Plugin\Payment\LineItem;
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
-use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\PaymentAwareInterface;
 
 /**

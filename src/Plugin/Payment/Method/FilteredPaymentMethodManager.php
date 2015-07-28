@@ -9,8 +9,8 @@ namespace Drupal\payment\Plugin\Payment\Method;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\plugin\Plugin\DefaultPluginDefinitionMapper;
 use Drupal\payment\Plugin\Payment\PaymentAwarePluginFilteredPluginManager;
+use Drupal\plugin\Plugin\DefaultPluginDefinitionMapper;
 
 /**
  * Provides a filtered payment method plugin manager.

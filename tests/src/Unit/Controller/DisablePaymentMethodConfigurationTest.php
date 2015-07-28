@@ -10,7 +10,6 @@ namespace Drupal\Tests\payment\Unit\Controller;
 use Drupal\payment\Controller\DisablePaymentMethodConfiguration;
 use Drupal\payment\Entity\PaymentMethodConfigurationInterface;
 use Drupal\Tests\UnitTestCase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
