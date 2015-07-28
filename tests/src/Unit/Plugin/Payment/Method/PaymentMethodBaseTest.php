@@ -71,7 +71,7 @@ class PaymentMethodBaseTest extends PaymentMethodBaseTestBase {
     ];
     $container->expects($this->any())
       ->method('get')
-      ->will($this->returnValueMap($map));
+      ->willReturnMap($map);
 
     /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodBase $class_name */
     $class_name = get_class($this->sut);

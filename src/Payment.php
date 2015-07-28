@@ -31,15 +31,6 @@ class Payment {
   }
 
   /**
-   * Returns the plugin selector manager.
-   *
-   * @return \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface
-   */
-  public static function pluginSelectorManager() {
-    return \Drupal::service('plugin.manager.plugin.plugin_selector');
-  }
-
-  /**
    * Returns the payment line item manager.
    *
    * @return \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface

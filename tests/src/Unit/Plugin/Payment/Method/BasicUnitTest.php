@@ -2,12 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\payment\Unit\Plugin\Payment\Method\BasicUnitTest.
+ * Contains \Drupal\Tests\payment\Unit\Plugin\Payment\Method\BasicTest.
  */
 
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\Method;
 
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\Payment\Method\Basic;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
+use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -25,18 +30,18 @@ class BasicTest extends PaymentMethodBaseTestBase {
   protected $moduleHandler;
 
   /**
-   * The payment method plugin under test.
-   *
-   * @var \Drupal\payment\Plugin\Payment\Method\Basic
-   */
-  protected $paymentMethod;
-
-  /**
-   * The payment status manager used for testing.
+   * The payment status manager.
    *
    * @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $paymentStatusManager;
+
+  /**
+   * The class under test.
+   *
+   * @var \Drupal\payment\Plugin\Payment\Method\Basic
+   */
+  protected $sut;
 
   /**
    * {@inheritdoc}
@@ -53,11 +58,11 @@ class BasicTest extends PaymentMethodBaseTestBase {
       'refund_status_id' => $this->randomMachineName(),
     );
 
-    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
+    $this->moduleHandler = $this->getMock(ModuleHandlerInterface::class);
 
-    $this->paymentStatusManager = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface');
+    $this->paymentStatusManager = $this->getMock(PaymentStatusManagerInterface::class);
 
-    $this->paymentMethod = new Basic([], '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager);
+    $this->sut = new Basic([], '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager);
   }
 
   /**
@@ -65,7 +70,7 @@ class BasicTest extends PaymentMethodBaseTestBase {
    * @covers ::__construct
    */
   function testCreate() {
-    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $container = $this->getMock(ContainerInterface::class);
     $map = array(
       array('payment.event_dispatcher', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->eventDispatcher),
       array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
@@ -74,108 +79,104 @@ class BasicTest extends PaymentMethodBaseTestBase {
     );
     $container->expects($this->any())
       ->method('get')
-      ->will($this->returnValueMap($map));
+      ->willReturnMap($map);
 
-    $form = Basic::create($container, [], '', $this->pluginDefinition);
-    $this->assertInstanceOf('\Drupal\payment\Plugin\Payment\Method\Basic', $form);
+    $sut = Basic::create($container, [], '', $this->pluginDefinition);
+    $this->assertInstanceOf(Basic::class, $sut);
   }
 
   /**
    * @covers ::defaultConfiguration
    */
   public function testDefaultConfiguration() {
-    $this->assertInternalType('array', $this->paymentMethod->defaultConfiguration());
+    $this->assertInternalType('array', $this->sut->defaultConfiguration());
   }
 
   /**
    * @covers ::getExecuteStatusId
    */
   public function testGetExecuteStatusId() {
-    $this->assertSame($this->pluginDefinition['execute_status_id'], $this->paymentMethod->getExecuteStatusId());
+    $this->assertSame($this->pluginDefinition['execute_status_id'], $this->sut->getExecuteStatusId());
   }
 
   /**
    * @covers ::getCaptureStatusId
    */
   public function testGetCaptureStatusId() {
-    $this->assertSame($this->pluginDefinition['capture_status_id'], $this->paymentMethod->getCaptureStatusId());
+    $this->assertSame($this->pluginDefinition['capture_status_id'], $this->sut->getCaptureStatusId());
   }
 
   /**
    * @covers ::getCapture
    */
   public function testGetCapture() {
-    $this->assertSame($this->pluginDefinition['capture'], $this->paymentMethod->getCapture());
+    $this->assertSame($this->pluginDefinition['capture'], $this->sut->getCapture());
   }
 
   /**
    * @covers ::getRefundStatusId
    */
   public function testGetRefundStatusId() {
-    $this->assertSame($this->pluginDefinition['refund_status_id'], $this->paymentMethod->getRefundStatusId());
+    $this->assertSame($this->pluginDefinition['refund_status_id'], $this->sut->getRefundStatusId());
   }
 
   /**
    * @covers ::getRefund
    */
   public function testGetRefund() {
-    $this->assertSame($this->pluginDefinition['refund'], $this->paymentMethod->getRefund());
+    $this->assertSame($this->pluginDefinition['refund'], $this->sut->getRefund());
   }
 
   /**
    * @covers ::doExecutePayment
    */
   public function testDoExecutePayment() {
-    $payment_status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
+    $payment_status = $this->getMock(PaymentStatusInterface::class);
 
     $this->paymentStatusManager->expects($this->once())
       ->method('createInstance')
       ->with($this->pluginDefinition['execute_status_id'])
-      ->will($this->returnValue($payment_status));
+      ->willReturn($payment_status);
 
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $payment = $this->getMock(PaymentInterface::class);
     $payment->expects($this->once())
       ->method('save');
     $payment->expects($this->once())
       ->method('setPaymentStatus')
       ->with($payment_status);
 
-    $this->paymentMethod->setPayment($payment);
+    $this->sut->setPayment($payment);
 
-    $method = new \ReflectionMethod($this->paymentMethod, 'doExecutePayment');
+    $method = new \ReflectionMethod($this->sut, 'doExecutePayment');
     $method->setAccessible(TRUE);
 
-    $method->invoke($this->paymentMethod, $payment);
+    $method->invoke($this->sut, $payment);
   }
 
   /**
    * @covers ::doCapturePayment
    */
   public function testDoCapturePayment() {
-    $payment_status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
+    $payment_status = $this->getMock(PaymentStatusInterface::class);
 
     $this->paymentStatusManager->expects($this->once())
       ->method('createInstance')
       ->with($this->pluginDefinition['capture_status_id'])
-      ->will($this->returnValue($payment_status));
+      ->willReturn($payment_status);
 
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $payment = $this->getMock(PaymentInterface::class);
     $payment->expects($this->once())
       ->method('save');
     $payment->expects($this->once())
       ->method('setPaymentStatus')
       ->with($payment_status);
 
-    $this->paymentMethod->setPayment($payment);
+    $this->sut->setPayment($payment);
 
-    $method = new \ReflectionMethod($this->paymentMethod, 'doCapturePayment');
+    $method = new \ReflectionMethod($this->sut, 'doCapturePayment');
     $method->setAccessible(TRUE);
 
-    $method->invoke($this->paymentMethod, $payment);
+    $method->invoke($this->sut, $payment);
   }
 
   /**
@@ -187,33 +188,31 @@ class BasicTest extends PaymentMethodBaseTestBase {
     $this->pluginDefinition['capture'] = $capture;
     $this->pluginDefinition['capture_status_id'] = $capture_status_id;
 
-    $this->paymentMethod = new Basic([], '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager);
+    $this->sut = new Basic([], '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager);
 
-    $capture_payment_status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
+    $capture_payment_status = $this->getMock(PaymentStatusInterface::class);
     $capture_payment_status->expects($this->any())
       ->method('getPluginId')
-      ->will($this->returnValue($current_status_id));
+      ->willReturn($current_status_id);
 
-    $capture_payment_status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
+    $capture_payment_status = $this->getMock(PaymentStatusInterface::class);
     $capture_payment_status->expects($this->any())
       ->method('getPluginId')
-      ->will($this->returnValue($current_status_id));
+      ->willReturn($current_status_id);
 
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $payment = $this->getMock(PaymentInterface::class);
     $payment->expects($this->any())
       ->method('getPaymentStatus')
-      ->will($this->returnValue($capture_payment_status));
+      ->willReturn($capture_payment_status);
 
-    $this->paymentMethod->setPayment($payment);
+    $this->sut->setPayment($payment);
 
-    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account = $this->getMock(AccountInterface::class);
 
-    $method = new \ReflectionMethod($this->paymentMethod, 'doCapturePaymentAccess');
+    $method = new \ReflectionMethod($this->sut, 'doCapturePaymentAccess');
     $method->setAccessible(TRUE);
 
-    $this->assertSame($expected, $method->invoke($this->paymentMethod, $account));
+    $this->assertSame($expected, $method->invoke($this->sut, $account));
   }
 
   /**
@@ -234,28 +233,26 @@ class BasicTest extends PaymentMethodBaseTestBase {
    * @covers ::doRefundPayment
    */
   public function testDoRefundPayment() {
-    $payment_status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
+    $payment_status = $this->getMock(PaymentStatusInterface::class);
 
     $this->paymentStatusManager->expects($this->once())
       ->method('createInstance')
       ->with($this->pluginDefinition['refund_status_id'])
-      ->will($this->returnValue($payment_status));
+      ->willReturn($payment_status);
 
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $payment = $this->getMock(PaymentInterface::class);
     $payment->expects($this->once())
       ->method('save');
     $payment->expects($this->once())
       ->method('setPaymentStatus')
       ->with($payment_status);
 
-    $this->paymentMethod->setPayment($payment);
+    $this->sut->setPayment($payment);
 
-    $method = new \ReflectionMethod($this->paymentMethod, 'doRefundPayment');
+    $method = new \ReflectionMethod($this->sut, 'doRefundPayment');
     $method->setAccessible(TRUE);
 
-    $method->invoke($this->paymentMethod, $payment);
+    $method->invoke($this->sut, $payment);
   }
 
   /**
@@ -267,28 +264,26 @@ class BasicTest extends PaymentMethodBaseTestBase {
     $this->pluginDefinition['refund'] = $refund;
     $this->pluginDefinition['refund_status_id'] = $refund_status_id;
 
-    $this->paymentMethod = new Basic([], '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager);
+    $this->sut = new Basic([], '', $this->pluginDefinition, $this->moduleHandler, $this->eventDispatcher, $this->token, $this->paymentStatusManager);
 
-    $payment_status = $this->getMock('\Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface');
+    $payment_status = $this->getMock(PaymentStatusInterface::class);
     $payment_status->expects($this->any())
       ->method('getPluginId')
-      ->will($this->returnValue($current_status_id));
+      ->willReturn($current_status_id);
 
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $payment = $this->getMock(PaymentInterface::class);
     $payment->expects($this->any())
       ->method('getPaymentStatus')
-      ->will($this->returnValue($payment_status));
+      ->willReturn($payment_status);
 
-    $this->paymentMethod->setPayment($payment);
+    $this->sut->setPayment($payment);
 
-    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account = $this->getMock(AccountInterface::class);
 
-    $method = new \ReflectionMethod($this->paymentMethod, 'doRefundPaymentAccess');
+    $method = new \ReflectionMethod($this->sut, 'doRefundPaymentAccess');
     $method->setAccessible(TRUE);
 
-    $this->assertSame($expected, $method->invoke($this->paymentMethod, $account));
+    $this->assertSame($expected, $method->invoke($this->sut, $account));
   }
 
   /**
@@ -309,36 +304,34 @@ class BasicTest extends PaymentMethodBaseTestBase {
    * @covers ::updatePaymentStatusAccess
    */
   public function testUpdatePaymentStatusAccess() {
-    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account = $this->getMock(AccountInterface::class);
 
-    $this->assertFalse($this->paymentMethod->updatePaymentStatusAccess($account)->isAllowed());
+    $this->assertFalse($this->sut->updatePaymentStatusAccess($account)->isAllowed());
   }
 
   /**
    * @covers ::getSettablePaymentStatuses
    */
   public function testGetSettablePaymentStatuses() {
-    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account = $this->getMock(AccountInterface::class);
 
-    $payment = $this->getMockBuilder('\Drupal\payment\Entity\Payment')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $payment = $this->getMock(PaymentInterface::class);
 
-    $this->assertSame([], $this->paymentMethod->getSettablePaymentStatuses($account, $payment));
+    $this->assertSame([], $this->sut->getSettablePaymentStatuses($account, $payment));
   }
 
   /**
    * @covers ::getSupportedCurrencies
    */
   public function testGetSupportedCurrencies() {
-    $this->assertTrue($this->paymentMethod->getSupportedCurrencies());
+    $this->assertTrue($this->sut->getSupportedCurrencies());
   }
 
   /**
    * @covers ::getEntityId
    */
   public function testGetEntityId() {
-    $this->assertSame($this->pluginDefinition['entity_id'], $this->paymentMethod->getEntityId());
+    $this->assertSame($this->pluginDefinition['entity_id'], $this->sut->getEntityId());
   }
 
 }

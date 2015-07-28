@@ -43,7 +43,7 @@ abstract class PaymentMethodBaseTestBase extends UnitTestCase {
   protected $moduleHandler;
 
   /**
-   * The token API used for testing.
+   * The token API.
    *
    * @var \Drupal\Core\Utility\Token|\PHPUnit_Framework_MockObject_MockObject
    */

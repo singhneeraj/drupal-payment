@@ -7,8 +7,13 @@
 
 namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration;
 
+use Drupal\Core\Cache\Context\CacheContextsManager;
 use Drupal\Core\DependencyInjection\Container;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccessControlHandler;
+use Drupal\payment\Entity\PaymentMethodConfigurationInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -37,7 +42,7 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
    * {@inheritdoc}
    */
   public function setUp() {
-    $cache_context_manager = $this->getMockBuilder('\Drupal\Core\Cache\Context\CacheContextsManager')
+    $cache_context_manager = $this->getMockBuilder(CacheContextsManager::class)
       ->disableOriginalConstructor()
       ->getMock();
 
@@ -45,9 +50,9 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
     $container->set('cache_contexts_manager', $cache_context_manager);
     \Drupal::setContainer($container);
 
-    $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
+    $entity_type = $this->getMock(EntityTypeInterface::class);
 
-    $this->moduleHandler = $this->getMock('\Drupal\Core\Extension\ModuleHandlerInterface');
+    $this->moduleHandler = $this->getMock(ModuleHandlerInterface::class);
     $this->moduleHandler->expects($this->any())
       ->method('invokeAll')
       ->willReturn([]);
@@ -60,15 +65,15 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
    * @covers ::__construct
    */
   public function testCreateInstance() {
-    $container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
+    $container = $this->getMock(ContainerInterface::class);
     $map = [
       ['module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler],
     ];
     $container->expects($this->any())
       ->method('get')
-      ->will($this->returnValueMap($map));
+      ->willReturnMap($map);
 
-    $entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
+    $entity_type = $this->getMock(EntityTypeInterface::class);
 
     $handler = PaymentMethodConfigurationAccessControlHandler::createInstance($container, $entity_type);
     $this->assertInstanceOf(PaymentMethodConfigurationAccessControlHandler::class, $handler);
@@ -80,7 +85,7 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
    * @return \Drupal\payment\Entity\PaymentMethodConfiguration|\PHPUnit_Framework_MockObject_MockObject
    */
   protected function getMockPaymentMethodConfiguration() {
-    $payment_method_configuration = $this->getMock('\Drupal\payment\Entity\PaymentMethodConfigurationInterface');
+    $payment_method_configuration = $this->getMock(PaymentMethodConfigurationInterface::class);
     $payment_method_configuration->expects($this->any())
       ->method('getCacheContexts')
       ->willReturn([]);
@@ -97,7 +102,7 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
   public function testCheckAccessWithoutPermission() {
     $operation = $this->randomMachineName();
     $language_code = $this->randomMachineName();
-    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account = $this->getMock(AccountInterface::class);
     $account->expects($this->any())
       ->method('hasPermission')
       ->willReturn(FALSE);
@@ -116,14 +121,14 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
   public function testCheckAccessWithAnyPermission() {
     $operation = $this->randomMachineName();
     $language_code = $this->randomMachineName();
-    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account = $this->getMock(AccountInterface::class);
     $map = [
       ['payment.payment_method_configuration.' . $operation . '.any', TRUE],
       ['payment.payment_method_configuration.' . $operation . '.own', FALSE],
     ];
     $account->expects($this->any())
       ->method('hasPermission')
-      ->will($this->returnValueMap($map));
+      ->willReturnMap($map);
 
     $payment_method_configuration = $this->getMockPaymentMethodConfiguration();
 
@@ -140,7 +145,7 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
     $owner_id = mt_rand();
     $operation = $this->randomMachineName();
     $language_code = $this->randomMachineName();
-    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account = $this->getMock(AccountInterface::class);
     $account->expects($this->any())
       ->method('id')
       ->willReturn($owner_id);
@@ -150,7 +155,7 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
     ];
     $account->expects($this->any())
       ->method('hasPermission')
-      ->will($this->returnValueMap($map));
+      ->willReturnMap($map);
 
     $payment_method_configuration = $this->getMockPaymentMethodConfiguration();
     $payment_method_configuration->expects($this->at(0))
@@ -175,7 +180,7 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
   public function testCheckAccessEnable($expected, $payment_method_configuration_status, $has_update_permission) {
     $operation = 'enable';
     $language_code = $this->randomMachineName();
-    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account = $this->getMock(AccountInterface::class);
     $map = [
       ['payment.payment_method_configuration.update.any', $has_update_permission],
       ['payment.payment_method_configuration.update.own', FALSE],
@@ -218,7 +223,7 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
   public function testCheckAccessDisable($expected, $payment_method_configuration_status, $has_update_permission) {
     $operation = 'disable';
     $language_code = $this->randomMachineName();
-    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account = $this->getMock(AccountInterface::class);
     $map = [
       ['payment.payment_method_configuration.update.any', $has_update_permission],
       ['payment.payment_method_configuration.update.own', FALSE],
@@ -262,7 +267,7 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
     $operation = 'duplicate';
     $language_code = $this->randomMachineName();
     $bundle = $this->randomMachineName();
-    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account = $this->getMock(AccountInterface::class);
     $map = [
       ['payment.payment_method_configuration.create.' . $bundle, $has_create_permission],
       ['payment.payment_method_configuration.view.any', $has_view_permission],
@@ -305,7 +310,7 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
   public function testCheckCreateAccess() {
     $bundle = $this->randomMachineName();
     $context = [];
-    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account = $this->getMock(AccountInterface::class);
     $account->expects($this->once())
       ->method('hasPermission')
       ->with('payment.payment_method_configuration.create.' . $bundle)
@@ -321,7 +326,7 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
    * @covers ::getCache
    */
   public function testGetCache() {
-    $account = $this->getMock('\Drupal\Core\Session\AccountInterface');
+    $account = $this->getMock(AccountInterface::class);
     $cache_id = $this->randomMachineName();
     $operation = $this->randomMachineName();
     $language_code = $this->randomMachineName();
