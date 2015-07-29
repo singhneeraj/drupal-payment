@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @group Payment
  */
-class sut extends UnitTestCase {
+class BasicTest extends UnitTestCase {
 
   /**
    * The database connection.
@@ -68,7 +68,7 @@ class sut extends UnitTestCase {
     );
     $container->expects($this->any())
       ->method('get')
-      ->willReturnMap($map));
+      ->willReturnMap($map);
 
     $configuration = [];
     $plugin_definition = [];
