@@ -15,7 +15,7 @@ use Drupal\payment\Plugin\Payment\PaymentAwarePluginManagerDecorator;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * @coversDefaultClass \Drupal\payment\Plugin\Payment\PaymentAwarePluginFilteredPluginManager
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\PaymentAwarePluginManagerDecorator
  *
  * @group Payment
  */
