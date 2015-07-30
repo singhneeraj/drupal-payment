@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\payment\Unit\Plugin\Payment\Method\FilteredPaymentMethodManagerTest.
+ * Contains \Drupal\Tests\payment\Unit\Plugin\Payment\Method\PaymentExecutionPaymentMethodManagerTest.
  */
 
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\Method;
@@ -10,18 +10,18 @@ namespace Drupal\Tests\payment\Unit\Plugin\Payment\Method;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Plugin\Payment\Method\FilteredPaymentMethodManager;
+use Drupal\payment\Plugin\Payment\Method\PaymentExecutionPaymentMethodManager;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Drupal\plugin\PluginOperationsProviderInterface;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\FilteredPaymentMethodManager
+ * @coversDefaultClass \Drupal\payment\Plugin\Payment\Method\PaymentExecutionPaymentMethodManager
  *
  * @group Payment
  */
-class FilteredPaymentMethodManagerTest extends UnitTestCase {
+class PaymentExecutionPaymentMethodManagerTest extends UnitTestCase {
 
   /**
    * The account.
@@ -47,7 +47,7 @@ class FilteredPaymentMethodManagerTest extends UnitTestCase {
   /**
    * The class under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\Method\FilteredPaymentMethodManager
+   * @var \Drupal\payment\Plugin\Payment\Method\PaymentExecutionPaymentMethodManager
    */
   protected $sut;
 
@@ -61,20 +61,20 @@ class FilteredPaymentMethodManagerTest extends UnitTestCase {
 
     $this->paymentMethodManager = $this->getMock(PaymentMethodManagerInterface::class);
 
-    $this->sut = new FilteredPaymentMethodManager($this->paymentMethodManager, $this->payment, $this->account);
+    $this->sut = new PaymentExecutionPaymentMethodManager($this->payment, $this->account, $this->paymentMethodManager);
   }
 
   /**
    * @covers ::__construct
    */
   public function testConstruct() {
-    $this->sut = new FilteredPaymentMethodManager($this->paymentMethodManager, $this->payment, $this->account);
+    $this->sut = new PaymentExecutionPaymentMethodManager($this->payment, $this->account, $this->paymentMethodManager);
   }
 
   /**
-   * @covers ::filterDefinition
+   * @covers ::processDecoratedDefinitions
    */
-  public function testFilterDefinition() {
+  public function testProcessDecoratedDefinitions() {
     $payment_method_id_a = $this->randomMachineName();
     $payment_method_a = $this->getMock(PaymentMethodInterface::class);
     $payment_method_a->expects($this->atLeastOnce())

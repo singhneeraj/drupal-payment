@@ -13,8 +13,9 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\payment\Plugin\Payment\Method\FilteredPaymentMethodManager;
+use Drupal\payment\Plugin\Payment\Method\PaymentExecutionPaymentMethodManager;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
+use Drupal\plugin\PluginDiscovery\LimitedPluginDiscoveryDecorator;
 use Drupal\plugin\PluginTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -121,7 +122,7 @@ class PaymentForm extends ContentEntityForm {
       'submit' => $actions['submit'],
     ];
     $actions['submit']['#value'] = $this->t('Pay');
-    $payment_method_manager = new FilteredPaymentMethodManager($this->paymentMethodType->getPluginManager(), $this->getEntity(), $this->currentUser);
+    $payment_method_manager = new PaymentExecutionPaymentMethodManager($this->getEntity(), $this->currentUser, $this->paymentMethodType->getPluginManager());
     $actions['submit']['#disabled'] = count($payment_method_manager->getDefinitions()) == 0;
 
     return $actions;
@@ -153,10 +154,11 @@ class PaymentForm extends ContentEntityForm {
       $limit_allowed_plugins = $config->get('limit_allowed_plugins');
       $allowed_plugin_ids = $config->get('allowed_plugin_ids');
       $plugin_selector = $this->pluginSelectorManager->createInstance($plugin_selector_id);
-      $payment_method_manager = new FilteredPaymentMethodManager($this->paymentMethodType->getPluginManager(), $this->getEntity(), $this->currentUser);
+      $payment_method_discovery = new LimitedPluginDiscoveryDecorator($this->paymentMethodType->getPluginManager());
       if ($limit_allowed_plugins) {
-        $payment_method_manager->setPluginIdFilter($allowed_plugin_ids);
+        $payment_method_discovery->setDiscoveryLimit($allowed_plugin_ids);
       }
+      $payment_method_manager = new PaymentExecutionPaymentMethodManager($this->getEntity(), $this->currentUser, $this->paymentMethodType->getPluginManager(), $payment_method_discovery);
       $plugin_selector->setSelectablePluginType($this->paymentMethodType, $payment_method_manager);
       $plugin_selector->setRequired();
       $plugin_selector->setLabel($this->t('Payment method'));

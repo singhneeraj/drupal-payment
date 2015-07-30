@@ -13,9 +13,9 @@ use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodUpdatePaymentStatusInterface;
-use Drupal\payment\Plugin\Payment\PaymentAwarePluginFilteredPluginManager;
-use Drupal\plugin\Plugin\DefaultPluginDefinitionMapper;
+use Drupal\payment\Plugin\Payment\PaymentAwarePluginManagerDecorator;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
+use Drupal\plugin\PluginDiscovery\LimitedPluginDiscoveryDecorator;
 use Drupal\plugin\PluginTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -123,12 +123,12 @@ class PaymentStatusForm extends EntityForm {
 
       $plugin_type = $this->pluginTypeManager->getPluginType('payment_method');
 
-      $mapper = new DefaultPluginDefinitionMapper();
-      $payment_status_manager = new PaymentAwarePluginFilteredPluginManager($plugin_type->getPluginManager(), $mapper, $payment);
       $payment_method = $payment->getPaymentMethod();
+      $payment_status_discovery = new LimitedPluginDiscoveryDecorator($plugin_type->getPluginManager());
       if ($payment_method instanceof PaymentMethodUpdatePaymentStatusInterface) {
-        $payment_status_manager->setPluginIdFilter($payment_method->getSettablePaymentStatuses($this->currentUser, $payment));
+        $payment_status_discovery->setDiscoveryLimit($payment_method->getSettablePaymentStatuses($this->currentUser, $payment));
       }
+      $payment_status_manager = new PaymentAwarePluginManagerDecorator($payment, $plugin_type->getPluginManager(), $payment_status_discovery);
 
       $plugin_selector = $this->pluginSelectorManager->createInstance('payment_select_list');
       $plugin_selector->setSelectablePluginType($plugin_type, $payment_status_manager);

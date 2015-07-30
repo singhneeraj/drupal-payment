@@ -28,8 +28,9 @@ use Drupal\Core\Utility\LinkGeneratorInterface;
 use Drupal\currency\FormElementCallbackTrait;
 use Drupal\payment\Entity\Payment;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Plugin\Payment\Method\FilteredPaymentMethodManager;
+use Drupal\payment\Plugin\Payment\Method\PaymentExecutionPaymentMethodManager;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
+use Drupal\plugin\PluginDiscovery\LimitedPluginDiscoveryDecorator;
 use Drupal\plugin\PluginTypeInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -540,12 +541,13 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     $key = 'payment_reference.element.payment_reference.plugin_selector.' . $element['#name'];
     if (!$form_state->has($key)) {
       $plugin_selector = $this->pluginSelectorManager->createInstance($element['#plugin_selector_id']);
-      $payment_method_manager = new FilteredPaymentMethodManager($this->paymentMethodType->getPluginManager(), $this->getPayment($element, $form_state), $this->currentUser);
+      $payment_method_discovery = $this->paymentMethodType->getPluginManager();
+      if (!is_null($element['#limit_allowed_plugin_ids'])) {
+        $payment_method_discovery = (new LimitedPluginDiscoveryDecorator($payment_method_discovery))->setDiscoveryLimit($element['#limit_allowed_plugin_ids']);
+      }
+      $payment_method_manager = new PaymentExecutionPaymentMethodManager($this->getPayment($element, $form_state), $this->currentUser, $this->paymentMethodType->getPluginManager(), $payment_method_discovery);
       $plugin_selector->setSelectablePluginType($this->paymentMethodType, $payment_method_manager);
       $plugin_selector->setRequired($element['#required']);
-      if (!is_null($element['#limit_allowed_plugin_ids'])) {
-        $payment_method_manager->setPluginIdFilter($element['#limit_allowed_plugin_ids']);
-      }
 
       $form_state->set($key, $plugin_selector);
     }

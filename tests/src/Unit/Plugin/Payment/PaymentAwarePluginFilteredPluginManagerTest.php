@@ -11,8 +11,7 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\PaymentAwareInterface;
-use Drupal\payment\Plugin\Payment\PaymentAwarePluginFilteredPluginManager;
-use Drupal\plugin\Plugin\PluginDefinitionMapperInterface;
+use Drupal\payment\Plugin\Payment\PaymentAwarePluginManagerDecorator;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -30,13 +29,6 @@ class PaymentAwarePluginFilteredPluginManagerTest extends UnitTestCase {
   protected $payment;
 
   /**
-   * The plugin definition mapper.
-   *
-   * @var \Drupal\plugin\Plugin\PluginDefinitionMapperInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $pluginDefinitionMapper;
-
-  /**
    * The original plugin manager.
    *
    * @var \Drupal\Component\Plugin\PluginManagerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -46,25 +38,23 @@ class PaymentAwarePluginFilteredPluginManagerTest extends UnitTestCase {
   /**
    * The class under test.
    *
-   * @var \Drupal\payment\Plugin\Payment\PaymentAwarePluginFilteredPluginManager
+   * @var \Drupal\payment\Plugin\Payment\PaymentAwarePluginManagerDecorator
    */
   protected $sut;
 
   public function setUp() {
     $this->payment = $this->getMock(PaymentInterface::class);
 
-    $this->pluginDefinitionMapper = $this->getMock(PluginDefinitionMapperInterface::class);
-
     $this->pluginManager = $this->getMock(PluginManagerInterface::class);
 
-    $this->sut = new PaymentAwarePluginFilteredPluginManager($this->pluginManager, $this->pluginDefinitionMapper, $this->payment);
+    $this->sut = new PaymentAwarePluginManagerDecorator($this->payment, $this->pluginManager);
   }
 
   /**
    * @covers ::__construct
    */
   public function testConstruct() {
-    $this->sut = new PaymentAwarePluginFilteredPluginManager($this->pluginManager, $this->pluginDefinitionMapper, $this->payment);
+    $this->sut = new PaymentAwarePluginManagerDecorator($this->payment, $this->pluginManager);
   }
 
   /**

@@ -26,6 +26,7 @@ use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
 use Drupal\plugin\PluginType;
 use Drupal\plugin\PluginTypeManagerInterface;
+use Drupal\Tests\payment\Unit\PHPUnitStubMap;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -329,10 +330,10 @@ class PaymentFormTest extends UnitTestCase {
       ->willReturn(AccessResult::forbidden());
 
     $plugin_definitions = [
-      [
+      $plugin_id_a => [
         'id' => $plugin_id_a,
       ],
-      [
+      $plugin_id_b => [
         'id' => $plugin_id_b,
       ],
     ];
