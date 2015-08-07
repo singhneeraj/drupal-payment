@@ -197,6 +197,7 @@ class PaymentFormTest extends UnitTestCase {
   /**
    * @covers ::form
    * @covers ::getPluginSelector
+   * @covers ::getPaymentMethodManager
    */
   public function testForm() {
     $plugin_selector_build = [
@@ -239,6 +240,7 @@ class PaymentFormTest extends UnitTestCase {
   /**
    * @covers ::validateForm
    * @covers ::getPluginSelector
+   * @covers ::getPaymentMethodManager
    */
   public function testValidateForm() {
     $form = [
@@ -263,6 +265,7 @@ class PaymentFormTest extends UnitTestCase {
   /**
    * @covers ::submitForm
    * @covers ::getPluginSelector
+   * @covers ::getPaymentMethodManager
    */
   public function testSubmitForm() {
     $redirect_url = new Url($this->randomMachineName());
@@ -309,13 +312,14 @@ class PaymentFormTest extends UnitTestCase {
 
   /**
    * @covers ::actions
+   * @covers ::getPaymentMethodManager
    */
   public function testActionsWithAvailablePlugins() {
     $form = [];
     $form_state = new FormState();
     $form_state->set('plugin_selector', $this->pluginSelector);
 
-    $plugin_id_a = $this->randomMachineName();
+    $plugin_id_a = reset($this->configFactoryConfiguration['payment_form.payment_type']['allowed_plugin_ids']);
     $plugin_id_b = $this->randomMachineName();
 
     $plugin_a = $this->getMock(PaymentMethodInterface::class);
@@ -323,11 +327,6 @@ class PaymentFormTest extends UnitTestCase {
       ->method('executePaymentAccess')
       ->with($this->currentUser)
       ->willReturn(AccessResult::allowed());
-    $plugin_b = $this->getMock(PaymentMethodInterface::class);
-    $plugin_b->expects($this->atLeastOnce())
-      ->method('executePaymentAccess')
-      ->with($this->currentUser)
-      ->willReturn(AccessResult::forbidden());
 
     $plugin_definitions = [
       $plugin_id_a => [
@@ -341,13 +340,12 @@ class PaymentFormTest extends UnitTestCase {
     $this->paymentMethodManager->expects($this->atLeastOnce())
       ->method('getDefinitions')
       ->willReturn($plugin_definitions);
-    $map = [
-      [$plugin_id_a, [], $plugin_a],
-      [$plugin_id_b, [], $plugin_b],
-    ];
-    $this->paymentMethodManager->expects($this->atLeast(count($plugin_definitions)))
+    $this->paymentMethodManager->expects($this->once())
       ->method('createInstance')
-      ->willReturnMap($map);
+      ->with($plugin_id_a)
+      ->willReturn($plugin_a);
+
+    $this->configFactory = $this->getConfigFactoryStub($this->configFactoryConfiguration);
 
     $method = new \ReflectionMethod($this->sut, 'actions');
     $method->setAccessible(TRUE);
@@ -357,6 +355,7 @@ class PaymentFormTest extends UnitTestCase {
 
   /**
    * @covers ::actions
+   * @covers ::getPaymentMethodManager
    */
   public function testActionsWithoutAvailablePlugins() {
     $form = [];

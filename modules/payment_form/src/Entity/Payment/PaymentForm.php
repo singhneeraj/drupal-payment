@@ -122,8 +122,7 @@ class PaymentForm extends ContentEntityForm {
       'submit' => $actions['submit'],
     ];
     $actions['submit']['#value'] = $this->t('Pay');
-    $payment_method_manager = new PaymentExecutionPaymentMethodManager($this->getEntity(), $this->currentUser, $this->paymentMethodType->getPluginManager());
-    $actions['submit']['#disabled'] = count($payment_method_manager->getDefinitions()) == 0;
+    $actions['submit']['#disabled'] = count($this->getPaymentMethodManager()->getDefinitions()) == 0;
 
     return $actions;
   }
@@ -151,21 +150,33 @@ class PaymentForm extends ContentEntityForm {
     else {
       $config = $this->config('payment_form.payment_type');
       $plugin_selector_id = $config->get('plugin_selector_id');
-      $limit_allowed_plugins = $config->get('limit_allowed_plugins');
-      $allowed_plugin_ids = $config->get('allowed_plugin_ids');
       $plugin_selector = $this->pluginSelectorManager->createInstance($plugin_selector_id);
-      $payment_method_discovery = new LimitedPluginDiscoveryDecorator($this->paymentMethodType->getPluginManager());
-      if ($limit_allowed_plugins) {
-        $payment_method_discovery->setDiscoveryLimit($allowed_plugin_ids);
-      }
-      $payment_method_manager = new PaymentExecutionPaymentMethodManager($this->getEntity(), $this->currentUser, $this->paymentMethodType->getPluginManager(), $payment_method_discovery);
-      $plugin_selector->setSelectablePluginType($this->paymentMethodType, $payment_method_manager);
+      $plugin_selector->setSelectablePluginType($this->paymentMethodType, $this->getPaymentMethodManager());
       $plugin_selector->setRequired();
       $plugin_selector->setLabel($this->t('Payment method'));
       $form_state->set('plugin_selector', $plugin_selector);
     }
 
     return $plugin_selector;
+  }
+
+  /**
+   * Gets the payment method manager.
+   *
+   * @return \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface
+   */
+  protected function getPaymentMethodManager() {
+    $config = $this->config('payment_form.payment_type');
+    $limit_allowed_plugins = $config->get('limit_allowed_plugins');
+    $payment_method_discovery = $this->paymentMethodType->getPluginManager();
+    if ($limit_allowed_plugins) {
+      $allowed_plugin_ids = $config->get('allowed_plugin_ids');
+      $payment_method_discovery = new LimitedPluginDiscoveryDecorator($payment_method_discovery);
+      $payment_method_discovery->setDiscoveryLimit($allowed_plugin_ids);
+    }
+    $payment_method_manager = new PaymentExecutionPaymentMethodManager($this->getEntity(), $this->currentUser, $this->paymentMethodType->getPluginManager(), $payment_method_discovery);
+
+    return $payment_method_manager;
   }
 
 }
