@@ -1,5 +1,6 @@
 payment_reference.payment_type:
   label: Payment Reference configuration
+  type: config_object
   mapping:
     allowed_plugin_ids:
       label: Allowed payment method plugin IDs
@@ -16,7 +17,6 @@ payment_reference.payment_type:
     plugin_selector_configuration:
       label: Plugin selector configuration
       type: plugin.plugin_configuration.selector.[%parent.plugin_selector_id]
-  type: mapping
 
 plugin.plugin_configuration.payment_type.payment_reference:
   label: Payment Reference payment type configuration
