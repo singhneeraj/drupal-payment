@@ -19,7 +19,7 @@ class PaymentTypeWebTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('field_ui', 'payment_test');
+  public static $modules = array('field_ui', 'payment', 'payment_test');
 
   /**
    * Tests administrative overview.
