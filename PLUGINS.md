@@ -20,6 +20,8 @@ for this configuration of which the type is
 `plugin.plugin_configuration.payment_method.[plugin_id]`, where `[plugin_id]` 
 is the plugin's ID.
 
+Plugin definitions are cached using the `payment_method` tag.
+
 See the [drupal.org handbook](https://www.drupal.org/node/1905070) for more 
 information about configuration schemas.
 

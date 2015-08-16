@@ -25,6 +25,7 @@ use Drupal\payment\PaymentAwareInterface;
  *   statuses, and if so, which statuses can be set.
  * - \Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface:
  *   This interface lets payment methods capture already authorized payments.
+ * - \Drupal\Core\Cache\CacheableDependencyInterface
  */
 interface PaymentMethodInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PaymentAwareInterface {
 

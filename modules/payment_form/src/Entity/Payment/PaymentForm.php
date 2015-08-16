@@ -151,7 +151,9 @@ class PaymentForm extends ContentEntityForm {
       $config = $this->config('payment_form.payment_type');
       $plugin_selector_id = $config->get('plugin_selector_id');
       $plugin_selector = $this->pluginSelectorManager->createInstance($plugin_selector_id);
-      $plugin_selector->setSelectablePluginType($this->paymentMethodType, $this->getPaymentMethodManager());
+      $plugin_selector->setSelectablePluginType($this->paymentMethodType);
+      $plugin_selector->setSelectablePluginDiscovery($this->getPaymentMethodManager());
+      $plugin_selector->setSelectablePluginFactory($this->getPaymentMethodManager());
       $plugin_selector->setRequired();
       $plugin_selector->setLabel($this->t('Payment method'));
       $form_state->set('plugin_selector', $plugin_selector);

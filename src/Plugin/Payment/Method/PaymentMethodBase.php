@@ -7,6 +7,8 @@
 namespace Drupal\payment\Plugin\Payment\Method;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -29,7 +31,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   form.
  * - message_text_format: The ID of the text format to format message_text with.
  */
-abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentMethodInterface, PaymentMethodCapturePaymentInterface, PaymentMethodRefundPaymentInterface, PluginFormInterface {
+abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentMethodInterface, PaymentMethodCapturePaymentInterface, PaymentMethodRefundPaymentInterface, PluginFormInterface, CacheableDependencyInterface {
 
   use PaymentAwareTrait;
 
@@ -86,6 +88,29 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static($configuration, $plugin_id, $plugin_definition, $container->get('module_handler'), $container->get('payment.event_dispatcher'), $container->get('token'), $container->get('plugin.manager.payment.status'));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheContexts() {
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheTags() {
+    // The default payment method manager caches definitions using the
+    // "payment_method" tag.
+    return ['payment_method'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheMaxAge() {
+    return Cache::PERMANENT;
   }
 
   /**
@@ -184,7 +209,8 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
       ->andIf($this->executePaymentAccessCurrency($account))
       ->andIf($this->eventDispatcher->executePaymentAccess($this->getPayment(), $this, $account))
       ->andIf($this->doExecutePaymentAccess($account))
-      ->addCacheableDependency($this->getPayment());
+      ->addCacheableDependency($this->getPayment())
+      ->addCacheTags(['payment_method']);
   }
 
   /**

@@ -39,7 +39,7 @@ class PaymentMethodManager extends DefaultPluginManager implements PaymentMethod
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, ClassResolverInterface $class_resolver) {
     parent::__construct('Plugin/Payment/Method', $namespaces, $module_handler, PaymentMethodInterface::class, PaymentMethod::class);
     $this->alterInfo('payment_method');
-    $this->setCacheBackend($cache_backend, 'payment_method');
+    $this->setCacheBackend($cache_backend, 'payment_method', ['payment_method']);
     $this->classResolver = $class_resolver;
   }
 
