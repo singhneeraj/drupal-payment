@@ -546,7 +546,9 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
         $payment_method_discovery = (new LimitedPluginDiscoveryDecorator($payment_method_discovery))->setDiscoveryLimit($element['#limit_allowed_plugin_ids']);
       }
       $payment_method_manager = new PaymentExecutionPaymentMethodManager($this->getPayment($element, $form_state), $this->currentUser, $this->paymentMethodType->getPluginManager(), $payment_method_discovery);
-      $plugin_selector->setSelectablePluginType($this->paymentMethodType, $payment_method_manager);
+      $plugin_selector->setSelectablePluginType($this->paymentMethodType);
+      $plugin_selector->setSelectablePluginDiscovery($payment_method_manager);
+      $plugin_selector->setSelectablePluginFactory($payment_method_manager);
       $plugin_selector->setRequired($element['#required']);
 
       $form_state->set($key, $plugin_selector);
