@@ -39,7 +39,7 @@ class PaymentTypeManager extends DefaultPluginManager implements PaymentTypeMana
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, ClassResolverInterface $class_resolver) {
     parent::__construct('Plugin/Payment/Type', $namespaces, $module_handler, PaymentTypeInterface::class, PaymentType::class);
     $this->alterInfo('payment_type');
-    $this->setCacheBackend($cache_backend, 'payment_type');
+    $this->setCacheBackend($cache_backend, 'payment_type', ['payment_type']);
     $this->classResolver = $class_resolver;
   }
 

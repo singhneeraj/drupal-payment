@@ -50,6 +50,8 @@ for this configuration of which the type is
 `plugin.plugin_configuration.payment_method_configuration.[plugin_id]`, where
 `[plugin_id]` is the plugin's ID.
 
+Plugin definitions are cached using the `payment_method_configuration` tag.
+
 See the [drupal.org handbook](https://www.drupal.org/node/1905070) for more 
 information about configuration schemas.
 
@@ -74,6 +76,8 @@ If a plugin provides configuration, it must also provide a configuration schema
 for this configuration of which the type is
 `plugin.plugin_configuration.payment_method_type.[plugin_id]`, where 
 `[plugin_id]` is the plugin's ID.
+
+Plugin definitions are cached using the `payment_type` tag.
 
 See the [drupal.org handbook](https://www.drupal.org/node/1905070) for more 
 information about configuration schemas.
@@ -109,6 +113,8 @@ for this configuration of which the type is
 `plugin.plugin_configuration.payment_method_status.[plugin_id]`, where
 `[plugin_id]` is the plugin's ID.
 
+Plugin definitions are cached using the `payment_status` tag.
+
 See the [drupal.org handbook](https://www.drupal.org/node/1905070) for more 
 information about configuration schemas.
 
@@ -134,6 +140,8 @@ If a plugin provides configuration, it must also provide a configuration schema
 for this configuration of which the type is
 `plugin.plugin_configuration.payment_method_line_item.[plugin_id]`, where
 `[plugin_id]` is the plugin's ID.
+
+Plugin definitions are cached using the `payment_line_item` tag.
 
 See the [drupal.org handbook](https://www.drupal.org/node/1905070) for more 
 information about configuration schemas.

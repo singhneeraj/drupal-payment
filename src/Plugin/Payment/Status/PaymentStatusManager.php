@@ -68,7 +68,7 @@ class PaymentStatusManager extends DefaultPluginManager implements PaymentStatus
    */
   public function __construct(CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, ClassResolverInterface $class_resolver, TranslationInterface $string_translation) {
     $this->alterInfo('payment_status');
-    $this->setCacheBackend($cache_backend, 'payment_status');
+    $this->setCacheBackend($cache_backend, 'payment_status', ['payment_status']);
     $this->classResolver = $class_resolver;
     $this->discovery = new YamlDiscovery('payment.status', $module_handler->getModuleDirectories());
     $this->discovery = new ContainerDerivativeDiscoveryDecorator($this->discovery);

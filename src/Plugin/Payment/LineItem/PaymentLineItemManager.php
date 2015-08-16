@@ -31,7 +31,7 @@ class PaymentLineItemManager extends DefaultPluginManager implements PaymentLine
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
     parent::__construct('Plugin/Payment/LineItem', $namespaces, $module_handler, PaymentLineItemInterface::class, PaymentLineItem::class);
     $this->alterInfo('payment_line_item');
-    $this->setCacheBackend($cache_backend, 'payment_line_item');
+    $this->setCacheBackend($cache_backend, 'payment_line_item', ['payment_line_item']);
   }
 
 }
