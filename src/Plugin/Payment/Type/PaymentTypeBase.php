@@ -6,6 +6,7 @@
 
 namespace Drupal\payment\Plugin\Payment\Type;
 
+use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\payment\EventDispatcherInterface;
@@ -15,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Defines base payment type.
  */
-abstract class PaymentTypeBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentTypeInterface {
+abstract class PaymentTypeBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentTypeInterface, ConfigurablePluginInterface {
 
   use PaymentAwareTrait;
 

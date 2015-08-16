@@ -6,6 +6,7 @@
 
 namespace Drupal\payment\Plugin\Payment\Status;
 
+use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -22,7 +23,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Plugins extending this class should provide a configuration schema that
  * extends plugin.plugin_configuration.payment_status.payment_base.
  */
-abstract class PaymentStatusBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentStatusInterface, PluginFormInterface {
+abstract class PaymentStatusBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentStatusInterface, PluginFormInterface, ConfigurablePluginInterface {
 
   use PaymentAwareTrait;
 

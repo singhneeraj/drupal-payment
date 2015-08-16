@@ -6,6 +6,7 @@
 
 namespace Drupal\payment\Plugin\Payment\Method;
 
+use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableDependencyInterface;
@@ -31,7 +32,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   form.
  * - message_text_format: The ID of the text format to format message_text with.
  */
-abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentMethodInterface, PaymentMethodCapturePaymentInterface, PaymentMethodRefundPaymentInterface, PluginFormInterface, CacheableDependencyInterface {
+abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryPluginInterface, PaymentMethodInterface, PaymentMethodCapturePaymentInterface, PaymentMethodRefundPaymentInterface, PluginFormInterface, CacheableDependencyInterface, ConfigurablePluginInterface {
 
   use PaymentAwareTrait;
 

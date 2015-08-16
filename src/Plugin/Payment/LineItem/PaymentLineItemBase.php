@@ -6,6 +6,7 @@
 
 namespace Drupal\payment\Plugin\Payment\LineItem;
 
+use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\payment\PaymentAwareTrait;
@@ -16,7 +17,7 @@ use Drupal\payment\PaymentAwareTrait;
  * Plugins extending this class should provide a configuration schema that
  * extends plugin.plugin_configuration.line_item.payment_base.
  */
-abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItemInterface {
+abstract class PaymentLineItemBase extends PluginBase implements PaymentLineItemInterface, ConfigurablePluginInterface {
 
   use PaymentAwareTrait;
 

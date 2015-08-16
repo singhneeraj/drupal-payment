@@ -6,7 +6,6 @@
 
 namespace Drupal\payment\Plugin\Payment\Method;
 
-use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\PaymentAwareInterface;
@@ -26,8 +25,11 @@ use Drupal\payment\PaymentAwareInterface;
  * - \Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface:
  *   This interface lets payment methods capture already authorized payments.
  * - \Drupal\Core\Cache\CacheableDependencyInterface
+ * - \Drupal\Component\Plugin\ConfigurablePluginInterface
+ *   Required if the plugin has any internal configuration, so it can be
+ *   exported for recreation of the plugin at a later time.
  */
-interface PaymentMethodInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PaymentAwareInterface {
+interface PaymentMethodInterface extends PluginInspectionInterface, PaymentAwareInterface {
 
   /**
    * Checks if the payment can be executed.

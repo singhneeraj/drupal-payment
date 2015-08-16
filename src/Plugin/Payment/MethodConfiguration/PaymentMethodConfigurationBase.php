@@ -6,6 +6,7 @@
 
 namespace Drupal\payment\Plugin\Payment\MethodConfiguration;
 
+use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -20,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * extends
  * plugin.plugin_configuration.payment_method_configuration.payment_base.
  */
-abstract class PaymentMethodConfigurationBase extends PluginBase implements PaymentMethodConfigurationInterface {
+abstract class PaymentMethodConfigurationBase extends PluginBase implements PaymentMethodConfigurationInterface, ConfigurablePluginInterface {
 
   /**
    * The module handler.

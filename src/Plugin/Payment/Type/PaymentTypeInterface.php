@@ -13,8 +13,13 @@ use Drupal\payment\PaymentAwareInterface;
 
 /**
  * A payment type plugin.
+ *
+ * Plugins can additionally implement the following interfaces:
+ * - \Drupal\Component\Plugin\ConfigurablePluginInterface
+ *   Required if the plugin has any internal configuration, so it can be
+ *   exported for recreation of the plugin at a later time.
  */
-interface PaymentTypeInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PaymentAwareInterface {
+interface PaymentTypeInterface extends PluginInspectionInterface, PaymentAwareInterface {
 
   /**
    * Returns the description of the payment this plugin is of.

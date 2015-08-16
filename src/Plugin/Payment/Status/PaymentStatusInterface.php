@@ -6,7 +6,6 @@
 
 namespace Drupal\payment\Plugin\Payment\Status;
 
-use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\payment\PaymentAwareInterface;
 
@@ -15,8 +14,11 @@ use Drupal\payment\PaymentAwareInterface;
  *
  * Plugins can additionally implement the following interfaces:
  * - \Drupal\Core\Plugin\PluginFormInterface
+ * - \Drupal\Component\Plugin\ConfigurablePluginInterface
+ *   Required if the plugin has any internal configuration, so it can be
+ *   exported for recreation of the plugin at a later time.
  */
-interface PaymentStatusInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PaymentAwareInterface {
+interface PaymentStatusInterface extends PluginInspectionInterface, PaymentAwareInterface {
 
   /**
    * Sets the created date and time.

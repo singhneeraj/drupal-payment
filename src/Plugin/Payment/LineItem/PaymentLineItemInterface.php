@@ -6,15 +6,19 @@
 
 namespace Drupal\payment\Plugin\Payment\LineItem;
 
-use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\payment\PaymentAwareInterface;
 
 /**
  * A payment line item.
+ *
+ * Plugins can additionally implement the following interfaces:
+ * - \Drupal\Component\Plugin\ConfigurablePluginInterface
+ *   Required if the plugin has any internal configuration, so it can be
+ *   exported for recreation of the plugin at a later time.
  */
-interface PaymentLineItemInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface, PaymentAwareInterface {
+interface PaymentLineItemInterface extends PluginInspectionInterface, PluginFormInterface, PaymentAwareInterface {
 
   /**
    * Gets the amount.
