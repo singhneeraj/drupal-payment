@@ -37,13 +37,6 @@ class PaymentForm extends PaymentTypeBase implements ContainerFactoryPluginInter
   protected $entityManager;
 
   /**
-   * The HTTP kernel.
-   *
-   * @var \Drupal\Core\HttpKernel
-   */
-  protected $httpKernel;
-
-  /**
    * Constructs a new instance.
    *
    * @param mixed[] $configuration
