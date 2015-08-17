@@ -9,7 +9,7 @@ namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
-use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
+use Drupal\payment\LineItemCollectionInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface as PluginPaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface as PluginPaymentStatusInterface;
 use Drupal\user\EntityOwnerInterface;
@@ -17,7 +17,7 @@ use Drupal\user\EntityOwnerInterface;
 /**
  * Defines a payment entity type .
  */
-interface PaymentInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
+interface PaymentInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface, LineItemCollectionInterface {
 
   /**
    * Executes the payment.
@@ -39,84 +39,6 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
    * @return \Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface
    */
   public function getPaymentType();
-
-  /**
-   * Gets the currency of the payment amount.
-   *
-   * @return \Drupal\currency\Entity\CurrencyInterface
-   */
-  public function getCurrency();
-
-  /**
-   * Sets the ISO 4217 currency code of the payment amount.
-   *
-   * @param string $currency_code
-   *
-   * @return \Drupal\payment\Entity\PaymentInterface
-   */
-  public function setCurrencyCode($currency_code);
-
-  /**
-   * Gets the ISO 4217 currency code of the payment amount.
-   *
-   * @return string
-   */
-  public function getCurrencyCode();
-
-  /**
-   * Sets line items.
-   *
-   * @param \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[] $line_items
-   *
-   * @return \Drupal\payment\Entity\PaymentInterface
-   */
-  public function setLineItems(array $line_items);
-
-  /**
-   * Sets a line item.
-   *
-   * @param \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface $line_item
-   *
-   * @return \Drupal\payment\Entity\PaymentInterface
-   */
-  public function setLineItem(PaymentLineItemInterface $line_item);
-
-  /**
-   * Unsets a line item.
-   *
-   * @param string $name
-   *   The line item's name.
-   *
-   * @return static
-   */
-  public function unsetLineItem($name);
-
-  /**
-   * Gets all line items.
-   *
-   * @return \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[]
-   */
-  public function getLineItems();
-
-  /**
-   * Gets a line item.
-   *
-   * @param string $name
-   *   The line item's machine name.
-   *
-   * @return \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface
-   */
-  public function getLineItem($name);
-
-  /**
-   * Gets line items by plugin type.
-   *
-   * @param string $plugin_id
-   *   The line item plugin's ID.
-   *
-   * @return \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface[]
-   */
-  public function getLineItemsByType($plugin_id);
 
   /**
    * Sets/replaces all statuses without notifications.
@@ -168,10 +90,9 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
   public function setPaymentMethod(PluginPaymentMethodInterface $payment_method);
 
   /**
-   * Gets the payment amount.
+   * Gets the line items' currency.
    *
-   * @return float|int|string
-   *   A numeric value.
+   * @return \Drupal\currency\Entity\CurrencyInterface
    */
-  public function getAmount();
+  public function getCurrency();
 }

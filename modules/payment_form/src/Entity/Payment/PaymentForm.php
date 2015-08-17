@@ -81,7 +81,7 @@ class PaymentForm extends ContentEntityForm {
     $payment = $this->getEntity();
 
     $form['line_items'] = [
-      '#payment' => $payment,
+      '#payment_line_items' => $payment,
       '#type' => 'payment_line_items_display',
     ];
     $form['payment_method'] = $this->getPluginSelector($form_state)->buildSelectorForm([], $form_state);

@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
 
+  use Drupal\Component\Plugin\ConfigurablePluginInterface;
   use Drupal\Core\Entity\EntityManagerInterface;
   use Drupal\Core\Entity\EntityStorageInterface;
   use Drupal\Core\Form\FormState;
@@ -290,7 +291,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
         ->method('id')
         ->willReturn($owner_id);
 
-      $plugin = $this->getMock(PaymentMethodConfigurationInterfacePlugin::class);
+      $plugin = $this->getMock(PaymentMethodConfigurationFormTestPlugin::class);
       $plugin->expects($this->atLeastOnce())
         ->method('getConfiguration')
         ->willReturn($plugin_configuration);
@@ -434,6 +435,13 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
 
       $this->sut->submitForm($form, $form_state);
     }
+
+  }
+
+  /**
+   * Provides a payment method configuration plugin that provides configuration.
+   */
+  interface PaymentMethodConfigurationFormTestPlugin extends PaymentMethodConfigurationInterfacePlugin, ConfigurablePluginInterface {
 
   }
 

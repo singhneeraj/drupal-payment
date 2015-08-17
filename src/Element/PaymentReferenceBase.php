@@ -272,7 +272,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface|null $selected_payment_method */
     $selected_payment_method = $plugin_selector->getSelectedPlugin();
     $build['line_items'] = array(
-      '#payment' => $this->getPayment($element, $form_state),
+      '#payment_line_items' => $this->getPayment($element, $form_state),
       '#type' => 'payment_line_items_display',
     );
     $build['payment_method'] = $plugin_selector->buildSelectorForm([], $form_state);

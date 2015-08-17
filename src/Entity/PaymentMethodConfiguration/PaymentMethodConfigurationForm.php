@@ -7,6 +7,7 @@
 
 namespace Drupal\payment\Entity\PaymentMethodConfiguration;
 
+use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -157,7 +158,7 @@ class PaymentMethodConfigurationForm extends EntityForm {
     $payment_method_configuration->setLabel($values['label']);
     $payment_method_configuration->setStatus($values['status']);
     $payment_method_configuration->setOwnerId($values['owner']);
-    $payment_method_configuration->setPluginConfiguration($payment_method_configuration_plugin->getConfiguration());
+    $payment_method_configuration->setPluginConfiguration($payment_method_configuration_plugin instanceof ConfigurablePluginInterface ? $payment_method_configuration_plugin->getConfiguration() : []);
   }
 
   /**

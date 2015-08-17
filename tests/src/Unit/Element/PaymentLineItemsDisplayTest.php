@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\currency\Entity\CurrencyInterface;
 use Drupal\payment\Element\PaymentLineItemsDisplay;
 use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\LineItemCollectionInterface;
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -100,45 +101,48 @@ class PaymentLineItemsDisplayTest extends UnitTestCase {
    * @covers ::preRender
    */
   public function testPreRender() {
-    $line_item_amount = mt_rand();
-    $line_item_total_amount = mt_rand();
-    $line_item_currency_code = $this->randomMachineName();
-    $line_item = $this->getMock(PaymentLineItemInterface::class);
-    $line_item->expects($this->atLeastOnce())
+    $payment_line_item_amount = mt_rand();
+    $payment_line_item_total_amount = mt_rand();
+    $payment_line_item_currency_code = $this->randomMachineName();
+    $payment_line_item = $this->getMock(PaymentLineItemInterface::class);
+    $payment_line_item->expects($this->atLeastOnce())
       ->method('getAmount')
-      ->willReturn($line_item_amount);
-    $line_item->expects($this->atLeastOnce())
+      ->willReturn($payment_line_item_amount);
+    $payment_line_item->expects($this->atLeastOnce())
       ->method('getCurrencyCode')
-      ->willReturn($line_item_currency_code);
-    $line_item->expects($this->atLeastOnce())
+      ->willReturn($payment_line_item_currency_code);
+    $payment_line_item->expects($this->atLeastOnce())
       ->method('getTotalAmount')
-      ->willReturn($line_item_total_amount);
+      ->willReturn($payment_line_item_total_amount);
 
-    $payment_currency_code = $this->randomMachineName();
-    $payment = $this->getMock(PaymentInterface::class);
-    $payment->expects($this->atLeastOnce())
+    $payment_line_items_currency_code = $this->randomMachineName();
+
+    $payment_line_items = $this->getMock(LineItemCollectionInterface::class);
+    $payment_line_items->expects($this->atLeastOnce())
       ->method('getCurrencyCode')
-      ->willReturn($payment_currency_code);
+      ->willReturn($payment_line_items_currency_code);
+    $payment_line_items->expects($this->atLeastOnce())
+      ->method('getLineItems')
+      ->willReturn([$payment_line_item]);
 
-    $line_item_currency = $this->getMock(CurrencyInterface::class);
-    $line_item_currency->expects($this->exactly(2))
+    $payment_line_item_currency = $this->getMock(CurrencyInterface::class);
+    $payment_line_item_currency->expects($this->exactly(2))
       ->method('formatAmount');
 
-    $payment_currency = $this->getMock(CurrencyInterface::class);
-    $payment_currency->expects($this->once())
+    $payment_line_items_currency = $this->getMock(CurrencyInterface::class);
+    $payment_line_items_currency->expects($this->once())
       ->method('formatAmount');
 
     $map = array(
-      array($line_item_currency_code, $line_item_currency),
-      array($payment_currency_code, $payment_currency),
+      array($payment_line_item_currency_code, $payment_line_item_currency),
+      array($payment_line_items_currency_code, $payment_line_items_currency),
     );
-    $this->currencyStorage->expects($this->exactly(2))
+    $this->currencyStorage->expects($this->atLeast(count($map)))
       ->method('load')
       ->willReturnMap($map);
 
     $element = array(
-      '#payment' => $payment,
-      '#payment_line_items' => [$line_item],
+      '#payment_line_items' => $payment_line_items,
     );
 
     $build = $this->sut->preRender($element);

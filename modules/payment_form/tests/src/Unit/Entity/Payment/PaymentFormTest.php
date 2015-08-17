@@ -232,7 +232,7 @@ class PaymentFormTest extends UnitTestCase {
     $this->sut->form($form, $form_state);
     $this->assertInternalType('array', $build);
     $this->assertArrayHasKey('line_items', $build);
-    $this->assertSame($this->payment, $build['line_items']['#payment']);
+    $this->assertSame($this->payment, $build['line_items']['#payment_line_items']);
     $this->assertArrayHasKey('payment_method', $build);
     $this->assertSame($plugin_selector_build, $build['payment_method']);
   }

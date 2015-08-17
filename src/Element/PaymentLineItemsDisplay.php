@@ -12,8 +12,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\currency\FormElementCallbackTrait;
-use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;
+use Drupal\payment\LineItemCollectionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -67,12 +66,8 @@ class PaymentLineItemsDisplay extends FormElement implements ContainerFactoryPlu
     $plugin_id = $this->getPluginId();
 
     return array(
-      // A \Drupal\payment\Entity\PaymentInterface instance (optional).
-      '#payment' => NULL,
-      // An array with
-      // \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface
-      // instances (required).
-      '#payment_line_items' => [],
+      // A \Drupal\payment\LineItemCollectionInterface instance (required).
+      '#payment_line_items' => NULL,
       '#pre_render' => [[get_class($this), 'instantiate#preRender#' . $plugin_id]],
     );
   }
@@ -83,11 +78,8 @@ class PaymentLineItemsDisplay extends FormElement implements ContainerFactoryPlu
    * @throws \InvalidArgumentException
    */
   public function preRender(array $element) {
-    if (!isset($element['#payment_line_items']) || !is_array($element['#payment_line_items'])) {
-      throw new \InvalidArgumentException('#payment_line_items must be an array of \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface instances.');
-    }
-    if (isset($element['#payment']) && !is_null($element['#payment']) && !($element['#payment'] instanceof PaymentInterface)) {
-      throw new \InvalidArgumentException('#payment must be NULL or implement \Drupal\payment\Entity\PaymentInterface.');
+    if (!isset($element['#payment_line_items']) || !($element['#payment_line_items'] instanceof LineItemCollectionInterface)) {
+      throw new \InvalidArgumentException(sprintf('#payment_line_items must be an instance of %s.', LineItemCollectionInterface::class));
     }
 
     $element['table'] = array(
@@ -96,12 +88,10 @@ class PaymentLineItemsDisplay extends FormElement implements ContainerFactoryPlu
       '#type' => 'table',
     );
 
-    /** @var \Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface $status */
-    foreach ($element['#payment_line_items'] as $delta => $payment_line_item) {
-      if (!$payment_line_item instanceof PaymentLineItemInterface) {
-        $type = is_object($payment_line_item) ? get_class($payment_line_item) : gettype($payment_line_item);
-        throw new \InvalidArgumentException(sprintf('#payment_line_items must be an array of \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface instances, but the array contained %s.', $type));
-      }
+    /** @var \Drupal\payment\LineItemCollectionInterface $payment_line_items */
+    $payment_line_items = $element['#payment_line_items'];
+
+    foreach ($payment_line_items->getLineItems() as $delta => $payment_line_item) {
       /** @var \Drupal\currency\Entity\CurrencyInterface $currency */
       $currency = $this->currencyStorage->load($payment_line_item->getCurrencyCode());
       $element['table']['line_item_' . $payment_line_item->getName()] = array(
@@ -139,29 +129,26 @@ class PaymentLineItemsDisplay extends FormElement implements ContainerFactoryPlu
       );
     }
 
-    if (isset($element['#payment'])) {
-      /** @var \Drupal\payment\Entity\PaymentInterface $payment */
-      $payment = $element['#payment'];
-      $currency = $this->currencyStorage->load($payment->getCurrencyCode());
-      $element['table']['payment_total'] = array(
+    /** @var \Drupal\currency\Entity\CurrencyInterface $payment_line_items_currency */
+    $payment_line_items_currency = $this->currencyStorage->load($payment_line_items->getCurrencyCode());
+    $element['table']['payment_total'] = array(
+      '#attributes' => array(
+        'class' => array('payment-amount'),
+      ),
+      'label' => array(
         '#attributes' => array(
-          'class' => array('payment-amount'),
+          'class' => array('payment-amount-label'),
+          'colspan' => 3,
         ),
-        'label' => array(
-          '#attributes' => array(
-            'class' => array('payment-amount-label'),
-            'colspan' => 3,
-          ),
-          '#markup' => $this->t('Total amount'),
+        '#markup' => $this->t('Total amount'),
+      ),
+      'total' => array(
+        '#attributes' => array(
+          'class' => array('payment-amount-total'),
         ),
-        'total' => array(
-          '#attributes' => array(
-            'class' => array('payment-amount-total'),
-          ),
-          '#markup' => $currency->formatAmount($payment->getAmount()),
-        ),
-      );
-    }
+        '#markup' => $payment_line_items_currency->formatAmount($payment_line_items->getAmount()),
+      ),
+    );
 
     return $element;
   }

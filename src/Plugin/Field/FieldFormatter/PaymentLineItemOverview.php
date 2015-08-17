@@ -9,7 +9,8 @@ namespace Drupal\payment\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
-use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\LineItemCollection;
+use Drupal\payment\LineItemCollectionInterface;
 
 /**
  * A payment line item field formatter.
@@ -28,13 +29,16 @@ class PaymentLineItemOverview extends FormatterBase {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items) {
-    $payment_line_items = [];
+    $payment_line_items = new LineItemCollection();
     /** @var \Drupal\plugin\Plugin\Field\FieldType\PluginCollectionItemInterface $item */
     foreach ($items as $delta => $item) {
-      $payment_line_items[$delta] = $item->getContainedPluginInstance();
+      $payment_line_items->setLineItem($item->getContainedPluginInstance());
+    }
+    $entity = $items->getEntity();
+    if ($entity instanceof LineItemCollectionInterface) {
+      $payment_line_items->setCurrencyCode($entity->getCurrencyCode());
     }
     $build[0] = array(
-      '#payment' => $items->getEntity() instanceof PaymentInterface ? $items->getEntity() : NULL,
       '#payment_line_items' => $payment_line_items,
       '#type' => 'payment_line_items_display',
     );
