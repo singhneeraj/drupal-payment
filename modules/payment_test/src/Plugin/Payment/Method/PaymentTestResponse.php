@@ -7,7 +7,7 @@
 namespace Drupal\payment_test\Plugin\Payment\Method;
 
 use Drupal\Core\Url;
-use Drupal\payment\PaymentExecutionResult;
+use Drupal\payment\OperationResult;
 use Drupal\payment\Response\Response;
 
 /**
@@ -26,7 +26,7 @@ class PaymentTestResponse extends PaymentTestNoResponse {
    * {@inheritdoc}
    */
   public function getPaymentExecutionResult() {
-    return new PaymentExecutionResult(new Response(Url::fromUri('http://example.com')));
+    return new OperationResult(new Response(Url::fromUri('http://example.com')));
   }
 
 }

@@ -51,7 +51,7 @@ interface PaymentMethodInterface extends PluginInspectionInterface, PaymentAware
    * This method MUST set the payment's status to "payment_pending" before it
    * performs any payment-method-specific logic.
    *
-   * @return \Drupal\payment\PaymentExecutionResultInterface
+   * @return \Drupal\payment\OperationResultInterface
    *
    * @see self::executePaymentAccess
    */
@@ -60,7 +60,7 @@ interface PaymentMethodInterface extends PluginInspectionInterface, PaymentAware
   /**
    * Gets the payment execution status.
    *
-   * @return \Drupal\payment\PaymentExecutionResultInterface
+   * @return \Drupal\payment\OperationResultInterface
    */
   public function getPaymentExecutionResult();
 

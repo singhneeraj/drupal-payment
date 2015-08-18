@@ -9,7 +9,7 @@ namespace Drupal\Tests\payment\Unit\Controller;
 
 use Drupal\payment\Controller\CompletePayment;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\PaymentExecutionResultInterface;
+use Drupal\payment\OperationResultInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
 use Drupal\payment\Response\ResponseInterface;
 use Drupal\Tests\UnitTestCase;
@@ -49,7 +49,7 @@ class CompletePaymentTest extends UnitTestCase {
       ->method('getResponse')
       ->willReturn($response);
 
-    $execution_result = $this->getMock(PaymentExecutionResultInterface::class);
+    $execution_result = $this->getMock(OperationResultInterface::class);
     $execution_result->expects($this->atLeastOnce())
       ->method('getCompletionResponse')
       ->willReturn($completion_response);

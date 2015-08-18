@@ -69,9 +69,14 @@ class PaymentRefundForm extends ContentEntityConfirmFormBase {
     $payment = $this->getEntity();
     /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodRefundPaymentInterface $payment_method */
     $payment_method = $payment->getPaymentMethod();
-    $payment_method->refundPayment();
+    $result = $payment_method->refundPayment();
 
-    $form_state->setRedirectUrl($payment->urlInfo());
+    if ($result->isCompleted()) {
+      $form_state->setRedirectUrl($payment->urlInfo());
+    }
+    else {
+      $form_state->setResponse($result->getCompletionResponse()->getResponse());
+    }
   }
 
 }

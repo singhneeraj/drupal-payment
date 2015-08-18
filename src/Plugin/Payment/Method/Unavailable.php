@@ -11,7 +11,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\PaymentExecutionResult;
+use Drupal\payment\OperationResult;
 
 /**
  * A payment method controller that essentially disables payment methods.
@@ -75,7 +75,7 @@ class Unavailable extends PluginBase implements PaymentMethodInterface {
    * {@inheritdoc}
    */
   public function getPaymentExecutionResult() {
-    return new PaymentExecutionResult();
+    return new OperationResult();
   }
 
   /**

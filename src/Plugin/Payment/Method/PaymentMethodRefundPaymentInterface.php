@@ -37,8 +37,17 @@ interface PaymentMethodRefundPaymentInterface {
    * \Drupal\payment\Event\PaymentEvents::PAYMENT_PRE_REFUND Symfony event
    * before refunding the payment.
    *
+   * @return \Drupal\payment\OperationResultInterface
+   *
    * @see self::refundPaymentAccess
    */
   public function refundPayment();
+
+  /**
+   * Gets the payment refund status.
+   *
+   * @return \Drupal\payment\OperationResultInterface
+   */
+  public function getPaymentRefundResult();
 
 }

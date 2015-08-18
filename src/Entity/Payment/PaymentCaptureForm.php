@@ -69,9 +69,14 @@ class PaymentCaptureForm extends ContentEntityConfirmFormBase {
     $payment = $this->getEntity();
     /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface $payment_method */
     $payment_method = $payment->getPaymentMethod();
-    $payment_method->capturePayment();
+    $result = $payment_method->capturePayment();
 
-    $form_state->setRedirectUrl($payment->urlInfo());
+    if ($result->isCompleted()) {
+      $form_state->setRedirectUrl($payment->urlInfo());
+    }
+    else {
+      $form_state->setResponse($result->getCompletionResponse()->getResponse());
+    }
   }
 
 }

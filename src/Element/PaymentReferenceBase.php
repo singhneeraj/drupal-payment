@@ -276,12 +276,12 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
       '#type' => 'payment_line_items_display',
     );
     $build['payment_method'] = $plugin_selector->buildSelectorForm([], $form_state);
-    if ($selected_payment_method && !$selected_payment_method->getPaymentExecutionResult()->hasCompleted()) {
+    if ($selected_payment_method && !$selected_payment_method->getPaymentExecutionResult()->isCompleted()) {
       $this->disableChildren($build['payment_method']);
     }
     $this->getEntityFormDisplay($element, $form_state)->buildForm($this->getPayment($element, $form_state), $build, $form_state);
     $build['pay_link'] = $this->buildCompletePaymentLink($element, $form_state);
-    $build['pay_link']['#access'] = !$selected_payment_method || !$selected_payment_method->getPaymentExecutionResult()->hasCompleted();
+    $build['pay_link']['#access'] = !$selected_payment_method || !$selected_payment_method->getPaymentExecutionResult()->isCompleted();
     $build['pay_link']['#process'] = array(array(get_class($this), 'processMaxWeight'));
     $plugin_id = $this->getPluginId();
     $build['pay_button'] = array(
@@ -329,7 +329,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     $selected_payment_method = $plugin_selector->getSelectedPlugin();
     if (!$element['#default_value']
       && $element['#available_payment_id']
-      && (!$selected_payment_method || !$selected_payment_method->getPaymentExecutionResult()->hasCompleted())) {
+      && (!$selected_payment_method || !$selected_payment_method->getPaymentExecutionResult()->isCompleted())) {
       $class[] = 'payment-reference-hidden';
     }
     $plugin_id = $this->getPluginId();
@@ -475,7 +475,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
 
     $payment->save();
     $result = $payment->execute();
-    if (!$result->hasCompleted() && !$this->requestStack->getCurrentRequest()->isXmlHttpRequest()) {
+    if (!$result->isCompleted() && !$this->requestStack->getCurrentRequest()->isXmlHttpRequest()) {
       $url = $payment->urlInfo('complete');
       $url->setOption('attributes', [
         'target' => '_blank',
@@ -500,7 +500,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
     /** @var \Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface $selected_payment_method */
     $selected_payment_method = $this->getPluginSelector($root_element, $form_state)->getSelectedPlugin();
 
-    if (!$selected_payment_method->getPaymentExecutionResult()->hasCompleted()) {
+    if (!$selected_payment_method->getPaymentExecutionResult()->isCompleted()) {
       $link = $this->buildCompletePaymentLink($root_element, $form_state);
       $response->addCommand(new OpenModalDialogCommand($this->t('Complete payment'), $this->renderer->render($link)));
     }

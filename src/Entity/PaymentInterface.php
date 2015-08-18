@@ -22,7 +22,7 @@ interface PaymentInterface extends ContentEntityInterface, EntityChangedInterfac
   /**
    * Executes the payment.
    *
-   * @return \Drupal\payment\PaymentExecutionResultInterface
+   * @return \Drupal\payment\OperationResultInterface
    */
   public function execute();
 

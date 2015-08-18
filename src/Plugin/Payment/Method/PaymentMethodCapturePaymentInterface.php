@@ -37,8 +37,17 @@ interface PaymentMethodCapturePaymentInterface {
    * \Drupal\payment\Event\PaymentEvents::PAYMENT_PRE_CAPTURE Symfony event
    * before capture.
    *
+   * @return \Drupal\payment\OperationResultInterface
+   *
    * @see self::capturePaymentAccess
    */
   public function capturePayment();
+
+  /**
+   * Gets the payment capture status.
+   *
+   * @return \Drupal\payment\OperationResultInterface
+   */
+  public function getPaymentCaptureResult();
 
 }

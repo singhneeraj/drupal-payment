@@ -13,7 +13,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\Payment\PaymentAccessControlHandler;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\PaymentExecutionResultInterface;
+use Drupal\payment\OperationResultInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodCapturePaymentInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodRefundPaymentInterface;
@@ -250,9 +250,9 @@ class PaymentAccessControlHandlerTest extends UnitTestCase {
     $account->expects($this->never())
       ->method('hasPermission');
 
-    $payment_execution_result = $this->getMock(PaymentExecutionResultInterface::class);
+    $payment_execution_result = $this->getMock(OperationResultInterface::class);
     $payment_execution_result->expects($this->any())
-      ->method('hasCompleted')
+      ->method('isCompleted')
       ->willReturn($payment_execution_has_completed);
 
     $payment_method = $this->getMock(PaymentAccessUnitTestDummyPaymentMethodUpdateStatusInterface::class);

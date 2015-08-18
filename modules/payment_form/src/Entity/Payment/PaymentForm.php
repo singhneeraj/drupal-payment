@@ -107,7 +107,7 @@ class PaymentForm extends ContentEntityForm {
     $payment->setPaymentMethod($plugin_selector->getSelectedPlugin());
     $payment->save();
     $result = $payment->execute();
-    if (!$result->hasCompleted()) {
+    if (!$result->isCompleted()) {
       $form_state->setRedirectUrl($result->getCompletionResponse()->getRedirectUrl());
     }
   }

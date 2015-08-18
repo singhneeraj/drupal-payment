@@ -16,7 +16,7 @@ use Drupal\Core\Form\FormState;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\payment\Entity\PaymentInterface;
-use Drupal\payment\PaymentExecutionResultInterface;
+use Drupal\payment\OperationResultInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface;
@@ -271,7 +271,7 @@ class PaymentFormTest extends UnitTestCase {
     $redirect_url = new Url($this->randomMachineName());
     $response = new Response($redirect_url);
 
-    $result = $this->getMock(PaymentExecutionResultInterface::class);
+    $result = $this->getMock(OperationResultInterface::class);
     $result->expects($this->atLeastOnce())
       ->method('getCompletionResponse')
       ->willReturn($response);

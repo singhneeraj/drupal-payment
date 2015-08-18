@@ -2,21 +2,21 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\payment\Unit\PaymentExecutionResultTest.
+ * Contains \Drupal\Tests\payment\Unit\OperationResultTest.
  */
 
 namespace Drupal\Tests\payment\Unit;
 
-use Drupal\payment\PaymentExecutionResult;
+use Drupal\payment\OperationResult;
 use Drupal\payment\Response\ResponseInterface;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * @coversDefaultClass \Drupal\payment\PaymentExecutionResult
+ * @coversDefaultClass \Drupal\payment\OperationResult
  *
  * @group Payment
  */
-class PaymentExecutionResultTest extends UnitTestCase {
+class OperationResultTest extends UnitTestCase {
 
   /**
    * The response.
@@ -28,7 +28,7 @@ class PaymentExecutionResultTest extends UnitTestCase {
   /**
    * The class under test.
    *
-   * @var \Drupal\payment\PaymentExecutionResult
+   * @var \Drupal\payment\OperationResult
    */
   protected $sut;
 
@@ -40,15 +40,15 @@ class PaymentExecutionResultTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::hasCompleted
+   * @covers ::isCompleted
    * @covers ::__construct
    */
-  function testHasCompleted() {
-    $this->sut = new PaymentExecutionResult();
-    $this->assertTrue($this->sut->hasCompleted());
+  function testIsCompleted() {
+    $this->sut = new OperationResult();
+    $this->assertTrue($this->sut->isCompleted());
 
-    $this->sut = new PaymentExecutionResult($this->response);
-    $this->assertFalse($this->sut->hasCompleted());
+    $this->sut = new OperationResult($this->response);
+    $this->assertFalse($this->sut->isCompleted());
   }
 
   /**
@@ -56,10 +56,10 @@ class PaymentExecutionResultTest extends UnitTestCase {
    * @covers ::__construct
    */
   function testGetCompletionResponse() {
-    $this->sut = new PaymentExecutionResult();
+    $this->sut = new OperationResult();
     $this->assertNULL($this->sut->getCompletionResponse());
 
-    $this->sut = new PaymentExecutionResult($this->response);
+    $this->sut = new OperationResult($this->response);
     $this->assertSame($this->response, $this->sut->getCompletionResponse());
   }
 

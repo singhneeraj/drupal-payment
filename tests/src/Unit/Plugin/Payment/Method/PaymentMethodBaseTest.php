@@ -16,6 +16,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\OperationResultInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodBase;
 use Drupal\payment\Plugin\Payment\Method\SupportedCurrency;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
@@ -315,7 +316,9 @@ class PaymentMethodBaseTest extends PaymentMethodBaseTestBase {
 
     $this->sut->setPayment($payment);
 
-    $this->sut->capturePayment();
+    $result = $this->sut->capturePayment();
+
+    $this->assertInstanceOf(OperationResultInterface::class, $result);
   }
 
   /**
@@ -365,7 +368,9 @@ class PaymentMethodBaseTest extends PaymentMethodBaseTestBase {
 
     $this->sut->setPayment($payment);
 
-    $this->sut->refundPayment();
+    $result = $this->sut->refundPayment();
+
+    $this->assertInstanceOf(OperationResultInterface::class, $result);
   }
 
   /**

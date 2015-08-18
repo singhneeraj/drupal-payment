@@ -25,7 +25,7 @@ namespace Drupal\Tests\payment\Unit\Element {
   use Drupal\currency\Entity\CurrencyInterface;
   use Drupal\payment\Element\PaymentReferenceBase;
   use Drupal\payment\Entity\PaymentInterface;
-  use Drupal\payment\PaymentExecutionResultInterface;
+  use Drupal\payment\OperationResultInterface;
   use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
   use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
   use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
@@ -305,9 +305,9 @@ namespace Drupal\Tests\payment\Unit\Element {
 
       $url = new Url($this->randomMachineName());
 
-      $result = $this->getMock(PaymentExecutionResultInterface::class);
+      $result = $this->getMock(OperationResultInterface::class);
       $result->expects($this->atLeastOnce())
-        ->method('hasCompleted')
+        ->method('isCompleted')
         ->willReturn($has_completed);
 
       $payment = $this->getMock(PaymentInterface::class);
@@ -398,13 +398,13 @@ namespace Drupal\Tests\payment\Unit\Element {
      *
      * @dataProvider providerTestAjaxPay
      */
-    public function testAjaxPay($has_completed, $number_of_commands) {
+    public function testAjaxPay($is_completed, $number_of_commands) {
       $payment = $this->getMock(PaymentInterface::class);
 
-      $result = $this->getMock(PaymentExecutionResultInterface::class);
+      $result = $this->getMock(OperationResultInterface::class);
       $result->expects($this->atLeastOnce())
-        ->method('hasCompleted')
-        ->willReturn($has_completed);
+        ->method('isCompleted')
+        ->willReturn($is_completed);
 
       $payment_method = $this->getMock(PaymentMethodInterface::class);
       $payment_method->expects($this->any())

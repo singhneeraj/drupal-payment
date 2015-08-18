@@ -12,9 +12,12 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\payment\Entity\Payment\PaymentRefundForm;
 use Drupal\payment\Entity\PaymentInterface;
+use Drupal\payment\OperationResultInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodRefundPaymentInterface;
+use Drupal\payment\Response\ResponseInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @coversDefaultClass \Drupal\payment\Entity\Payment\PaymentRefundForm
@@ -114,10 +117,56 @@ class PaymentRefundFormTest extends UnitTestCase {
   /**
    * @covers ::submitForm
    */
-  function testSubmitForm() {
+  function testSubmitFormWithCompletionResponse() {
+    $response = $this->getMockBuilder(Response::class)
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $completion_response = $this->getMock(ResponseInterface::class);
+    $completion_response->expects($this->atLeastOnce())
+      ->method('getResponse')
+      ->willReturn($response);
+
+    $operation_result = $this->getMock(OperationResultInterface::class);
+    $operation_result->expects($this->atLeastOnce())
+      ->method('getCompletionResponse')
+      ->willReturn($completion_response);
+    $operation_result->expects($this->atLeastOnce())
+      ->method('isCompleted')
+      ->willReturn(FALSE);
+
     $payment_method = $this->getMock(PaymentMethodRefundPaymentInterface::class);
     $payment_method->expects($this->once())
-      ->method('refundPayment');
+      ->method('refundPayment')
+      ->willReturn($operation_result);
+
+    $this->payment->expects($this->atLeastOnce())
+      ->method('getPaymentMethod')
+      ->willReturn($payment_method);
+
+    $form = [];
+
+    $form_state = $this->getMock(FormStateInterface::class);
+    $form_state->expects($this->atLeastOnce())
+      ->method('setResponse')
+      ->with($response);
+
+    $this->sut->submitForm($form, $form_state);
+  }
+
+  /**
+   * @covers ::submitForm
+   */
+  function testSubmitFormWithoutCompletionResponse() {
+    $operation_result = $this->getMock(OperationResultInterface::class);
+    $operation_result->expects($this->atLeastOnce())
+      ->method('isCompleted')
+      ->willReturn(TRUE);
+
+    $payment_method = $this->getMock(PaymentMethodRefundPaymentInterface::class);
+    $payment_method->expects($this->once())
+      ->method('refundPayment')
+      ->willReturn($operation_result);
 
     $url = new Url($this->randomMachineName());
 
@@ -130,8 +179,9 @@ class PaymentRefundFormTest extends UnitTestCase {
       ->willReturn($url);
 
     $form = [];
+
     $form_state = $this->getMock(FormStateInterface::class);
-    $form_state->expects($this->once())
+    $form_state->expects($this->atLeastOnce())
       ->method('setRedirectUrl')
       ->with($url);
 

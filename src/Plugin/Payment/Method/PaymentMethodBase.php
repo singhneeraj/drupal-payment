@@ -19,7 +19,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\payment\EventDispatcherInterface;
 use Drupal\payment\PaymentAwareTrait;
-use Drupal\payment\PaymentExecutionResult;
+use Drupal\payment\OperationResult;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -252,7 +252,7 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
    * {@inheritdoc}
    */
   public function getPaymentExecutionResult() {
-    return new PaymentExecutionResult();
+    return new OperationResult();
   }
 
   /**
@@ -287,6 +287,15 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
     }
     $this->eventDispatcher->preCapturePayment($this->getPayment());
     $this->doCapturePayment();
+
+    return $this->getPaymentCaptureResult();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPaymentCaptureResult() {
+    return new OperationResult();
   }
 
   /**
@@ -328,6 +337,15 @@ abstract class PaymentMethodBase extends PluginBase implements ContainerFactoryP
     }
     $this->eventDispatcher->preRefundPayment($this->getPayment());
     $this->doRefundPayment();
+
+    return $this->getPaymentRefundResult();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPaymentRefundResult() {
+    return new OperationResult();
   }
 
   /**

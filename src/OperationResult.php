@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\PaymentExecutionResult.
+ * Contains \Drupal\payment\OperationResult.
  */
 
 namespace Drupal\payment;
@@ -10,9 +10,9 @@ namespace Drupal\payment;
 use Drupal\payment\Response\ResponseInterface;
 
 /**
- * Provides a payment execution result.
+ * Provides an operation result.
  */
-class PaymentExecutionResult implements PaymentExecutionResultInterface {
+class OperationResult implements OperationResultInterface {
 
   /**
    * The response.
@@ -25,7 +25,7 @@ class PaymentExecutionResult implements PaymentExecutionResultInterface {
    * Creates a new instance.
    *
    * @param \Drupal\payment\Response\ResponseInterface|null $response
-   *   A response or NULL if execution has completed.
+   *   A response or NULL if the operation is completed.
    */
   public function __construct(ResponseInterface $response = NULL) {
     $this->response = $response;
@@ -34,7 +34,7 @@ class PaymentExecutionResult implements PaymentExecutionResultInterface {
   /**
    * {@inheritdoc}
    */
-  public function hasCompleted() {
+  public function isCompleted() {
     return is_null($this->response);
   }
 
