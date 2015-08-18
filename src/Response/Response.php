@@ -8,7 +8,7 @@
 namespace Drupal\payment\Response;
 
 use Drupal\Core\Url;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Drupal\Core\Routing\TrustedRedirectResponse;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 /**
@@ -53,7 +53,7 @@ class Response implements ResponseInterface {
    */
   public function getResponse() {
     if (!$this->response) {
-      $this->response = new RedirectResponse($this->url->toString());
+      $this->response = new TrustedRedirectResponse($this->url->toString());
     }
 
     return $this->response;
