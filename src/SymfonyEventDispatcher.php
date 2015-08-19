@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\payment\EventDispatcher.
+ * Contains \Drupal\payment\SymfonyEventDispatcher.
  */
 
 namespace Drupal\payment;
@@ -22,9 +22,9 @@ use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as SymfonyEventDispatcherInterface;
 
 /**
- * Provides a Payment event dispatcher.
+ * Dispatches Payment events through Symfony's event dispatcher.
  */
-class EventDispatcher implements EventDispatcherInterface {
+class SymfonyEventDispatcher implements EventDispatcherInterface {
 
   /**
    * The Symfony event dispatcher.

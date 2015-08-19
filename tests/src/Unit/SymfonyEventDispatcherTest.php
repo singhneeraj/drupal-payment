@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\payment\Unit\EventDispatcherTest.
+ * Contains \Drupal\Tests\payment\Unit\SymfonyEventDispatcherTest.
  */
 
 namespace Drupal\Tests\payment\Unit;
@@ -18,18 +18,18 @@ use Drupal\payment\Event\PaymentPreRefund;
 use Drupal\payment\Event\PaymentQueuePaymentIdsAlter;
 use Drupal\payment\Event\PaymentStatusSet;
 use Drupal\payment\Event\PaymentTypePreResumeContext;
-use Drupal\payment\EventDispatcher;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
+use Drupal\payment\SymfonyEventDispatcher;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * @coversDefaultClass \Drupal\payment\EventDispatcher
+ * @coversDefaultClass \Drupal\payment\SymfonyEventDispatcher
  *
  * @group Payment
  */
-class EventDispatcherTest extends UnitTestCase {
+class SymfonyEventDispatcherTest extends UnitTestCase {
 
   /**
    * The Symfony event dispatcher.
@@ -39,9 +39,9 @@ class EventDispatcherTest extends UnitTestCase {
   protected $symfonyEventDispatcher;
 
   /**
-   * The class under test.
+   * The subject under test.
    *
-   * @var \Drupal\payment\EventDispatcher
+   * @var \Drupal\payment\SymfonyEventDispatcher
    */
   protected $sut;
 
@@ -51,14 +51,14 @@ class EventDispatcherTest extends UnitTestCase {
   public function setUp() {
     $this->symfonyEventDispatcher = $this->getMock(EventDispatcherInterface::class);
 
-    $this->sut = new EventDispatcher($this->symfonyEventDispatcher);
+    $this->sut = new SymfonyEventDispatcher($this->symfonyEventDispatcher);
   }
 
   /**
    * @covers ::__construct
    */
   public function testConstruct() {
-    new EventDispatcher($this->symfonyEventDispatcher);
+    new SymfonyEventDispatcher($this->symfonyEventDispatcher);
   }
 
   /**

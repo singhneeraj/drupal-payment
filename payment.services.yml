@@ -1,7 +1,13 @@
 services:
   payment.event_dispatcher:
-    class: Drupal\payment\EventDispatcher
+    class: Drupal\payment\EventDispatcherCollection
+    tags:
+      - { name: service_collector, tag: payment.event_dispatcher, call: addEventDispatcher }
+  payment.event_dispatcher.symfony:
+    class: Drupal\payment\SymfonyEventDispatcher
     arguments: ['@event_dispatcher']
+    tags:
+      - { name: payment.event_dispatcher }
   payment.logger:
     parent: logger.channel_base
     arguments: ['payment']
