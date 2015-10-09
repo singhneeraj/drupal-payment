@@ -14,8 +14,8 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Plugin\Discovery\ContainerDerivativeDiscoveryDecorator;
 use Drupal\Core\Plugin\Discovery\YamlDiscovery;
 use Drupal\Core\Plugin\Factory\ContainerFactory;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\Core\StringTranslation\TranslationWrapper;
 use Drupal\plugin\Plugin\PluginOperationsProviderPluginManagerTrait;
 
 /**
@@ -91,7 +91,7 @@ class PaymentStatusManager extends DefaultPluginManager implements PaymentStatus
     parent::processDefinition($definition, $plugin_id);
     foreach (['description', 'label'] as $key) {
       if (isset($definition[$key])) {
-        $definition[$key] = (new TranslationWrapper($definition[$key]))->setStringTranslation($this->stringTranslation);
+        $definition[$key] = new TranslatableMarkup($definition[$key], [], [], $this->stringTranslation);
       }
     }
   }
