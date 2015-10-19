@@ -8,6 +8,7 @@
 namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -59,6 +60,8 @@ use Drupal\user\UserInterface;
  */
 class Payment extends ContentEntityBase implements PaymentInterface {
 
+  use EntityChangedTrait;
+
   /**
    * {@inheritdoc}
    */
@@ -81,13 +84,6 @@ class Payment extends ContentEntityBase implements PaymentInterface {
    */
   public function getCreatedTime() {
     return $this->get('created')->value;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getChangedTime() {
-    return $this->get('changed')->value;
   }
 
   /**
