@@ -24,7 +24,7 @@ class PaymentAccessControlHandler extends EntityAccessControlHandler {
   /**
    * {@inheritdoc}
    */
-  protected function checkAccess(EntityInterface $payment, $operation, $langcode, AccountInterface $account) {
+  protected function checkAccess(EntityInterface $payment, $operation, AccountInterface $account) {
     /** @var \Drupal\payment\Entity\PaymentInterface $payment */
 
     if ($operation == 'update_status') {
