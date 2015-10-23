@@ -21,12 +21,13 @@ class PaymentWebTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('payment', 'payment_test');
+  public static $modules = array('payment', 'payment_test', 'block');
 
   /**
    * Tests the payment UI.
    */
   protected function testPaymentUi() {
+    $this->drupalPlaceBlock('local_tasks_block');
     $payment_method = Payment::methodManager()->createInstance('payment_test');
     // Create just enough payments for three pages
     $count_payments = 50 * 2 + 1;
