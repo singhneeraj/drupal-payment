@@ -610,7 +610,7 @@ display:
           plugin_id: payment_method
         uid:
           id: uid
-          table: users
+          table: users_field_data
           field: uid
           relationship: owner
           group_type: group
@@ -627,7 +627,7 @@ display:
             operator: uid_op
             identifier: uid
             required: false
-            remember: true
+            remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
@@ -736,7 +736,10 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
+        - url.query_args
       cacheable: false
+      max-age: 0
+      tags: {  }
   page_1:
     display_plugin: page
     id: page_1
@@ -762,7 +765,10 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
+        - url.query_args
       cacheable: false
+      max-age: 0
+      tags: {  }
   page_2:
     display_plugin: page
     id: page_2
@@ -794,4 +800,8 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
+        - url.query_args
       cacheable: false
+      max-age: 0
+      tags: {  }
+    deleted: false
