@@ -11,6 +11,7 @@ use Drupal\Core\Cache\Context\CacheContextsManager;
 use Drupal\Core\DependencyInjection\Container;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccessControlHandler;
 use Drupal\payment\Entity\PaymentMethodConfigurationInterface;
@@ -101,7 +102,6 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
    */
   public function testCheckAccessWithoutPermission() {
     $operation = $this->randomMachineName();
-    $language_code = $this->randomMachineName();
     $account = $this->getMock(AccountInterface::class);
     $account->expects($this->any())
       ->method('hasPermission')
@@ -112,7 +112,7 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
     $class = new \ReflectionClass($this->sut);
     $method = $class->getMethod('checkAccess');
     $method->setAccessible(TRUE);
-    $this->assertFalse($method->invokeArgs($this->sut, [$payment_method_configuration, $operation, $language_code, $account])->isAllowed());
+    $this->assertFalse($method->invokeArgs($this->sut, [$payment_method_configuration, $operation, $account])->isAllowed());
   }
 
   /**
@@ -120,7 +120,6 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
    */
   public function testCheckAccessWithAnyPermission() {
     $operation = $this->randomMachineName();
-    $language_code = $this->randomMachineName();
     $account = $this->getMock(AccountInterface::class);
     $map = [
       ['payment.payment_method_configuration.' . $operation . '.any', TRUE],
@@ -135,7 +134,7 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
     $class = new \ReflectionClass($this->sut);
     $method = $class->getMethod('checkAccess');
     $method->setAccessible(TRUE);
-    $this->assertTrue($method->invokeArgs($this->sut, [$payment_method_configuration, $operation, $language_code, $account])->isAllowed());
+    $this->assertTrue($method->invokeArgs($this->sut, [$payment_method_configuration, $operation, $account])->isAllowed());
   }
 
   /**
@@ -144,7 +143,6 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
   public function testCheckAccessWithOwnPermission() {
     $owner_id = mt_rand();
     $operation = $this->randomMachineName();
-    $language_code = $this->randomMachineName();
     $account = $this->getMock(AccountInterface::class);
     $account->expects($this->any())
       ->method('id')
@@ -168,8 +166,8 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
     $class = new \ReflectionClass($this->sut);
     $method = $class->getMethod('checkAccess');
     $method->setAccessible(TRUE);
-    $this->assertTrue($method->invokeArgs($this->sut, [$payment_method_configuration, $operation, $language_code, $account])->isAllowed());
-    $this->assertFalse($method->invokeArgs($this->sut, [$payment_method_configuration, $operation, $language_code, $account])->isAllowed());
+    $this->assertTrue($method->invokeArgs($this->sut, [$payment_method_configuration, $operation, $account])->isAllowed());
+    $this->assertFalse($method->invokeArgs($this->sut, [$payment_method_configuration, $operation, $account])->isAllowed());
   }
 
   /**
@@ -179,7 +177,6 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
    */
   public function testCheckAccessEnable($expected, $payment_method_configuration_status, $has_update_permission) {
     $operation = 'enable';
-    $language_code = $this->randomMachineName();
     $account = $this->getMock(AccountInterface::class);
     $map = [
       ['payment.payment_method_configuration.update.any', $has_update_permission],
@@ -194,10 +191,12 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
       ->method('status')
       ->willReturn($payment_method_configuration_status);
 
+    $this->setUpLanguage($payment_method_configuration);
+
     $class = new \ReflectionClass($this->sut);
     $method = $class->getMethod('checkAccess');
     $method->setAccessible(TRUE);
-    $this->assertSame($expected, $method->invokeArgs($this->sut, [$payment_method_configuration, $operation, $language_code, $account])->isAllowed());
+    $this->assertSame($expected, $method->invokeArgs($this->sut, [$payment_method_configuration, $operation, $account])->isAllowed());
 
   }
 
@@ -222,7 +221,6 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
    */
   public function testCheckAccessDisable($expected, $payment_method_configuration_status, $has_update_permission) {
     $operation = 'disable';
-    $language_code = $this->randomMachineName();
     $account = $this->getMock(AccountInterface::class);
     $map = [
       ['payment.payment_method_configuration.update.any', $has_update_permission],
@@ -236,11 +234,12 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
     $payment_method_configuration->expects($this->atLeastOnce())
       ->method('status')
       ->willReturn($payment_method_configuration_status);
+    $this->setUpLanguage($payment_method_configuration);
 
     $class = new \ReflectionClass($this->sut);
     $method = $class->getMethod('checkAccess');
     $method->setAccessible(TRUE);
-    $this->assertSame($expected, $method->invokeArgs($this->sut, [$payment_method_configuration, $operation, $language_code, $account])->isAllowed());
+    $this->assertSame($expected, $method->invokeArgs($this->sut, [$payment_method_configuration, $operation, $account])->isAllowed());
 
   }
 
@@ -265,7 +264,6 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
    */
   public function testCheckAccessDuplicate($expected, $has_create_permission, $has_view_permission) {
     $operation = 'duplicate';
-    $language_code = $this->randomMachineName();
     $bundle = $this->randomMachineName();
     $account = $this->getMock(AccountInterface::class);
     $map = [
@@ -284,7 +282,7 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
     $class = new \ReflectionClass($this->sut);
     $method = $class->getMethod('checkAccess');
     $method->setAccessible(TRUE);
-    $this->assertSame($expected, $method->invokeArgs($this->sut, [$payment_method_configuration, $operation, $language_code, $account])->isAllowed());
+    $this->assertSame($expected, $method->invokeArgs($this->sut, [$payment_method_configuration, $operation, $account])->isAllowed());
 
   }
 
@@ -335,6 +333,22 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
     $method = $class->getMethod('getCache');
     $method->setAccessible(TRUE);
     $this->assertNull($method->invokeArgs($this->sut, [$cache_id, $operation, $language_code, $account]));
+  }
+
+  /**
+   * Sets up the mock definitions for the language() method.
+   *
+   * @param \PHPUnit_Framework_MockObject_MockObject $payment_method_configuration
+   *   A mock entity.
+   */
+  protected function setUpLanguage(\PHPUnit_Framework_MockObject_MockObject $payment_method_configuration) {
+    $language = $this->getMock(LanguageInterface::class);
+    $language->expects($this->any())
+      ->method('getId')
+      ->willReturn($this->randomMachineName(2));
+    $payment_method_configuration->expects($this->any())
+      ->method('language')
+      ->willReturn($language);
   }
 
 }

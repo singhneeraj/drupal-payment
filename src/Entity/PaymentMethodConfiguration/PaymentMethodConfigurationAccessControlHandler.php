@@ -43,16 +43,16 @@ class PaymentMethodConfigurationAccessControlHandler extends EntityAccessControl
   /**
    * {@inheritdoc}
    */
-  protected function checkAccess(EntityInterface $payment_method_configuration, $operation, $langcode, AccountInterface $account) {
+  protected function checkAccess(EntityInterface $payment_method_configuration, $operation, AccountInterface $account) {
     /** @var \Drupal\payment\Entity\PaymentMethodConfigurationInterface $payment_method_configuration */
     if ($operation == 'enable') {
-      return AccessResult::allowedIf(!$payment_method_configuration->status())->andIf($this->access($payment_method_configuration, 'update', $langcode, $account, TRUE))->cacheUntilEntityChanges($payment_method_configuration);
+      return AccessResult::allowedIf(!$payment_method_configuration->status())->andIf($this->access($payment_method_configuration, 'update', $account, TRUE))->cacheUntilEntityChanges($payment_method_configuration);
     }
     elseif ($operation == 'disable') {
-      return AccessResult::allowedIf($payment_method_configuration->status())->andIf($this->access($payment_method_configuration, 'update', $langcode, $account, TRUE))->cacheUntilEntityChanges($payment_method_configuration);
+      return AccessResult::allowedIf($payment_method_configuration->status())->andIf($this->access($payment_method_configuration, 'update', $account, TRUE))->cacheUntilEntityChanges($payment_method_configuration);
     }
     elseif ($operation == 'duplicate') {
-      return $this->createAccess($payment_method_configuration->bundle(), $account, [], TRUE)->andIf($this->access($payment_method_configuration, 'view', $langcode, $account, TRUE));
+      return $this->createAccess($payment_method_configuration->bundle(), $account, [], TRUE)->andIf($this->access($payment_method_configuration, 'view', $account, TRUE));
     }
     else {
       $permission_prefix = 'payment.payment_method_configuration.' . $operation;
