@@ -20,7 +20,7 @@ class PaymentStatusWebTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('payment');
+  public static $modules = array('payment', 'block');
 
   /**
    * The payment status storage.
@@ -35,6 +35,7 @@ class PaymentStatusWebTest extends WebTestBase {
   protected function setUp() {
     parent::setUp();
     $this->paymentStatusStorage = \Drupal::entityManager()->getStorage('payment_status');
+    $this->drupalPlaceBlock('local_actions_block');
   }
 
   /**

@@ -21,7 +21,7 @@ class PaymentReferenceWebTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('payment', 'payment_reference');
+  public static $modules = array('field_ui', 'payment', 'payment_reference');
 
   /**
    * {@inheritdoc}

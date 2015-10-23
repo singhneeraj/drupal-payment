@@ -106,7 +106,7 @@ class PaymentForm extends FormatterBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items) {
+  public function viewElements(FieldItemListInterface $items, $langcode) {
     $entity_type_id = $items->getEntity()->getEntityTypeId();
     $bundle = $items->getEntity()->bundle();
     $field_name = $this->fieldDefinition->getName();
