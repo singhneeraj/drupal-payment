@@ -38,7 +38,6 @@ class PaymentReference extends ConfigurableEntityReferenceItem {
    */
   public static function defaultStorageSettings() {
     return [
-      'target_bundle' => 'payment_reference',
       'target_type' => 'payment',
     ] + parent::defaultStorageSettings();
   }

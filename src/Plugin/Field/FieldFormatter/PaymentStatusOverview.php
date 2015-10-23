@@ -26,7 +26,7 @@ class PaymentStatusOverview extends FormatterBase {
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items) {
+  public function viewElements(FieldItemListInterface $items, $langcode) {
     $payment_statuses = [];
     /** @var \Drupal\plugin\Plugin\Field\FieldType\PluginCollectionItemInterface $item */
     foreach ($items as $delta => $item) {
