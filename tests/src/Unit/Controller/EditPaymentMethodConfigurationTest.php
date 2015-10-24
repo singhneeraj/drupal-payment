@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\payment\Unit\Controller;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\payment\Controller\EditPaymentMethodConfiguration;
 use Drupal\payment\Entity\PaymentMethodConfigurationInterface;
 use Drupal\Tests\UnitTestCase;
@@ -69,7 +70,7 @@ class EditPaymentMethodConfigurationTest extends UnitTestCase {
     $payment_method_configuration->expects($this->once())
       ->method('label');
 
-    $this->assertInternalType('string', $this->sut->title($payment_method_configuration));
+    $this->assertInstanceOf(TranslatableMarkup::class, $this->sut->title($payment_method_configuration));
   }
 
 }

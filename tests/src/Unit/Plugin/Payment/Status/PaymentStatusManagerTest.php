@@ -12,7 +12,7 @@ use Drupal\Component\Plugin\Factory\FactoryInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\StringTranslation\TranslationWrapper;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\payment\Plugin\Payment\Status\DefaultPaymentStatus;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManager;
 use Drupal\Tests\UnitTestCase;
@@ -133,7 +133,7 @@ class PaymentStatusManagerTest extends UnitTestCase {
       ),
     );
     $manager_definitions = $discovery_definitions;
-    $manager_definitions['foo']['label'] = (new TranslationWrapper($manager_definitions['foo']['label']))->setStringTranslation($this->stringTranslation);
+    $manager_definitions['foo']['label'] = new TranslatableMarkup($manager_definitions['foo']['label'], [], [], $this->stringTranslation);
     $this->discovery->expects($this->once())
       ->method('getDefinitions')
       ->willReturn($discovery_definitions);

@@ -70,7 +70,7 @@ class EditPaymentStatusTest extends UnitTestCase {
       ->method('label')
       ->willReturn($label);
 
-    $this->assertContains($label, $this->sut->title($payment_status));
+    $this->assertContains($label, (string) $this->sut->title($payment_status));
   }
 
 }
