@@ -42,8 +42,8 @@ class ViewPayment extends ControllerBase {
    * @return string
    */
   public function title(PaymentInterface $payment) {
-    return $this->t('Payment #!payment_id', [
-      '!payment_id' => $payment->id(),
+    return $this->t('Payment #@payment_id', [
+      '@payment_id' => $payment->id(),
     ]);
   }
 

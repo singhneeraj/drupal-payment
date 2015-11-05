@@ -42,8 +42,8 @@ class PaymentRefundForm extends ContentEntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return $this->t('Do you really want to refund payment #!payment_id?', array(
-      '!payment_id' => $this->getEntity()->id(),
+    return $this->t('Do you really want to refund payment #@payment_id?', array(
+      '@payment_id' => $this->getEntity()->id(),
     ));
   }
 
