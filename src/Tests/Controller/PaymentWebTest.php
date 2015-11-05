@@ -21,7 +21,7 @@ class PaymentWebTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('payment', 'payment_test', 'block');
+  public static $modules = array('payment', 'payment_test', 'block', 'views');
 
   /**
    * Tests the payment UI.
@@ -51,6 +51,7 @@ class PaymentWebTest extends WebTestBase {
       $this->assertTitle(t('Payments | Drupal'));
       $this->assertText(t('Last updated'));
       $this->assertText(t('Payment method'));
+      $this->assertText(t('Enter a comma separated list of user names.'));
       $this->assertText(t('EUR 24.20'));
       $this->assertText($payment_method->getPluginLabel());
       $count_pages = ceil($count_payments / 50);
