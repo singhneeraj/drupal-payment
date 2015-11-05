@@ -48,8 +48,8 @@ class DuplicatePaymentMethodConfiguration extends ControllerBase {
   public function execute(PaymentMethodConfigurationInterface $payment_method_configuration) {
     $clone = $payment_method_configuration
       ->createDuplicate();
-    $clone->setLabel($this->t('!label (duplicate)', [
-      '!label' => $payment_method_configuration->label(),
+    $clone->setLabel($this->t('@label (duplicate)', [
+      '@label' => $payment_method_configuration->label(),
     ]));
 
     return $this->entityFormBuilder->getForm($clone, 'default');
