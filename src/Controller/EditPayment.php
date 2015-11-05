@@ -42,8 +42,8 @@ class EditPayment extends ControllerBase {
    * @return string
    */
   public function title(PaymentInterface $payment) {
-    return $this->t('Edit payment #!payment_id', [
-      '!payment_id' => $payment->id(),
+    return $this->t('Edit payment #@payment_id', [
+      '@payment_id' => $payment->id(),
     ]);
   }
 
