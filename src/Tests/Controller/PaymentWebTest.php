@@ -62,7 +62,8 @@ class PaymentWebTest extends WebTestBase {
         $this->assertNoLinkByHref('?page=' . ($page + 1));
       }
       $this->assertLinkByHref('payment/1');
-      $this->assertLinkByHref('payment/99');
+      $this->clickLinkPartialName('Next');
+      $this->assertUrl('admin/content/payment?page=1');
     }
     $this->drupalLogout();
 
