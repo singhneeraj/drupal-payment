@@ -8,7 +8,7 @@
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\Status;
 
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusOperationsProvider;
-use Drupal\Tests\plugin\Unit\DefaultPluginTypeOperationsProviderTest;
+use Drupal\Tests\plugin\Unit\PluginType\DefaultPluginTypeOperationsProviderTest;
 
 /**
  * @coversDefaultClass \Drupal\payment\Plugin\Payment\Status\PaymentStatusOperationsProvider
