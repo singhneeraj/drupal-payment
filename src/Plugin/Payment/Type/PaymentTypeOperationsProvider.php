@@ -8,7 +8,7 @@
 namespace Drupal\payment\Plugin\Payment\Type;
 
 use Drupal\Core\Url;
-use Drupal\plugin\DefaultPluginTypeOperationsProvider;
+use Drupal\plugin\PluginType\DefaultPluginTypeOperationsProvider;
 
 /**
  * Provides operations for the payment type plugin type.

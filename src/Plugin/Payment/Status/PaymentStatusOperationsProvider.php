@@ -8,7 +8,7 @@
 namespace Drupal\payment\Plugin\Payment\Status;
 
 use Drupal\Core\Url;
-use Drupal\plugin\DefaultPluginTypeOperationsProvider;
+use Drupal\plugin\PluginType\DefaultPluginTypeOperationsProvider;
 
 /**
  * Provides operations for the payment status plugin type.
