@@ -137,6 +137,10 @@ class ListPaymentStatusesTest extends UnitTestCase {
       ->will($this->returnArgument(0));
 
     $build = $this->sut->execute();
+    foreach ($build['#header'] as $key => $label) {
+      $build['#header'][$key] = (string) $label;
+    }
+
     $expected = [
       '#header' => ['Title', 'Description', 'Operations'],
       '#type' => 'table',
