@@ -57,13 +57,13 @@ class PaymentWebTest extends WebTestBase {
       $count_pages = ceil($count_payments / 50);
       if ($count_pages) {
         foreach (range(1, $count_pages - 1) as $page) {
-          $this->assertLinkByHref('?page=' . $page);
+          $this->assertLinkByHref('&page=' . $page);
         }
-        $this->assertNoLinkByHref('?page=' . ($page + 1));
+        $this->assertNoLinkByHref('&page=' . ($page + 1));
       }
       $this->assertLinkByHref('payment/1');
       $this->clickLinkPartialName('Next');
-      $this->assertUrl('admin/content/payment?page=1');
+      $this->assertUrl('admin/content/payment?changed_after=&changed_before=&=Apply&page=1');
     }
     $this->drupalLogout();
 
