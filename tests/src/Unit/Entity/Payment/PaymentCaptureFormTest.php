@@ -9,6 +9,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment;
 
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\payment\Entity\Payment\PaymentCaptureForm;
 use Drupal\payment\Entity\PaymentInterface;
@@ -90,14 +91,14 @@ class PaymentCaptureFormTest extends UnitTestCase {
    * @covers ::getConfirmText
    */
   function testGetConfirmText() {
-    $this->assertInternalType('string', $this->sut->getConfirmText());
+    $this->assertInstanceOf(TranslatableMarkup::class, $this->sut->getConfirmText());
   }
 
   /**
    * @covers ::getQuestion
    */
   function testGetQuestion() {
-    $this->assertInternalType('string', $this->sut->getQuestion());
+    $this->assertInstanceOf(TranslatableMarkup::class, $this->sut->getQuestion());
   }
 
   /**

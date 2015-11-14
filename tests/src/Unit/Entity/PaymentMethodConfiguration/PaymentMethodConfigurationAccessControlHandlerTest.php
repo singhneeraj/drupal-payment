@@ -46,6 +46,9 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
     $cache_context_manager = $this->getMockBuilder(CacheContextsManager::class)
       ->disableOriginalConstructor()
       ->getMock();
+    $cache_context_manager->expects($this->any())
+      ->method('assertValidTokens')
+      ->willReturn(TRUE);
 
     $container = new Container();
     $container->set('cache_contexts_manager', $cache_context_manager);
@@ -274,10 +277,15 @@ class PaymentMethodConfigurationAccessControlHandlerTest extends UnitTestCase {
       ->method('hasPermission')
       ->willReturnMap($map);
 
+    $language = $this->getMock(LanguageInterface::class);
+
     $payment_method_configuration = $this->getMockPaymentMethodConfiguration();
     $payment_method_configuration->expects($this->atLeastOnce())
       ->method('bundle')
       ->willReturn($bundle);
+    $payment_method_configuration->expects($this->any())
+      ->method('language')
+      ->willReturn($language);
 
     $class = new \ReflectionClass($this->sut);
     $method = $class->getMethod('checkAccess');

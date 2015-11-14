@@ -63,8 +63,12 @@ class PaymentMethodConfigurationListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $row['label'] = $this->t('Name');
-    $row['plugin'] = $this->t('Type');
+    $row['label'] = [
+      'data' => $this->t('Name'),
+    ];
+    $row['plugin'] = [
+      'data' => $this->t('Type'),
+    ];
     $row['owner'] = array(
       'data' => $this->t('Owner'),
       'class' => array(RESPONSIVE_PRIORITY_LOW),
@@ -73,7 +77,9 @@ class PaymentMethodConfigurationListBuilder extends ConfigEntityListBuilder {
       'data' => $this->t('Status'),
       'class' => array(RESPONSIVE_PRIORITY_MEDIUM),
     );
-    $row['operations'] = $this->t('Operations');
+    $row['operations'] = [
+      'data' => $this->t('Operations'),
+    ];
 
     return $row;
   }

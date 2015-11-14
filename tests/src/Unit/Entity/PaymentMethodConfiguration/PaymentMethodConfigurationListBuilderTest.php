@@ -13,6 +13,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
   use Drupal\Core\Entity\EntityTypeInterface;
   use Drupal\Core\Entity\Query\QueryInterface;
   use Drupal\Core\Extension\ModuleHandlerInterface;
+  use Drupal\Core\StringTranslation\TranslatableMarkup;
   use Drupal\Core\Url;
   use Drupal\payment\Entity\PaymentInterface;
   use Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationListBuilder;
@@ -119,20 +120,13 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
      */
     function testBuildHeader() {
       $header = $this->sut->buildHeader();
-      $expected = array(
-        'label' => 'Name',
-        'plugin' => 'Type',
-        'owner' => array(
-          'data' => 'Owner',
-          'class' => array(RESPONSIVE_PRIORITY_LOW),
-        ),
-        'status' => array(
-          'data' => 'Status',
-          'class' => array(RESPONSIVE_PRIORITY_MEDIUM),
-        ),
-        'operations' => 'Operations',
-      );
-      $this->assertSame($expected, $header);
+      foreach ($header as $cell) {
+        $this->assertInternalType('array', $cell);
+        $this->assertInstanceOf(TranslatableMarkup::class, $cell['data']);
+        if (array_key_exists('class', $cell)) {
+          $this->assertInternalType('array', $cell['class']);
+        }
+      }
     }
 
     /**
@@ -185,7 +179,6 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
               '#account' => $owner,
             )
           ),
-          'status' => 'Disabled',
           'operations' => array(
             'data' => array(
               '#type' => 'operations',
@@ -195,6 +188,8 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
         ),
         'class' => array('payment-method-configuration-disabled'),
       );
+      $this->assertInstanceOf(TranslatableMarkup::class, $build['data']['status']);
+      unset($build['data']['status']);
       $this->assertSame($expected_build, $build);
     }
 
@@ -231,14 +226,16 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
         '#type' => 'table',
         '#title' => NULL,
         '#rows' => [],
-        '#empty' => 'There is no payment method configuration yet.',
         '#attributes' => array(
           'class' => array('payment-method-configuration-list'),
         ),
         '#cache' => [
           'contexts' => NULL,
+          'tags' => NULL,
         ],
       );
+      $this->assertInstanceOf(TranslatableMarkup::class, $build['table']['#empty']);
+      unset($build['table']['#empty']);
       $this->assertEquals($expected_build, $build['table']);
     }
 
@@ -279,18 +276,14 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
         ->willReturnMap($map);
 
       $operations = $method->invoke($this->sut, $payment);
-      $expected_operations = array(
-        'duplicate' => array(
-          'title' => 'Duplicate',
-          'weight' => 99,
-        ),
-      );
-      $this->assertEmpty(array_diff_key($expected_operations, $operations));
-      $this->assertEmpty(array_diff_key($operations, $expected_operations));
+      $expected_operations = ['duplicate'];
+      $this->assertSame($expected_operations, array_keys($operations));
       foreach ($operations as $name => $operation) {
+        $this->assertInstanceof(TranslatableMarkup::class, $operation['title']);
         $this->assertInstanceof(Url::class, $operation['url']);
-        unset($operation['url']);
-        $this->assertSame($expected_operations[$name], $operation);
+        if (array_key_exists('weight', $operation)) {
+          $this->assertInternalType('int', $operation['weight']);
+        }
       }
     }
 

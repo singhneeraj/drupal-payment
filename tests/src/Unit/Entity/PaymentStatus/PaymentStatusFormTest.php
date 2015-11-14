@@ -187,34 +187,35 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
       $build = $this->sut->form([], $form_state);
       unset($build['#process']);
       unset($build['langcode']);
-      $expected_build = array(
-        'label' => array(
-          '#type' => 'textfield',
-          '#title' => 'Label',
-          '#default_value' => $label,
-          '#maxlength' => 255,
-          '#required' => TRUE,
+
+      $expected_build['label'] = [
+        '#type' => 'textfield',
+        '#default_value' => $label,
+        '#maxlength' => 255,
+        '#required' => TRUE,
+      ];
+      unset($build['label']['#title']);
+      $expected_build['id'] = [
+        '#default_value' => $id,
+        '#disabled' => !$is_new,
+        '#machine_name' => array(
+          'source' => array('label'),
+          'exists' => array($this->sut, 'PaymentStatusIdExists'),
         ),
-        'id' => array(
-          '#default_value' => $id,
-          '#disabled' => !$is_new,
-          '#machine_name' => array(
-            'source' => array('label'),
-            'exists' => array($this->sut, 'PaymentStatusIdExists'),
-          ),
-          '#maxlength' => 255,
-          '#type' => 'machine_name',
-          '#required' => TRUE,
-        ),
-        'parent_id' => $parent_selector_form,
-        'description' => array(
-          '#type' => 'textarea',
-          '#title' => 'Description',
-          '#default_value' => $description,
-          '#maxlength' => 255,
-        ),
-        '#after_build' => ['::afterBuild'],
-      );
+        '#maxlength' => 255,
+        '#type' => 'machine_name',
+        '#required' => TRUE,
+      ];
+      unset($build['id']['#title']);
+      $expected_build['parent_id'] = $parent_selector_form;
+      $expected_build['description'] = [
+        '#type' => 'textarea',
+        '#default_value' => $description,
+        '#maxlength' => 255,
+      ];
+      unset($build['description']['#title']);
+      $expected_build['#after_build'] = ['::afterBuild'];
+
       $this->assertSame($expected_build, $build);
     }
 
