@@ -15,7 +15,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
-use Drupal\plugin\PluginTypeInterface;
+use Drupal\plugin\PluginType\PluginTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -32,7 +32,7 @@ class SetStatus extends ConfigurableActionBase implements ContainerFactoryPlugin
   /**
    * The payment status type.
    *
-   * @var \Drupal\plugin\PluginTypeInterface
+   * @var \Drupal\plugin\PluginType\PluginTypeInterface
    */
   protected $paymentStatusType;
 
@@ -56,7 +56,7 @@ class SetStatus extends ConfigurableActionBase implements ContainerFactoryPlugin
    *   The string translator.
    * @param \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface $plugin_selector_manager
    *   The plugin selector manager.
-   * @param \Drupal\plugin\PluginTypeInterface $payment_status_type
+   * @param \Drupal\plugin\PluginType\PluginTypeInterface $payment_status_type
    *   The payment status type.
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition, TranslationInterface $string_translation, PluginSelectorManagerInterface $plugin_selector_manager, PluginTypeInterface $payment_status_type) {
@@ -70,7 +70,7 @@ class SetStatus extends ConfigurableActionBase implements ContainerFactoryPlugin
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    /** @var \Drupal\plugin\PluginTypeManagerInterface $plugin_type_manager */
+    /** @var \Drupal\plugin\PluginType\PluginTypeManagerInterface $plugin_type_manager */
     $plugin_type_manager = $container->get('plugin.plugin_type_manager');
 
     return new static($configuration, $plugin_id, $plugin_definition, $container->get('string_translation'), $container->get('plugin.manager.plugin.plugin_selector'), $plugin_type_manager->getPluginType('payment_status'));

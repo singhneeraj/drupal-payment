@@ -41,6 +41,9 @@ class PaymentAccessControlHandlerTest extends UnitTestCase {
     $cache_context_manager = $this->getMockBuilder(CacheContextsManager::class)
       ->disableOriginalConstructor()
       ->getMock();
+    $cache_context_manager->expects($this->any())
+      ->method('assertValidTokens')
+      ->willReturn(TRUE);
 
     $container = new Container();
     $container->set('cache_contexts_manager', $cache_context_manager);

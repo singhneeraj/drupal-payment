@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\payment\Unit\Controller;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\payment\Controller\EditPayment;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\Tests\UnitTestCase;
@@ -65,7 +66,7 @@ class EditPaymentTest extends UnitTestCase {
     $payment->expects($this->atLeastOnce())
       ->method('id');
 
-    $this->assertInternalType('string', $this->sut->title($payment));
+    $this->assertInstanceOf(TranslatableMarkup::class, $this->sut->title($payment));
   }
 
 }

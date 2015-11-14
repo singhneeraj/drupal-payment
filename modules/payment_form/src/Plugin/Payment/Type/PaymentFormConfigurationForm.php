@@ -14,7 +14,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
-use Drupal\plugin\PluginTypeInterface;
+use Drupal\plugin\PluginType\PluginTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -32,7 +32,7 @@ class PaymentFormConfigurationForm extends ConfigFormBase {
   /**
    * The plugin selector plugin type.
    *
-   * @var \Drupal\plugin\PluginTypeInterface
+   * @var \Drupal\plugin\PluginType\PluginTypeInterface
    */
   protected $pluginSelectorType;
 
@@ -42,7 +42,7 @@ class PaymentFormConfigurationForm extends ConfigFormBase {
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    * @param \Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface $payment_method_manager
-   * @param \Drupal\plugin\PluginTypeInterface $plugin_selector_type
+   * @param \Drupal\plugin\PluginType\PluginTypeInterface $plugin_selector_type
    */
   public function __construct(ConfigFactoryInterface $config_factory, TranslationInterface $string_translation, PaymentMethodManagerInterface $payment_method_manager, PluginTypeInterface $plugin_selector_type) {
     parent::__construct($config_factory);
@@ -55,7 +55,7 @@ class PaymentFormConfigurationForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    /** @var \Drupal\plugin\PluginTypeManagerInterface $plugin_type_manager */
+    /** @var \Drupal\plugin\PluginType\PluginTypeManagerInterface $plugin_type_manager */
     $plugin_type_manager = $container->get('plugin.plugin_type_manager');
 
     return new static(

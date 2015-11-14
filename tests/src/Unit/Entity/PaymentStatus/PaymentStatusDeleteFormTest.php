@@ -8,6 +8,7 @@
 namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
 
   use Drupal\Core\Form\FormStateInterface;
+  use Drupal\Core\StringTranslation\TranslatableMarkup;
   use Drupal\Core\Url;
   use Drupal\payment\Entity\PaymentStatus\PaymentStatusDeleteForm;
   use Drupal\payment\Entity\PaymentStatusInterface;
@@ -86,14 +87,14 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
      * @covers ::getQuestion
      */
     function testGetQuestion() {
-      $this->assertInternalType('string', $this->sut->getQuestion());
+      $this->assertInstanceOf(TranslatableMarkup::class, $this->sut->getQuestion());
     }
 
     /**
      * @covers ::getConfirmText
      */
     function testGetConfirmText() {
-      $this->assertInternalType('string', $this->sut->getConfirmText());
+      $this->assertInstanceOf(TranslatableMarkup::class, $this->sut->getConfirmText());
     }
 
     /**

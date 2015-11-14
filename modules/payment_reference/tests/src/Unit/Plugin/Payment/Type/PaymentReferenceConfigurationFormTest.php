@@ -14,8 +14,8 @@ namespace Drupal\Tests\payment_reference\Unit\Plugin\Payment\Type {
   use Drupal\payment_reference\Plugin\Payment\Type\PaymentReferenceConfigurationForm;
   use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface;
   use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
-  use Drupal\plugin\PluginType;
-  use Drupal\plugin\PluginTypeManagerInterface;
+  use Drupal\plugin\PluginType\PluginType;
+  use Drupal\plugin\PluginType\PluginTypeManagerInterface;
   use Drupal\Tests\UnitTestCase;
   use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -66,7 +66,7 @@ namespace Drupal\Tests\payment_reference\Unit\Plugin\Payment\Type {
     /**
      * The plugin selector plugin type.
      *
-     * @var \Drupal\plugin\PluginTypeInterface
+     * @var \Drupal\plugin\PluginType\PluginTypeInterface
      */
     protected $pluginSelectorType;
 

@@ -14,6 +14,7 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
   use Drupal\Core\Entity\Query\QueryInterface;
   use Drupal\Core\Extension\ModuleHandlerInterface;
   use Drupal\Core\Routing\RedirectDestinationInterface;
+  use Drupal\Core\StringTranslation\TranslatableMarkup;
   use Drupal\Core\Url;
   use Drupal\currency\Entity\CurrencyInterface;
   use Drupal\payment\Entity\Payment\PaymentListBuilder;
@@ -145,26 +146,13 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
      */
     function testBuildHeader() {
       $header = $this->sut->buildHeader();
-      $expected = array(
-        'updated' => [
-          'data' => 'Last updated',
-          'field' => 'changed',
-          'sort' => 'DESC',
-          'specifier' => 'changed',
-        ],
-        'status' => 'Status',
-        'amount' => 'Amount',
-        'payment_method' => array(
-          'data' => 'Payment method',
-          'class' => array(RESPONSIVE_PRIORITY_LOW),
-        ),
-        'owner' => array(
-          'data' => 'Payer',
-          'class' => array(RESPONSIVE_PRIORITY_MEDIUM),
-        ),
-        'operations' => 'Operations',
-      );
-      $this->assertSame($expected, $header);
+      foreach ($header as $cell) {
+        $this->assertInternalType('array', $cell);
+        $this->assertInstanceOf(TranslatableMarkup::class, $cell['data']);
+        if (array_key_exists('class', $cell)) {
+          $this->assertInternalType('array', $cell['class']);
+        }
+      }
     }
 
     /**
@@ -325,11 +313,13 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
         '#type' => 'table',
         '#title' => NULL,
         '#rows' => [],
-        '#empty' => 'There are no payments yet.',
         '#cache' => [
           'contexts' => NULL,
+          'tags' => NULL,
         ],
       );
+      $this->assertInstanceOf(TranslatableMarkup::class, $build['table']['#empty']);
+      unset($build['table']['#empty']);
       $this->assertEquals($expected_build, $build['table']);
     }
 
@@ -397,65 +387,16 @@ namespace Drupal\Tests\payment\Unit\Entity\Payment {
         ->willReturn($destination);
 
       $operations = $method->invoke($this->sut, $payment);
-      $expected_operations = array(
-        'view' => array(
-          'title' => 'View',
-          'weight' => -10,
-        ),
-        'edit' => array(
-          'title' => 'Edit',
-          'weight' => 10,
-          'query' => array(
-            'destination' => $destination,
-          ),
-        ),
-        'delete' => array(
-          'title' => 'Delete',
-          'weight' => 100,
-          'query' => array(
-            'destination' => $destination,
-          ),
-        ),
-        'update_status' => array(
-          'title' => 'Update status',
-          'attributes' => array(
-            'class' => array('use-ajax'),
-            'data-accepts' => 'application/vnd.drupal-modal',
-          ),
-          'query' => array(
-            'destination' => $destination,
-          ),
-        ),
-        'capture' => array(
-          'title' => 'Capture',
-          'attributes' => array(
-            'class' => array('use-ajax'),
-            'data-accepts' => 'application/vnd.drupal-modal',
-          ),
-          'query' => array(
-            'destination' => $destination,
-          ),
-        ),
-        'refund' => array(
-          'title' => 'Refund',
-          'attributes' => array(
-            'class' => array('use-ajax'),
-            'data-accepts' => 'application/vnd.drupal-modal',
-          ),
-          'query' => array(
-            'destination' => $destination,
-          ),
-        ),
-        'complete' => array(
-          'title' => 'Complete',
-        ),
-      );
-      $this->assertEmpty(array_diff_key($expected_operations, $operations));
-      $this->assertEmpty(array_diff_key($operations, $expected_operations));
+      ksort($operations);
+      $expected_operations = ['view', 'edit', 'delete', 'update_status', 'capture', 'refund', 'complete'];
+      sort($expected_operations);
+      $this->assertSame($expected_operations, array_keys($operations));
       foreach ($operations as $name => $operation) {
+        $this->assertInstanceof(TranslatableMarkup::class, $operation['title']);
         $this->assertInstanceof(Url::class, $operation['url']);
-        unset($operation['url']);
-        $this->assertSame($expected_operations[$name], $operation);
+        if (array_key_exists('weight', $operation)) {
+          $this->assertInternalType('int', $operation['weight']);
+        }
       }
     }
 

@@ -14,6 +14,7 @@ use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\payment\Controller\AddPaymentMethodConfiguration;
 use Drupal\payment\Entity\PaymentMethodConfigurationInterface;
 use Drupal\payment\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationManagerInterface;
@@ -193,7 +194,7 @@ class AddPaymentMethodConfigurationTest extends UnitTestCase {
         'label' => $this->randomMachineName(),
       ]);
 
-    $this->assertInternalType('string', $this->sut->title($plugin_id));
+    $this->assertInstanceOf(TranslatableMarkup::class, $this->sut->title($plugin_id));
   }
 
 }

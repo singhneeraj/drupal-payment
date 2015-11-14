@@ -134,8 +134,12 @@ class PaymentListBuilder extends EntityListBuilder implements PaymentListBuilder
       'sort' => 'DESC',
       'specifier' => 'changed',
     ];
-    $header['status'] = $this->t('Status');
-    $header['amount'] =$this-> t('Amount');
+    $header['status'] = [
+      'data' => $this->t('Status'),
+    ];
+    $header['amount'] = [
+      'data' => $this-> t('Amount'),
+    ];
     $header['payment_method'] = array(
       'data' => $this->t('Payment method'),
       'class' => array(RESPONSIVE_PRIORITY_LOW),
@@ -144,7 +148,9 @@ class PaymentListBuilder extends EntityListBuilder implements PaymentListBuilder
       'data' => $this->t('Payer'),
       'class' => array(RESPONSIVE_PRIORITY_MEDIUM),
     );
-    $header['operations'] = $this->t('Operations');
+    $header['operations'] = [
+      'data' => $this->t('Operations'),
+    ];
 
     return $header;
   }

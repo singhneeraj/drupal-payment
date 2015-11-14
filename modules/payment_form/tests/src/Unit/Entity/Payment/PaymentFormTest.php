@@ -24,8 +24,8 @@ use Drupal\payment\Response\Response;
 use Drupal\payment_form\Entity\Payment\PaymentForm;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
-use Drupal\plugin\PluginType;
-use Drupal\plugin\PluginTypeManagerInterface;
+use Drupal\plugin\PluginType\PluginType;
+use Drupal\plugin\PluginType\PluginTypeManagerInterface;
 use Drupal\Tests\payment\Unit\PHPUnitStubMap;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -91,7 +91,7 @@ class PaymentFormTest extends UnitTestCase {
   /**
    * The payment method plugin type.
    *
-   * @var \Drupal\plugin\PluginTypeInterface
+   * @var \Drupal\plugin\PluginType\PluginTypeInterface
    */
   protected $paymentMethodType;
 

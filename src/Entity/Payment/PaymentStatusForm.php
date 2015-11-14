@@ -16,7 +16,7 @@ use Drupal\payment\Plugin\Payment\Method\PaymentMethodUpdatePaymentStatusInterfa
 use Drupal\payment\Plugin\Payment\PaymentAwarePluginManagerDecorator;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
 use Drupal\plugin\PluginDiscovery\LimitedPluginDiscoveryDecorator;
-use Drupal\plugin\PluginTypeManagerInterface;
+use Drupal\plugin\PluginType\PluginTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -34,7 +34,7 @@ class PaymentStatusForm extends EntityForm {
   /**
    * The plugin type manager.
    *
-   * @var \Drupal\plugin\PluginTypeManagerInterface
+   * @var \Drupal\plugin\PluginType\PluginTypeManagerInterface
    */
   protected $pluginTypeManager;
 
@@ -48,7 +48,7 @@ class PaymentStatusForm extends EntityForm {
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *    The string translator.
    * @param \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface $plugin_selector_manager
-   * @param \Drupal\plugin\PluginTypeManagerInterface $plugin_type_manager
+   * @param \Drupal\plugin\PluginType\PluginTypeManagerInterface $plugin_type_manager
    *   The plugin type manager.
    */
   function __construct(AccountInterface $current_user, UrlGeneratorInterface $url_generator, TranslationInterface $string_translation, PluginSelectorManagerInterface $plugin_selector_manager, PluginTypeManagerInterface $plugin_type_manager) {

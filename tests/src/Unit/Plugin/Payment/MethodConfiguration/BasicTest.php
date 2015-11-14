@@ -14,8 +14,8 @@ use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
-use Drupal\plugin\PluginType;
-use Drupal\plugin\PluginTypeManagerInterface;
+use Drupal\plugin\PluginType\PluginType;
+use Drupal\plugin\PluginType\PluginTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -35,7 +35,7 @@ class BasicTest extends PaymentMethodConfigurationBaseTestBase {
   /**
    * The payment status plugin type.
    *
-   * @var \Drupal\plugin\PluginTypeInterface
+   * @var \Drupal\plugin\PluginType\PluginTypeInterface
    */
   protected $paymentStatusType;
 

@@ -266,7 +266,7 @@ class PaymentFormTest extends UnitTestCase {
       ->with($payment, 'payment_form')
       ->willReturn($form);
 
-    $this->assertSame($form, $this->sut->viewElements($items));
+    $this->assertSame($form, $this->sut->viewElements($items, 'en'));
   }
 
 }

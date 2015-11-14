@@ -20,8 +20,8 @@ use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Drupal\payment\QueueInterface;
 use Drupal\payment_reference\Element\PaymentReference;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
-use Drupal\plugin\PluginType;
-use Drupal\plugin\PluginTypeManagerInterface;
+use Drupal\plugin\PluginType\PluginType;
+use Drupal\plugin\PluginType\PluginTypeManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -64,7 +64,7 @@ class PaymentReferenceTest extends UnitTestCase {
   /**
    * The payment method type.
    *
-   * @var \Drupal\plugin\PluginTypeInterface
+   * @var \Drupal\plugin\PluginType\PluginTypeInterface
    */
   protected $paymentMethodType;
 

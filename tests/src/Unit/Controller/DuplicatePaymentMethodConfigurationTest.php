@@ -104,7 +104,7 @@ class DuplicatePaymentMethodConfigurationTest extends UnitTestCase {
       ->method('label')
       ->willReturn($label);
 
-    $this->assertContains($label, $this->sut->title($payment_method_configuration));
+    $this->assertContains($label, (string) $this->sut->title($payment_method_configuration));
   }
 
 }
