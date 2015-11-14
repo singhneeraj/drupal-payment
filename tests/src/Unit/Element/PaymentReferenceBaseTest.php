@@ -32,7 +32,7 @@ namespace Drupal\Tests\payment\Unit\Element {
   use Drupal\payment\QueueInterface;
   use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface;
   use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
-  use Drupal\plugin\PluginType;
+  use Drupal\plugin\PluginType\PluginType;
   use Drupal\Tests\UnitTestCase;
   use Symfony\Component\DependencyInjection\ContainerInterface;
   use Symfony\Component\HttpFoundation\Request;
@@ -76,7 +76,7 @@ namespace Drupal\Tests\payment\Unit\Element {
     /**
      * The payment method type.
      *
-     * @var \Drupal\plugin\PluginTypeInterface
+     * @var \Drupal\plugin\PluginType\PluginTypeInterface
      */
     protected $paymentMethodType;
 

@@ -31,7 +31,7 @@ use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentExecutionPaymentMethodManager;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
 use Drupal\plugin\PluginDiscovery\LimitedPluginDiscoveryDecorator;
-use Drupal\plugin\PluginTypeInterface;
+use Drupal\plugin\PluginType\PluginTypeInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -75,7 +75,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
   /**
    * The payment method type.
    *
-   * @var \Drupal\plugin\PluginTypeInterface
+   * @var \Drupal\plugin\PluginType\PluginTypeInterface
    */
   protected $paymentMethodType;
 
@@ -131,7 +131,7 @@ abstract class PaymentReferenceBase extends FormElement implements FormElementIn
    * @param \Drupal\Core\Render\RendererInterface $renderer
    * @param \Drupal\Core\Session\AccountInterface $current_user
    * @param \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface $plugin_selector_manager
-   * @param \Drupal\plugin\PluginTypeInterface $payment_method_type
+   * @param \Drupal\plugin\PluginType\PluginTypeInterface $payment_method_type
    * @param \Drupal\Component\Utility\Random $random
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition, RequestStack $request_stack, EntityStorageInterface $payment_storage, TranslationInterface $string_translation, DateFormatter $date_formatter, LinkGeneratorInterface $link_generator, RendererInterface $renderer, AccountInterface $current_user, PluginSelectorManagerInterface $plugin_selector_manager, PluginTypeInterface $payment_method_type, Random $random) {

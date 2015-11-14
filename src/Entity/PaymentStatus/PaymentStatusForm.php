@@ -13,7 +13,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
-use Drupal\plugin\PluginTypeManagerInterface;
+use Drupal\plugin\PluginType\PluginTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -38,7 +38,7 @@ class PaymentStatusForm extends EntityForm {
   /**
    * The plugin type manager.
    *
-   * @var \Drupal\plugin\PluginTypeManagerInterface
+   * @var \Drupal\plugin\PluginType\PluginTypeManagerInterface
    */
   protected $pluginTypeManager;
 
@@ -51,7 +51,7 @@ class PaymentStatusForm extends EntityForm {
    *   The payment status storage.
    * @param \Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface $plugin_selector_manager
    *   The plugin selector manager.
-   * @param \Drupal\plugin\PluginTypeManagerInterface $plugin_type_manager
+   * @param \Drupal\plugin\PluginType\PluginTypeManagerInterface $plugin_type_manager
    *   The plugin type manager.
    */
   public function __construct(TranslationInterface $string_translation, EntityStorageInterface $payment_status_storage, PluginSelectorManagerInterface $plugin_selector_manager, PluginTypeManagerInterface $plugin_type_manager) {
