@@ -108,7 +108,13 @@ class Payment extends ContentEntityBase implements PaymentInterface {
   public function getPaymentType() {
     /** @var \Drupal\plugin\Plugin\Field\FieldType\PluginCollectionItemInterface $field_item */
     $field_item = $this->get('payment_type')->first();
-
+    // @todo For some reason the
+    // \Drupal\payment_reference_test\PaymentReferenceElement passes if we
+    // retrieve the plugin ID and configuration here. Maybe those two method
+    // calls cause plugin instantiation, which ::getContainedPluginInstance()
+    // does not?
+    debug($field_item->getContainedPluginId();
+    debug($field_item->getContainedPluginConfiguration());
     return $field_item ? $field_item->getContainedPluginInstance() : NULL;
   }
 
