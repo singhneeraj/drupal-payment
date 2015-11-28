@@ -21,9 +21,6 @@ use Drupal\payment_reference\PaymentReference as PaymentReferenceServiceWrapper;
  *
  * @FieldType(
  *   configurable = "true",
- *   constraints = {
- *     "ValidReference" = {}
- *   },
  *   default_formatter = "entity_reference_label",
  *   default_widget = "payment_reference",
  *   id = "payment_reference",
