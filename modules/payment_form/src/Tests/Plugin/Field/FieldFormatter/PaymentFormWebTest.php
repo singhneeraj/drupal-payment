@@ -50,7 +50,7 @@ class PaymentFormWebTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['entity_reference', 'field', 'filter', 'payment', 'payment_form'];
+  public static $modules = ['field', 'filter', 'payment', 'payment_form'];
 
   /**
    * {@inheritdoc

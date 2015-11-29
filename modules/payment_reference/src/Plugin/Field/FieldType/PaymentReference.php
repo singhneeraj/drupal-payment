@@ -9,9 +9,9 @@ namespace Drupal\payment_reference\Plugin\Field\FieldType;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\currency\Entity\Currency;
-use Drupal\entity_reference\ConfigurableEntityReferenceItem;
 use Drupal\payment\Element\PaymentLineItemsInput;
 use Drupal\payment\Payment;
 use Drupal\payment_reference\PaymentReference as PaymentReferenceServiceWrapper;
@@ -28,7 +28,7 @@ use Drupal\payment_reference\PaymentReference as PaymentReferenceServiceWrapper;
  *   list_class = "\Drupal\payment_reference\Plugin\Field\FieldType\PaymentReferenceItemList"
  * )
  */
-class PaymentReference extends ConfigurableEntityReferenceItem {
+class PaymentReference extends EntityReferenceItem {
 
   /**
    * {@inheritdoc}
