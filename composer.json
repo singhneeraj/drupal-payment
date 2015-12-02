@@ -12,7 +12,7 @@
   "autoload-dev": {
     "psr-4": {
       "Drupal\\Tests\\payment\\": "tests/src",
-      "Drupal\\Tests\\payment_reference\\": "modules/payment_form/tests/src",
+      "Drupal\\Tests\\payment_form\\": "modules/payment_form/tests/src",
       "Drupal\\Tests\\payment_reference\\": "modules/payment_reference/tests/src"
     }
   },
