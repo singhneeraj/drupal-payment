@@ -1,5 +1,5 @@
 # Payment
-[![Build Status](https://travis-ci.org/bartfeenstra/drupal-payment.svg?branch=8.x-2.x)](https://travis-ci.org/bartfeenstra/drupal-payment) [![Coverage Status](https://coveralls.io/repos/bartfeenstra/drupal-payment/badge.svg?branch=8.x-2.x)](https://coveralls.io/r/bartfeenstra/drupal-payment?branch=8.x-2.x)
+[![Build Status](https://travis-ci.org/bartfeenstra/drupal-payment.svg?branch=8.x-2.x)](https://travis-ci.org/bartfeenstra/drupal-payment)
 
 ## About
 Payment allows you to create and configure payment methods and use those to
