@@ -8,7 +8,6 @@
 namespace Drupal\Tests\payment_form\Unit\Entity\Payment;
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -24,9 +23,8 @@ use Drupal\payment\Response\Response;
 use Drupal\payment_form\Entity\Payment\PaymentForm;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
-use Drupal\plugin\PluginType\PluginType;
+use Drupal\plugin\PluginType\PluginTypeInterface;
 use Drupal\plugin\PluginType\PluginTypeManagerInterface;
-use Drupal\Tests\payment\Unit\PHPUnitStubMap;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -91,7 +89,7 @@ class PaymentFormTest extends UnitTestCase {
   /**
    * The payment method plugin type.
    *
-   * @var \Drupal\plugin\PluginType\PluginTypeInterface
+   * @var \Drupal\plugin\PluginType\PluginTypeInterface|\Prophecy\Prophecy\ObjectProphecy
    */
   protected $paymentMethodType;
 
@@ -137,16 +135,10 @@ class PaymentFormTest extends UnitTestCase {
 
     $this->paymentMethodManager = $this->getMock(PaymentMethodManagerInterface::class);
 
-    $class_resolver = $this->getMock(ClassResolverInterface::class);
-
     $this->stringTranslation = $this->getStringTranslationStub();
 
-    $plugin_type_definition = [
-      'id' => $this->randomMachineName(),
-      'label' => $this->randomMachineName(),
-      'provider' => $this->randomMachineName(),
-    ];
-    $this->paymentMethodType = new PluginType($plugin_type_definition, $this->stringTranslation, $class_resolver, $this->paymentMethodManager);
+    $this->paymentMethodType = $this->prophesize(PluginTypeInterface::class);
+    $this->paymentMethodType->getPluginManager()->willReturn($this->paymentMethodManager);
 
     $this->pluginSelector = $this->getMock(PluginSelectorInterface::class);
 
@@ -162,7 +154,7 @@ class PaymentFormTest extends UnitTestCase {
 
     $this->configFactory = $this->getConfigFactoryStub($this->configFactoryConfiguration);
 
-    $this->sut = new PaymentForm($this->entityManager, $this->stringTranslation, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodType);
+    $this->sut = new PaymentForm($this->entityManager, $this->stringTranslation, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodType->reveal());
     $this->sut->setConfigFactory($this->configFactory);
     $this->sut->setEntity($this->payment);
   }
@@ -172,18 +164,16 @@ class PaymentFormTest extends UnitTestCase {
    * @covers ::__construct
    */
   function testCreate() {
-    $plugin_type_manager = $this->getMock(PluginTypeManagerInterface::class);
-    $plugin_type_manager->expects($this->any())
-      ->method('getPluginType')
-      ->with('payment_method')
-      ->willReturn($this->paymentMethodType);
+    $plugin_type_manager = $this->prophesize(PluginTypeManagerInterface::class);
+    $plugin_type_manager->getPluginType('payment_method')
+      ->willReturn($this->paymentMethodType->reveal());
 
     $container = $this->getMock(ContainerInterface::class);
     $map = [
       ['current_user', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->currentUser],
       ['entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->entityManager],
       ['plugin.manager.plugin.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager],
-      ['plugin.plugin_type_manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $plugin_type_manager],
+      ['plugin.plugin_type_manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $plugin_type_manager->reveal()],
       ['string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation],
     ];
     $container->expects($this->any())

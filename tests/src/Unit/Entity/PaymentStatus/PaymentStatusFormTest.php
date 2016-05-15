@@ -7,7 +7,6 @@
 
 namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
 
-  use Drupal\Core\DependencyInjection\ClassResolverInterface;
   use Drupal\Core\Entity\EntityManagerInterface;
   use Drupal\Core\Entity\EntityStorageInterface;
   use Drupal\Core\Form\FormState;
@@ -18,7 +17,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
   use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
   use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface;
   use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
-  use Drupal\plugin\PluginType\PluginType;
+  use Drupal\plugin\PluginType\PluginTypeInterface;
   use Drupal\plugin\PluginType\PluginTypeManagerInterface;
   use Drupal\Tests\UnitTestCase;
   use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -59,11 +58,11 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
     protected $pluginSelectorManager;
 
     /**
-     * The plugin type manager.
+     * The payment status plugin type.
      *
-     * @var \Drupal\plugin\PluginType\PluginTypeManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Drupal\plugin\PluginType\PluginTypeInterface|\Prophecy\Prophecy\ObjectProphecy
      */
-    protected $pluginTypeManager;
+    protected $paymentStatusPluginType;
 
     /**
      * The string translator.
@@ -91,23 +90,11 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
 
       $this->pluginSelectorManager = $this->getMock(PluginSelectorManagerInterface::class);
 
-      $class_resolver = $this->getMock(ClassResolverInterface::class);
-
       $this->stringTranslation = $this->getStringTranslationStub();
 
-      $this->pluginTypeManager = $this->getMock(PluginTypeManagerInterface::class);
-      $plugin_type_definition = [
-        'id' => $this->randomMachineName(),
-        'label' => $this->randomMachineName(),
-        'provider' => $this->randomMachineName(),
-      ];
-      $plugin_type = new PluginType($plugin_type_definition, $this->stringTranslation, $class_resolver, $this->paymentStatusManager);
-      $this->pluginTypeManager->expects($this->any())
-        ->method('getPluginType')
-        ->with('payment_status')
-        ->willReturn($plugin_type);
+      $this->paymentStatusPluginType = $this->prophesize(PluginTypeInterface::class);
 
-      $this->sut = new PaymentStatusForm($this->stringTranslation, $this->paymentStatusStorage, $this->pluginSelectorManager, $this->pluginTypeManager);
+      $this->sut = new PaymentStatusForm($this->stringTranslation, $this->paymentStatusStorage, $this->pluginSelectorManager, $this->paymentStatusPluginType->reveal());
       $this->sut->setEntity($this->paymentStatus);
     }
 
@@ -122,11 +109,14 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
         ->with('payment_status')
         ->willReturn($this->paymentStatusStorage);
 
+      $plugin_type_manager = $this->prophesize(PluginTypeManagerInterface::class);
+      $plugin_type_manager->getPluginType('payment_status')->willReturn($this->paymentStatusPluginType);
+
       $container = $this->getMock(ContainerInterface::class);
       $map = array(
         array('entity.manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $entity_manager),
         array('plugin.manager.plugin.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
-        array('plugin.plugin_type_manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginTypeManager),
+        array('plugin.plugin_type_manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $plugin_type_manager->reveal()),
         array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
       );
       $container->expects($this->any())
@@ -301,7 +291,7 @@ namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
 
       /** @var \Drupal\payment\Entity\PaymentStatus\PaymentStatusForm|\PHPUnit_Framework_MockObject_MockObject $form */
       $form = $this->getMockBuilder(PaymentStatusForm::class)
-        ->setConstructorArgs(array($this->stringTranslation, $this->paymentStatusStorage, $this->pluginSelectorManager, $this->pluginTypeManager))
+        ->setConstructorArgs(array($this->stringTranslation, $this->paymentStatusStorage, $this->pluginSelectorManager, $this->paymentStatusPluginType->reveal()))
         ->setMethods(array('copyFormValuesToEntity'))
         ->getMock();
       $form->setEntity($this->paymentStatus);

@@ -10,6 +10,7 @@ namespace Drupal\Tests\payment\Unit\Element {
   use Drupal\Component\Plugin\PluginManagerInterface;
   use Drupal\Component\Utility\Random;
   use Drupal\Core\Ajax\AjaxResponse;
+  use Drupal\Core\Config\TypedConfigManagerInterface;
   use Drupal\Core\Datetime\DateFormatter;
   use Drupal\Core\DependencyInjection\ClassResolverInterface;
   use Drupal\Core\DependencyInjection\Container;
@@ -147,6 +148,14 @@ namespace Drupal\Tests\payment\Unit\Element {
      * {@inheritdoc}
      */
     public function setUp() {
+      $plugin_type_id = $this->randomMachineName();
+      $plugin_configuration_schema_id = sprintf('plugin.plugin_configuration.%s.*', $plugin_type_id);
+      $plugin_type_definition = [
+        'id' => $plugin_type_id,
+        'label' => $this->randomMachineName(),
+        'provider' => $this->randomMachineName(),
+      ];
+
       $this->currentUser = $this->getMock(AccountInterface::class);
 
       $this->dateFormatter = $this->getMockBuilder(DateFormatter::class)
@@ -161,12 +170,10 @@ namespace Drupal\Tests\payment\Unit\Element {
 
       $this->stringTranslation = $this->getStringTranslationStub();
 
-      $plugin_type_definition = [
-        'id' => $this->randomMachineName(),
-        'label' => $this->randomMachineName(),
-        'provider' => $this->randomMachineName(),
-      ];
-      $this->paymentMethodType = new PluginType($plugin_type_definition, $this->stringTranslation, $class_resolver, $this->paymentMethodManager);
+      $typed_config_manager = $this->prophesize(TypedConfigManagerInterface::class);
+      $typed_config_manager->hasConfigSchema($plugin_configuration_schema_id)->willReturn(TRUE);
+
+      $this->paymentMethodType = new PluginType($plugin_type_definition, $this->stringTranslation, $class_resolver, $this->paymentMethodManager, $typed_config_manager->reveal());
 
       $this->paymentQueue = $this->getMock(QueueInterface::class);
 

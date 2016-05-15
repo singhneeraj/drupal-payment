@@ -8,13 +8,12 @@
 
 namespace Drupal\Tests\payment_reference\Unit\Plugin\Payment\Type {
 
-  use Drupal\Core\DependencyInjection\ClassResolverInterface;
   use Drupal\Core\Form\FormState;
   use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
   use Drupal\payment_reference\Plugin\Payment\Type\PaymentReferenceConfigurationForm;
   use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface;
   use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
-  use Drupal\plugin\PluginType\PluginType;
+  use Drupal\plugin\PluginType\PluginTypeInterface;
   use Drupal\plugin\PluginType\PluginTypeManagerInterface;
   use Drupal\Tests\UnitTestCase;
   use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -66,7 +65,7 @@ namespace Drupal\Tests\payment_reference\Unit\Plugin\Payment\Type {
     /**
      * The plugin selector plugin type.
      *
-     * @var \Drupal\plugin\PluginType\PluginTypeInterface
+     * @var \Drupal\plugin\PluginType\PluginTypeInterface|\Prophecy\Prophecy\ObjectProphecy
      */
     protected $pluginSelectorType;
 
@@ -111,20 +110,14 @@ namespace Drupal\Tests\payment_reference\Unit\Plugin\Payment\Type {
 
       $this->pluginSelectorManager = $this->getMock(PluginSelectorManagerInterface::class);
 
-      $class_resolver = $this->getMock(ClassResolverInterface::class);
-
       $this->stringTranslation = $this->getStringTranslationStub();
 
-      $plugin_type_definition = [
-        'id' => $this->randomMachineName(),
-        'label' => $this->randomMachineName(),
-        'provider' => $this->randomMachineName(),
-      ];
-      $this->pluginSelectorType = new PluginType($plugin_type_definition, $this->stringTranslation, $class_resolver, $this->pluginSelectorManager);
+      $this->pluginSelectorType = $this->prophesize(PluginTypeInterface::class);
+      $this->pluginSelectorType->getPluginManager()->willReturn($this->pluginSelectorManager);
 
       $this->selectedPluginSelector = $this->getMock(PluginSelectorInterface::class);
 
-      $this->sut = new PaymentReferenceConfigurationForm($this->configFactory, $this->stringTranslation, $this->paymentMethodManager, $this->pluginSelectorType);
+      $this->sut = new PaymentReferenceConfigurationForm($this->configFactory, $this->stringTranslation, $this->paymentMethodManager, $this->pluginSelectorType->reveal());
     }
 
     /**
@@ -132,17 +125,15 @@ namespace Drupal\Tests\payment_reference\Unit\Plugin\Payment\Type {
      * @covers ::__construct
      */
     function testCreate() {
-      $plugin_type_manager = $this->getMock(PluginTypeManagerInterface::class);
-      $plugin_type_manager->expects($this->any())
-        ->method('getPluginType')
-        ->with('plugin_selector')
-        ->willReturn($this->pluginSelectorType);
+      $plugin_type_manager = $this->prophesize(PluginTypeManagerInterface::class);
+      $plugin_type_manager->getPluginType('plugin_selector')
+        ->willReturn($this->pluginSelectorType->reveal());
 
       $container = $this->getMock(ContainerInterface::class);
       $map = array(
         array('config.factory', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->configFactory),
         array('plugin.manager.payment.method', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentMethodManager),
-        ['plugin.plugin_type_manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $plugin_type_manager],
+        ['plugin.plugin_type_manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $plugin_type_manager->reveal()],
         array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
       );
       $container->expects($this->any())
