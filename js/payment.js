@@ -14,13 +14,13 @@
   /**
    * Refreshes all payment references.
    */
-  Drupal.PaymentReferenceRefreshButtons = function() {
-    $('.payment_reference-refresh-button').each(function() {
+  Drupal.PaymentReferenceRefreshButtons = function () {
+    $('.payment_reference-refresh-button').each(function () {
       if (!drupalSettings.PaymentReferencePaymentAvailable[drupalSettings.ajax[this.id].wrapper]) {
         $(this).trigger('mousedown');
       }
     });
-  }
+  };
 
   /**
    * Sets an interval to refresh all payment references.
