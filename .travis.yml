@@ -40,6 +40,7 @@ install:
   # Build Drupal and add the package under test as a dependency.
   - cp -R $TRAVIS_BUILD_DIR/travis-ci/build $BUILD_DIR
   - cd $BUILD_DIR
+  - export COMPOSER_EXIT_ON_PATCH_FAILURE=1
   - composer install
   - mkdir ./web/profiles
 
