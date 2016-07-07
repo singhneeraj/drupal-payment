@@ -19,6 +19,7 @@
   "require" : {
     "ext-bcmath": "*",
     "php": "~5.5|~7.0",
+    "drupal/core": "~8.0",
     "drupal/currency": "8.3.*",
     "drupal/plugin": "8.2.* || >= 8.2.2"
   }
