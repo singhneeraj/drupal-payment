@@ -8,7 +8,6 @@
 namespace Drupal\Tests\payment\Unit\Plugin\Action;
 
 use Drupal\Core\Access\AccessResultAllowed;
-use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\payment\Entity\PaymentInterface;
@@ -17,7 +16,7 @@ use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
-use Drupal\plugin\PluginType\PluginType;
+use Drupal\plugin\PluginType\PluginTypeInterface;
 use Drupal\plugin\PluginType\PluginTypeManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -39,7 +38,7 @@ class SetStatusTest extends UnitTestCase {
   /**
    * The payment status type.
    *
-   * @var \Drupal\plugin\PluginType\PluginTypeInterface
+   * @var \Drupal\plugin\PluginType\PluginTypeInterface|\Prophecy\Prophecy\ObjectProphecy
    */
   protected $paymentStatusType;
 
@@ -72,21 +71,15 @@ class SetStatusTest extends UnitTestCase {
 
     $this->pluginSelectorManager = $this->getMock(PluginSelectorManagerInterface::class);
 
-    $class_resolver = $this->getMock(ClassResolverInterface::class);
-
     $this->stringTranslation = $this->getStringTranslationStub();
 
-    $plugin_type_definition = [
-      'id' => $this->randomMachineName(),
-      'label' => $this->randomMachineName(),
-      'provider' => $this->randomMachineName(),
-    ];
-    $this->paymentStatusType = new PluginType($plugin_type_definition, $this->stringTranslation, $class_resolver, $this->paymentStatusManager);
+    $this->paymentStatusType = $this->prophesize(PluginTypeInterface::class);
+    $this->paymentStatusType->getPluginManager()->willReturn($this->paymentStatusManager);
 
     $configuration = [];
     $plugin_definition = [];
     $plugin_id = $this->randomMachineName();
-    $this->sut = new SetStatus($configuration, $plugin_id, $plugin_definition, $this->stringTranslation, $this->pluginSelectorManager, $this->paymentStatusType);
+    $this->sut = new SetStatus($configuration, $plugin_id, $plugin_definition, $this->stringTranslation, $this->pluginSelectorManager, $this->paymentStatusType->reveal());
   }
 
   /**
@@ -94,16 +87,14 @@ class SetStatusTest extends UnitTestCase {
    * @covers ::__construct
    */
   function testCreate() {
-    $plugin_type_manager = $this->getMock(PluginTypeManagerInterface::class);
-    $plugin_type_manager->expects($this->any())
-      ->method('getPluginType')
-      ->with('payment_status')
-      ->willReturn($this->paymentStatusType);
+    $plugin_type_manager = $this->prophesize(PluginTypeManagerInterface::class);
+    $plugin_type_manager->getPluginType('payment_status')
+      ->willReturn($this->paymentStatusType->reveal());
 
     $container = $this->getMock(ContainerInterface::class);
     $map = array(
       array('plugin.manager.plugin.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
-      array('plugin.plugin_type_manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $plugin_type_manager),
+      array('plugin.plugin_type_manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $plugin_type_manager->reveal()),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
     $container->expects($this->any())

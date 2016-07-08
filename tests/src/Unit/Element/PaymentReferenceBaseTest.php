@@ -10,6 +10,7 @@ namespace Drupal\Tests\payment\Unit\Element {
   use Drupal\Component\Plugin\PluginManagerInterface;
   use Drupal\Component\Utility\Random;
   use Drupal\Core\Ajax\AjaxResponse;
+  use Drupal\Core\Config\TypedConfigManagerInterface;
   use Drupal\Core\Datetime\DateFormatter;
   use Drupal\Core\DependencyInjection\ClassResolverInterface;
   use Drupal\Core\DependencyInjection\Container;
@@ -44,6 +45,13 @@ namespace Drupal\Tests\payment\Unit\Element {
    * @group Payment
    */
   class PaymentReferenceBaseTest extends UnitTestCase {
+
+    /**
+     * The service container.
+     *
+     * @var \Symfony\Component\DependencyInjection\ContainerInterface|\Prophecy\Prophecy\ObjectProphecy
+     */
+    protected $container;
 
     /**
      * The current user.
@@ -147,6 +155,16 @@ namespace Drupal\Tests\payment\Unit\Element {
      * {@inheritdoc}
      */
     public function setUp() {
+      $plugin_type_id = $this->randomMachineName();
+      $plugin_manager_service_id = 'foo.bar';
+      $plugin_configuration_schema_id = sprintf('plugin.plugin_configuration.%s.*', $plugin_type_id);
+      $plugin_type_definition = [
+        'id' => $plugin_type_id,
+        'label' => $this->randomMachineName(),
+        'provider' => $this->randomMachineName(),
+        'plugin_manager_service_id' => $plugin_manager_service_id,
+      ];
+
       $this->currentUser = $this->getMock(AccountInterface::class);
 
       $this->dateFormatter = $this->getMockBuilder(DateFormatter::class)
@@ -157,16 +175,17 @@ namespace Drupal\Tests\payment\Unit\Element {
 
       $this->paymentMethodManager = $this->getMock(PaymentMethodManagerInterface::class);
 
+      $this->container = $this->prophesize(ContainerInterface::class);
+      $this->container->get($plugin_manager_service_id)->willReturn($this->paymentMethodManager);
+
       $class_resolver = $this->getMock(ClassResolverInterface::class);
 
       $this->stringTranslation = $this->getStringTranslationStub();
 
-      $plugin_type_definition = [
-        'id' => $this->randomMachineName(),
-        'label' => $this->randomMachineName(),
-        'provider' => $this->randomMachineName(),
-      ];
-      $this->paymentMethodType = new PluginType($plugin_type_definition, $this->stringTranslation, $class_resolver, $this->paymentMethodManager);
+      $typed_config_manager = $this->prophesize(TypedConfigManagerInterface::class);
+      $typed_config_manager->hasConfigSchema($plugin_configuration_schema_id)->willReturn(TRUE);
+
+      $this->paymentMethodType = new PluginType($plugin_type_definition, $this->container->reveal(), $this->stringTranslation, $class_resolver, $typed_config_manager->reveal());
 
       $this->paymentQueue = $this->getMock(QueueInterface::class);
 

@@ -5,5 +5,5 @@ configure: payment.admin
 type: module
 package: Payment
 dependencies:
-  - currency
-  - plugin
+  - currency (3.x)
+  - plugin (2.x)

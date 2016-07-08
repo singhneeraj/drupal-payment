@@ -15,6 +15,7 @@ use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
 use Drupal\plugin\PluginType\PluginType;
+use Drupal\plugin\PluginType\PluginTypeInterface;
 use Drupal\plugin\PluginType\PluginTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -35,7 +36,7 @@ class BasicTest extends PaymentMethodConfigurationBaseTestBase {
   /**
    * The payment status plugin type.
    *
-   * @var \Drupal\plugin\PluginType\PluginTypeInterface
+   * @var \Drupal\plugin\PluginType\PluginTypeInterface|\Prophecy\Prophecy\ObjectProphecy
    */
   protected $paymentStatusType;
 
@@ -61,18 +62,12 @@ class BasicTest extends PaymentMethodConfigurationBaseTestBase {
 
     $this->paymentStatusManager = $this->getMock(PaymentStatusManagerInterface::class);
 
-    $class_resolver = $this->getMock(ClassResolverInterface::class);
-
-    $plugin_type_definition = [
-      'id' => $this->randomMachineName(),
-      'label' => $this->randomMachineName(),
-      'provider' => $this->randomMachineName(),
-    ];
-    $this->paymentStatusType = new PluginType($plugin_type_definition, $this->getStringTranslationStub(), $class_resolver, $this->paymentStatusManager);
+    $this->paymentStatusType = $this->prophesize(PluginTypeInterface::class);
+    $this->paymentStatusType->getPluginManager()->willReturn($this->paymentStatusManager);
 
     $this->pluginSelectorManager = $this->getMock(PluginSelectorManagerInterface::class);
 
-    $this->sut = new Basic([], '', $this->pluginDefinition, $this->stringTranslation, $this->moduleHandler, $this->pluginSelectorManager, $this->paymentStatusType);
+    $this->sut = new Basic([], '', $this->pluginDefinition, $this->stringTranslation, $this->moduleHandler, $this->pluginSelectorManager, $this->paymentStatusType->reveal());
   }
 
   /**
@@ -80,17 +75,15 @@ class BasicTest extends PaymentMethodConfigurationBaseTestBase {
    * @covers ::__construct
    */
   function testCreate() {
-    $plugin_type_manager = $this->getMock(PluginTypeManagerInterface::class);
-    $plugin_type_manager->expects($this->any())
-      ->method('getPluginType')
-      ->with('payment_status')
-      ->willReturn($this->paymentStatusType);
+    $plugin_type_manager = $this->prophesize(PluginTypeManagerInterface::class);
+    $plugin_type_manager->getPluginType('payment_status')
+      ->willReturn($this->paymentStatusType->reveal());
 
     $container = $this->getMock(ContainerInterface::class);
     $map = array(
       array('module_handler', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->moduleHandler),
       array('plugin.manager.plugin.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
-      array('plugin.plugin_type_manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $plugin_type_manager),
+      array('plugin.plugin_type_manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $plugin_type_manager->reveal()),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
     );
     $container->expects($this->any())

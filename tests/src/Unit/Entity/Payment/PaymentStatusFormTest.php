@@ -7,7 +7,6 @@
 
 namespace Drupal\Tests\payment\Unit\Entity\Payment;
 
-use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageInterface;
@@ -22,7 +21,7 @@ use Drupal\payment\Plugin\Payment\Status\PaymentStatusInterface;
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
-use Drupal\plugin\PluginType\PluginType;
+use Drupal\plugin\PluginType\PluginTypeInterface;
 use Drupal\plugin\PluginType\PluginTypeManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -70,11 +69,11 @@ class PaymentStatusFormTest extends UnitTestCase {
   protected $pluginSelectorManager;
 
   /**
-   * The plugin type manager.
+   * The payment status plugin type.
    *
-   * @var \Drupal\plugin\PluginType\PluginTypeManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\plugin\PluginType\PluginTypeInterface|\Prophecy\Prophecy\ObjectProphecy
    */
-  protected $pluginTypeManager;
+  protected $paymentStatusPluginType;
 
   /**
    * The string translator.
@@ -111,25 +110,13 @@ class PaymentStatusFormTest extends UnitTestCase {
 
     $this->stringTranslation = $this->getStringTranslationStub();
 
-    $class_resolver = $this->getMock(ClassResolverInterface::class);
-
-    $this->pluginTypeManager = $this->getmock(PluginTypeManagerInterface::class);
-    $plugin_type_definition = [
-      'id' => $this->randomMachineName(),
-      'label' => $this->randomMachineName(),
-      'provider' => $this->randomMachineName(),
-    ];
-    $plugin_type = new PluginType($plugin_type_definition, $this->stringTranslation, $class_resolver, $this->paymentStatusManager);
-    $this->pluginTypeManager->expects($this->any())
-      ->method('getPluginType')
-      ->with('payment_method')
-      ->willReturn($plugin_type);
+    $this->paymentStatusPluginType = $this->prophesize(PluginTypeInterface::class);
 
     $this->urlGenerator = $this->getmock(UrlGeneratorInterface::class);
 
     $this->payment = $this->getMock(PaymentInterface::class);
 
-    $this->sut = new PaymentStatusForm($this->currentUser, $this->urlGenerator, $this->stringTranslation, $this->pluginSelectorManager, $this->pluginTypeManager);
+    $this->sut = new PaymentStatusForm($this->currentUser, $this->urlGenerator, $this->stringTranslation, $this->pluginSelectorManager, $this->paymentStatusPluginType->reveal());
     $this->sut->setEntity($this->payment);
   }
 
@@ -138,12 +125,15 @@ class PaymentStatusFormTest extends UnitTestCase {
    * @covers ::__construct
    */
   function testCreate() {
+    $plugin_type_manager = $this->prophesize(PluginTypeManagerInterface::class);
+    $plugin_type_manager->getPluginType('payment_status')->willReturn($this->paymentStatusPluginType->reveal());
+
     $container = $this->getMock(ContainerInterface::class);
     \Drupal::setContainer($container);
     $map = array(
       array('current_user', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->currentUser),
       array('plugin.manager.plugin.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
-      array('plugin.plugin_type_manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginTypeManager),
+      array('plugin.plugin_type_manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $plugin_type_manager->reveal()),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
       array('url_generator', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->urlGenerator),
     );
@@ -193,6 +183,9 @@ class PaymentStatusFormTest extends UnitTestCase {
       ->with([], $form_state)
       ->willReturn($plugin_selector_form);
 
+    $payment_status_manager = $this->prophesize(PaymentStatusManagerInterface::class);
+    $this->paymentStatusPluginType->getPluginManager()->willReturn($payment_status_manager->reveal());
+
     $build = $this->sut->form($form, $form_state);
     $this->assertInternalType('array', $build);
     $this->assertArrayHasKey('payment_status', $build);
@@ -222,6 +215,9 @@ class PaymentStatusFormTest extends UnitTestCase {
     $this->pluginSelector->expects($this->atLeastOnce())
       ->method('validateSelectorForm')
       ->with($form['payment_status'], $form_state);
+
+    $payment_status_manager = $this->prophesize(PaymentStatusManagerInterface::class);
+    $this->paymentStatusPluginType->getPluginManager()->willReturn($payment_status_manager->reveal());
 
     $this->sut->validateForm($form, $form_state);
   }
@@ -263,6 +259,9 @@ class PaymentStatusFormTest extends UnitTestCase {
       ->with('canonical')
       ->willReturn($url);
 
+    $payment_status_manager = $this->prophesize(PaymentStatusManagerInterface::class);
+    $this->paymentStatusPluginType->getPluginManager()->willReturn($payment_status_manager->reveal());
+
     $this->sut->submitForm($form, $form_state);
     $this->assertSame($url, $form_state->getRedirect());
   }
@@ -276,7 +275,8 @@ class PaymentStatusFormTest extends UnitTestCase {
 
     $method = new \ReflectionMethod($this->sut, 'actions');
     $method->setAccessible(TRUE);
-    $method->invokeArgs($this->sut, array($form, $form_state));
+    $actions = $method->invokeArgs($this->sut, array($form, $form_state));
+    $this->assertInternalType('array', $actions);
   }
 
 }

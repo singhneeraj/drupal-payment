@@ -9,7 +9,6 @@ namespace Drupal\Tests\payment_reference\Unit\Element;
 
 use Drupal\Component\Utility\Random;
 use Drupal\Core\Datetime\DateFormatter;
-use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Render\RendererInterface;
@@ -20,7 +19,7 @@ use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Drupal\payment\QueueInterface;
 use Drupal\payment_reference\Element\PaymentReference;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
-use Drupal\plugin\PluginType\PluginType;
+use Drupal\plugin\PluginType\PluginTypeInterface;
 use Drupal\plugin\PluginType\PluginTypeManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -64,7 +63,7 @@ class PaymentReferenceTest extends UnitTestCase {
   /**
    * The payment method type.
    *
-   * @var \Drupal\plugin\PluginType\PluginTypeInterface
+   * @var \Drupal\plugin\PluginType\PluginTypeInterface|\Prophecy\Prophecy\ObjectProphecy
    */
   protected $paymentMethodType;
 
@@ -138,16 +137,9 @@ class PaymentReferenceTest extends UnitTestCase {
 
     $this->paymentMethodManager = $this->getMock(PaymentMethodManagerInterface::class);
 
-    $class_resolver = $this->getMock(ClassResolverInterface::class);
-
     $this->stringTranslation = $this->getStringTranslationStub();
 
-    $plugin_type_definition = [
-      'id' => $this->randomMachineName(),
-      'label' => $this->randomMachineName(),
-      'provider' => $this->randomMachineName(),
-    ];
-    $this->paymentMethodType = new PluginType($plugin_type_definition, $this->stringTranslation, $class_resolver, $this->paymentMethodManager);
+    $this->paymentMethodType = $this->prophesize(PluginTypeInterface::class);
 
     $this->paymentQueue = $this->getMock(QueueInterface::class);
 
@@ -167,7 +159,7 @@ class PaymentReferenceTest extends UnitTestCase {
     $plugin_id = $this->randomMachineName();
     $plugin_definition = [];
 
-    $this->sut = new PaymentReference($configuration, $plugin_id, $plugin_definition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodType, new Random(), $this->paymentQueue);
+    $this->sut = new PaymentReference($configuration, $plugin_id, $plugin_definition, $this->requestStack, $this->paymentStorage, $this->stringTranslation, $this->dateFormatter, $this->linkGenerator, $this->renderer, $this->currentUser, $this->pluginSelectorManager, $this->paymentMethodType->reveal(), new Random(), $this->paymentQueue);
   }
 
   /**
@@ -181,11 +173,9 @@ class PaymentReferenceTest extends UnitTestCase {
       ->with('payment')
       ->willReturn($this->paymentStorage);
 
-    $plugin_type_manager = $this->getMock(PluginTypeManagerInterface::class);
-    $plugin_type_manager->expects($this->any())
-      ->method('getPluginType')
-      ->with('payment_method')
-      ->willReturn($this->paymentMethodType);
+    $plugin_type_manager = $this->prophesize(PluginTypeManagerInterface::class);
+    $plugin_type_manager->getPluginType('payment_method')
+      ->willReturn($this->paymentMethodType->reveal());
 
     $container = $this->getMock(ContainerInterface::class);
     $map = array(
@@ -195,7 +185,7 @@ class PaymentReferenceTest extends UnitTestCase {
       array('link_generator', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->linkGenerator),
       array('payment_reference.queue', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->paymentQueue),
       array('plugin.manager.plugin.plugin_selector', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->pluginSelectorManager),
-      array('plugin.plugin_type_manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $plugin_type_manager),
+      array('plugin.plugin_type_manager', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $plugin_type_manager->reveal()),
       array('renderer', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->renderer),
       array('request_stack', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->requestStack),
       array('string_translation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->stringTranslation),
