@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\PaymentLineItemsDisplayTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Element;
 
 use Drupal\Core\Entity\EntityStorageInterface;

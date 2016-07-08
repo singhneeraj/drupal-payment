@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Tests\Entity\PaymentUnitTest.
- */
-
 namespace Drupal\payment\Tests\Entity;
 
 use Drupal\payment\Entity\PaymentInterface;

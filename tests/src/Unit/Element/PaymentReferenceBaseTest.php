@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Element\PaymentReferenceBaseTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Element {
 
   use Drupal\Component\Plugin\PluginManagerInterface;

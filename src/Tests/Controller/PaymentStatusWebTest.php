@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Tests\Controller\PaymentStatusWebTest.
- */
-
 namespace Drupal\payment\Tests\Controller;
 
 use Drupal\payment\Payment;

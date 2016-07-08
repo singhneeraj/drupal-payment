@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Controller\DisablePaymentMethodConfigurationTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Controller;
 
 use Drupal\payment\Controller\DisablePaymentMethodConfiguration;

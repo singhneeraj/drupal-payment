@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\Payment\Unit\Plugin\Payment\PaymentAwarePluginFilteredPluginManagerTest.
- */
-
 namespace Drupal\Tests\Payment\Unit\Plugin\Payment;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;

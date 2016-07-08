@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Element\PaymentLineItemsDisplay.
- */
-
 namespace Drupal\payment\Element;
 
 use Drupal\Core\Entity\EntityStorageInterface;

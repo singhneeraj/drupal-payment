@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Plugin\field\formatter\PaymentLineItemOverview.
- */
-
 namespace Drupal\payment\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemListInterface;

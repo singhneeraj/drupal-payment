@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\DatabaseQueue.
- */
-
 namespace Drupal\payment;
 
 use Drupal\Component\Utility\Random;

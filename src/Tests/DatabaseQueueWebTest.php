@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Tests\DatabaseQueueWebTest.
- */
-
 namespace Drupal\payment\Tests;
 
 use Drupal\payment\DatabaseQueue;

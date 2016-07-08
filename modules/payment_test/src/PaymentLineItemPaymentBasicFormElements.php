@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment_test\PaymentLineItemPaymentBasicFormElement.
- */
-
 namespace Drupal\payment_test;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;

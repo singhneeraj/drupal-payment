@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\QueueInterface.
- */
-
 namespace Drupal\payment;
 
 /**

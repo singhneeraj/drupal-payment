@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Plugin\views\field\PaymentStatusLabel.
- */
-
 namespace Drupal\payment\Plugin\views\field;
 
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;

@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @file Contains \Drupal\Tests\payment\Unit\Plugin\views\field\PaymentAmountTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Plugin\views\field;
 
 use Drupal\currency\Entity\CurrencyInterface;

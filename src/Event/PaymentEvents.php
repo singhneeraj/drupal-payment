@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Event\PaymentEvents.
- */
-
 namespace Drupal\payment\Event;
 
 /**

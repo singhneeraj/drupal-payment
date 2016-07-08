@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains
- * \Drupal\Tests\payment_reference\Unit\Plugin\Field\FieldWidget\PaymentReferenceTest.
- */
-
 namespace Drupal\Tests\payment_reference\Unit\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Entity\EntityInterface;

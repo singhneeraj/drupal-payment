@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Plugin\views\relationship\CurrentPaymentStatus.
- */
-
 namespace Drupal\payment\Plugin\views\relationship;
 
 use Drupal\views\Plugin\views\relationship\RelationshipPluginBase;

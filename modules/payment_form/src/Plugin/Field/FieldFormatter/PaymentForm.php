@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment_form\Plugin\field\formatter\PaymentForm.
- */
-
 namespace Drupal\payment_form\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Entity\EntityFormBuilderInterface;

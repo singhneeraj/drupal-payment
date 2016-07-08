@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @file Contains \Drupal\Tests\payment\Unit\Plugin\views\field\PaymentStatusLabelTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Plugin\views\field;
 
 use Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface;

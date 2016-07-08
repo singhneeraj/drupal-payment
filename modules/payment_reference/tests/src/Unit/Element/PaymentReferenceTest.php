@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment_reference\Unit\Element\PaymentReferenceTest.
- */
-
 namespace Drupal\Tests\payment_reference\Unit\Element;
 
 use Drupal\Component\Utility\Random;

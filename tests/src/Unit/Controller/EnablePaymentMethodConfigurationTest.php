@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Controller\EnablePaymentMethodConfigurationTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Controller;
 
 use Drupal\payment\Controller\EnablePaymentMethodConfiguration;

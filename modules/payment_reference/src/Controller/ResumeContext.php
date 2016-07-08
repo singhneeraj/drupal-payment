@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment_reference\Controller\ResumeContext.
- */
-
 namespace Drupal\payment_reference\Controller;
 
 use Drupal\Core\Access\AccessResult;

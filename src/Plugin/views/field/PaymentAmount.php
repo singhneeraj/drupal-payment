@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Plugin\views\field\PaymentAmount.
- */
-
 namespace Drupal\payment\Plugin\views\field;
 
 use Drupal\views\Plugin\views\field\FieldPluginBase;

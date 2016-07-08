@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @file Contains \Drupal\Tests\payment\Unit\Plugin\Payment\LineItem\BasicTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\LineItem;
 
 use Drupal\Core\Database\Connection;

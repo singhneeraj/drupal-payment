@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @file Contains \Drupal\Tests\payment\Unit\Plugin\views\filter\PaymentMethodTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Plugin\views\filter;
 
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;

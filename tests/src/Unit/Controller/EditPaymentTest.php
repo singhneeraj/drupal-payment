@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Controller\EditPaymentTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Controller;
 
 use Drupal\Core\StringTranslation\TranslatableMarkup;

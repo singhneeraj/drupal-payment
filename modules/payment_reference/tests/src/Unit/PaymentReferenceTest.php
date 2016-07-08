@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment_reference\Unit\PaymentReferenceTest.
- */
-
 namespace Drupal\Tests\payment_reference\Unit;
 
 use Drupal\payment\QueueInterface;

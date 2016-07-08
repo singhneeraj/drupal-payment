@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment_reference\Tests\Element\PaymentReferenceWebTest.
- */
-
 namespace Drupal\payment_reference\Tests\Element;
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;

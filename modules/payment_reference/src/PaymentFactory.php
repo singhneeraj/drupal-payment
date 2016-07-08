@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment_reference\PaymentFactory.
- */
-
 namespace Drupal\payment_reference;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;

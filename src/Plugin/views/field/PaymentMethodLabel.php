@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Plugin\views\field\PaymentMethodLabel.
- */
-
 namespace Drupal\payment\Plugin\views\field;
 
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;

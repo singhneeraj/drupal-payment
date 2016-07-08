@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Controller\SelectPaymentMethodConfiguration.
- */
-
 namespace Drupal\payment\Controller;
 
 use Drupal\Core\Access\AccessResult;

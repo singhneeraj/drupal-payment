@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Plugin\Field\FieldType\LineItemItem.
- */
-
 namespace Drupal\payment\Plugin\Field\FieldType;
 
 /**

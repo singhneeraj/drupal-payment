@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Hook\EntityBundleInfoTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Hook;
 
 use Drupal\payment\Hook\EntityBundleInfo;

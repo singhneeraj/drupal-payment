@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\PermissionsTest.
- */
-
 namespace Drupal\Tests\payment\Unit;
 
 use Drupal\payment\Permissions;

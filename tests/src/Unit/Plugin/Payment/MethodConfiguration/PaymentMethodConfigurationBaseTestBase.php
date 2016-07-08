@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Plugin\Payment\MethodConfiguration\PaymentMethodConfigurationBaseTestBase.
- */
-
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\MethodConfiguration;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;

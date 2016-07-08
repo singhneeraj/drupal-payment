@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Definition of Drupal\payment\LineItemCollectionInterface.
- */
-
 namespace Drupal\payment;
 
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemInterface;

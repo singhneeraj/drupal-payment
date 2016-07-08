@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\OperationResultInterface.
- */
-
 namespace Drupal\payment;
 
 /**

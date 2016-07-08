@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\LineItemCollectionTest.
- */
-
 namespace Drupal\Tests\payment\Unit;
 
 use Drupal\payment\LineItemCollection;

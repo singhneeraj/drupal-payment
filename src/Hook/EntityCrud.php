@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Hook\EntityCrud..
- */
-
 namespace Drupal\payment\Hook;
 
 use Drupal\Component\Plugin\Discovery\CachedDiscoveryInterface;

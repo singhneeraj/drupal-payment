@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Event\PaymentTypePreResumeContextTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Event;
 
 use Drupal\payment\Entity\PaymentInterface;

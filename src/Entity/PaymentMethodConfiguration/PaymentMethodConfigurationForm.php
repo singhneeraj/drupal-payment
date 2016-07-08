@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationForm..
- */
-
 namespace Drupal\payment\Entity\PaymentMethodConfiguration;
 
 use Drupal\Component\Plugin\ConfigurablePluginInterface;

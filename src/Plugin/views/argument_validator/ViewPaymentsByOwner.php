@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Plugin\views\argument_validator\ViewPaymentsByOwner.
- */
-
 namespace Drupal\payment\Plugin\views\argument_validator;
 
 use Drupal\Core\Entity\EntityManagerInterface;

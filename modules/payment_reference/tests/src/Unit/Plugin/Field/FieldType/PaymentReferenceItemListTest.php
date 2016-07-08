@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains
- * \Drupal\Tests\payment_reference\Unit\Plugin\Field\FieldType\PaymentReferenceItemListTest.
- */
-
 namespace Drupal\Tests\payment_reference\Unit\Plugin\Field\FieldType;
 
 use Drupal\Core\Form\FormStateInterface;

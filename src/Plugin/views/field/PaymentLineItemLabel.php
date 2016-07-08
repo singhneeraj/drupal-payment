@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Plugin\views\field\PaymentLineItemLabel.
- */
-
 namespace Drupal\payment\Plugin\views\field;
 
 use Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface;

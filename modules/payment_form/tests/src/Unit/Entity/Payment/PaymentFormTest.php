@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment_form\Unit\Entity\Payment\PaymentFormTest.
- */
-
 namespace Drupal\Tests\payment_form\Unit\Entity\Payment;
 
 use Drupal\Core\Access\AccessResult;

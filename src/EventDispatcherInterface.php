@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\EventDispatcherInterface.
- */
-
 namespace Drupal\payment;
 
 use Drupal\Core\Session\AccountInterface;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Definition of Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationListBuilder.
- */
-
 namespace Drupal\payment\Entity\PaymentMethodConfiguration;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;

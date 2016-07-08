@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Entity\PaymentStatus\PaymentStatusListBuilderUnitTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus;
 
 use Drupal\Core\Entity\EntityStorageInterface;

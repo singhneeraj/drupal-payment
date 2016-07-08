@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Definition of Drupal\payment\Entity\PaymentStatusInterface.
- */
-
 namespace Drupal\payment\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;

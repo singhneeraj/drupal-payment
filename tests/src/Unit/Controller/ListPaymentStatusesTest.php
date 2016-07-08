@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Controller\ListPaymentStatusesTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Controller;
 
 use Drupal\Core\Render\RendererInterface;

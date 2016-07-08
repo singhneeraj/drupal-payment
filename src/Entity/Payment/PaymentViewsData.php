@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Entity\Payment\PaymentViewsData.
- */
-
 namespace Drupal\payment\Entity\Payment;
 
 use Drupal\views\EntityViewsData;

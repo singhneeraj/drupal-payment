@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Plugin\views\field\PaymentTypeLabel.
- */
-
 namespace Drupal\payment\Plugin\views\field;
 
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface;

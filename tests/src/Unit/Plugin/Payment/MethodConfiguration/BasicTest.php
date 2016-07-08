@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Plugin\Payment\MethodConfiguration\BasicTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\MethodConfiguration;
 
 use Drupal\Core\DependencyInjection\ClassResolverInterface;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Generate.
- */
-
 namespace Drupal\payment\Tests;
 
 use Drupal\Component\Utility\Random;

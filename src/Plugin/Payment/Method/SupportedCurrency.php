@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Plugin\Payment\Method\SupportedCurrency.
- */
-
 namespace Drupal\payment\Plugin\Payment\Method;
 
 /**

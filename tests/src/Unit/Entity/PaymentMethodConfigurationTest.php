@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Entity\PaymentMethodConfigurationTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;

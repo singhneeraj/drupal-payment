@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\payment\Plugin\views\filter\PaymentStatus.
- */
-
 namespace Drupal\payment\Plugin\views\filter;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;

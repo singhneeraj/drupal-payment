@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Event\PaymentExecuteAccessTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Event;
 
 use Drupal\Core\Access\AccessResultAllowed;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationDeleteForm.
- */
-
 namespace Drupal\payment\Entity\PaymentMethodConfiguration;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;

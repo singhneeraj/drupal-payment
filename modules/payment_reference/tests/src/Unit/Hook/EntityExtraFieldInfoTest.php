@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment_reference\Unit\Hook\EntityExtraFieldInfoTest.
- */
-
 namespace Drupal\Tests\payment_reference\Unit\Hook;
 
 use Drupal\payment_reference\Hook\EntityExtraFieldInfo;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\EventDispatcherCollectionTest.
- */
-
 namespace Drupal\Tests\payment\Unit;
 
 use Drupal\Core\Access\AccessResult;

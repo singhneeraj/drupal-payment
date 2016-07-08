@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment_reference\Hook\EntityExtraFieldInfo.
- */
-
 namespace Drupal\payment_reference\Hook;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;

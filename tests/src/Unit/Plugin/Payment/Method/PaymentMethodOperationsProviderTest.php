@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Plugin\Payment\Method\PaymentMethodOperationsProviderTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\Method;
 
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodOperationsProvider;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Definition of Drupal\payment\Entity\Payment\PaymentAccessControlHandler.
- */
-
 namespace Drupal\payment\Entity\Payment;
 
 use Drupal\Core\Access\AccessResult;

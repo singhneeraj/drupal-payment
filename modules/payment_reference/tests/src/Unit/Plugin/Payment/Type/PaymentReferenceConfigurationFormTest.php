@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains
- * \Drupal\Tests\payment_reference\Unit\Plugin\Payment\Type\PaymentReferenceConfigurationFormTest.
- */
-
 namespace Drupal\Tests\payment_reference\Unit\Plugin\Payment\Type {
 
   use Drupal\Core\Form\FormState;

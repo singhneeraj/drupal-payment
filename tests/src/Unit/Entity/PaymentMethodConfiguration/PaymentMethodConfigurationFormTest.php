@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationFormTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Entity\PaymentMethodConfiguration {
 
   use Drupal\Component\Plugin\ConfigurablePluginInterface;

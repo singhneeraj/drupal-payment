@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Plugin\Payment\Status\PaymentStatusOperationsProvider.
- */
-
 namespace Drupal\payment\Plugin\Payment\Status;
 
 use Drupal\Core\Url;

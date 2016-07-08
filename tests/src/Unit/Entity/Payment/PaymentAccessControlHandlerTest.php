@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Payment\PaymentAccessControlHandlerTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Entity\Payment;
 
 use Drupal\Core\Cache\Context\CacheContextsManager;

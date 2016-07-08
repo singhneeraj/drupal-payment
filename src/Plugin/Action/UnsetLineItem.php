@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Plugin\Action\UnsetLineItem.
- */
-
 namespace Drupal\payment\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;

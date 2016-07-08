@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\SymfonyEventDispatcherTest.
- */
-
 namespace Drupal\Tests\payment\Unit;
 
 use Drupal\Core\Access\AccessResultInterface;

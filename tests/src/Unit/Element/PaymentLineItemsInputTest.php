@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\PaymentLineItemsInputTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Element {
 
   use Drupal\Component\Utility\Html;

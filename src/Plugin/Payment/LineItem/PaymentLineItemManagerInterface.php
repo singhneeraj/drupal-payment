@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Plugin\Payment\LineItem\PaymentLineItemManagerInterface.
- */
-
 namespace Drupal\payment\Plugin\Payment\LineItem;
 
 use Drupal\Component\Plugin\PluginManagerInterface;

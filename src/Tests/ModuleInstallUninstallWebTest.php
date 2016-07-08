@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Tests\ModuleInstallUninstallWebTest.
- */
-
 namespace Drupal\payment\Tests;
 
 use Drupal\payment\Entity\PaymentMethodConfigurationInterface;

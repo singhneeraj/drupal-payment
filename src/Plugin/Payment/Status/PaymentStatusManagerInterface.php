@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Plugin\Payment\Status\PaymentStatusManagerInterface.
- */
-
 namespace Drupal\payment\Plugin\Payment\Status;
 
 use Drupal\Component\Plugin\PluginManagerInterface;

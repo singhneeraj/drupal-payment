@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Plugin\Action\UnsetLineItemTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Plugin\Action;
 
 use Drupal\Core\Access\AccessResultAllowed;

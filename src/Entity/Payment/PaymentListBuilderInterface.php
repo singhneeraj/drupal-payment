@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Entity\Payment\PaymentListBuilderInterface.
- */
-
 namespace Drupal\payment\Entity\Payment;
 
 use Drupal\Core\Entity\EntityListBuilderInterface;

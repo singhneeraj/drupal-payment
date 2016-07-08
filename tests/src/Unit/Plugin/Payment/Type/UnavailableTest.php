@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Plugin\Payment\Type\UnavailableTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\Type;
 
 use Drupal\Core\Access\AccessResultInterface;

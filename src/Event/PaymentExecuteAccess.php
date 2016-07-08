@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Event\PaymentExecuteAccess.
- */
-
 namespace Drupal\payment\Event;
 
 use Drupal\Core\Access\AccessResultAllowed;

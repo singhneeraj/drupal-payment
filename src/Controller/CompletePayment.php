@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Controller\CompletePayment.
- */
-
 namespace Drupal\payment\Controller;
 
 use Drupal\payment\Entity\PaymentInterface;

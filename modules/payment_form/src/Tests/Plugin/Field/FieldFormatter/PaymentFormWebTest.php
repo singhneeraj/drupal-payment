@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Tests\Plugin\Field\FieldFormatter\PaymentFormWebTest.
- */
-
 namespace Drupal\payment_form\Tests\Plugin\Field\FieldFormatter;
 
 use Drupal\field\FieldStorageConfigInterface;

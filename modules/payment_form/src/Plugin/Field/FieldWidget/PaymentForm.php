@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment_form\Plugin\Field\FieldWidget\PaymentForm.
- */
-
 namespace Drupal\payment_form\Plugin\Field\FieldWidget;
 
 use Drupal\Component\Utility\NestedArray;

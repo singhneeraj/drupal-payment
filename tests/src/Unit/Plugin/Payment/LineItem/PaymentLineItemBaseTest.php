@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Plugin\Payment\LineItem\PaymentLineItemBaseTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\LineItem;
 
 use Drupal\Core\Form\FormStateInterface;

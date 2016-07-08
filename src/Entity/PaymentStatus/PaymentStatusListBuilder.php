@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Entity\PaymentStatus\PaymentStatusListBuilder.
- */
-
 namespace Drupal\payment\Entity\PaymentStatus;
 
 use Drupal\Core\Entity\EntityListBuilder;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Entity\Payment\PaymentStorage.
- */
-
 namespace Drupal\payment\Entity\Payment;
 
 use Drupal\Core\Cache\CacheBackendInterface;

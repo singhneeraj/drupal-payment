@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Annotations\PaymentStatus.
- */
-
 namespace Drupal\payment\Annotations;
 
 use Drupal\Component\Annotation\Plugin;

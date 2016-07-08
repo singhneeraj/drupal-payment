@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Definition of Drupal\payment\Entity\PaymentMethodConfiguration\PaymentMethodConfigurationAccessControlHandler.
- */
-
 namespace Drupal\payment\Entity\PaymentMethodConfiguration;
 
 use Drupal\Core\Access\AccessResult;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Element\PaymentStatusesDisplay.
- */
-
 namespace Drupal\payment\Element;
 
 use Drupal\Core\Datetime\DateFormatter;

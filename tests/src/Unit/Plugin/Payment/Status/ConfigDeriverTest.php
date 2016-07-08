@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Plugin\Payment\Status\ConfigDeriverTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\Status;
 
 use Drupal\Core\Entity\EntityManagerInterface;

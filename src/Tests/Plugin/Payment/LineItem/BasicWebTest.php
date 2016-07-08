@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Tests\Plugin\Payment\LineItem\BasicWebTest.
- */
-
 namespace Drupal\payment\Tests\Plugin\Payment\LineItem;
 
 use Drupal\payment\Payment;

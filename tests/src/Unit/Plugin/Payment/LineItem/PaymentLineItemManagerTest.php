@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @file Contains \Drupal\Tests\payment\Unit\Plugin\Payment\LineItem\PaymentLineItemManagerTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\LineItem;
 
 use Drupal\Component\Plugin\Discovery\DiscoveryInterface;

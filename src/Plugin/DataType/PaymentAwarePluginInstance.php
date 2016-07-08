@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Plugin\DataType\PaymentAwarePluginInstance.
- */
-
 namespace Drupal\payment\Plugin\DataType;
 
 use Drupal\payment\Entity\PaymentInterface;

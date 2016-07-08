@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Tests\PaymentLineItemsInputWebTest.
- */
-
 namespace Drupal\payment\Tests\Element;
 
 use Drupal\payment\Payment;

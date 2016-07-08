@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Plugin\DataType\PluginId.
- */
-
 namespace Drupal\payment\Plugin\DataType;
 
 use Drupal\Core\TypedData\Plugin\DataType\Timestamp;

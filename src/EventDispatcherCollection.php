@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\EventDispatcherCollection.
- */
-
 namespace Drupal\payment;
 
 use Drupal\Core\Access\AccessResult;

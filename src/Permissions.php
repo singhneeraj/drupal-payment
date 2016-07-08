@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Permissions.
- */
-
 namespace Drupal\payment;
 
 use Drupal\Component\Plugin\PluginManagerInterface;

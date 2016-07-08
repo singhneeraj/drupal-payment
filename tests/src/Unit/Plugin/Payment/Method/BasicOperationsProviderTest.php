@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Plugin\Payment\Status\BasicOperationsProviderTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\Method;
 
 use Drupal\Core\Entity\EntityListBuilderInterface;

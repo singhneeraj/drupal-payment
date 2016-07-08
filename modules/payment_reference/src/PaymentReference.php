@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment_reference\PaymentReference.
- */
-
 namespace Drupal\payment_reference;
 
 /**

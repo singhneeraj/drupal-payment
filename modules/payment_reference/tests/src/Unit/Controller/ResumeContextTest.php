@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment_reference\Unit\Controller\ResumeContextTest.
- */
-
 namespace Drupal\Tests\payment_reference\Unit\Controller;
 
 use Drupal\Core\Session\AccountInterface;

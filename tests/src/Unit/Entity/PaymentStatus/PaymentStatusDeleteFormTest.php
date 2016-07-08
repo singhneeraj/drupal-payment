@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Entity\PaymentStatus\PaymentStatusDeleteFormTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Entity\PaymentStatus {
 
   use Drupal\Core\Form\FormStateInterface;

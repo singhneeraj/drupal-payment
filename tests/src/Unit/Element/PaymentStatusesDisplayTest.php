@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\PaymentStatusesDisplayTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Element;
 
 use Drupal\Core\Datetime\DateFormatter;

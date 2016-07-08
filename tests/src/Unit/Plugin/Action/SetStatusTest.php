@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Plugin\Action\SetStatusTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Plugin\Action;
 
 use Drupal\Core\Access\AccessResultAllowed;

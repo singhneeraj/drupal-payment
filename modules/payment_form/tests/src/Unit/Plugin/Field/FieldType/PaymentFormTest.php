@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains
- * \Drupal\Tests\payment_form\Unit\Plugin\Field\FieldType\PaymentFormTest.
- */
-
 namespace Drupal\Tests\payment_form\Unit\Plugin\Field\FieldType;
 
 use Drupal\Core\DependencyInjection\Container;

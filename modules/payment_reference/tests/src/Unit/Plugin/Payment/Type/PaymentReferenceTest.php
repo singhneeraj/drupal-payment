@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains
- * \Drupal\Tests\payment_reference\Unit\Plugin\Payment\Type\PaymentReferenceTest.
- */
-
 namespace Drupal\Tests\payment_reference\Unit\Plugin\Payment\Type;
 
 use Drupal\Core\Access\AccessResultInterface;

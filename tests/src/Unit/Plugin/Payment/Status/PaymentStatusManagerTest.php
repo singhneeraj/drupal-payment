@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Plugin\Payment\Status\PaymentStatusManagerTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\Status;
 
 use Drupal\Component\Plugin\Discovery\DiscoveryInterface;

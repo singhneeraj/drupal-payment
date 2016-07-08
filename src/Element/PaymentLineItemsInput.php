@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Element\PaymentLineItemsInput.
- */
-
 namespace Drupal\payment\Element;
 
 use Drupal\Component\Utility\Html;

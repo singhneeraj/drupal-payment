@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Event\PaymentQueuePaymentIdsAlterTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Event;
 
 use Drupal\payment\Event\PaymentQueuePaymentIdsAlter;

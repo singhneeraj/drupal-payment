@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Plugin\Payment\Method\PaymentMethodManagerTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Plugin\Payment\Method;
 
 use Drupal\Component\Plugin\Discovery\DiscoveryInterface;

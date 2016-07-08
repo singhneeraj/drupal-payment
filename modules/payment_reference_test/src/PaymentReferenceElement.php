@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment_reference_test\PaymentReferenceElement.
- */
-
 namespace Drupal\payment_reference_test;
 
 use Drupal\Core\Form\FormInterface;

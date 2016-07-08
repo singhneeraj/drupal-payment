@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment_reference\PaymentFactoryInterface.
- */
-
 namespace Drupal\payment_reference;
 
 use Drupal\Core\Field\FieldDefinitionInterface;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Definition of Drupal\payment\Entity\Payment.
- */
-
 namespace Drupal\payment\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;

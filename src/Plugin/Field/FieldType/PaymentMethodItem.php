@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Plugin\Field\FieldType\PaymentMethodItem.
- */
-
 namespace Drupal\payment\Plugin\Field\FieldType;
 
 /**

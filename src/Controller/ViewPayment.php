@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Controller\ViewPayment.
- */
-
 namespace Drupal\payment\Controller;
 
 use Drupal\Core\Controller\ControllerBase;

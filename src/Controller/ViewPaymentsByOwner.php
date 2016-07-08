@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Controller\ViewPaymentsByOwner.
- */
-
 namespace Drupal\payment\Controller;
 
 use Drupal\Core\Access\AccessResult;

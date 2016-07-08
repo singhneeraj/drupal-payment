@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Payment\PaymentStorageSchemaTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Entity\Payment;
 
 use Drupal\Core\Database\Connection;

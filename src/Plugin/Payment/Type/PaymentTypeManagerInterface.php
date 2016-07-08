@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Plugin\Payment\Type\PaymentTypeManagerInterface.
- */
-
 namespace Drupal\payment\Plugin\Payment\Type;
 
 use Drupal\Component\Plugin\PluginManagerInterface;

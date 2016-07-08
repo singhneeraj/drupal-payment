@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Response\Response.
- */
-
 namespace Drupal\payment\Response;
 
 use Drupal\Core\Url;

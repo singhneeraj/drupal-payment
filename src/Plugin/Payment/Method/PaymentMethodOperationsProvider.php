@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Plugin\Payment\Method\PaymentMethodOperationsProvider.
- */
-
 namespace Drupal\payment\Plugin\Payment\Method;
 
 use Drupal\Core\Url;

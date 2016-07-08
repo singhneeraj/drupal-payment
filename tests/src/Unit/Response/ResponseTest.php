@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\ResponseTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Response;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;

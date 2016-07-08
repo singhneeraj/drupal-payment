@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Payment.
- */
-
 namespace Drupal\payment;
 
 /**

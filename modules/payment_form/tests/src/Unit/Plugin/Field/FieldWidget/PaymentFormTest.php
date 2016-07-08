@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains
- * \Drupal\Tests\payment_form\Unit\Plugin\Field\FieldWidget\PaymentFormTest.
- */
-
 namespace Drupal\Tests\payment_form\Unit\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Field\FieldDefinitionInterface;

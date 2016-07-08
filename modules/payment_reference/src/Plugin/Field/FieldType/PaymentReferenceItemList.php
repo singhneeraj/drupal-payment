@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment_reference\Plugin\Field\FieldType\PaymentReferenceItemList.
- */
-
 namespace Drupal\payment_reference\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldItemList;

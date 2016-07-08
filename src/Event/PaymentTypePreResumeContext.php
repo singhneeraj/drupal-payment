@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Event\PaymentTypePreResumeContext.
- */
-
 namespace Drupal\payment\Event;
 
 use Drupal\payment\Entity\PaymentInterface;

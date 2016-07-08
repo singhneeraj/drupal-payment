@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Element\PaymentReferenceBase.
- */
-
 namespace Drupal\payment\Element;
 
 use Drupal\Component\Utility\Html;

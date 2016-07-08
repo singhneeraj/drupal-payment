@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Tests\PaymentAdministrationCategoryWebTest.
- */
-
 namespace Drupal\payment\Tests;
 
 use Drupal\simpletest\WebTestBase;

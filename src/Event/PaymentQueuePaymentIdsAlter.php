@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Event\PaymentQueuePaymentIdsAlter.
- */
-
 namespace Drupal\payment\Event;
 
 use Symfony\Component\EventDispatcher\Event;

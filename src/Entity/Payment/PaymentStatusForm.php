@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\payment\Entity\Payment\PaymentStatusForm.
- */
-
 namespace Drupal\payment\Entity\Payment;
 
 use Drupal\Core\Entity\EntityForm;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\payment\Unit\Hook\EntityCrudTest.
- */
-
 namespace Drupal\Tests\payment\Unit\Hook;
 
 use Drupal\payment\Entity\PaymentMethodConfigurationInterface;
