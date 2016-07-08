@@ -13,13 +13,12 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Url;
 use Drupal\payment\Entity\PaymentInterface;
 use Drupal\payment\OperationResultInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodInterface;
 use Drupal\payment\Plugin\Payment\Method\PaymentMethodManagerInterface;
 use Drupal\payment\Plugin\Payment\Type\PaymentTypeInterface;
-use Drupal\payment\Response\Response;
+use Drupal\payment\Response\ResponseInterface;
 use Drupal\payment_form\Entity\Payment\PaymentForm;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorInterface;
 use Drupal\plugin\Plugin\Plugin\PluginSelector\PluginSelectorManagerInterface;
@@ -27,6 +26,7 @@ use Drupal\plugin\PluginType\PluginTypeInterface;
 use Drupal\plugin\PluginType\PluginTypeManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @coversDefaultClass \Drupal\payment_form\Entity\Payment\PaymentForm
@@ -258,13 +258,14 @@ class PaymentFormTest extends UnitTestCase {
    * @covers ::getPaymentMethodManager
    */
   public function testSubmitForm() {
-    $redirect_url = new Url($this->randomMachineName());
-    $response = new Response($redirect_url);
+    $symfony_response = $this->prophesize(Response::class);
+    $completion_response = $this->prophesize(ResponseInterface::class);
+    $completion_response->getResponse()->willReturn($symfony_response->reveal());
 
     $result = $this->getMock(OperationResultInterface::class);
     $result->expects($this->atLeastOnce())
       ->method('getCompletionResponse')
-      ->willReturn($response);
+      ->willReturn($completion_response->reveal());
 
     $form = [
       'payment_method' => [
@@ -297,7 +298,7 @@ class PaymentFormTest extends UnitTestCase {
       ->willReturn($result);
 
     $this->sut->submitForm($form, $form_state);
-    $this->assertSame($redirect_url, $form_state->getRedirect());
+    $this->assertSame($symfony_response->reveal(), $form_state->getResponse());
   }
 
   /**
