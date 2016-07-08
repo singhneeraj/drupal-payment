@@ -64,11 +64,9 @@ class PaymentWebTest extends WebTestBase {
       $this->assertLinkByHref('payment/1');
       $this->clickLinkPartialName('Next');
       // @todo The following code does not work, as it results in the following
-      // assert if this test is run on Drush' built-in server:
+      // failure if this test is run on Drush' built-in server:
       // @code
-      // Expected
-      //
-      // &#039;http://local.dev:8080/admin/content/payment%3Fchanged_after%3D%26changed_before%3D%26%3DApply%26page%3D1&#039;
+      // Expected &#039;http://local.dev:8080/admin/content/payment%3Fchanged_after%3D%26changed_before%3D%26%3DApply%26page%3D1&#039;
       //
       // matches current URL
       //
